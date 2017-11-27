@@ -16,17 +16,26 @@
 
 using namespace std;
 
+// TODO: Investigate if the name is valid. The '_t' suffix is common but may
+// not adhere to the POSIX standards.
+typedef struct {
+    int curs_x;
+    int curs_y;
+    Uint8 foreground_colour [4];
+    Uint8 background_colour [4];
+} cursor_t;
+
 void lines230_270();
-void lines280_350();
-void lines360_420();
+void lines280_350(cursor_t *cursor);
+void lines360_420(cursor_t *cursor);
 void lines430_440();
-void lines450_600();
+void lines450_600(cursor_t *cursor);
 void lines610_690();
 void lines700_770();
 void lines790_800();
 void lines810_840();
-void ink(int c_num);
-void paper(int c_num);
+void ink(cursor_t *cursor, int c_num);
+void paper(cursor_t *cursor, int c_num);
 void lines4000_4030();
 void lines5000_5080();
 
@@ -38,13 +47,7 @@ int W;
 
 int zoom = 4;
 
-int curs_x = 0;
-int curs_y = 0;
-
-Uint8 foreground_colour [4];
-Uint8 background_colour [4];
-
-void print_text(SDL_Renderer *ren, const char *message) {
+void print_text(SDL_Renderer *ren,  cursor_t *cursor, const char *message) {
     TTF_Font *c64_font = TTF_OpenFont(
         "fonts/dungeon_of_doom.ttf",
         8 * zoom
@@ -56,21 +59,21 @@ void print_text(SDL_Renderer *ren, const char *message) {
     }
     int message_length = (int) strlen(message);
     SDL_Rect text_pos = {
-        .x = curs_x * 8 * zoom,
-        .y = curs_y * 8 * zoom,
+        .x = cursor->curs_x * 8 * zoom,
+        .y = cursor->curs_y * 8 * zoom,
         .w = message_length * 8 * zoom,
         .h = 8 * zoom
     };
-    curs_x += message_length;
+    cursor->curs_x += message_length;
 
     Uint8 r, g, b;
     // Background
     int error = SDL_SetRenderDrawColor(
         ren,
-        background_colour[0],
-        background_colour[1],
-        background_colour[2],
-        background_colour[3]
+        cursor->background_colour[0],
+        cursor->background_colour[1],
+        cursor->background_colour[2],
+        cursor->background_colour[3]
     );
     if (error) {
         printf("SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
@@ -80,9 +83,9 @@ void print_text(SDL_Renderer *ren, const char *message) {
         printf("SDL_RenderFillRect error: %s\n", SDL_GetError());
     }
     // Foreground
-    r = foreground_colour[0];
-    g = foreground_colour[1];
-    b = foreground_colour[2];
+    r = cursor->foreground_colour[0];
+    g = cursor->foreground_colour[1];
+    b = cursor->foreground_colour[2];
 
     SDL_Color text_color = {
         .r = r,
@@ -119,9 +122,9 @@ void print_text(SDL_Renderer *ren, const char *message) {
     TTF_CloseFont(c64_font);
 }
 
-void tab(int x, int y) {
-    curs_x = x;
-    curs_y = y;
+void tab(cursor_t *cursor, int x, int y) {
+    cursor->curs_x = x;
+    cursor->curs_y = y;
 }
 
 int LE, X, Y, OS;
@@ -167,28 +170,31 @@ int main(int argc, char *argv[]) {
     SDL_RenderClear(ren);
     SDL_RenderPresent(ren);
 
+    cursor_t *cursor = new cursor_t;
+    cursor->curs_x = 0;
+    cursor->curs_y = 0;
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280
     BG = 2;
     FG = 1;
     T = 0;
     L = 3;
     LW = W - 3;
-    lines280_350();
+    lines280_350(cursor);
     // 40 paper 2:ink 0
-    paper(2);
-    ink(0);
+    paper(cursor, 2);
+    ink(cursor, 0);
     // 50 PRINT tab(1,1);"LEVEL GENERATOR"
-    tab(1, 1);
-    print_text(ren, "LEVEL GENERATOR");
+    tab(cursor, 1, 1);
+    print_text(ren, cursor, "LEVEL GENERATOR");
     // 60 PRINT tab(1,2);"THIS IS LEVEL:";LE;
-    tab(1, 2);
+    tab(cursor, 1, 2);
     char* outstring = new char[40];
     snprintf(outstring, 40, "THIS IS LEVEL: %i", LE);
-    print_text(ren, outstring);
+    print_text(ren, cursor, outstring);
     delete outstring;
     // 70 PRINT tab(1,3);"PRESS H FOR HELP"
-    tab(1, 3);
-    print_text(ren, "PRESS H FOR HELP");
+    tab(cursor, 1, 3);
+    print_text(ren, cursor, "PRESS H FOR HELP");
 
     // 80 LET BG=3:LET FG=2:LET T=5:LET L=15:LET LW=15:GOSUB 280
     BG = 3;
@@ -196,7 +202,7 @@ int main(int argc, char *argv[]) {
     T = 5;
     L = 15;
     LW = 15;
-    lines280_350();
+    lines280_350(cursor);
     SDL_RenderPresent(ren);
 
     // 90 LET X=1:LET Y=1
@@ -230,7 +236,7 @@ int main(int argc, char *argv[]) {
             // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
 
             if (*I$ == 'h') {
-                lines360_420();
+                lines360_420(cursor);
             } else if (*I$ == 'a' and Y > 1) {
                 Y -= 1;
             } else if (*I$ == 'z' and Y < 15) {
@@ -243,21 +249,21 @@ int main(int argc, char *argv[]) {
                 lines230_270();
             }
             // 170 paper 3:ink 0
-            paper(3);
-            ink(0);
+            paper(cursor, 3);
+            ink(cursor, 0);
             // 180 PRINT tab(X,Y+5);CHR$(OS);
-            tab(X, Y + 5);
+            tab(cursor, X, Y + 5);
             char os_input[2];
             sprintf(os_input, "%s", (char *) &OS);
-            print_text(ren, os_input);
-            tab(X, Y + 5);
-            // 190 PRINT tab(X,Y+5);CHR$(R(X,Y));
+            print_text(ren, cursor, os_input);
+            tab(cursor, X, Y + 5);
+            // 190 PRINT tab(cursor, X,Y+5);CHR$(R(X,Y));
             sprintf(os_input, "%s", (char *) &R[X][Y]);
-            print_text(ren, os_input);
+            print_text(ren, cursor, os_input);
             SDL_RenderPresent(ren);
             // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
             if (*I$ == 's' && IX > 0) {
-                lines450_600();
+                lines450_600(cursor);
             }
             // 210 IF I$<>"F" THEN GOTO 100
             if (*I$ == 'f') {
@@ -266,6 +272,8 @@ int main(int argc, char *argv[]) {
         }
     }
     // 220 STOP
+
+    delete cursor;
 
     TTF_Quit();
     SDL_DestroyRenderer(ren);
@@ -293,34 +301,34 @@ void lines230_270() {
     // 270 RETURN
 }
 
-void print_left$_b$(SDL_Renderer *ren, int width);
-void newline();
+void print_left$_b$(SDL_Renderer *ren, cursor_t *cursor, int width);
+void newline(cursor_t *cursor);
 
-void lines280_350() {
+void lines280_350(cursor_t *cursor) {
     // 280 PRINT tab(0,T);
-    tab(0, T);
+    tab(cursor, 0, T);
     // 290 paper FG:PRINT LEFT$(B$,LW+2)
-    paper(FG);
-    print_left$_b$(ren, LW + 2);
-    newline();
+    paper(cursor, FG);
+    print_left$_b$(ren, cursor, LW + 2);
+    newline(cursor);
     // 300 paper BG:ink FG
-    paper(BG);
-    ink(FG);
+    paper(cursor, BG);
+    ink(cursor, FG);
     // 310 FOR I=1 TO L
     for (int I = 1; I <= L; I +=1) {
     // 320 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,LW);BG$(FG);" "
-        paper(FG);
-        print_text(ren, " ");
-        paper(BG);
-        print_left$_b$(ren, LW);
-        paper(FG);
-        print_text(ren, " ");
-        newline();
+        paper(cursor, FG);
+        print_text(ren, cursor, " ");
+        paper(cursor, BG);
+        print_left$_b$(ren, cursor, LW);
+        paper(cursor, FG);
+        print_text(ren, cursor, " ");
+        newline(cursor);
     // 330 NEXT I
     }
     // 340 paper FG:PRINT LEFT$(B$,LW+2);
-    paper(FG);
-    print_left$_b$(ren, LW + 2);
+    paper(cursor, FG);
+    print_left$_b$(ren, cursor, LW + 2);
     SDL_RenderPresent(ren);
     // 350 RETURN
 
@@ -329,27 +337,27 @@ void lines280_350() {
 const char * H$[10];
 char *B$;
 
-void lines360_420() {
+void lines360_420(cursor_t *cursor) {
 
     int H;
     // 360 paper 1:ink 3
-    paper(1);
-    ink(3);
+    paper(cursor, 1);
+    ink(cursor, 3);
     // 370 FOR H = 1 TO 10
     for (H = 0; H < 10; H += 1) {
     // 380 PRINT tab(1,4);H$(H);:GOSUB 430
-        tab(1, 4);
-        print_text(ren, H$[H]);
+        tab(cursor, 1, 4);
+        print_text(ren, cursor, H$[H]);
         SDL_RenderPresent(ren);
         lines430_440();
     // 390 PRINT tab(1,4);LEFT$(B$,W-2);
-        tab(1, 4);
-        print_left$_b$(ren, W - 2);
+        tab(cursor, 1, 4);
+        print_left$_b$(ren, cursor, W - 2);
         SDL_RenderPresent(ren);
     // 400 NEXT H
     }
     // 410 ink 3
-    ink(3);
+    ink(cursor, 3);
     // 420 RETURN
 }
 
@@ -371,10 +379,10 @@ void lines430_440() {
     }
 }
 
-void lines450_600() {
+void lines450_600(cursor_t *cursor) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
-    tab(1, 4);
-    print_text(ren, "ONE MOMENT PLEASE");
+    tab(cursor, 1, 4);
+    print_text(ren, cursor, "ONE MOMENT PLEASE");
     // 460 LET S$=""
     char S$[239];
     // 470 FOR J=1 TO 15
@@ -396,8 +404,8 @@ void lines450_600() {
     S$[227] = (char) LE + OS;
     S$[228] = 0;
     // 540 PRINT tab(1,4);"ANY KEY TO SAVE   ";GOSUB 430
-    tab(1, 4);
-    print_text(ren, "ANY KEY TO SAVE   ");
+    tab(cursor, 1, 4);
+    print_text(ren, cursor, "ANY KEY TO SAVE   ");
     SDL_RenderPresent(ren);
     lines430_440();
     // 550 LET S=OPENOUT "LEVEL"
@@ -413,8 +421,8 @@ void lines450_600() {
         printf("Error %i saving the level!", error);
     }
     // 580 PRINT tab(1,4);LEFT(B$,W)
-    tab(1, 4);
-    print_left$_b$(ren, W);
+    tab(cursor, 1, 4);
+    print_left$_b$(ren, cursor, W);
     SDL_RenderPresent(ren);
     // 590 LET LE=LE+1:GOSUB 700
     LE = LE + 1;
@@ -472,33 +480,33 @@ void lines700_770() {
     // 770 RETURN
 }
 
-void print_left$_b$(SDL_Renderer *ren, int width) {
+void print_left$_b$(SDL_Renderer *ren, cursor_t *cursor, int width) {
     int error = SDL_SetRenderDrawColor(
         ren,
-        background_colour[0],
-        background_colour[1],
-        background_colour[2],
-        background_colour[3]
+        cursor->background_colour[0],
+        cursor->background_colour[1],
+        cursor->background_colour[2],
+        cursor->background_colour[3]
     );
     if (error) {
         printf("SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
     }
     const SDL_Rect rect = {
-        .x = curs_x * 8 * zoom,
-        .y = curs_y * 8 * zoom,
+        .x = cursor->curs_x * 8 * zoom,
+        .y = cursor->curs_y * 8 * zoom,
         .w = width * 8 * zoom,
         .h = 8 * zoom
     };
-    curs_x += width;
+    cursor->curs_x += width;
     error = SDL_RenderFillRect(ren, &rect);
     if (error) {
         printf("SDL_RenderFillRect!: %s\n", SDL_GetError());
     }
 }
 
-void newline() {
-    curs_x = 0;
-    curs_y += 1;
+void newline(cursor_t *cursor) {
+    cursor->curs_x = 0;
+    cursor->curs_y += 1;
 }
 
 void lines790_800()
@@ -522,18 +530,18 @@ void lines810_840()
 Uint8 BG$ [4][2][4];
 
 
-void ink(int c_num) {
-    foreground_colour[0] = BG$[c_num][1][0];
-    foreground_colour[1] = BG$[c_num][1][1];
-    foreground_colour[2] = BG$[c_num][1][2];
-    foreground_colour[3] = BG$[c_num][1][3];
+void ink(cursor_t *cursor, int c_num) {
+    cursor->foreground_colour[0] = BG$[c_num][1][0];
+    cursor->foreground_colour[1] = BG$[c_num][1][1];
+    cursor->foreground_colour[2] = BG$[c_num][1][2];
+    cursor->foreground_colour[3] = BG$[c_num][1][3];
 }
 
-void paper(int c_num) {
-    background_colour[0] = BG$[c_num][1][0];
-    background_colour[1] = BG$[c_num][1][1];
-    background_colour[2] = BG$[c_num][1][2];
-    background_colour[3] = BG$[c_num][1][3];
+void paper(cursor_t *cursor, int c_num) {
+    cursor->background_colour[0] = BG$[c_num][1][0];
+    cursor->background_colour[1] = BG$[c_num][1][1];
+    cursor->background_colour[2] = BG$[c_num][1][2];
+    cursor->background_colour[3] = BG$[c_num][1][3];
 }
 
 

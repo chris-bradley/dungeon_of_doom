@@ -28,7 +28,6 @@ void lines790_800();
 void lines810_840();
 void ink(cursor_t *cursor, int c_num);
 void paper(cursor_t *cursor, int c_num);
-void lines4000_4030();
 void lines5000_5080();
 
 SDL_Window *win;
@@ -430,7 +429,6 @@ void lines790_800()
   OS = 96;
   CO = OS + 6;
   W = 40;
-  lines4000_4030();
   // 800 RETURN
 }
 
@@ -442,7 +440,12 @@ void lines810_840()
   // 840 RETURN
 }
 
-Uint8 BG$ [4][4];
+Uint8 BG$ [4][4] {
+    {0x00, 0x00, 0x00, 0},
+    {0x88, 0x20, 0x00, 0},
+    {0xf0, 0xe8, 0x58, 0},
+    {0xff, 0xff, 0xff, 0}
+};
 
 
 void ink(cursor_t *cursor, int c_num) {
@@ -460,35 +463,6 @@ void paper(cursor_t *cursor, int c_num) {
 }
 
 
-
-// Sets up the print formatting. Will be replaced by ncurses commands.
-void lines4000_4030()
-{
-    // 4000 BG$(0)=chr$(146):BG$(1)=CHR$(18)+CHR(28)
-    // BG$(0) stops highlighting; Use attroff(A_REVERSE);
-    // BG$(1) sets the type to highlighted red;
-    BG$[1][0] = 0x88;
-    BG$[1][1] = 0x20;
-    BG$[1][2] = 0x00;
-    BG$[1][3] = 0;
-    // 4010 BG$(2)=CHR$(18)+CHR$(158):BG$(3)=CHR$(18)+CHR$(5)
-    // BG$(2) sets the type to highlighted yellow
-    BG$[2][0] = 0xf0;
-    BG$[2][1] = 0xe8;
-    BG$[2][2] = 0x58;
-    BG$[2][3] = 0;
-
-    // BG$(3) sets the type to highlighted white; Use attron(COLOR_PAIR(3));
-    BG$[3][0] = 0xff;
-    BG$[3][1] = 0xff;
-    BG$[3][2] = 0xff;
-    BG$[3][3] = 0;
-    // 4020 HM$=CHR(19):CU$="":FOR I=1 TO W:LET CU$=CU$+CHR(17):NEXT I
-    // HM$ returns to the top of the screen; Use move(0, 0);
-    // CU$ is an array of up arrows; use getyx() and move(y - index, x);
-    // 4030 POKE 650,255:RETURN
-    // Repeat key turned on; This is the default
-}
 
 // Graphic Memory setup stuff
 

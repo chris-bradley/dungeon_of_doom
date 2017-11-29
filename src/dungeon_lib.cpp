@@ -3,6 +3,13 @@
 
 #include "dungeon_lib.h"
 
+Uint8 BG$ [4][4] {
+    {0x00, 0x00, 0x00, 0},
+    {0x88, 0x20, 0x00, 0},
+    {0xf0, 0xe8, 0x58, 0},
+    {0xff, 0xff, 0xff, 0}
+};
+
 void print_text(screen_t *screen, cursor_t *cursor, const char *message) {
     TTF_Font *c64_font = TTF_OpenFont(
         "fonts/dungeon_of_doom.ttf",
@@ -78,3 +85,16 @@ void print_text(screen_t *screen, cursor_t *cursor, const char *message) {
     TTF_CloseFont(c64_font);
 }
 
+void ink(cursor_t *cursor, int c_num) {
+    cursor->foreground_colour[0] = BG$[c_num][0];
+    cursor->foreground_colour[1] = BG$[c_num][1];
+    cursor->foreground_colour[2] = BG$[c_num][2];
+    cursor->foreground_colour[3] = BG$[c_num][3];
+}
+
+void paper(cursor_t *cursor, int c_num) {
+    cursor->background_colour[0] = BG$[c_num][0];
+    cursor->background_colour[1] = BG$[c_num][1];
+    cursor->background_colour[2] = BG$[c_num][2];
+    cursor->background_colour[3] = BG$[c_num][3];
+}

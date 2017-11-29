@@ -13,3 +13,7 @@ typedef struct {
 } screen_t;
 
 void print_text(screen_t *screen, cursor_t *cursor, const char *message);
+
+void ink(cursor_t *cursor, int c_num);
+
+void paper(cursor_t *cursor, int c_num);

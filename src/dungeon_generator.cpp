@@ -440,30 +440,6 @@ void lines810_840()
   // 840 RETURN
 }
 
-Uint8 BG$ [4][4] {
-    {0x00, 0x00, 0x00, 0},
-    {0x88, 0x20, 0x00, 0},
-    {0xf0, 0xe8, 0x58, 0},
-    {0xff, 0xff, 0xff, 0}
-};
-
-
-void ink(cursor_t *cursor, int c_num) {
-    cursor->foreground_colour[0] = BG$[c_num][0];
-    cursor->foreground_colour[1] = BG$[c_num][1];
-    cursor->foreground_colour[2] = BG$[c_num][2];
-    cursor->foreground_colour[3] = BG$[c_num][3];
-}
-
-void paper(cursor_t *cursor, int c_num) {
-    cursor->background_colour[0] = BG$[c_num][0];
-    cursor->background_colour[1] = BG$[c_num][1];
-    cursor->background_colour[2] = BG$[c_num][2];
-    cursor->background_colour[3] = BG$[c_num][3];
-}
-
-
-
 // Graphic Memory setup stuff
 
 void lines5000_5080()

@@ -25,6 +25,7 @@ dungeon_lib_win.o : dungeon_lib.cpp
 		-l oleaut32 \
 		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
 		-D main=SDL_main \
+		-std=gnu++11 \
 		-o dungeon_lib_win.o
 
 dungeon_lib_lin.o : dungeon_lib.cpp
@@ -34,6 +35,7 @@ dungeon_lib_lin.o : dungeon_lib.cpp
 		-l SDL2_ttf \
 		-D main=SDL_main \
 		-I /usr/include/SDL2 \
+		-std=gnu++11 \
 		-o dungeon_lib_lin.o
 
 dungeon_generator.exe : dungeon_generator.cpp dungeon_lib_win.o
@@ -65,7 +67,6 @@ dungeon_generator.exe : dungeon_generator.cpp dungeon_lib_win.o
 		-I /usr/i686-w64-mingw32/sys-root/mingw/include/freetype2 \
 		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
 		-D main=SDL_main \
-		-std=gnu++11 \
 		-o dungeon_generator.exe
 
 dungeon_generator : dungeon_generator.cpp dungeon_lib_lin.o
@@ -74,7 +75,6 @@ dungeon_generator : dungeon_generator.cpp dungeon_lib_lin.o
 		-l SDL2_ttf \
 		-I /usr/include/SDL2 \
 		-o dungeon_generator \
-		-std=gnu++11 \
 		dungeon_lib_lin.o \
 		dungeon_generator.cpp
 

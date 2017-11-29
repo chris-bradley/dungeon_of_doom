@@ -442,21 +442,21 @@ void lines810_840()
   // 840 RETURN
 }
 
-Uint8 BG$ [4][2][4];
+Uint8 BG$ [4][4];
 
 
 void ink(cursor_t *cursor, int c_num) {
-    cursor->foreground_colour[0] = BG$[c_num][1][0];
-    cursor->foreground_colour[1] = BG$[c_num][1][1];
-    cursor->foreground_colour[2] = BG$[c_num][1][2];
-    cursor->foreground_colour[3] = BG$[c_num][1][3];
+    cursor->foreground_colour[0] = BG$[c_num][0];
+    cursor->foreground_colour[1] = BG$[c_num][1];
+    cursor->foreground_colour[2] = BG$[c_num][2];
+    cursor->foreground_colour[3] = BG$[c_num][3];
 }
 
 void paper(cursor_t *cursor, int c_num) {
-    cursor->background_colour[0] = BG$[c_num][1][0];
-    cursor->background_colour[1] = BG$[c_num][1][1];
-    cursor->background_colour[2] = BG$[c_num][1][2];
-    cursor->background_colour[3] = BG$[c_num][1][3];
+    cursor->background_colour[0] = BG$[c_num][0];
+    cursor->background_colour[1] = BG$[c_num][1];
+    cursor->background_colour[2] = BG$[c_num][2];
+    cursor->background_colour[3] = BG$[c_num][3];
 }
 
 
@@ -467,34 +467,22 @@ void lines4000_4030()
     // 4000 BG$(0)=chr$(146):BG$(1)=CHR$(18)+CHR(28)
     // BG$(0) stops highlighting; Use attroff(A_REVERSE);
     // BG$(1) sets the type to highlighted red;
-    BG$[1][0][0] = 0;
-    BG$[1][0][1] = 0;
-    BG$[1][0][2] = 0;
-    BG$[1][0][3] = 0;
-    BG$[1][1][0] = 0x88;
-    BG$[1][1][1] = 0x20;
-    BG$[1][1][2] = 0x00;
-    BG$[1][1][3] = 0;
+    BG$[1][0] = 0x88;
+    BG$[1][1] = 0x20;
+    BG$[1][2] = 0x00;
+    BG$[1][3] = 0;
     // 4010 BG$(2)=CHR$(18)+CHR$(158):BG$(3)=CHR$(18)+CHR$(5)
     // BG$(2) sets the type to highlighted yellow
-    BG$[2][0][0] = 0;
-    BG$[2][0][1] = 0;
-    BG$[2][0][2] = 0;
-    BG$[2][0][3] = 0;
-    BG$[2][1][0] = 0xf0;
-    BG$[2][1][1] = 0xe8;
-    BG$[2][1][2] = 0x58;
-    BG$[2][1][3] = 0;
+    BG$[2][0] = 0xf0;
+    BG$[2][1] = 0xe8;
+    BG$[2][2] = 0x58;
+    BG$[2][3] = 0;
 
     // BG$(3) sets the type to highlighted white; Use attron(COLOR_PAIR(3));
-    BG$[3][0][0] = 0;
-    BG$[3][0][1] = 0;
-    BG$[3][0][2] = 0;
-    BG$[3][0][3] = 0;
-    BG$[3][1][0] = 0xff;
-    BG$[3][1][1] = 0xff;
-    BG$[3][1][2] = 0xff;
-    BG$[3][1][3] = 0;
+    BG$[3][0] = 0xff;
+    BG$[3][1] = 0xff;
+    BG$[3][2] = 0xff;
+    BG$[3][3] = 0;
     // 4020 HM$=CHR(19):CU$="":FOR I=1 TO W:LET CU$=CU$+CHR(17):NEXT I
     // HM$ returns to the top of the screen; Use move(0, 0);
     // CU$ is an array of up arrows; use getyx() and move(y - index, x);

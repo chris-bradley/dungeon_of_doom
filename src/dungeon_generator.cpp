@@ -13,22 +13,9 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <unistd.h>
+#include "dungeon_lib.h"
 
 using namespace std;
-
-// TODO: Investigate if the name is valid. The '_t' suffix is common but may
-// not adhere to the POSIX standards.
-typedef struct {
-    int curs_x;
-    int curs_y;
-    Uint8 foreground_colour [4];
-    Uint8 background_colour [4];
-} cursor_t;
-
-typedef struct {
-    SDL_Renderer *ren;
-    int zoom;
-} screen_t;
 
 void lines230_270();
 void lines280_350(screen_t *screen, cursor_t *cursor);
@@ -49,81 +36,6 @@ SDL_Window *win;
 int BG, FG, T, L, LW;
 int W;
 
-void print_text(screen_t *screen, cursor_t *cursor, const char *message) {
-    TTF_Font *c64_font = TTF_OpenFont(
-        "fonts/dungeon_of_doom.ttf",
-        8 * screen->zoom
-    );
-    if (!c64_font) {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        // Do some proper error handling.
-        return;
-    }
-    int message_length = (int) strlen(message);
-    SDL_Rect text_pos = {
-        .x = cursor->curs_x * 8 * screen->zoom,
-        .y = cursor->curs_y * 8 * screen->zoom,
-        .w = message_length * 8 * screen->zoom,
-        .h = 8 * screen->zoom
-    };
-    cursor->curs_x += message_length;
-
-    Uint8 r, g, b;
-    // Background
-    int error = SDL_SetRenderDrawColor(
-        screen->ren,
-        cursor->background_colour[0],
-        cursor->background_colour[1],
-        cursor->background_colour[2],
-        cursor->background_colour[3]
-    );
-    if (error) {
-        printf("SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
-    }
-    error = SDL_RenderFillRect(screen->ren, &text_pos);
-    if (error) {
-        printf("SDL_RenderFillRect error: %s\n", SDL_GetError());
-    }
-    // Foreground
-    r = cursor->foreground_colour[0];
-    g = cursor->foreground_colour[1];
-    b = cursor->foreground_colour[2];
-
-    SDL_Color text_color = {
-        .r = r,
-        .g = g,
-        .b = b
-    };
-
-    SDL_Surface *text_surface = TTF_RenderText_Solid(
-        c64_font,
-        message,
-        text_color
-    );
-
-    SDL_Texture *text_texture = SDL_CreateTextureFromSurface(
-        screen->ren,
-        text_surface
-    );
-
-    text_pos.y += 1;
-    text_pos.h += 1;
-
-    error = SDL_RenderCopy(
-        screen->ren,
-        text_texture,
-        NULL,
-        &text_pos
-    );
-    if (error) {
-        printf("SDL_RenderCopy error: %s\n", SDL_GetError());
-        fflush(stdout);
-    }
-    SDL_DestroyTexture(text_texture);
-    SDL_FreeSurface(text_surface);
-    TTF_CloseFont(c64_font);
-}
-
 void tab(cursor_t *cursor, int x, int y) {
     cursor->curs_x = x;
     cursor->curs_y = y;
@@ -133,7 +45,6 @@ int LE, X, Y, OS;
 int R[16][16];
 char *I$;
 int IX, IY, CO;
-
 
 int main(int argc, char *argv[]) {
     // 5 GOSUB 5000

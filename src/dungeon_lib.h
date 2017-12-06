@@ -17,3 +17,5 @@ void print_text(screen_t *screen, cursor_t *cursor, const char *message);
 void ink(cursor_t *cursor, int c_num);
 
 void paper(cursor_t *cursor, int c_num);
+
+void print_left$_b$(screen_t *screen, cursor_t *cursor, int width);

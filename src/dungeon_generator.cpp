@@ -215,7 +215,6 @@ void lines230_270() {
     // 270 RETURN
 }
 
-void print_left$_b$(screen_t *screen, cursor_t *cursor, int width);
 void newline(cursor_t *cursor);
 
 void lines280_350(screen_t *screen, cursor_t *cursor) {
@@ -392,30 +391,6 @@ void lines700_770() {
     }
     B$[W] = 0;
     // 770 RETURN
-}
-
-void print_left$_b$(screen_t *screen, cursor_t *cursor, int width) {
-    int error = SDL_SetRenderDrawColor(
-        screen->ren,
-        cursor->background_colour[0],
-        cursor->background_colour[1],
-        cursor->background_colour[2],
-        cursor->background_colour[3]
-    );
-    if (error) {
-        printf("SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
-    }
-    const SDL_Rect rect = {
-        .x = cursor->curs_x * 8 * screen->zoom,
-        .y = cursor->curs_y * 8 * screen->zoom,
-        .w = width * 8 * screen->zoom,
-        .h = 8 * screen->zoom
-    };
-    cursor->curs_x += width;
-    error = SDL_RenderFillRect(screen->ren, &rect);
-    if (error) {
-        printf("SDL_RenderFillRect!: %s\n", SDL_GetError());
-    }
 }
 
 void newline(cursor_t *cursor) {

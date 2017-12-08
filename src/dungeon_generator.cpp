@@ -35,11 +35,6 @@ SDL_Window *win;
 int BG, FG, T, L, LW;
 int W;
 
-void tab(cursor_t *cursor, int x, int y) {
-    cursor->curs_x = x;
-    cursor->curs_y = y;
-}
-
 int LE, X, Y, OS;
 int R[16][16];
 char *I$;

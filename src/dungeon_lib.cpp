@@ -122,3 +122,8 @@ void print_left$_b$(screen_t *screen, cursor_t *cursor, int width) {
         printf("SDL_RenderFillRect!: %s\n", SDL_GetError());
     }
 }
+
+void tab(cursor_t *cursor, int x, int y) {
+    cursor->curs_x = x;
+    cursor->curs_y = y;
+}

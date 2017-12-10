@@ -210,7 +210,6 @@ void lines230_270() {
     // 270 RETURN
 }
 
-void newline(cursor_t *cursor);
 
 void lines280_350(screen_t *screen, cursor_t *cursor) {
     // 280 PRINT tab(0,T);
@@ -386,11 +385,6 @@ void lines700_770() {
     }
     B$[W] = 0;
     // 770 RETURN
-}
-
-void newline(cursor_t *cursor) {
-    cursor->curs_x = 0;
-    cursor->curs_y += 1;
 }
 
 void lines790_800()

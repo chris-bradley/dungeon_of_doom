@@ -127,3 +127,8 @@ void tab(cursor_t *cursor, int x, int y) {
     cursor->curs_x = x;
     cursor->curs_y = y;
 }
+
+void newline(cursor_t *cursor) {
+    cursor->curs_x = 0;
+    cursor->curs_y += 1;
+}

@@ -1,3 +1,12 @@
+all: dungeon_lib.cpp dungeon_generator.cpp dungeon_lib_win.o dungeon_lib_lin.o character_creator.cpp
+	make \
+		dungeon_lib_win.o \
+		dungeon_lib_lin.o \
+		dungeon_generator.exe \
+		dungeon_generator \
+		character_creator.exe \
+		character_creator
+
 dungeon_lib_win.o : dungeon_lib.cpp
 	i686-w64-mingw32-g++ \
 		-Wall \

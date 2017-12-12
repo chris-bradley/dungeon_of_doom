@@ -11,7 +11,6 @@
 
 #include <bits/stdc++.h>
 #include <SDL.h>
-#include <SDL_ttf.h>
 #include <unistd.h>
 #include "dungeon_lib.h"
 
@@ -48,40 +47,12 @@ int main(int argc, char *argv[]) {
     lines610_690();
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
-
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        cerr << "SDL_Init error:" << SDL_GetError() << endl;
-        SDL_Quit();
+    screen_t *screen = NULL;
+    SDL_Window *win = NULL;
+    cursor_t *cursor = NULL;
+    if (init_screen(screen, win, cursor) < 0) {
         return 1;
     }
-    TTF_Init();
-    screen_t *screen = new screen_t;
-    screen->zoom = 4;
-    win = SDL_CreateWindow(
-        "Dungeon of Doom",
-        100 * screen->zoom,
-        100 * screen->zoom,
-        320 * screen->zoom,
-        176 * screen->zoom,
-        SDL_WINDOW_SHOWN
-    );
-    screen->ren = SDL_CreateRenderer(
-        win,
-        -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-    );
-    if (screen->ren == NULL) {
-        SDL_DestroyWindow(win);
-        cout << "SDL_CreateRenderer Error: " << SDL_GetError() << endl;
-        SDL_Quit();
-        return 1;
-    }
-    SDL_RenderClear(screen->ren);
-    SDL_RenderPresent(screen->ren);
-
-    cursor_t *cursor = new cursor_t;
-    cursor->curs_x = 0;
-    cursor->curs_y = 0;
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280
     BG = 2;
     FG = 1;
@@ -182,12 +153,7 @@ int main(int argc, char *argv[]) {
     }
     // 220 STOP
 
-    delete cursor;
-
-    TTF_Quit();
-    SDL_DestroyRenderer(screen->ren);
-    SDL_DestroyWindow(win);
-    SDL_Quit();
+    destroy_screen(screen, win, cursor);
 
     // delete [] B$;
     return 0;

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -131,4 +132,51 @@ void tab(cursor_t *cursor, int x, int y) {
 void newline(cursor_t *cursor) {
     cursor->curs_x = 0;
     cursor->curs_y += 1;
+}
+
+int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "SDL_Init error:" << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return -1;
+    }
+    TTF_Init();
+    screen = new screen_t;
+    screen->zoom = 4;
+    win = SDL_CreateWindow(
+        "Dungeon of Doom",
+        100 * screen->zoom,
+        100 * screen->zoom,
+        320 * screen->zoom,
+        176 * screen->zoom,
+        SDL_WINDOW_SHOWN
+    );
+    screen->ren = SDL_CreateRenderer(
+        win,
+        -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
+    if (screen->ren == NULL) {
+        SDL_DestroyWindow(win);
+        std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() <<
+            std::endl;
+        SDL_Quit();
+        return -1;
+    }
+    SDL_RenderClear(screen->ren);
+    SDL_RenderPresent(screen->ren);
+
+    cursor = new cursor_t;
+    cursor->curs_x = 0;
+    cursor->curs_y = 0;
+    return 0;
+}
+
+void destroy_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
+    delete cursor;
+
+    TTF_Quit();
+    SDL_DestroyRenderer(screen->ren);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
 }

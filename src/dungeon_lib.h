@@ -23,3 +23,6 @@ void print_left$_b$(screen_t *screen, cursor_t *cursor, int width);
 void tab(cursor_t *cursor, int x, int y);
 
 void newline(cursor_t *cursor);
+
+int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor);
+void destroy_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor);

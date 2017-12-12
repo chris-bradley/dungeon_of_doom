@@ -1,10 +1,9 @@
 #include <SDL.h>
-#include <SDL_ttf.h>
 #include <unistd.h>
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-SDL_Window *win;
+SDL_Window *win = NULL;
 
 int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
@@ -16,8 +15,8 @@ char * I$;
 char * IN$;
 char * M$;
 char * N$;
-cursor_t *cursor;
-screen_t *screen;
+cursor_t *cursor = NULL;
+screen_t *screen = NULL;
 
 void lines570_600();
 void lines610_670();
@@ -34,39 +33,9 @@ int main(int argc, char *argv[]) {
     // 10 GOSUB 1060
     lines1060_1590();
     // 20 paper 0:CLS
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL_Init error: %s\n", SDL_GetError());
-        SDL_Quit();
+    if (init_screen(screen, win, cursor) < 0) {
         return 1;
     }
-    TTF_Init();
-    screen = new screen_t;
-    screen->zoom = 4;
-    win = SDL_CreateWindow(
-        "Dungeon of Doom",
-        100 * screen->zoom,
-        100 * screen->zoom,
-        320 * screen->zoom,
-        176 * screen->zoom,
-        SDL_WINDOW_SHOWN
-    );
-    screen->ren = SDL_CreateRenderer(
-        win,
-        -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-    );
-    if (screen->ren == NULL) {
-        SDL_DestroyWindow(win);
-        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-    SDL_RenderClear(screen->ren);
-    SDL_RenderPresent(screen->ren);
-
-    cursor = new cursor_t;
-    cursor->curs_x = 0;
-    cursor->curs_y = 0;
 
     paper(cursor, 0);
     // 30 LET J=1:LET H=MP:LET H$="POINTS"
@@ -243,17 +212,13 @@ int main(int argc, char *argv[]) {
     delete [] S$;
     // 560 STOP
 
-    delete cursor;
     delete [] B$;
     delete I$;
     delete [] M$;
     delete [] N$;
     delete [] O;
 
-    TTF_Quit();
-    SDL_DestroyRenderer(screen->ren);
-    SDL_DestroyWindow(win);
-    SDL_Quit();
+    destroy_screen(screen, win, cursor);
 
     return 0;
 }

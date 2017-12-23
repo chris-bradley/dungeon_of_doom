@@ -286,12 +286,12 @@ void lines450_600(screen_t *screen, cursor_t *cursor) {
     // 560 PRINT#S,S$
     int error = fputs(S$, S);
     if (error) {
-        printf("Error %i writing the level!", error);
+        fprintf(stderr, "Error %i writing the level!", error);
     }
     // 570 CLOSE#S
     error = fclose(S);
     if (error) {
-        printf("Error %i saving the level!", error);
+        fprintf(stderr, "Error %i saving the level!", error);
     }
     // 580 PRINT tab(1,4);LEFT(B$,W)
     tab(cursor, 1, 4);

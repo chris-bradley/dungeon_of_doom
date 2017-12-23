@@ -201,13 +201,13 @@ int main(int argc, char *argv[]) {
     // 540 PRINT#S,S$
     int error = fputs(S$, S);
     if (error) {
-        printf("Error %i writing the character!", error);
+        fprintf(stderr, "Error %i writing the character!", error);
     }
 
     // 550 CLOSE#S
     error = fclose(S);
     if (error) {
-        printf("Error %i saving the character!", error);
+        fprintf(stderr, "Error %i saving the character!", error);
     }
     delete [] S$;
     // 560 STOP

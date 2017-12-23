@@ -17,7 +17,7 @@ void print_text(screen_t *screen, cursor_t *cursor, const char *message) {
         8 * screen->zoom
     );
     if (!c64_font) {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
+        fprintf(stderr, "TTF_OpenFont: %s\n", TTF_GetError());
         // Do some proper error handling.
         return;
     }
@@ -40,11 +40,11 @@ void print_text(screen_t *screen, cursor_t *cursor, const char *message) {
         cursor->background_colour[3]
     );
     if (error) {
-        printf("SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
+        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
     }
     error = SDL_RenderFillRect(screen->ren, &text_pos);
     if (error) {
-        printf("SDL_RenderFillRect error: %s\n", SDL_GetError());
+        fprintf(stderr, "SDL_RenderFillRect error: %s\n", SDL_GetError());
     }
     // Foreground
     r = cursor->foreground_colour[0];
@@ -78,8 +78,8 @@ void print_text(screen_t *screen, cursor_t *cursor, const char *message) {
         &text_pos
     );
     if (error) {
-        printf("SDL_RenderCopy error: %s\n", SDL_GetError());
-        fflush(stdout);
+        fprintf(stderr, "SDL_RenderCopy error: %s\n", SDL_GetError());
+        fflush(stderr);
     }
     SDL_DestroyTexture(text_texture);
     SDL_FreeSurface(text_surface);
@@ -109,7 +109,7 @@ void print_left$_b$(screen_t *screen, cursor_t *cursor, int width) {
         cursor->background_colour[3]
     );
     if (error) {
-        printf("SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
+        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
     }
     const SDL_Rect rect = {
         .x = cursor->curs_x * 8 * screen->zoom,
@@ -120,7 +120,7 @@ void print_left$_b$(screen_t *screen, cursor_t *cursor, int width) {
     cursor->curs_x += width;
     error = SDL_RenderFillRect(screen->ren, &rect);
     if (error) {
-        printf("SDL_RenderFillRect!: %s\n", SDL_GetError());
+        fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
     }
 }
 

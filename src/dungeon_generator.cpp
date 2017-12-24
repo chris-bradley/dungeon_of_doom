@@ -29,8 +29,6 @@ void ink(cursor_t *cursor, int c_num);
 void paper(cursor_t *cursor, int c_num);
 void lines5000_5080();
 
-SDL_Window *win;
-
 int BG, FG, T, L, LW;
 int W;
 
@@ -48,9 +46,8 @@ int main(int argc, char *argv[]) {
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
-    SDL_Window *win = NULL;
     cursor_t *cursor = NULL;
-    if (init_screen(screen, win, cursor) < 0) {
+    if (init_screen(screen, cursor) < 0) {
         return 1;
     }
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280
@@ -157,7 +154,7 @@ int main(int argc, char *argv[]) {
     }
     // 220 STOP
 
-    destroy_screen(screen, win, cursor);
+    destroy_screen(screen, cursor);
 
     // free(B$);
     return 0;

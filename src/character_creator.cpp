@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-SDL_Window *win = NULL;
-
 int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
@@ -33,7 +31,7 @@ int main(int argc, char *argv[]) {
     // 10 GOSUB 1060
     lines1060_1590();
     // 20 paper 0:CLS
-    if (init_screen(screen, win, cursor) < 0) {
+    if (init_screen(screen, cursor) < 0) {
         return 1;
     }
 
@@ -232,7 +230,7 @@ int main(int argc, char *argv[]) {
     free(N$);
     free(O);
 
-    destroy_screen(screen, win, cursor);
+    destroy_screen(screen, cursor);
 
     return 0;
 }

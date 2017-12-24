@@ -134,7 +134,7 @@ void newline(cursor_t *cursor) {
     cursor->curs_y += 1;
 }
 
-int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
+int init_screen(screen_t *screen, cursor_t *cursor) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cerr << "SDL_Init error:" << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -147,7 +147,7 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
        exit(1);
     }
     screen->zoom = 4;
-    win = SDL_CreateWindow(
+    screen->win = SDL_CreateWindow(
         "Dungeon of Doom",
         100 * screen->zoom,
         100 * screen->zoom,
@@ -156,12 +156,12 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
         SDL_WINDOW_SHOWN
     );
     screen->ren = SDL_CreateRenderer(
-        win,
+        screen->win,
         -1,
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
     if (screen->ren == NULL) {
-        SDL_DestroyWindow(win);
+        SDL_DestroyWindow(screen->win);
         std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() <<
             std::endl;
         SDL_Quit();
@@ -180,11 +180,11 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
     return 0;
 }
 
-void destroy_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
+void destroy_screen(screen_t *screen, cursor_t *cursor) {
     free(cursor);
 
     TTF_Quit();
     SDL_DestroyRenderer(screen->ren);
-    SDL_DestroyWindow(win);
+    SDL_DestroyWindow(screen->win);
     SDL_Quit();
 }

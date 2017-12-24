@@ -54,6 +54,10 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(screen->ren);
     // 70 GOSUB 720
     I$ = new char;
+    if (I$ == NULL) {
+        fprintf(stderr, "I$ is NULL!\n");
+        exit(1);
+    }
     do {
         lines720_800();
     // 80 IF K=5 THEN GOTO 70
@@ -144,6 +148,10 @@ int main(int argc, char *argv[]) {
     // 350 NEXT J
     }
     N$ = new char[40];
+    if (N$ == NULL) {
+        fprintf(stderr, "N$ is NULL!\n");
+        exit(1);
+    }
     do {
     // 360 PRINT tab(1,2);"NAME THY CHARACTER";
         tab(cursor, 1, 2);
@@ -174,6 +182,10 @@ int main(int argc, char *argv[]) {
     // 430 LET S$=CHR$(O+AS)
 
     char * S$ = new char [14 + O_ + strlen(N$) + strlen(C$[C])];
+    if (S$ == NULL) {
+        fprintf(stderr, "S$ is NULL!\n");
+        exit(1);
+    }
 
     S$[0] = char (O_ + AS);
     // 440 FOR I=1 TO 8
@@ -369,6 +381,10 @@ void lines860_890() {
     print_text(screen, cursor, H$);
     tab(cursor, 15, 3);
     char * outstring = new char[40];
+    if (outstring == NULL) {
+        fprintf(stderr, "outstring is NULL!\n");
+        exit(1);
+    }
     sprintf(outstring, "%i ", H);
     print_text(screen, cursor, outstring);
     delete [] outstring;
@@ -403,6 +419,10 @@ void lines920_970() {
         print_text(screen, cursor, F$[J][I]);
         tab(cursor, 16, Y);
         char * outstring = new char[40];
+        if (outstring == NULL) {
+            fprintf(stderr, "outstring is NULL!\n");
+            exit(1);
+        }
         sprintf(outstring, "%i ", F[J][I]);
         print_text(screen, cursor, outstring);
         delete [] outstring;
@@ -453,6 +473,10 @@ void lines1060_1590() {
     // 1100 DIM C$(5)
     // 1110 DIM O(D*3)
     O = new int[D * 3];
+    if (O == NULL) {
+        fprintf(stderr, "O is NULL!\n");
+        exit(1);
+    }
    
     int i;
     for (i = 0; i < D * 3; i += 1) {
@@ -626,10 +650,18 @@ void lines1060_1590() {
     GC = 120 + (rand() % 60);
     // 1570 LET M$="":LET AS=65
     M$ = new char[40];
+    if (M$ == NULL) {
+        fprintf(stderr, "M$ is NULL!\n");
+        exit(1);
+    }
     strcpy(M$, "");
     AS = 65;
     // 1580 LET B$="":FOR I=1 TO W:LET B$=B$+" ":NEXT I
     B$ = new char [W + 1];
+    if (B$ == NULL) {
+        fprintf(stderr, "B$ is NULL!\n");
+        exit(1);
+    }
     for (I = 0; I < W; I += 1) {
         B$[I] = ' ';
     }
@@ -649,6 +681,10 @@ void lines1700_1730() {
     // 1700 IN$=""
     int ind = 0;
     IN$ = new char[40];
+    if (IN$ == NULL) {
+        fprintf(stderr, "IN$ is NULL!\n");
+        exit(1);
+    }
     IN$[0] = 0;
     // 1710 GET I$:IF I$=CHR$(13) THEN RETURN
     SDL_Event event;

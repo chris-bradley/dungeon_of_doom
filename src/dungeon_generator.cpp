@@ -69,6 +69,10 @@ int main(int argc, char *argv[]) {
     // 60 PRINT tab(1,2);"THIS IS LEVEL:";LE;
     tab(cursor, 1, 2);
     char* outstring = new char[40];
+    if (outstring == NULL) {
+       fprintf(stdout, "Allocating outstring failed!");
+       exit(1);
+    }
     snprintf(outstring, 40, "THIS IS LEVEL: %i", LE);
     print_text(screen, cursor, outstring);
     delete outstring;
@@ -346,6 +350,10 @@ void lines700_770() {
     IY = 0;
     // 760 LET B$="":FOR I = 1 TO W:LET B$=B$+" ":NEXT I
     B$ = new char[W + 1];
+    if (B$ == NULL) {
+       fprintf(stdout, "Allocating B$ failed!");
+       exit(1);
+    }
     for (int I=0; I<W; I++) {
         B$[I] = ' ';
     }

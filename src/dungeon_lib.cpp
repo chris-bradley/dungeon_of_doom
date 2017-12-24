@@ -142,6 +142,10 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
     }
     TTF_Init();
     screen = new screen_t;
+    if (screen == NULL) {
+       fprintf(stderr, "screen is NULL!\n");
+       exit(1);
+    }
     screen->zoom = 4;
     win = SDL_CreateWindow(
         "Dungeon of Doom",
@@ -167,6 +171,10 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
     SDL_RenderPresent(screen->ren);
 
     cursor = new cursor_t;
+    if (cursor == NULL) {
+       fprintf(stderr, "cursor is NULL!\n");
+       exit(1);
+    }
     cursor->curs_x = 0;
     cursor->curs_y = 0;
     return 0;

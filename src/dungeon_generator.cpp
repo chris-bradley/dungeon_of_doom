@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
     cursor_t *cursor = NULL;
-    if (init_screen(screen, cursor) < 0) {
+    if (init_screen(&screen, &cursor) < 0) {
         return 1;
     }
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280

@@ -25,5 +25,5 @@ void tab(cursor_t *cursor, int x, int y);
 
 void newline(cursor_t *cursor);
 
-int init_screen(screen_t *screen, cursor_t *cursor);
+int init_screen(screen_t **screen, cursor_t **cursor);
 void destroy_screen(screen_t *screen, cursor_t *cursor);

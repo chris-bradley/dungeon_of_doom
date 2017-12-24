@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     // 10 GOSUB 1060
     lines1060_1590();
     // 20 paper 0:CLS
-    if (init_screen(screen, cursor) < 0) {
+    if (init_screen(&screen, &cursor) < 0) {
         return 1;
     }
 

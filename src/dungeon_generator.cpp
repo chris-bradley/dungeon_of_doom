@@ -68,14 +68,14 @@ int main(int argc, char *argv[]) {
     print_text(screen, cursor, "LEVEL GENERATOR");
     // 60 PRINT tab(1,2);"THIS IS LEVEL:";LE;
     tab(cursor, 1, 2);
-    char* outstring = new char[40];
+    char* outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
        fprintf(stdout, "Allocating outstring failed!");
        exit(1);
     }
     snprintf(outstring, 40, "THIS IS LEVEL: %i", LE);
     print_text(screen, cursor, outstring);
-    delete outstring;
+    free(outstring);
     // 70 PRINT tab(1,3);"PRESS H FOR HELP"
     tab(cursor, 1, 3);
     print_text(screen, cursor, "PRESS H FOR HELP");
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
 
     destroy_screen(screen, win, cursor);
 
-    // delete [] B$;
+    // free(B$);
     return 0;
 }
 
@@ -349,7 +349,7 @@ void lines700_770() {
     IX = 0;
     IY = 0;
     // 760 LET B$="":FOR I = 1 TO W:LET B$=B$+" ":NEXT I
-    B$ = new char[W + 1];
+    B$ = (char *) malloc(sizeof(char) * (W + 1));
     if (B$ == NULL) {
        fprintf(stdout, "Allocating B$ failed!");
        exit(1);

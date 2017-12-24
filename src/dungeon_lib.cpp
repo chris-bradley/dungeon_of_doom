@@ -141,7 +141,7 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
         return -1;
     }
     TTF_Init();
-    screen = new screen_t;
+    screen = (screen_t *) malloc(sizeof(screen_t));
     if (screen == NULL) {
        fprintf(stderr, "screen is NULL!\n");
        exit(1);
@@ -170,7 +170,7 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
     SDL_RenderClear(screen->ren);
     SDL_RenderPresent(screen->ren);
 
-    cursor = new cursor_t;
+    cursor = (cursor_t *) malloc(sizeof(cursor_t));
     if (cursor == NULL) {
        fprintf(stderr, "cursor is NULL!\n");
        exit(1);
@@ -181,7 +181,7 @@ int init_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
 }
 
 void destroy_screen(screen_t *screen, SDL_Window *win, cursor_t *cursor) {
-    delete cursor;
+    free(cursor);
 
     TTF_Quit();
     SDL_DestroyRenderer(screen->ren);

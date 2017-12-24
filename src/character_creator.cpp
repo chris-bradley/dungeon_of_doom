@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     print_text(screen, cursor, ">");
     SDL_RenderPresent(screen->ren);
     // 70 GOSUB 720
-    I$ = new char;
+    I$ = (char *) malloc(sizeof(char));
     if (I$ == NULL) {
         fprintf(stderr, "I$ is NULL!\n");
         exit(1);
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
         } while (*I$ != ' '); 
     // 350 NEXT J
     }
-    N$ = new char[40];
+    N$ = (char *) malloc(sizeof(char) * 40);
     if (N$ == NULL) {
         fprintf(stderr, "N$ is NULL!\n");
         exit(1);
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
         Y = 3;
         lines1700_1730();
         strcpy(N$, IN$);
-        delete [] IN$;
+        free(IN$);
     // 390 IF LEN(N$)>10 THEN GOTO 360
     } while (strlen(N$) > 10);
     // 400 PRINT tab(1,3);"ONE MOMENT PLEASE";
@@ -181,7 +181,9 @@ int main(int argc, char *argv[]) {
     O_ = D * 3;
     // 430 LET S$=CHR$(O+AS)
 
-    char * S$ = new char [14 + O_ + strlen(N$) + strlen(C$[C])];
+    char * S$ = (char *) malloc(
+        sizeof(char) * (14 + O_ + strlen(N$) + strlen(C$[C]))
+    );
     if (S$ == NULL) {
         fprintf(stderr, "S$ is NULL!\n");
         exit(1);
@@ -221,14 +223,14 @@ int main(int argc, char *argv[]) {
     if (error) {
         fprintf(stderr, "Error %i saving the character!", error);
     }
-    delete [] S$;
+    free(S$);
     // 560 STOP
 
-    delete [] B$;
-    delete I$;
-    delete [] M$;
-    delete [] N$;
-    delete [] O;
+    free(B$);
+    free(I$);
+    free(M$);
+    free(N$);
+    free(O);
 
     destroy_screen(screen, win, cursor);
 
@@ -252,7 +254,7 @@ void lines570_600() {
     Y = 2;
     lines1700_1730();
     OF = atoi(IN$);
-    delete [] IN$;
+    free(IN$);
     // 600 GOSUB 680
     lines680_710();
     lines610_670();
@@ -380,14 +382,14 @@ void lines860_890() {
     tab(cursor, 2, 3);
     print_text(screen, cursor, H$);
     tab(cursor, 15, 3);
-    char * outstring = new char[40];
+    char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
         fprintf(stderr, "outstring is NULL!\n");
         exit(1);
     }
     sprintf(outstring, "%i ", H);
     print_text(screen, cursor, outstring);
-    delete [] outstring;
+    free(outstring);
     // 890 RETURN
 }
 
@@ -418,14 +420,14 @@ void lines920_970() {
         tab(cursor, 2, Y);
         print_text(screen, cursor, F$[J][I]);
         tab(cursor, 16, Y);
-        char * outstring = new char[40];
+        char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
         sprintf(outstring, "%i ", F[J][I]);
         print_text(screen, cursor, outstring);
-        delete [] outstring;
+        free(outstring);
     // 960 NEXT I
     }
     // 970 RETURN
@@ -472,7 +474,7 @@ void lines1060_1590() {
     // 1090 DIM F$(4,D+1)
     // 1100 DIM C$(5)
     // 1110 DIM O(D*3)
-    O = new int[D * 3];
+    O = (int *) malloc(sizeof(int) * D * 3);
     if (O == NULL) {
         fprintf(stderr, "O is NULL!\n");
         exit(1);
@@ -649,7 +651,7 @@ void lines1060_1590() {
     // 1560 LET GC=120+rnd(60)
     GC = 120 + (rand() % 60);
     // 1570 LET M$="":LET AS=65
-    M$ = new char[40];
+    M$ = (char *) malloc(sizeof(char) * 40);
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
@@ -657,7 +659,7 @@ void lines1060_1590() {
     strcpy(M$, "");
     AS = 65;
     // 1580 LET B$="":FOR I=1 TO W:LET B$=B$+" ":NEXT I
-    B$ = new char [W + 1];
+    B$ = (char *) malloc(sizeof(char) * (W + 1));
     if (B$ == NULL) {
         fprintf(stderr, "B$ is NULL!\n");
         exit(1);
@@ -680,7 +682,7 @@ void lines1600_1650() {
 void lines1700_1730() {
     // 1700 IN$=""
     int ind = 0;
-    IN$ = new char[40];
+    IN$ = (char *) malloc(sizeof(char) * 40);
     if (IN$ == NULL) {
         fprintf(stderr, "IN$ is NULL!\n");
         exit(1);

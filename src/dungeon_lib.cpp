@@ -188,3 +188,15 @@ void destroy_screen(screen_t *screen, cursor_t *cursor) {
     SDL_DestroyWindow(screen->win);
     SDL_Quit();
 }
+
+void clear_screen(screen_t *screen, cursor_t *cursor) {
+    SDL_SetRenderDrawColor(
+        screen->ren,
+        cursor->background_colour[0],
+        cursor->background_colour[1],
+        cursor->background_colour[2],
+        cursor->background_colour[3]
+    );
+    SDL_RenderClear(screen->ren);
+    SDL_RenderPresent(screen->ren);
+}

@@ -28,3 +28,5 @@ void newline(cursor_t *cursor);
 int init_screen(screen_t **screen, cursor_t **cursor);
 void destroy_screen(screen_t *screen, cursor_t *cursor);
 void clear_screen(screen_t *screen, cursor_t *cursor);
+
+char inkey$();

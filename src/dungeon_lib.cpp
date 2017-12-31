@@ -200,3 +200,23 @@ void clear_screen(screen_t *screen, cursor_t *cursor) {
     SDL_RenderClear(screen->ren);
     SDL_RenderPresent(screen->ren);
 }
+
+char inkey$() {
+    int text_entered = 0;
+    char key;
+    SDL_Event event;
+    while (!text_entered) {
+        if (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_TEXTINPUT:
+                    key = event.text.text[0];
+                    text_entered = 1;
+                    break;
+                case SDL_QUIT:
+                    fprintf(stderr, "Quit through quit event.");
+                    exit(1);
+            }
+        }
+    }
+    return key;
+}

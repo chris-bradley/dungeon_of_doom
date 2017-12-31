@@ -208,6 +208,7 @@ int main(int argc, char *argv[]) {
     strcpy(S$ + 11 + O_, N$);
     strcpy(S$ + 11 + O_ + strlen(N$), " -");
     strcpy(S$ + 13 + O_ + strlen(N$), C$[C]);
+    S$[13 + O_ + strlen(N$) + strlen(C$[C])] = 0;
     // 530 LET S=OPENOUT "HERO"
     FILE *S = fopen("HERO", "w");
     // 540 PRINT#S,S$

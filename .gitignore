@@ -1,5 +1,6 @@
 src/dungeon_generator
 src/character_creator
+src/game_module
 *.exe
 *.o
 *~

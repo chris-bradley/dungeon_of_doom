@@ -156,7 +156,6 @@ int main(int argc, char *argv[]) {
 
     destroy_screen(screen, cursor);
 
-    // free(B$);
     return 0;
 }
 
@@ -209,7 +208,6 @@ void lines280_350(screen_t *screen, cursor_t *cursor) {
 }
 
 const char * H$[10];
-char *B$;
 
 void lines360_420(screen_t *screen, cursor_t *cursor) {
 
@@ -346,15 +344,7 @@ void lines700_770() {
     IX = 0;
     IY = 0;
     // 760 LET B$="":FOR I = 1 TO W:LET B$=B$+" ":NEXT I
-    B$ = (char *) malloc(sizeof(char) * (W + 1));
-    if (B$ == NULL) {
-       fprintf(stdout, "Allocating B$ failed!");
-       exit(1);
-    }
-    for (int I=0; I<W; I++) {
-        B$[I] = ' ';
-    }
-    B$[W] = 0;
+    // dungeon_libs' print_left$_b$() removes the need for B$
     // 770 RETURN
 }
 

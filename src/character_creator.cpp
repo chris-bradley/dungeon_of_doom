@@ -8,7 +8,6 @@ int F[5][9];
 int * O;
 const char * C$[5];
 const char * H$;
-char * B$;
 char * I$;
 char * IN$;
 char * M$;
@@ -225,7 +224,6 @@ int main(int argc, char *argv[]) {
     free(S$);
     // 560 STOP
 
-    free(B$);
     free(I$);
     free(M$);
     free(N$);
@@ -658,15 +656,7 @@ void lines1060_1590() {
     strcpy(M$, "");
     AS = 65;
     // 1580 LET B$="":FOR I=1 TO W:LET B$=B$+" ":NEXT I
-    B$ = (char *) malloc(sizeof(char) * (W + 1));
-    if (B$ == NULL) {
-        fprintf(stderr, "B$ is NULL!\n");
-        exit(1);
-    }
-    for (I = 0; I < W; I += 1) {
-        B$[I] = ' ';
-    }
-    B$[W] = 0;
+    // dungeon_libs' print_left$_b$() removes the need for B$
     // 1590 RETURN
 }
 

@@ -57,6 +57,9 @@ int main(int argc, char *argv[]) {
     if (init_screen(&screen, &cursor) < 0) {
         return 1;
     }
+    paper(cursor, 2);
+    ink(cursor, 0);
+    clear_screen(screen, cursor);
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
     lines2500_2780();

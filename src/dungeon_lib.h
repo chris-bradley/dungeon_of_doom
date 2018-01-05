@@ -10,23 +10,24 @@ typedef struct {
 typedef struct {
     SDL_Renderer *ren;
     SDL_Window *win;
+    cursor_t *cursor;
     int zoom;
 } screen_t;
 
-void print_text(screen_t *screen, cursor_t *cursor, const char *message);
+void print_text(screen_t *screen, const char *message);
 
 void ink(cursor_t *cursor, int c_num);
 
 void paper(cursor_t *cursor, int c_num);
 
-void print_left$_b$(screen_t *screen, cursor_t *cursor, int width);
+void print_left$_b$(screen_t *screen, int width);
 
 void tab(cursor_t *cursor, int x, int y);
 
 void newline(cursor_t *cursor);
 
-int init_screen(screen_t **screen, cursor_t **cursor);
-void destroy_screen(screen_t *screen, cursor_t *cursor);
-void clear_screen(screen_t *screen, cursor_t *cursor);
+int init_screen(screen_t **screen);
+void destroy_screen(screen_t *screen);
+void clear_screen(screen_t *screen);
 
 char inkey$();

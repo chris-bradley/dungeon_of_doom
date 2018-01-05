@@ -13,41 +13,40 @@ char * IN$;
 char * M$;
 char * N$;
 
-void lines570_600(screen_t *screen, cursor_t *cursor);
+void lines570_600(screen_t *screen);
 void lines610_670();
 void lines680_710();
-void lines720_800(screen_t *screen, cursor_t *cursor);
-void lines810_850(screen_t *screen, cursor_t *cursor);
-void lines860_890(screen_t *screen, cursor_t *cursor);
-void lines900_910(screen_t *screen, cursor_t *cursor);
-void lines920_970(screen_t *screen, cursor_t *cursor);
+void lines720_800(screen_t *screen);
+void lines810_850(screen_t *screen);
+void lines860_890(screen_t *screen);
+void lines900_910(screen_t *screen);
+void lines920_970(screen_t *screen);
 void lines1060_1590();
-void lines1700_1730(screen_t *screen, cursor_t *cursor);
+void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
     // 10 GOSUB 1060
     lines1060_1590();
     // 20 paper 0:CLS
-    cursor_t *cursor = NULL;
     screen_t *screen = NULL;
-    if (init_screen(&screen, &cursor) < 0) {
+    if (init_screen(&screen) < 0) {
         return 1;
     }
 
-    paper(cursor, 0);
+    paper(screen->cursor, 0);
     // 30 LET J=1:LET H=MP:LET H$="POINTS"
     J = 1;
     H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, cursor);
-    lines900_910(screen, cursor);
+    lines810_850(screen);
+    lines900_910(screen);
     // 50 LET K=1:LET P=T+1
     K = 1;
     P_ = T + 1;
     // 60 PRINT tab(1,P);">";
-    tab(cursor, 1, P_);
-    print_text(screen, cursor, ">");
+    tab(screen->cursor, 1, P_);
+    print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
     // 70 GOSUB 720
     I$ = (char *) malloc(sizeof(char));
@@ -56,22 +55,22 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(screen, cursor);
+        lines720_800(screen);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen, cursor);
+            lines720_800(screen);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
             F[J][K] += 1;
             H -= 1;
-            lines920_970(screen, cursor);
+            lines920_970(screen);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*I$ == '-' && F[J][K] > 1) {
             F[J][K] -=1;
             H += 1;
-            lines920_970(screen, cursor);
+            lines920_970(screen);
         }
     // 110 LET C=1
         C = 1;
@@ -94,7 +93,7 @@ int main(int argc, char *argv[]) {
     // 160 LET M$=C$(C)
         strcpy(M$, C$[C]);
     // 170 GOSUB 860
-        lines860_890(screen, cursor);
+        lines860_890(screen);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
     } while (*I$ != ' ');
@@ -109,16 +108,16 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, cursor);
+        lines810_850(screen);
     // 240 GOSUB 900
-        lines900_910(screen, cursor);
+        lines900_910(screen);
     // 250 PRINT tab(1,P);">";
-        tab(cursor, 1, P_);
-        print_text(screen, cursor, ">");
+        tab(screen->cursor, 1, P_);
+        print_text(screen, ">");
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen, cursor);
+            lines720_800(screen);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -136,10 +135,10 @@ int main(int argc, char *argv[]) {
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, cursor);
+                lines570_600(screen);
             }
     // 330 GOSUB 860
-            lines860_890(screen, cursor);
+            lines860_890(screen);
     // 340 IF I$<>" " THEN GOTO 260
         } while (*I$ != ' '); 
     // 350 NEXT J
@@ -151,29 +150,29 @@ int main(int argc, char *argv[]) {
     }
     do {
     // 360 PRINT tab(1,2);"NAME THY CHARACTER";
-        tab(cursor, 1, 2);
-        print_text(screen, cursor, "NAME THY CHARACTER");
+        tab(screen->cursor, 1, 2);
+        print_text(screen, "NAME THY CHARACTER");
     // 370 PRINT tab(1,3);LEFT$(B$,W-2);:PRINT tab(1,3);
-        tab(cursor, 1, 3);
-        print_left$_b$(screen, cursor, W - 2);
+        tab(screen->cursor, 1, 3);
+        print_left$_b$(screen, W - 2);
         SDL_RenderPresent(screen->ren);
-        tab(cursor, 1, 3);
+        tab(screen->cursor, 1, 3);
     // 380 INPUT N$
 
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         X = 1;
         Y = 3;
-        lines1700_1730(screen, cursor);
+        lines1700_1730(screen);
         strcpy(N$, IN$);
         free(IN$);
     // 390 IF LEN(N$)>10 THEN GOTO 360
     } while (strlen(N$) > 10);
     // 400 PRINT tab(1,3);"ONE MOMENT PLEASE";
-    tab(cursor, 1, 3);
-    print_text(screen, cursor, "ONE MOMENT PLEASE");
+    tab(screen->cursor, 1, 3);
+    print_text(screen, "ONE MOMENT PLEASE");
     SDL_RenderPresent(screen->ren);
     // 410 PRINT tab(1,3);
-    tab(cursor, 1, 3);
+    tab(screen->cursor, 1, 3);
     // 420 LET O=D*3
     O_ = D * 3;
     // 430 LET S$=CHR$(O+AS)
@@ -229,7 +228,7 @@ int main(int argc, char *argv[]) {
     free(N$);
     free(O);
 
-    destroy_screen(screen, cursor);
+    destroy_screen(screen);
 
     return 0;
 }
@@ -237,19 +236,19 @@ int main(int argc, char *argv[]) {
 int P[24];
 int PR;
 
-void lines570_600(screen_t *screen, cursor_t *cursor) {
+void lines570_600(screen_t *screen) {
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
-    lines860_890(screen, cursor);
+    lines860_890(screen);
     // 580 PRINT tab(2,2);"YOUR OFFER";
-    tab(cursor, 2, 2);
-    print_text(screen, cursor, "YOUR OFFER");
+    tab(screen->cursor, 2, 2);
+    print_text(screen, "YOUR OFFER");
     SDL_RenderPresent(screen->ren);
     // 590 INPUT OF
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     X = 14;
     Y = 2;
-    lines1700_1730(screen, cursor);
+    lines1700_1730(screen);
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
@@ -303,16 +302,16 @@ void lines680_710() {
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen, cursor_t *cursor) {
+void lines720_800(screen_t *screen) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
     // 740 paper 3:ink 1
-    paper(cursor, 3);
-    ink(cursor, 1);
+    paper(screen->cursor, 3);
+    ink(screen->cursor, 1);
     // 750 print tab(1,P);" ";
-    tab(cursor, 1, P_);
-    print_text(screen, cursor, " ");
+    tab(screen->cursor, 1, P_);
+    print_text(screen, " ");
     // 760 IF I$="A" AND K>1 THEN LET K=K-1
     if (*I$ == 'a' && K > 1) {
         K -= 1;
@@ -324,129 +323,129 @@ void lines720_800(screen_t *screen, cursor_t *cursor) {
     // 780 LET P=K*2+T-1
     P_ = K * 2 + T - 1;
     // 790 PRINT tab(1,P);">";
-    tab(cursor, 1, P_);
-    print_text(screen, cursor, ">");
+    tab(screen->cursor, 1, P_);
+    print_text(screen, ">");
     // 800 RETURN
 }
 
-void lines980_1050(screen_t *screen, cursor_t *cursor);
+void lines980_1050(screen_t *screen);
 
 int BG, FG, L;
 const char * F$[5][10];
-void lines810_850(screen_t *screen, cursor_t *cursor) {
+void lines810_850(screen_t *screen) {
     // 810 paper 0:ink 2
-    paper(cursor, 0);
-    ink(cursor, 2);
+    paper(screen->cursor, 0);
+    ink(screen->cursor, 2);
     // 820 PRINT tab(0,0);LEFT$(B$,W);
-    tab(cursor, 0, 0);
-    print_left$_b$(screen, cursor, W);
+    tab(screen->cursor, 0, 0);
+    print_left$_b$(screen, W);
     // 830 PRINT tab(0,0);F$(J,9)
-    tab(cursor, 0, 0);
-    print_text(screen, cursor, F$[J][9]);
+    tab(screen->cursor, 0, 0);
+    print_text(screen, F$[J][9]);
     // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
     BG = 2;
     FG = 3;
     T = 1;
     L = 2;
     // 850 GOSUB 980
-    lines980_1050(screen, cursor);
-    lines860_890(screen, cursor);
+    lines980_1050(screen);
+    lines860_890(screen);
 }
 
-void lines860_890(screen_t *screen, cursor_t *cursor) {
+void lines860_890(screen_t *screen) {
     // 860 paper 2:ink 0
-    paper(cursor, 2);
-    ink(cursor, 0);
+    paper(screen->cursor, 2);
+    ink(screen->cursor, 0);
     // 870 PRINT tab(2,2);LEFT$(B$,17);tab(2,2);M$;
-    tab(cursor, 2, 2);
-    print_left$_b$(screen, cursor, 17);
-    tab(cursor, 2, 2);
-    print_text(screen, cursor, M$);
+    tab(screen->cursor, 2, 2);
+    print_left$_b$(screen, 17);
+    tab(screen->cursor, 2, 2);
+    print_text(screen, M$);
     // C64: 875 PRINT HM$;LEFT$(CU$,3);SPC(15);LEFT$(B$,4);
-    tab(cursor, 15, 3);
-    print_left$_b$(screen, cursor, 4);
+    tab(screen->cursor, 15, 3);
+    print_left$_b$(screen, 4);
     // 880 PRINT tab(2,3);H$;tab(15,3);H;" ";
-    tab(cursor, 2, 3);
-    print_text(screen, cursor, H$);
-    tab(cursor, 15, 3);
+    tab(screen->cursor, 2, 3);
+    print_text(screen, H$);
+    tab(screen->cursor, 15, 3);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
         fprintf(stderr, "outstring is NULL!\n");
         exit(1);
     }
     sprintf(outstring, "%i ", H);
-    print_text(screen, cursor, outstring);
+    print_text(screen, outstring);
     free(outstring);
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, cursor_t *cursor) {
+void lines900_910(screen_t *screen) {
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     BG = 3;
     FG = 2;
     T = 5;
     L = 15;
     // 910 GOSUB 980
-    lines980_1050(screen, cursor);
-    lines920_970(screen, cursor);
+    lines980_1050(screen);
+    lines920_970(screen);
 }
 
-void lines920_970(screen_t *screen, cursor_t *cursor) {
+void lines920_970(screen_t *screen) {
     // 920 paper 3:ink 0
-    paper(cursor, 3);
-    ink(cursor, 0);
+    paper(screen->cursor, 3);
+    ink(screen->cursor, 0);
     // 930 FOR I=1 TO 8
     for (I = 1; I <= 8; I += 1) {
     // 940 LET Y=T+(I-1)*2+1
         Y = T + (I - 1) * 2 + 1;
     // C64: 945 PRINT HM$;LEFT(CU$,Y);SPC(15);LEFT(B$,5);
-        tab(cursor, 15, Y);
-        print_left$_b$(screen, cursor, 5);
+        tab(screen->cursor, 15, Y);
+        print_left$_b$(screen, 5);
     // 950 PRINT tab(2,Y);F$(J,I);tab(16,Y);F(J,I);" ";
 
-        tab(cursor, 2, Y);
-        print_text(screen, cursor, F$[J][I]);
-        tab(cursor, 16, Y);
+        tab(screen->cursor, 2, Y);
+        print_text(screen, F$[J][I]);
+        tab(screen->cursor, 16, Y);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
         sprintf(outstring, "%i ", F[J][I]);
-        print_text(screen, cursor, outstring);
+        print_text(screen, outstring);
         free(outstring);
     // 960 NEXT I
     }
     // 970 RETURN
 }
 
-void lines980_1050(screen_t *screen, cursor_t *cursor) {
+void lines980_1050(screen_t *screen) {
     // 980 PRINT tab(0,T);
-    tab(cursor, 0, T);
+    tab(screen->cursor, 0, T);
     // 990 paper FG:PRINT LEFT$(B$,W);
-    paper(cursor, FG);
-    print_left$_b$(screen, cursor, W);
-    newline(cursor);
+    paper(screen->cursor, FG);
+    print_left$_b$(screen, W);
+    newline(screen->cursor);
     // 1000 paper BG:ink FG
-    paper(cursor, BG);
-    ink(cursor, FG);
+    paper(screen->cursor, BG);
+    ink(screen->cursor, FG);
     // 1010 FOR I=1 TO L
     for (I = 1; I <= L; I += 1) {
     // 1020 PRINT CHR$(B);LEFT$(B$,W-2);CHR$(B);
     // C64: 1020 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,W-2);BG$(FG);" ";
-        paper(cursor, FG);
-        print_text(screen, cursor, " ");
-        paper(cursor, BG);
-        print_left$_b$(screen, cursor, W - 2);
-        paper(cursor, FG);
-        print_text(screen, cursor, " ");
+        paper(screen->cursor, FG);
+        print_text(screen, " ");
+        paper(screen->cursor, BG);
+        print_left$_b$(screen, W - 2);
+        paper(screen->cursor, FG);
+        print_text(screen, " ");
         // print_text() doesn't support wrapping yet, so we do our own newline:
-        newline(cursor);
+        newline(screen->cursor);
     // 1030 NEXT I
     }
     // 1040 paper FG:PRINT LEFT$(B$,W);
-    paper(cursor, FG);
-    print_left$_b$(screen, cursor, W);
+    paper(screen->cursor, FG);
+    print_left$_b$(screen, W);
     // 1050 RETURN
 }
 
@@ -658,7 +657,7 @@ void lines1600_1650() {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen, cursor_t *cursor) {
+void lines1700_1730(screen_t *screen) {
     // 1700 IN$=""
     int ind = 0;
     IN$ = (char *) malloc(sizeof(char) * 40);
@@ -691,8 +690,8 @@ void lines1700_1730(screen_t *screen, cursor_t *cursor) {
             IN$[ind] = *I$;
             ind += 1;
             IN$[ind] = 0;
-            tab(cursor, X, Y);
-            print_text(screen, cursor, IN$);
+            tab(screen->cursor, X, Y);
+            print_text(screen, IN$);
             SDL_RenderPresent(screen->ren);
         }
     // 1730 GOTO 1710

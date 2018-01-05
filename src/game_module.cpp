@@ -1037,6 +1037,7 @@ void lines1960_2000() {
         exit(1);
     }
     sprintf(outstring, "FOR LEVEL %d", (int) F[5]);
+    print_text(screen, cursor, outstring);
     free(outstring);
     // 2000 RETURN
 }

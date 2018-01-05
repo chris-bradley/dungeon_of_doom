@@ -91,69 +91,54 @@ int main(int argc, char *argv[]) {
     Y = 1;
 
     // 100 LET I$=inkey$
-    SDL_Event event;
+    I$ = (char *) malloc(sizeof(char));
     int done = 0;
-    int text_entered;
     while (!done) {
-        text_entered = 0;
-        while (!done && !text_entered) {
-            if (SDL_PollEvent(&event)) {
-                switch (event.type) {
-                   case SDL_QUIT:
-                      done = SDL_TRUE;
-                      break;
-                   case SDL_TEXTINPUT:
-                       I$ = event.text.text;
-                       text_entered = 1;
-                }
-            }
-        }
-        if (text_entered) {
-            // 110 IF I$="H" THEN GOSUB 360
-            // 120 IF I$="A" AND Y>1 THEN LET Y=Y-1
-            // 130 IF I$="Z" AND Y<15 THEN LET Y=Y+1
-            // 140 IF I$="N" AND X>1 THEN X=X-1
-            // 150 IF I$="M" AND X<15 THEN LET X=X+1
-            // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
+	*I$ = inkey$();
+        // 110 IF I$="H" THEN GOSUB 360
+        // 120 IF I$="A" AND Y>1 THEN LET Y=Y-1
+        // 130 IF I$="Z" AND Y<15 THEN LET Y=Y+1
+        // 140 IF I$="N" AND X>1 THEN X=X-1
+        // 150 IF I$="M" AND X<15 THEN LET X=X+1
+        // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
 
-            if (*I$ == 'h') {
-                lines360_420(screen, cursor);
-            } else if (*I$ == 'a' and Y > 1) {
-                Y -= 1;
-            } else if (*I$ == 'z' and Y < 15) {
-                Y += 1;
-            } else if (*I$ == 'n' and X > 1) {
-                X -= 1;
-            } else if (*I$ == 'm' and X < 15) {
-                X += 1;
-            } else if (*I$ > '/' and *I$ < ':') {
-                lines230_270();
-            }
-            // 170 paper 3:ink 0
-            paper(cursor, 3);
-            ink(cursor, 0);
-            // 180 PRINT tab(X,Y+5);CHR$(OS);
-            tab(cursor, X, Y + 5);
-            char os_input[2];
-            sprintf(os_input, "%s", (char *) &OS);
-            print_text(screen, cursor, os_input);
-            tab(cursor, X, Y + 5);
-            // 190 PRINT tab(cursor, X,Y+5);CHR$(R(X,Y));
-            sprintf(os_input, "%s", (char *) &R[X][Y]);
-            print_text(screen, cursor, os_input);
-            SDL_RenderPresent(screen->ren);
-            // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
-            if (*I$ == 's' && IX > 0) {
-                lines450_600(screen, cursor);
-            }
-            // 210 IF I$<>"F" THEN GOTO 100
-            if (*I$ == 'f') {
-                done = SDL_TRUE;
-            }
+        if (*I$ == 'h') {
+            lines360_420(screen, cursor);
+        } else if (*I$ == 'a' and Y > 1) {
+            Y -= 1;
+        } else if (*I$ == 'z' and Y < 15) {
+            Y += 1;
+        } else if (*I$ == 'n' and X > 1) {
+            X -= 1;
+        } else if (*I$ == 'm' and X < 15) {
+            X += 1;
+        } else if (*I$ > '/' and *I$ < ':') {
+            lines230_270();
+        }
+        // 170 paper 3:ink 0
+        paper(cursor, 3);
+        ink(cursor, 0);
+        // 180 PRINT tab(X,Y+5);CHR$(OS);
+        tab(cursor, X, Y + 5);
+        char os_input[2];
+        sprintf(os_input, "%s", (char *) &OS);
+        print_text(screen, cursor, os_input);
+        tab(cursor, X, Y + 5);
+        // 190 PRINT tab(cursor, X,Y+5);CHR$(R(X,Y));
+        sprintf(os_input, "%s", (char *) &R[X][Y]);
+        print_text(screen, cursor, os_input);
+        SDL_RenderPresent(screen->ren);
+        // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
+        if (*I$ == 's' && IX > 0) {
+            lines450_600(screen, cursor);
+        }
+        // 210 IF I$<>"F" THEN GOTO 100
+        if (*I$ == 'f') {
+            done = SDL_TRUE;
         }
     }
     // 220 STOP
-
+    free(I$);
     destroy_screen(screen, cursor);
 
     return 0;
@@ -236,19 +221,7 @@ void lines360_420(screen_t *screen, cursor_t *cursor) {
 void lines430_440() {
     // 430 LET G$=inkey$:IF G$="" THEN GOTO 430
     // 440 RETURN
-
-    int done = 0;
-    SDL_Event event;
-    while (!done) {
-        if (SDL_PollEvent(&event)) {
-            switch (event.type) {
-               case SDL_QUIT:
-               case SDL_TEXTINPUT:
-                  done = SDL_TRUE;
-                  break;
-            }
-        }
-    }
+    inkey$();
 }
 
 void lines450_600(screen_t *screen, cursor_t *cursor) {

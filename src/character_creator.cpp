@@ -306,17 +306,7 @@ void lines680_710() {
 void lines720_800() {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
-    SDL_RenderPresent(screen->ren);
-    SDL_Event event;
-    int text_entered = 0;
-    while (!text_entered) {
-        if (SDL_PollEvent(&event)) {
-            if (event.type == SDL_TEXTINPUT) {
-                *I$ = event.text.text[0];
-                text_entered = 1;
-            }
-        }
-    }
+    *I$ = inkey$();
     // 740 paper 3:ink 1
     paper(cursor, 3);
     ink(cursor, 1);

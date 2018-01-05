@@ -12,24 +12,24 @@ char * I$;
 char * IN$;
 char * M$;
 char * N$;
-cursor_t *cursor = NULL;
-screen_t *screen = NULL;
 
-void lines570_600();
+void lines570_600(screen_t *screen, cursor_t *cursor);
 void lines610_670();
 void lines680_710();
-void lines720_800();
-void lines810_850();
-void lines860_890();
-void lines900_910();
-void lines920_970();
+void lines720_800(screen_t *screen, cursor_t *cursor);
+void lines810_850(screen_t *screen, cursor_t *cursor);
+void lines860_890(screen_t *screen, cursor_t *cursor);
+void lines900_910(screen_t *screen, cursor_t *cursor);
+void lines920_970(screen_t *screen, cursor_t *cursor);
 void lines1060_1590();
-void lines1700_1730();
+void lines1700_1730(screen_t *screen, cursor_t *cursor);
 
 int main(int argc, char *argv[]) {
     // 10 GOSUB 1060
     lines1060_1590();
     // 20 paper 0:CLS
+    cursor_t *cursor = NULL;
+    screen_t *screen = NULL;
     if (init_screen(&screen, &cursor) < 0) {
         return 1;
     }
@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
     H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850();
-    lines900_910();
+    lines810_850(screen, cursor);
+    lines900_910(screen, cursor);
     // 50 LET K=1:LET P=T+1
     K = 1;
     P_ = T + 1;
@@ -56,22 +56,22 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800();
+        lines720_800(screen, cursor);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800();
+            lines720_800(screen, cursor);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
             F[J][K] += 1;
             H -= 1;
-            lines920_970();
+            lines920_970(screen, cursor);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*I$ == '-' && F[J][K] > 1) {
             F[J][K] -=1;
             H += 1;
-            lines920_970();
+            lines920_970(screen, cursor);
         }
     // 110 LET C=1
         C = 1;
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     // 160 LET M$=C$(C)
         strcpy(M$, C$[C]);
     // 170 GOSUB 860
-        lines860_890();
+        lines860_890(screen, cursor);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
     } while (*I$ != ' ');
@@ -109,16 +109,16 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850();
+        lines810_850(screen, cursor);
     // 240 GOSUB 900
-        lines900_910();
+        lines900_910(screen, cursor);
     // 250 PRINT tab(1,P);">";
         tab(cursor, 1, P_);
         print_text(screen, cursor, ">");
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800();
+            lines720_800(screen, cursor);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -136,10 +136,10 @@ int main(int argc, char *argv[]) {
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600();
+                lines570_600(screen, cursor);
             }
     // 330 GOSUB 860
-            lines860_890();
+            lines860_890(screen, cursor);
     // 340 IF I$<>" " THEN GOTO 260
         } while (*I$ != ' '); 
     // 350 NEXT J
@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         X = 1;
         Y = 3;
-        lines1700_1730();
+        lines1700_1730(screen, cursor);
         strcpy(N$, IN$);
         free(IN$);
     // 390 IF LEN(N$)>10 THEN GOTO 360
@@ -237,10 +237,10 @@ int main(int argc, char *argv[]) {
 int P[24];
 int PR;
 
-void lines570_600() {
+void lines570_600(screen_t *screen, cursor_t *cursor) {
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
-    lines860_890();
+    lines860_890(screen, cursor);
     // 580 PRINT tab(2,2);"YOUR OFFER";
     tab(cursor, 2, 2);
     print_text(screen, cursor, "YOUR OFFER");
@@ -249,7 +249,7 @@ void lines570_600() {
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     X = 14;
     Y = 2;
-    lines1700_1730();
+    lines1700_1730(screen, cursor);
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
@@ -303,7 +303,7 @@ void lines680_710() {
     // 710 RETURN
 }
 
-void lines720_800() {
+void lines720_800(screen_t *screen, cursor_t *cursor) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
@@ -329,11 +329,11 @@ void lines720_800() {
     // 800 RETURN
 }
 
-void lines980_1050();
+void lines980_1050(screen_t *screen, cursor_t *cursor);
 
 int BG, FG, L;
 const char * F$[5][10];
-void lines810_850() {
+void lines810_850(screen_t *screen, cursor_t *cursor) {
     // 810 paper 0:ink 2
     paper(cursor, 0);
     ink(cursor, 2);
@@ -349,11 +349,11 @@ void lines810_850() {
     T = 1;
     L = 2;
     // 850 GOSUB 980
-    lines980_1050();
-    lines860_890();
+    lines980_1050(screen, cursor);
+    lines860_890(screen, cursor);
 }
 
-void lines860_890() {
+void lines860_890(screen_t *screen, cursor_t *cursor) {
     // 860 paper 2:ink 0
     paper(cursor, 2);
     ink(cursor, 0);
@@ -380,18 +380,18 @@ void lines860_890() {
     // 890 RETURN
 }
 
-void lines900_910() {
+void lines900_910(screen_t *screen, cursor_t *cursor) {
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     BG = 3;
     FG = 2;
     T = 5;
     L = 15;
     // 910 GOSUB 980
-    lines980_1050();
-    lines920_970();
+    lines980_1050(screen, cursor);
+    lines920_970(screen, cursor);
 }
 
-void lines920_970() {
+void lines920_970(screen_t *screen, cursor_t *cursor) {
     // 920 paper 3:ink 0
     paper(cursor, 3);
     ink(cursor, 0);
@@ -420,7 +420,7 @@ void lines920_970() {
     // 970 RETURN
 }
 
-void lines980_1050() {
+void lines980_1050(screen_t *screen, cursor_t *cursor) {
     // 980 PRINT tab(0,T);
     tab(cursor, 0, T);
     // 990 paper FG:PRINT LEFT$(B$,W);
@@ -658,7 +658,7 @@ void lines1600_1650() {
     // 1650 RETURN
 }
 
-void lines1700_1730() {
+void lines1700_1730(screen_t *screen, cursor_t *cursor) {
     // 1700 IN$=""
     int ind = 0;
     IN$ = (char *) malloc(sizeof(char) * 40);

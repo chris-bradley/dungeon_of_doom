@@ -2,24 +2,21 @@
 #include <unistd.h>
 #include "dungeon_lib.h"
 
-cursor_t *cursor = NULL;
-screen_t *screen = NULL;
-
-void lines430_430();
-void lines480_560();
-void lines570_610();
-void lines620_770();
-void lines810_860();
-void lines870_930();
-void lines990_1130();
-void lines1410_1520();
-void lines1550_1650();
+void lines430_430(screen_t *screen, cursor_t *cursor);
+void lines480_560(screen_t *screen, cursor_t *cursor);
+void lines570_610(screen_t *screen, cursor_t *cursor);
+void lines620_770(screen_t *screen, cursor_t *cursor);
+void lines810_860(screen_t *screen, cursor_t *cursor);
+void lines870_930(screen_t *screen, cursor_t *cursor);
+void lines990_1130(screen_t *screen, cursor_t *cursor);
+void lines1410_1520(screen_t *screen, cursor_t *cursor);
+void lines1550_1650(screen_t *screen, cursor_t *cursor);
 void lines1660_1680();
-void lines1690_1750();
-void lines1760_1950();
-void lines1770_1950();
-void lines2010_2250();
-void lines2260_2490();
+void lines1690_1750(screen_t *screen, cursor_t *cursor);
+void lines1760_1950(screen_t *screen, cursor_t *cursor);
+void lines1770_1950(screen_t *screen, cursor_t *cursor);
+void lines2010_2250(screen_t *screen, cursor_t *cursor);
+void lines2260_2490(screen_t *screen, cursor_t *cursor);
 void lines2500_2780();
 
 int C1,  // Symbol for Wall
@@ -54,6 +51,9 @@ int * T;
 
 int main(int argc, char *argv[]) {
     // C64: 5 GOSUB 5000:POKE 53281,0
+    cursor_t *cursor = NULL;
+    screen_t *screen = NULL;
+
     if (init_screen(&screen, &cursor) < 0) {
         return 1;
     }
@@ -64,9 +64,9 @@ int main(int argc, char *argv[]) {
     // 10 GOSUB2500
     lines2500_2780();
     // 20 GOSUB2010
-    lines2010_2250();
+    lines2010_2250(screen, cursor);
     // 30 GOSUB1770
-    lines1770_1950();
+    lines1770_1950(screen, cursor);
     int game_over = 0;
     do {
         SDL_RenderPresent(screen->ren);
@@ -74,15 +74,15 @@ int main(int argc, char *argv[]) {
         I$ = inkey$();
     // 50 IF I$="A" AND DX<255 THEN GOSUB870
         if (I$ == 'a' && DX < 255 ) {
-            lines870_930();
+            lines870_930(screen, cursor);
         }
     // 60 IF I$="C" AND F(7)>0 AND O(17)+O(18)>0 THEN GOSUB990
         if (I$ == 'c' && F[7] > 0 && O[17] + O[18] > 0) {
-            lines990_1130();
+            lines990_1130(screen, cursor);
         }
     // 70 IF I$="G" THEN GOSUB1410
         if (I$ == 'g') {
-            lines1410_1520();
+            lines1410_1520(screen, cursor);
         }
     // 80 IF I$="P" THEN GOSUB1660
         if (I$ == 'p') {
@@ -90,11 +90,11 @@ int main(int argc, char *argv[]) {
         }
     // 90 IF I$="R" THEN GOSUB1690
         if (I$ == 'r') {
-            lines1690_1750();
+            lines1690_1750(screen, cursor);
         }
     // 100 IF I$="S" THEN GOSUB2260
         if (I$ == 's') {
-            lines2260_2490();
+            lines2260_2490(screen, cursor);
         }
     // 110 IF I$="B" THEN LET NF=NF-1
         if (I$ == 'b') {
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
         if (RH == C1) {
             X = NX;
             Y = NY;
-            lines570_610();
+            lines570_610(screen, cursor);
             NX = OX;
             NY = OY;
             F[1] -= 0.03;
@@ -168,19 +168,19 @@ int main(int argc, char *argv[]) {
             F[1] += F[2] / 1100;
         }
     // 270 GOSUB480
-        lines480_560();
+        lines480_560(screen, cursor);
     // 280 IF OX<>NX OR OY<>NY THEN LET X=OX:LET Y=OY:GOSUB570
         if (OX != NX || OY != NY) {
             X = OX;
             Y = OY;
-            lines570_610();
+            lines570_610(screen, cursor);
         }
     // 290 LET OX=NX:LET OY=NY
         OX = NX;
         OY = NY;
     // 300 IF DX<255 THEN GOSUB620
         if (DX < 255) {
-            lines620_770();
+            lines620_770(screen, cursor);
         }
     // 310 IF F(1)>0 AND FI<1 AND RH<>C5 THEN GOTO 40
         if (F[1] > 0 && FI < 1 && RH != C5) {
@@ -196,8 +196,8 @@ int main(int argc, char *argv[]) {
             }
             strcpy(M$, T$[12]);
             M$[strlen(T$[12])] = 0;
-            lines430_430();
-            lines1760_1950();
+            lines430_430(screen, cursor);
+            lines1760_1950(screen, cursor);
             game_over = 0;
         } else {
             game_over = 1;
@@ -205,7 +205,7 @@ int main(int argc, char *argv[]) {
     } while (!game_over);
     // 330 IF F(1)<1 THEN GOSUB810
     if (F[1] < 1) {
-        lines810_860();
+        lines810_860(screen, cursor);
     }
     // 340 PRINT tab(0,10);:STOP
     tab(cursor, 0, 10);
@@ -249,7 +249,7 @@ void lines360_365() {
 
 int W;
 
-void lines370_420() {
+void lines370_420(screen_t *screen, cursor_t *cursor) {
     // 370 paper 2:ink 0
     paper(cursor, 2);
     ink(cursor, 0);
@@ -273,17 +273,17 @@ void lines370_420() {
     // 420 RETURN
 }
 
-void lines440_470();
+void lines440_470(screen_t *screen, cursor_t *cursor);
 
 int S2;
-void lines430_430() {
+void lines430_430(screen_t *screen, cursor_t *cursor) {
     // 430 paper 2:ink 0
     paper(cursor, 2);
     ink(cursor, 0);
-    lines440_470();
+    lines440_470(screen, cursor);
 }
 
-void lines440_470() {
+void lines440_470(screen_t *screen, cursor_t *cursor) {
     // 440 PRINT tab(0,5);M$;
     tab(cursor, 0, 5);
     print_text(screen, cursor, M$);
@@ -304,7 +304,7 @@ void lines440_470() {
     // 470 RETURN
 }
 
-void lines480_560() {
+void lines480_560(screen_t *screen, cursor_t *cursor) {
     // 480 paper 1:ink 3
     paper(cursor, 1);
     ink(cursor, 3);
@@ -350,7 +350,7 @@ void lines480_560() {
 
 int C2, C7, LX, LY, M_, MS, MT, MV, RM;
 
-void lines570_610() {
+void lines570_610(screen_t *screen, cursor_t *cursor) {
     // 570 paper 1:ink 2
     paper(cursor, 1);
     ink(cursor, 2);
@@ -394,7 +394,7 @@ void lines780_800();
 
 int C0, DY, H, I, J, MB, MX, MY, SX, SY, WB;
 
-void lines620_770() {
+void lines620_770(screen_t *screen, cursor_t *cursor) {
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     DX = LX - NX;
     SX = sign(DX);
@@ -413,12 +413,12 @@ void lines620_770() {
     R[LX][LY] = C0;
     X = LX;
     Y = LY;
-    lines570_610();
+    lines570_610(screen, cursor);
     // 660 LET R(MX,MY)=MT:LET X=MX:LET Y=MY:GOSUB 570
     R[MX][MY] = MT;
     X = MX;
     Y = MY;
-    lines570_610();
+    lines570_610(screen, cursor);
     // 670 LET LX=MX:LET LY=MY:LET H=0
     LX = MX;
     LY = MY;
@@ -441,7 +441,7 @@ void lines620_770() {
         exit(1);
     }
     strcpy(M$, T$[5]);
-    lines430_430();
+    lines430_430(screen, cursor);
     lines360_365();
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
     H /= (3 + O[9] + O[10] + O[11] + O[12] + O[13] + O[14]);
@@ -489,11 +489,11 @@ void lines780_800() {
     // 800 RETURN
 }
 
-void lines810_860() {
+void lines810_860(screen_t *screen, cursor_t *cursor) {
     // 810 LET NF=5;LET F(1)=0:GOSUB 440
     NF = 5;
     F[1] = 0;
-    lines440_470();
+    lines440_470(screen, cursor);
     // 820 PRINT tab(1,5);"THOU HAST EXPIRED!"
     tab(cursor, 1, 5);
     print_text(screen, cursor, "THOU HAST EXPIRED!");
@@ -502,18 +502,18 @@ void lines810_860() {
     // 840 GOSUB350:GOSUB360:GOSUB570:GOSUB480
         lines350_355();
         lines360_365();
-        lines570_610();
-        lines480_560();
+        lines570_610(screen, cursor);
+        lines480_560(screen, cursor);
     // 850 NEXT J
     }
     // 860 RETURN
 }
 
-void lines940_980();
+void lines940_980(screen_t *screen, cursor_t *cursor);
 
 int HT;
 
-void lines870_930() {
+void lines870_930(screen_t *screen, cursor_t *cursor) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
     free(M$);
     int t$_ind = rand() % 3 + 1;
@@ -541,18 +541,18 @@ void lines870_930() {
     }
     // 900 LET MS=MS-H:GOSUB430
     MS -= H;
-    lines430_430();
+    lines430_430(screen, cursor);
     // 910 LET F(1)=F(1)-(H/100):LET F(5)=F(5)+0.05
     F[1] -= H / 100;
     F[5] += 0.05;
     // 920 IF MS<1 THEN GOSUB940
     if (MS < 1) {
-        lines940_980();
+        lines940_980(screen, cursor);
     }
     // 930 RETURN
 }
 
-void lines940_980() {
+void lines940_980(screen_t *screen, cursor_t *cursor) {
     // 940 LET DX=255:LET MS=0:LET R(MX,MY)=C0
     DX = 255;
     MS = 0;
@@ -567,28 +567,28 @@ void lines940_980() {
         exit(1);
     }
     strcpy(M$, T$[6]);
-    lines430_430();
+    lines430_430(screen, cursor);
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
     for (J = 200; J >= 150; J -= 8) {
         lines350_355();
         lines360_365();
     }
     // 980 GOSUB570:RETURN
-    lines570_610();
+    lines570_610(screen, cursor);
 }
 
-void lines1140_1180();
+void lines1140_1180(screen_t *screen, cursor_t *cursor);
 void lines1190_1210();
-void lines1220_1270();
+void lines1220_1270(screen_t *screen, cursor_t *cursor);
 void lines1280_1290();
-void lines1300_1380();
+void lines1300_1380(screen_t *screen, cursor_t *cursor);
 void lines1390_1400();
 
 int SL;
 
-void lines990_1130() {
+void lines990_1130(screen_t *screen, cursor_t *cursor) {
     // 990 GOSUB480:paper 2: ink 0
-    lines480_560();
+    lines480_560(screen, cursor);
     paper(cursor, 2);
     ink(cursor, 0);
     // 1000 PRINT tab(0,10);"YOU MAY USE MAGICKS";
@@ -616,7 +616,7 @@ void lines990_1130() {
             exit(1);
         }
         strcpy(M$, "USE SPELL NUMBER?");
-        lines370_420();
+        lines370_420(screen, cursor);
         char * outstring = (char *) malloc(sizeof(char) * 2);
         sprintf(outstring, "%c", I$);
     // 1050 LET SL=VAL(I$)
@@ -651,23 +651,23 @@ void lines990_1130() {
         print_left$_b$(screen, cursor, W);
         newline(cursor);
     }
-    lines570_610();
+    lines570_610(screen, cursor);
     // 1100 ON SL GOSUB1140,1190,1220,1280,1300,1390,1130
     switch (SL) {
         case 1:
-            lines1140_1180();
+            lines1140_1180(screen, cursor);
             break;
         case 2:
             lines1190_1210();
             break;
         case 3:
-            lines1220_1270();
+            lines1220_1270(screen, cursor);
             break;
         case 4:
             lines1280_1290();
             break;
         case 5:
-            lines1300_1380();
+            lines1300_1380(screen, cursor);
             break;
         case 6:
             lines1390_1400();
@@ -679,11 +679,11 @@ void lines990_1130() {
     // 1110 LET F(5)=F(5)+.2
     F[5] += 0.2;
     // 1120 GOSUB430
-    lines430_430();
+    lines430_430(screen, cursor);
     // 1130 RETURN
 }
 
-void lines1140_1180() {
+void lines1140_1180(screen_t *screen, cursor_t *cursor) {
     // 1140 FOR J=1 TO 12
     for (J = 1; J <= 12; J += 1) {
     // 1150 GOSUB350:GOSUB360
@@ -695,7 +695,7 @@ void lines1140_1180() {
     if (DX < 255) {
         X = MX;
         Y = MY;
-        lines940_980();
+        lines940_980(screen, cursor);
     }
     // 1180 RETURN
 }
@@ -713,7 +713,7 @@ void lines1190_1210() {
     // 1210 RETURN
 }
 
-void lines1220_1270() {
+void lines1220_1270(screen_t *screen, cursor_t *cursor) {
     // 1220 LET NX=rnd(13):LET NY=rnd(13)
     NX = rand() % 13;
     NY = rand() % 13;
@@ -725,7 +725,7 @@ void lines1220_1270() {
     // 1250 NEXT J
     }
     // 1260 GOSUB480
-    lines480_560();
+    lines480_560(screen, cursor);
     // 1270 RETURN
 }
 
@@ -737,14 +737,14 @@ void lines1280_1290() {
     // 1290 RETURN
 }
 
-void lines1300_1380() {
+void lines1300_1380(screen_t *screen, cursor_t *cursor) {
     // 1300 FOR J=1 TO 30
     for (J = 1; J <= 30; J += 1) {
     // 1310 LET R(NX,NY)=rnd(8)+1+C0
         R[NX][NY] = rand() % 8 + 1 + C0;
     // 1320 GOSUB350:GOSUB570
         lines350_355();
-        lines570_610();
+        lines570_610(screen, cursor);
     // 1330 NEXT J
     }
     // 1340 IF RH<=C7 THEN LET DX=255:LET MS=0
@@ -771,7 +771,7 @@ void lines1390_1400() {
 
 int C3, C4, GT, GX, GY, TR;
 
-void lines1410_1520() {
+void lines1410_1520(screen_t *screen, cursor_t *cursor) {
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
     GX = NX + D[NF][1];
     GY = NY + D[NF][2];
@@ -807,12 +807,12 @@ void lines1410_1520() {
     }
     // 1490 IF GT=C4 THEN GOSUB 1550
     if (GT == C4) {
-        lines1550_1650();
+        lines1550_1650(screen, cursor);
     }
     // 1500 LET X=GX:LET Y=GY:GOSUB570
     X = GX;
     Y = GY;
-    lines570_610();
+    lines570_610(screen, cursor);
     // 1510 IF GT>C1 AND GT<C4 THEN LET J=GT:GOSUB350:LET J=GT+5:GOSUB350
     if (GT > C1 && GT < C4) {
         J = GT;
@@ -825,7 +825,7 @@ void lines1410_1520() {
 
 int GC, N;
 
-void lines1550_1650() {
+void lines1550_1650(screen_t *screen, cursor_t *cursor) {
     // 1550 paper 2:ink 1
     paper(cursor, 2);
     ink(cursor, 1);
@@ -844,7 +844,7 @@ void lines1550_1650() {
     // 1600 FOR N=1 TO 4:LET NF=N:GOSUB480:NEXT N
         for (N = 1; N <=4; N += 1) {
             NF = N;
-            lines480_560();
+            lines480_560(screen, cursor);
         }
     // 1610 NEXT I
     }
@@ -885,7 +885,7 @@ void lines1660_1680() {
 
 int LT;
 
-void lines1690_1750() {
+void lines1690_1750(screen_t *screen, cursor_t *cursor) {
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN
     if (LT == 0) {
         free(M$);
@@ -895,7 +895,7 @@ void lines1690_1750() {
             exit(1);
         }
         strcpy(M$, T$[7]);
-        lines430_430();
+        lines430_430(screen, cursor);
         return;
     }
     // 1700 FOR Y=NY-3 TO NY+3
@@ -904,7 +904,7 @@ void lines1690_1750() {
         for (X = NX - 3; X <= NX + 3; X += 1) {
     // 1720 IF (X>0 AND X<16) AND (Y>0 AND Y<16)THEN GOSUB570
             if (X > 0 && X < 16 && Y > 0 && Y < 16) {
-                lines570_610();
+                lines570_610(screen, cursor);
             }
     // 1730 NEXT X:NEXT Y
         }
@@ -914,13 +914,14 @@ void lines1690_1750() {
     // 1750 RETURN
 }
 
-void lines370_420();
-void lines1960_2000();
-void lines2790_2920();
+void lines370_420(screen_t *screen, cursor_t *cursor);
+void lines1960_2000(screen_t *screen, cursor_t *cursor);
+void lines2790_2920(screen_t *screen, cursor_t *cursor);
 
 int IX, IY, LE, OS, S3;
 
-void lines1760_1770_1950(int start_at_1770) {
+void lines1760_1770_1950(screen_t *screen, cursor_t *cursor,
+                         int start_at_1770) {
     // The original BASIC code sometimes used 'GOSUB 1760' and sometimes
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
@@ -939,7 +940,7 @@ void lines1760_1770_1950(int start_at_1770) {
             strcpy(M$, T$[11]);
             NX = OX;
             NY = OY;
-            lines430_430();
+            lines430_430(screen, cursor);
             return;
         }
         start_at_1770 = 0;
@@ -955,7 +956,7 @@ void lines1760_1770_1950(int start_at_1770) {
             exit(1);
         }
         strcpy(M$, T$[10]);
-        lines370_420();
+        lines370_420(screen, cursor);
         size_t filesize;
     // 1790 S=OPENIN"LEVEL"
         FILE *S = fopen("LEVEL", "r");
@@ -994,14 +995,14 @@ void lines1760_1770_1950(int start_at_1770) {
         LE = (int) S$[I + 1] - OS;
     // 1920 IF LE>F(5) THEN GOSUB 1960:GOTO 1760
         if (LE > F[5]) {
-            lines1960_2000();
+            lines1960_2000(screen, cursor);
             correct_level_loaded = 1;
         } else {
             correct_level_loaded = 0;
         }
     } while (correct_level_loaded);
     // 1930 GOSUB2790
-    lines2790_2920();
+    lines2790_2920(screen, cursor);
     // 1940 LET NX=IX:LET NY=IY:LET OX=NX:LET OY=NY:LET DX=255
     NX = IX;
     NY = IY;
@@ -1011,15 +1012,15 @@ void lines1760_1770_1950(int start_at_1770) {
     // 1950 RETURN
 }
 
-void lines1760_1950() {
-    lines1760_1770_1950(0);
+void lines1760_1950(screen_t *screen, cursor_t *cursor) {
+    lines1760_1770_1950(screen, cursor, 0);
 }
 
-void lines1770_1950() {
-    lines1760_1770_1950(1);
+void lines1770_1950(screen_t *screen, cursor_t *cursor) {
+    lines1760_1770_1950(screen, cursor, 1);
 }
 
-void lines1960_2000() {
+void lines1960_2000(screen_t *screen, cursor_t *cursor) {
     // 1960 PRINT:PRINT"LEVEL TOO DEEP"
     newline(cursor);
     print_text(screen, cursor, "LEVEL TOO DEEP");
@@ -1044,7 +1045,7 @@ void lines1960_2000() {
 
 int AS, OT, P;
 
-void lines2010_2250() {
+void lines2010_2250(screen_t *screen, cursor_t *cursor) {
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen, cursor);
     tab(cursor, 0, 3);
@@ -1057,7 +1058,7 @@ void lines2010_2250() {
         exit(1);
     }
     strcpy(M$, T$[10]);
-    lines370_420();
+    lines370_420(screen, cursor);
     // 2030 S=OPENIN "HERO"
     FILE *S = fopen("HERO", "r");
     // 2040 INPUT#S,S$
@@ -1129,7 +1130,7 @@ void lines2010_2250() {
     free(S$);
 }
 
-void lines2260_2490() {
+void lines2260_2490(screen_t *screen, cursor_t *cursor) {
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
     free(M$);
     M$ = (char *) malloc(sizeof(char) * 18);
@@ -1138,7 +1139,7 @@ void lines2260_2490() {
         exit(1);
     }
     strcpy(M$, "ONE MOMENT PLEASE");
-    lines430_430();
+    lines430_430(screen, cursor);
     // 2270 LET S$="":LET T$=""
     char * S$ = (char *) malloc(sizeof(char) * (12 + OT + strlen(C$)));
     if (S$ == NULL) {
@@ -1207,7 +1208,7 @@ void lines2260_2490() {
         exit(1);
     }
     strcpy(M$, "ANY KEY TO SAVE");
-    lines370_420();
+    lines370_420(screen, cursor);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
     FILE *S = fopen("HERO", "w");
     int error = fputs(S$, S);
@@ -1411,7 +1412,7 @@ void lines2500_2780() {
     // 2780 RETURN
 }
 
-void lines2790_2920() {
+void lines2790_2920(screen_t *screen, cursor_t *cursor) {
     // 2790 paper 1:CLS
     paper(cursor, 1);
     clear_screen(screen, cursor);

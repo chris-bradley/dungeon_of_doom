@@ -17,7 +17,8 @@
 using namespace std;
 
 void lines230_270();
-void lines280_350(screen_t *screen, cursor_t *cursor);
+void lines280_350(screen_t *screen, cursor_t *cursor, int BG, int FG, int T,
+                  int L, int LW);
 void lines360_420(screen_t *screen, cursor_t *cursor);
 void lines430_440();
 void lines450_600(screen_t *screen, cursor_t *cursor);
@@ -29,7 +30,6 @@ void ink(cursor_t *cursor, int c_num);
 void paper(cursor_t *cursor, int c_num);
 void lines5000_5080();
 
-int BG, FG, T, L, LW;
 int W;
 
 int LE, X, Y, OS;
@@ -51,12 +51,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280
-    BG = 2;
-    FG = 1;
-    T = 0;
-    L = 3;
-    LW = W - 3;
-    lines280_350(screen, cursor);
+    lines280_350(screen, cursor, 2, 1, 0, 3, W - 3);
     // 40 paper 2:ink 0
     paper(cursor, 2);
     ink(cursor, 0);
@@ -78,12 +73,7 @@ int main(int argc, char *argv[]) {
     print_text(screen, cursor, "PRESS H FOR HELP");
 
     // 80 LET BG=3:LET FG=2:LET T=5:LET L=15:LET LW=15:GOSUB 280
-    BG = 3;
-    FG = 2;
-    T = 5;
-    L = 15;
-    LW = 15;
-    lines280_350(screen, cursor);
+    lines280_350(screen, cursor, 3, 2, 5, 15, 15);
     SDL_RenderPresent(screen->ren);
 
     // 90 LET X=1:LET Y=1
@@ -162,7 +152,8 @@ void lines230_270() {
 }
 
 
-void lines280_350(screen_t *screen, cursor_t *cursor) {
+void lines280_350(screen_t *screen, cursor_t *cursor, int BG, int FG, int T,
+                  int L, int LW) {
     // 280 PRINT tab(0,T);
     tab(cursor, 0, T);
     // 290 paper FG:PRINT LEFT$(B$,LW+2)

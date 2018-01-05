@@ -26,8 +26,6 @@ void lines610_690();
 void lines700_770();
 void lines790_800();
 void lines810_840();
-void ink(cursor_t *cursor, int c_num);
-void paper(cursor_t *cursor, int c_num);
 void lines5000_5080();
 
 int W;

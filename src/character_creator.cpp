@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int N, O_, OF, P_, T, W, X, Y;
+int O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -13,9 +13,10 @@ char * IN$;
 char * M$;
 char * N$;
 
-void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K);
-void lines610_670(int BR, int J, int *H, int K);
-void lines680_710(int C);
+void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
+                  int N);
+void lines610_670(int BR, int J, int *H, int K, int N);
+void lines680_710(int C, int N);
 void lines720_800(screen_t *screen, int D, int *K);
 void lines810_850(screen_t *screen, int J, int H);
 void lines860_890(screen_t *screen, int H);
@@ -25,7 +26,7 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP;
+    int AS, BR, C, D, GC, I, J, H, K, MP, N;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP);
     // 20 paper 0:CLS
@@ -124,19 +125,19 @@ int main(int argc, char *argv[]) {
     // 280 LET M$="MAKE YOUR CHOICE"
             strcpy(M$, "MAKE YOUR CHOICE");
     // 290 GOSUB 680
-            lines680_710(C);
+            lines680_710(C, N);
     // 300 LET BR=0:LET OF=0
             BR = 0;
             OF = 0;
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J, &H, K);
+                lines610_670(BR, J, &H, K, N);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, BR, C, J, &H, K);
+                lines570_600(screen, BR, C, J, &H, K, N);
             }
     // 330 GOSUB 860
             lines860_890(screen, H);
@@ -237,7 +238,8 @@ int main(int argc, char *argv[]) {
 int P[24];
 int PR;
 
-void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K) {
+void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
+                  int N) {
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen, *H);
@@ -253,11 +255,11 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K) {
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
-    lines680_710(C);
-    lines610_670(BR, J, H, K);
+    lines680_710(C, N);
+    lines610_670(BR, J, H, K, N);
 }
 
-void lines610_670(int BR, int J, int *H, int K) {
+void lines610_670(int BR, int J, int *H, int K, int N) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
@@ -289,7 +291,7 @@ void lines610_670(int BR, int J, int *H, int K) {
 
 const char * O$[25];
 
-void lines680_710(int C) {
+void lines680_710(int C, int N) {
     // 680 LET Y=0
     Y = 0;
     // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1

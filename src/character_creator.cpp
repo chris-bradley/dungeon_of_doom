@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -15,18 +14,18 @@ char * N$;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N);
-void lines610_670(int BR, int J, int *H, int K, int N, int OF);
-void lines680_710(int C, int N);
+void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y);
+void lines680_710(int C, int N, int *Y);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W);
 void lines860_890(screen_t *screen, int H);
 void lines900_910(screen_t *screen, int J, int *T, int W);
 void lines920_970(screen_t *screen, int J, int T);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W);
-void lines1700_1730(screen_t *screen, int X);
+void lines1700_1730(screen_t *screen, int X, int Y);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X;
+    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP, &W);
     // 20 paper 0:CLS
@@ -125,14 +124,14 @@ int main(int argc, char *argv[]) {
     // 280 LET M$="MAKE YOUR CHOICE"
             strcpy(M$, "MAKE YOUR CHOICE");
     // 290 GOSUB 680
-            lines680_710(C, N);
+            lines680_710(C, N, &Y);
     // 300 LET BR=0:LET OF=0
             BR = 0;
             OF = 0;
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J, &H, K, N, OF);
+                lines610_670(BR, J, &H, K, N, OF, Y);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
@@ -164,7 +163,7 @@ int main(int argc, char *argv[]) {
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         X = 1;
         Y = 3;
-        lines1700_1730(screen, X);
+        lines1700_1730(screen, X, Y);
         strcpy(N$, IN$);
         free(IN$);
     // 390 IF LEN(N$)>10 THEN GOTO 360
@@ -240,7 +239,7 @@ int PR;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N) {
-    int OF, X;
+    int OF, X, Y;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen, *H);
@@ -252,15 +251,15 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     X = 14;
     Y = 2;
-    lines1700_1730(screen, X);
+    lines1700_1730(screen, X, Y);
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
-    lines680_710(C, N);
-    lines610_670(BR, J, H, K, N, OF);
+    lines680_710(C, N, &Y);
+    lines610_670(BR, J, H, K, N, OF, Y);
 }
 
-void lines610_670(int BR, int J, int *H, int K, int N, int OF) {
+void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
@@ -292,15 +291,15 @@ void lines610_670(int BR, int J, int *H, int K, int N, int OF) {
 
 const char * O$[25];
 
-void lines680_710(int C, int N) {
+void lines680_710(int C, int N, int *Y) {
     // 680 LET Y=0
-    Y = 0;
+    *Y = 0;
     // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1
     if (O$[N][C] == '1') {
-        Y = 1;
+        *Y = 1;
     }
     // 700 IF Y=0 THEN LET M$="NOT FOR "+C$(C)
-    if (Y == 0) {
+    if (*Y == 0) {
         sprintf(M$, "NOT FOR %s", C$[C]);
     }
     // 710 RETURN
@@ -395,7 +394,7 @@ void lines900_910(screen_t *screen, int J, int *T, int W) {
 }
 
 void lines920_970(screen_t *screen, int J, int T) {
-    int I;
+    int I, Y;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
@@ -664,7 +663,7 @@ void lines1600_1650(int *W) {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen, int X) {
+void lines1700_1730(screen_t *screen, int X, int Y) {
     // 1700 IN$=""
     int ind = 0;
     IN$ = (char *) malloc(sizeof(char) * 40);

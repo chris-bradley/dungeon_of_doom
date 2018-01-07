@@ -3,20 +3,21 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-const char * H$;
 char * I$;
 char * IN$;
 char * M$;
 char * N$;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
-                  int N, int F[5][9], int * O, const char * C$[5]);
+                  int N, int F[5][9], int * O, const char * C$[5],
+                  const char * H$);
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
                   int F[5][9], int * O);
 void lines680_710(int C, int N, int *Y, const char * C$[5]);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T);
-void lines810_850(screen_t *screen, int J, int H, int *T, int W);
-void lines860_890(screen_t *screen, int H);
+void lines810_850(screen_t *screen, int J, int H, int *T, int W,
+                  const char * H$);
+void lines860_890(screen_t *screen, int H, const char * H$);
 void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]);
 void lines920_970(screen_t *screen, int J, int T, int F[5][9]);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
@@ -27,7 +28,7 @@ int main(int argc, char *argv[]) {
     int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
     int F[5][9];
     int * O;
-    const char * C$[5];
+    const char * C$[5], * H$;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$);
     // 20 paper 0:CLS
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]) {
     H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, J, H, &T, W);
+    lines810_850(screen, J, H, &T, W, H$);
     lines900_910(screen, J, &T, W, F);
     // 50 LET K=1:LET P=T+1
     K = 1;
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]) {
     // 160 LET M$=C$(C)
         strcpy(M$, C$[C]);
     // 170 GOSUB 860
-        lines860_890(screen, H);
+        lines860_890(screen, H, H$);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
     } while (*I$ != ' ');
@@ -111,7 +112,7 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, J, H, &T, W);
+        lines810_850(screen, J, H, &T, W, H$);
     // 240 GOSUB 900
         lines900_910(screen, J, &T, W, F);
     // 250 PRINT tab(1,P);">";
@@ -138,10 +139,10 @@ int main(int argc, char *argv[]) {
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, BR, C, J, &H, K, N, F, O, C$);
+                lines570_600(screen, BR, C, J, &H, K, N, F, O, C$, H$);
             }
     // 330 GOSUB 860
-            lines860_890(screen, H);
+            lines860_890(screen, H, H$);
     // 340 IF I$<>" " THEN GOTO 260
         } while (*I$ != ' '); 
     // 350 NEXT J
@@ -240,11 +241,12 @@ int P[24];
 int PR;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
-                  int N, int F[5][9], int * O, const char * C$[5]) {
+                  int N, int F[5][9], int * O, const char * C$[5],
+                  const char * H$) {
     int OF, X, Y;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
-    lines860_890(screen, *H);
+    lines860_890(screen, *H, H$);
     // 580 PRINT tab(2,2);"YOUR OFFER";
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
@@ -338,7 +340,8 @@ void lines980_1050(screen_t *screen, int T, int W);
 
 int BG, FG, L;
 const char * F$[5][10];
-void lines810_850(screen_t *screen, int J, int H, int *T, int W) {
+void lines810_850(screen_t *screen, int J, int H, int *T, int W,
+                  const char * H$) {
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
@@ -355,10 +358,10 @@ void lines810_850(screen_t *screen, int J, int H, int *T, int W) {
     L = 2;
     // 850 GOSUB 980
     lines980_1050(screen, *T, W);
-    lines860_890(screen, H);
+    lines860_890(screen, H, H$);
 }
 
-void lines860_890(screen_t *screen, int H) {
+void lines860_890(screen_t *screen, int H, const char * H$) {
     // 860 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);

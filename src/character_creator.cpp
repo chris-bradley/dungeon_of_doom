@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int P_, T, W, X, Y;
+int T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -17,7 +17,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N);
 void lines610_670(int BR, int J, int *H, int K, int N, int OF);
 void lines680_710(int C, int N);
-void lines720_800(screen_t *screen, int D, int *K);
+void lines720_800(screen_t *screen, int D, int *K, int *P_);
 void lines810_850(screen_t *screen, int J, int H);
 void lines860_890(screen_t *screen, int H);
 void lines900_910(screen_t *screen, int J);
@@ -26,7 +26,7 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF;
+    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP);
     // 20 paper 0:CLS
@@ -57,10 +57,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(screen, D, &K);
+        lines720_800(screen, D, &K, &P_);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen, D, &K);
+            lines720_800(screen, D, &K, &P_);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen, D, &K);
+            lines720_800(screen, D, &K, &P_);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -306,7 +306,7 @@ void lines680_710(int C, int N) {
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen, int D, int *K) {
+void lines720_800(screen_t *screen, int D, int *K, int *P_) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
@@ -314,7 +314,7 @@ void lines720_800(screen_t *screen, int D, int *K) {
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     // 750 print tab(1,P);" ";
-    tab(screen->cursor, 1, P_);
+    tab(screen->cursor, 1, *P_);
     print_text(screen, " ");
     // 760 IF I$="A" AND K>1 THEN LET K=K-1
     if (*I$ == 'a' && *K > 1) {
@@ -325,9 +325,9 @@ void lines720_800(screen_t *screen, int D, int *K) {
         *K += 1;
     }
     // 780 LET P=K*2+T-1
-    P_ = *K * 2 + T - 1;
+    *P_ = *K * 2 + T - 1;
     // 790 PRINT tab(1,P);">";
-    tab(screen->cursor, 1, P_);
+    tab(screen->cursor, 1, *P_);
     print_text(screen, ">");
     // 800 RETURN
 }

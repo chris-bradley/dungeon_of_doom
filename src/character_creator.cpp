@@ -5,10 +5,11 @@
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N, int F[5][9], int * O, const char * C$[5],
-                  const char * H$, char * M$, int P[24]);
+                  const char * H$, char * M$, int P[24], const char * O$[25]);
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
                   int F[5][9], int * O, char * M$, int P[24]);
-void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$);
+void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$,
+                  const char * O$[25]);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
                   const char * H$, char * M$);
@@ -16,24 +17,24 @@ void lines860_890(screen_t *screen, int H, const char * H$, char * M$);
 void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]);
 void lines920_970(screen_t *screen, int J, int T, int F[5][9]);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char * M$, int P[24]);
+                    int ** O, const char * C$[5], char * M$, int P[24],
+                    const char * O$[25]);
 void lines1700_1730(screen_t *screen, int X, int Y, char * IN$);
 
 int main(int argc, char *argv[]) {
     int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
     int F[5][9];
     int * O;
-    const char * C$[5], * H$;
+    const char * C$[5], * H$, * O$[25];
     char * I$, * IN$ = NULL, * M$ = NULL, * N$;
     int P[24];
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, M$, P);
+    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, M$, P, O$);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
         return 1;
     }
-
     paper(screen->cursor, 0);
     // 30 LET J=1:LET H=MP:LET H$="POINTS"
     J = 1;
@@ -124,7 +125,7 @@ int main(int argc, char *argv[]) {
     // 280 LET M$="MAKE YOUR CHOICE"
             strcpy(M$, "MAKE YOUR CHOICE");
     // 290 GOSUB 680
-            lines680_710(C, N, &Y, C$, M$);
+            lines680_710(C, N, &Y, C$, M$, O$);
     // 300 LET BR=0:LET OF=0
             BR = 0;
             OF = 0;
@@ -136,7 +137,9 @@ int main(int argc, char *argv[]) {
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, BR, C, J, &H, K, N, F, O, C$, H$, M$, P);
+                lines570_600(
+                    screen, BR, C, J, &H, K, N, F, O, C$, H$, M$, P, O$
+                );
             }
     // 330 GOSUB 860
             lines860_890(screen, H, H$, M$);
@@ -236,7 +239,7 @@ int main(int argc, char *argv[]) {
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N, int F[5][9], int * O, const char * C$[5],
-                  const char * H$, char * M$, int P[24]) {
+                  const char * H$, char * M$, int P[24], const char * O$[25]) {
     int OF, X, Y;
     char * IN$ = NULL;
     // 570 LET M$="";GOSUB 860
@@ -254,7 +257,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
-    lines680_710(C, N, &Y, C$, M$);
+    lines680_710(C, N, &Y, C$, M$, O$);
     lines610_670(BR, J, H, K, N, OF, Y, F, O, M$, P);
 }
 
@@ -290,9 +293,9 @@ void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
     // 670 RETURN
 }
 
-const char * O$[25];
 
-void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$) {
+void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$,
+                  const char * O$[25]) {
     // 680 LET Y=0
     *Y = 0;
     // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1
@@ -459,7 +462,8 @@ void lines980_1050(screen_t *screen, int T, int W) {
 void lines1600_1650(int *W);
 
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char * M$, int P[24]) {
+                    int ** O, const char * C$[5], char * M$, int P[24],
+                    const char * O$[25]) {
     int I;
     // 1060 GOSUB 1600
     lines1600_1650(W);

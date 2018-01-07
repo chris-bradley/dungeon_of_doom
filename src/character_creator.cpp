@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int X, Y;
+int Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -23,10 +23,10 @@ void lines860_890(screen_t *screen, int H);
 void lines900_910(screen_t *screen, int J, int *T, int W);
 void lines920_970(screen_t *screen, int J, int T);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W);
-void lines1700_1730(screen_t *screen);
+void lines1700_1730(screen_t *screen, int X);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W;
+    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP, &W);
     // 20 paper 0:CLS
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         X = 1;
         Y = 3;
-        lines1700_1730(screen);
+        lines1700_1730(screen, X);
         strcpy(N$, IN$);
         free(IN$);
     // 390 IF LEN(N$)>10 THEN GOTO 360
@@ -240,7 +240,7 @@ int PR;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N) {
-    int OF;
+    int OF, X;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen, *H);
@@ -252,7 +252,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     X = 14;
     Y = 2;
-    lines1700_1730(screen);
+    lines1700_1730(screen, X);
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
@@ -664,7 +664,7 @@ void lines1600_1650(int *W) {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen) {
+void lines1700_1730(screen_t *screen, int X) {
     // 1700 IN$=""
     int ind = 0;
     IN$ = (char *) malloc(sizeof(char) * 40);

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int MP, N, O_, OF, P_, T, W, X, Y;
+int N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -21,13 +21,13 @@ void lines810_850(screen_t *screen, int J, int H);
 void lines860_890(screen_t *screen, int H);
 void lines900_910(screen_t *screen, int J);
 void lines920_970(screen_t *screen, int J);
-void lines1060_1590(int *AS, int *D, int *GC);
+void lines1060_1590(int *AS, int *D, int *GC, int *MP);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K;
+    int AS, BR, C, D, GC, I, J, H, K, MP;
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC);
+    lines1060_1590(&AS, &D, &GC, &MP);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -454,7 +454,7 @@ void lines980_1050(screen_t *screen) {
 
 void lines1600_1650();
 
-void lines1060_1590(int *AS, int *D, int *GC) {
+void lines1060_1590(int *AS, int *D, int *GC, int *MP) {
     int I;
     // 1060 GOSUB 1600
     lines1600_1650();
@@ -637,7 +637,7 @@ void lines1060_1590(int *AS, int *D, int *GC) {
     C$[4] = "WARRIOR";
     C$[5] = "BARBARIAN";
     // 1550 LET MP=3+rnd(5)
-    MP = 3 + (rand() % 5);
+    *MP = 3 + (rand() % 5);
     // 1560 LET GC=120+rnd(60)
     *GC = 120 + (rand() % 60);
     // 1570 LET M$="":LET AS=65

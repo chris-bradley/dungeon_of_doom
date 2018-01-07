@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int H, K, MP, N, O_, OF, P_, T, W, X, Y;
+int K, MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -13,19 +13,19 @@ char * IN$;
 char * M$;
 char * N$;
 
-void lines570_600(screen_t *screen, int BR, int C, int J);
-void lines610_670(int BR, int J);
+void lines570_600(screen_t *screen, int BR, int C, int J, int *H);
+void lines610_670(int BR, int J, int *H);
 void lines680_710(int C);
 void lines720_800(screen_t *screen, int D);
-void lines810_850(screen_t *screen, int J);
-void lines860_890(screen_t *screen);
+void lines810_850(screen_t *screen, int J, int H);
+void lines860_890(screen_t *screen, int H);
 void lines900_910(screen_t *screen, int J);
 void lines920_970(screen_t *screen, int J);
 void lines1060_1590(int *AS, int *D, int *GC);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J;
+    int AS, BR, C, D, GC, I, J, H;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC);
     // 20 paper 0:CLS
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, J);
+    lines810_850(screen, J, H);
     lines900_910(screen, J);
     // 50 LET K=1:LET P=T+1
     K = 1;
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     // 160 LET M$=C$(C)
         strcpy(M$, C$[C]);
     // 170 GOSUB 860
-        lines860_890(screen);
+        lines860_890(screen, H);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
     } while (*I$ != ' ');
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, J);
+        lines810_850(screen, J, H);
     // 240 GOSUB 900
         lines900_910(screen, J);
     // 250 PRINT tab(1,P);">";
@@ -131,15 +131,15 @@ int main(int argc, char *argv[]) {
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J);
+                lines610_670(BR, J, &H);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, BR, C, J);
+                lines570_600(screen, BR, C, J, &H);
             }
     // 330 GOSUB 860
-            lines860_890(screen);
+            lines860_890(screen, H);
     // 340 IF I$<>" " THEN GOTO 260
         } while (*I$ != ' '); 
     // 350 NEXT J
@@ -237,10 +237,10 @@ int main(int argc, char *argv[]) {
 int P[24];
 int PR;
 
-void lines570_600(screen_t *screen, int BR, int C, int J) {
+void lines570_600(screen_t *screen, int BR, int C, int J, int *H) {
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
-    lines860_890(screen);
+    lines860_890(screen, *H);
     // 580 PRINT tab(2,2);"YOUR OFFER";
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
@@ -254,10 +254,10 @@ void lines570_600(screen_t *screen, int BR, int C, int J) {
     free(IN$);
     // 600 GOSUB 680
     lines680_710(C);
-    lines610_670(BR, J);
+    lines610_670(BR, J, H);
 }
 
-void lines610_670(int BR, int J) {
+void lines610_670(int BR, int J, int *H) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
@@ -265,13 +265,13 @@ void lines610_670(int BR, int J) {
     // 620 LET PR=F(J,K)-BR
         PR = F[J][K] - BR;
     // 630 IF H<PR THEN LET M$="YOU CANNOT AFFORD":RETURN
-        if (H < PR) {
+        if (*H < PR) {
             strcpy(M$, "YOU CANNOT AFFORD");
         } else {
     // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
             if (OF >= PR && Y == 1) {
                 O[N] += P[N];
-                H -= PR;
+                *H -= PR;
                 strcpy(M$, "TIS YOURS!");
             }
     // 650 IF OF<PR AND Y=1 THEN LET M$="OFFER REJECTED";
@@ -279,8 +279,8 @@ void lines610_670(int BR, int J) {
                 strcpy(M$, "OFFER REJECTED");
             }
     // 660 IF H<0 THEN LET H=0
-            if (H < 0) {
-                H = 0;
+            if (*H < 0) {
+                *H = 0;
             }
         }
     }
@@ -333,7 +333,7 @@ void lines980_1050(screen_t *screen);
 
 int BG, FG, L;
 const char * F$[5][10];
-void lines810_850(screen_t *screen, int J) {
+void lines810_850(screen_t *screen, int J, int H) {
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
@@ -350,10 +350,10 @@ void lines810_850(screen_t *screen, int J) {
     L = 2;
     // 850 GOSUB 980
     lines980_1050(screen);
-    lines860_890(screen);
+    lines860_890(screen, H);
 }
 
-void lines860_890(screen_t *screen) {
+void lines860_890(screen_t *screen, int H) {
     // 860 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);

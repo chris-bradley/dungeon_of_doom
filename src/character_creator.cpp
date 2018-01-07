@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-char * I$;
 char * IN$;
 char * M$;
 char * N$;
@@ -14,7 +13,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
                   int F[5][9], int * O);
 void lines680_710(int C, int N, int *Y, const char * C$[5]);
-void lines720_800(screen_t *screen, int D, int *K, int *P_, int T);
+void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
                   const char * H$);
 void lines860_890(screen_t *screen, int H, const char * H$);
@@ -29,6 +28,7 @@ int main(int argc, char *argv[]) {
     int F[5][9];
     int * O;
     const char * C$[5], * H$;
+    char * I$;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$);
     // 20 paper 0:CLS
@@ -59,10 +59,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(screen, D, &K, &P_, T);
+        lines720_800(screen, D, &K, &P_, T, I$);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen, D, &K, &P_, T);
+            lines720_800(screen, D, &K, &P_, T, I$);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen, D, &K, &P_, T);
+            lines720_800(screen, D, &K, &P_, T, I$);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -310,7 +310,7 @@ void lines680_710(int C, int N, int *Y, const char * C$[5]) {
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen, int D, int *K, int *P_, int T) {
+void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
@@ -673,6 +673,7 @@ void lines1600_1650(int *W) {
 void lines1700_1730(screen_t *screen, int X, int Y) {
     // 1700 IN$=""
     int ind = 0;
+    char * I$ = (char *) malloc(sizeof(char));
     IN$ = (char *) malloc(sizeof(char) * 40);
     if (IN$ == NULL) {
         fprintf(stderr, "IN$ is NULL!\n");
@@ -710,4 +711,5 @@ void lines1700_1730(screen_t *screen, int X, int Y) {
     // 1730 GOTO 1710
     }
     IN$[ind] = 0;
+    free(I$);
 }

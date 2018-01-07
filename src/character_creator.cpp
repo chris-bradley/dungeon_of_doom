@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
+int I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -21,13 +21,13 @@ void lines810_850(screen_t *screen);
 void lines860_890(screen_t *screen);
 void lines900_910(screen_t *screen);
 void lines920_970(screen_t *screen);
-void lines1060_1590(int *AS, int *D);
+void lines1060_1590(int *AS, int *D, int *GC);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D;
+    int AS, BR, C, D, GC;
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D);
+    lines1060_1590(&AS, &D, &GC);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -452,7 +452,7 @@ void lines980_1050(screen_t *screen) {
 
 void lines1600_1650();
 
-void lines1060_1590(int *AS, int *D) {
+void lines1060_1590(int *AS, int *D, int *GC) {
     // 1060 GOSUB 1600
     lines1600_1650();
     // 1070 LET D=8
@@ -636,7 +636,7 @@ void lines1060_1590(int *AS, int *D) {
     // 1550 LET MP=3+rnd(5)
     MP = 3 + (rand() % 5);
     // 1560 LET GC=120+rnd(60)
-    GC = 120 + (rand() % 60);
+    *GC = 120 + (rand() % 60);
     // 1570 LET M$="":LET AS=65
     M$ = (char *) malloc(sizeof(char) * 40);
     if (M$ == NULL) {

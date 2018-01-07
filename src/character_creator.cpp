@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int W, X, Y;
+int X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -18,17 +18,17 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
 void lines610_670(int BR, int J, int *H, int K, int N, int OF);
 void lines680_710(int C, int N);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T);
-void lines810_850(screen_t *screen, int J, int H, int *T);
+void lines810_850(screen_t *screen, int J, int H, int *T, int W);
 void lines860_890(screen_t *screen, int H);
-void lines900_910(screen_t *screen, int J, int *T);
+void lines900_910(screen_t *screen, int J, int *T, int W);
 void lines920_970(screen_t *screen, int J, int T);
-void lines1060_1590(int *AS, int *D, int *GC, int *MP);
+void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T;
+    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W;
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC, &MP);
+    lines1060_1590(&AS, &D, &GC, &MP, &W);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
     H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, J, H, &T);
-    lines900_910(screen, J, &T);
+    lines810_850(screen, J, H, &T, W);
+    lines900_910(screen, J, &T, W);
     // 50 LET K=1:LET P=T+1
     K = 1;
     P_ = T + 1;
@@ -110,9 +110,9 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, J, H, &T);
+        lines810_850(screen, J, H, &T, W);
     // 240 GOSUB 900
-        lines900_910(screen, J, &T);
+        lines900_910(screen, J, &T, W);
     // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, P_);
         print_text(screen, ">");
@@ -332,11 +332,11 @@ void lines720_800(screen_t *screen, int D, int *K, int *P_, int T) {
     // 800 RETURN
 }
 
-void lines980_1050(screen_t *screen, int T);
+void lines980_1050(screen_t *screen, int T, int W);
 
 int BG, FG, L;
 const char * F$[5][10];
-void lines810_850(screen_t *screen, int J, int H, int *T) {
+void lines810_850(screen_t *screen, int J, int H, int *T, int W) {
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
@@ -352,7 +352,7 @@ void lines810_850(screen_t *screen, int J, int H, int *T) {
     *T = 1;
     L = 2;
     // 850 GOSUB 980
-    lines980_1050(screen, *T);
+    lines980_1050(screen, *T, W);
     lines860_890(screen, H);
 }
 
@@ -383,14 +383,14 @@ void lines860_890(screen_t *screen, int H) {
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, int J, int *T) {
+void lines900_910(screen_t *screen, int J, int *T, int W) {
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     BG = 3;
     FG = 2;
     *T = 5;
     L = 15;
     // 910 GOSUB 980
-    lines980_1050(screen, *T);
+    lines980_1050(screen, *T, W);
     lines920_970(screen, J, *T);
 }
 
@@ -424,7 +424,7 @@ void lines920_970(screen_t *screen, int J, int T) {
     // 970 RETURN
 }
 
-void lines980_1050(screen_t *screen, int T) {
+void lines980_1050(screen_t *screen, int T, int W) {
     int I;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
@@ -455,12 +455,12 @@ void lines980_1050(screen_t *screen, int T) {
     // 1050 RETURN
 }
 
-void lines1600_1650();
+void lines1600_1650(int *W);
 
-void lines1060_1590(int *AS, int *D, int *GC, int *MP) {
+void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W) {
     int I;
     // 1060 GOSUB 1600
-    lines1600_1650();
+    lines1600_1650(W);
     // 1070 LET D=8
     *D = 8;
     // 1080 DIM F(4,D+1)
@@ -656,9 +656,9 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP) {
     // 1590 RETURN
 }
 
-void lines1600_1650() {
+void lines1600_1650(int *W) {
     // 1600 LET W=40
-    W = 40;
+    *W = 40;
     // 1610 GOSUB 4000
     // not needed due to dungeon_lib
     // 1650 RETURN

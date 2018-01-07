@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
+int GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -16,18 +16,18 @@ char * N$;
 void lines570_600(screen_t *screen, int BR, int C);
 void lines610_670(int BR);
 void lines680_710(int C);
-void lines720_800(screen_t *screen);
+void lines720_800(screen_t *screen, int D);
 void lines810_850(screen_t *screen);
 void lines860_890(screen_t *screen);
 void lines900_910(screen_t *screen);
 void lines920_970(screen_t *screen);
-void lines1060_1590(int *AS);
+void lines1060_1590(int *AS, int *D);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C;
+    int AS, BR, C, D;
     // 10 GOSUB 1060
-    lines1060_1590(&AS);
+    lines1060_1590(&AS, &D);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -56,10 +56,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(screen);
+        lines720_800(screen, D);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen);
+            lines720_800(screen, D);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen);
+            lines720_800(screen, D);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -303,7 +303,7 @@ void lines680_710(int C) {
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen) {
+void lines720_800(screen_t *screen, int D) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
@@ -452,23 +452,23 @@ void lines980_1050(screen_t *screen) {
 
 void lines1600_1650();
 
-void lines1060_1590(int *AS) {
+void lines1060_1590(int *AS, int *D) {
     // 1060 GOSUB 1600
     lines1600_1650();
     // 1070 LET D=8
-    D = 8;
+    *D = 8;
     // 1080 DIM F(4,D+1)
     // 1090 DIM F$(4,D+1)
     // 1100 DIM C$(5)
     // 1110 DIM O(D*3)
-    O = (int *) malloc(sizeof(int) * D * 3);
+    O = (int *) malloc(sizeof(int) * (*D) * 3);
     if (O == NULL) {
         fprintf(stderr, "O is NULL!\n");
         exit(1);
     }
    
     int i;
-    for (i = 0; i < D * 3; i += 1) {
+    for (i = 0; i < *D * 3; i += 1) {
         O[i] = 0;
     }
 

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int OF, P_, T, W, X, Y;
+int P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -15,7 +15,7 @@ char * N$;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N);
-void lines610_670(int BR, int J, int *H, int K, int N);
+void lines610_670(int BR, int J, int *H, int K, int N, int OF);
 void lines680_710(int C, int N);
 void lines720_800(screen_t *screen, int D, int *K);
 void lines810_850(screen_t *screen, int J, int H);
@@ -26,7 +26,7 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_;
+    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP);
     // 20 paper 0:CLS
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J, &H, K, N);
+                lines610_670(BR, J, &H, K, N, OF);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
@@ -240,6 +240,7 @@ int PR;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N) {
+    int OF;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen, *H);
@@ -256,10 +257,10 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     free(IN$);
     // 600 GOSUB 680
     lines680_710(C, N);
-    lines610_670(BR, J, H, K, N);
+    lines610_670(BR, J, H, K, N, OF);
 }
 
-void lines610_670(int BR, int J, int *H, int K, int N) {
+void lines610_670(int BR, int J, int *H, int K, int N, int OF) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");

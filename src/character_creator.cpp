@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
+int J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -25,7 +25,7 @@ void lines1060_1590(int *AS, int *D, int *GC);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC;
+    int AS, BR, C, D, GC, I;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC);
     // 20 paper 0:CLS
@@ -392,6 +392,7 @@ void lines900_910(screen_t *screen) {
 }
 
 void lines920_970(screen_t *screen) {
+    int I;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
@@ -421,6 +422,7 @@ void lines920_970(screen_t *screen) {
 }
 
 void lines980_1050(screen_t *screen) {
+    int I;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
     // 990 paper FG:PRINT LEFT$(B$,W);
@@ -453,6 +455,7 @@ void lines980_1050(screen_t *screen) {
 void lines1600_1650();
 
 void lines1060_1590(int *AS, int *D, int *GC) {
+    int I;
     // 1060 GOSUB 1600
     lines1600_1650();
     // 1070 LET D=8

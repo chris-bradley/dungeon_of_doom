@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int * O;
 const char * C$[5];
 const char * H$;
 char * I$;
@@ -12,23 +11,25 @@ char * M$;
 char * N$;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
-                  int N, int F[5][9]);
+                  int N, int F[5][9], int * O);
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
-                  int F[5][9]);
+                  int F[5][9], int * O);
 void lines680_710(int C, int N, int *Y);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W);
 void lines860_890(screen_t *screen, int H);
 void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]);
 void lines920_970(screen_t *screen, int J, int T, int F[5][9]);
-void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9]);
+void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
+                    int ** O);
 void lines1700_1730(screen_t *screen, int X, int Y);
 
 int main(int argc, char *argv[]) {
     int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
     int F[5][9];
+    int * O;
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC, &MP, &W, F);
+    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -132,12 +133,12 @@ int main(int argc, char *argv[]) {
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J, &H, K, N, OF, Y, F);
+                lines610_670(BR, J, &H, K, N, OF, Y, F, O);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, BR, C, J, &H, K, N, F);
+                lines570_600(screen, BR, C, J, &H, K, N, F, O);
             }
     // 330 GOSUB 860
             lines860_890(screen, H);
@@ -239,7 +240,7 @@ int P[24];
 int PR;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
-                  int N, int F[5][9]) {
+                  int N, int F[5][9], int * O) {
     int OF, X, Y;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
@@ -257,11 +258,11 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     free(IN$);
     // 600 GOSUB 680
     lines680_710(C, N, &Y);
-    lines610_670(BR, J, H, K, N, OF, Y, F);
+    lines610_670(BR, J, H, K, N, OF, Y, F, O);
 }
 
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
-                  int F[5][9]) {
+                  int F[5][9], int * O) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
@@ -458,7 +459,8 @@ void lines980_1050(screen_t *screen, int T, int W) {
 
 void lines1600_1650(int *W);
 
-void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9]) {
+void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
+                    int ** O) {
     int I;
     // 1060 GOSUB 1600
     lines1600_1650(W);
@@ -468,9 +470,9 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9]) {
     // 1090 DIM F$(4,D+1)
     // 1100 DIM C$(5)
     // 1110 DIM O(D*3)
-    O = (int *) malloc(sizeof(int) * (*D) * 3);
-    if (O == NULL) {
-        fprintf(stderr, "O is NULL!\n");
+    *O = (int *) malloc(sizeof(int) * (*D) * 3);
+    if (*O == NULL) {
+        fprintf(stderr, "*O is NULL!\n");
         exit(1);
     }
    

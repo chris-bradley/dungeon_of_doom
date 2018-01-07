@@ -234,8 +234,6 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-int PR;
-
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N, int F[5][9], int * O, const char * C$[5],
                   const char * H$, char * M$, int P[24]) {
@@ -262,6 +260,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
 
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
                   int F[5][9], int * O, char * M$, int P[24]) {
+    int PR;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");

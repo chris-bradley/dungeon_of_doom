@@ -5,9 +5,9 @@
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N, int F[5][9], int * O, const char * C$[5],
-                  const char * H$, char * M$);
+                  const char * H$, char * M$, int P[24]);
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
-                  int F[5][9], int * O, char * M$);
+                  int F[5][9], int * O, char * M$, int P[24]);
 void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
@@ -16,7 +16,7 @@ void lines860_890(screen_t *screen, int H, const char * H$, char * M$);
 void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]);
 void lines920_970(screen_t *screen, int J, int T, int F[5][9]);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char * M$);
+                    int ** O, const char * C$[5], char * M$, int P[24]);
 void lines1700_1730(screen_t *screen, int X, int Y, char * IN$);
 
 int main(int argc, char *argv[]) {
@@ -25,8 +25,9 @@ int main(int argc, char *argv[]) {
     int * O;
     const char * C$[5], * H$;
     char * I$, * IN$ = NULL, * M$ = NULL, * N$;
+    int P[24];
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, M$);
+    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, M$, P);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -130,12 +131,12 @@ int main(int argc, char *argv[]) {
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J, &H, K, N, OF, Y, F, O, M$);
+                lines610_670(BR, J, &H, K, N, OF, Y, F, O, M$, P);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, BR, C, J, &H, K, N, F, O, C$, H$, M$);
+                lines570_600(screen, BR, C, J, &H, K, N, F, O, C$, H$, M$, P);
             }
     // 330 GOSUB 860
             lines860_890(screen, H, H$, M$);
@@ -233,12 +234,11 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-int P[24];
 int PR;
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N, int F[5][9], int * O, const char * C$[5],
-                  const char * H$, char * M$) {
+                  const char * H$, char * M$, int P[24]) {
     int OF, X, Y;
     char * IN$ = NULL;
     // 570 LET M$="";GOSUB 860
@@ -257,11 +257,11 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     free(IN$);
     // 600 GOSUB 680
     lines680_710(C, N, &Y, C$, M$);
-    lines610_670(BR, J, H, K, N, OF, Y, F, O, M$);
+    lines610_670(BR, J, H, K, N, OF, Y, F, O, M$, P);
 }
 
 void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
-                  int F[5][9], int * O, char * M$) {
+                  int F[5][9], int * O, char * M$, int P[24]) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
@@ -460,7 +460,7 @@ void lines980_1050(screen_t *screen, int T, int W) {
 void lines1600_1650(int *W);
 
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char * M$) {
+                    int ** O, const char * C$[5], char * M$, int P[24]) {
     int I;
     // 1060 GOSUB 1600
     lines1600_1650(W);

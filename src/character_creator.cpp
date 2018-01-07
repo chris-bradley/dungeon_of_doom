@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int K, MP, N, O_, OF, P_, T, W, X, Y;
+int MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -13,10 +13,10 @@ char * IN$;
 char * M$;
 char * N$;
 
-void lines570_600(screen_t *screen, int BR, int C, int J, int *H);
-void lines610_670(int BR, int J, int *H);
+void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K);
+void lines610_670(int BR, int J, int *H, int K);
 void lines680_710(int C);
-void lines720_800(screen_t *screen, int D);
+void lines720_800(screen_t *screen, int D, int *K);
 void lines810_850(screen_t *screen, int J, int H);
 void lines860_890(screen_t *screen, int H);
 void lines900_910(screen_t *screen, int J);
@@ -25,7 +25,7 @@ void lines1060_1590(int *AS, int *D, int *GC);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H;
+    int AS, BR, C, D, GC, I, J, H, K;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC);
     // 20 paper 0:CLS
@@ -56,10 +56,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(screen, D);
+        lines720_800(screen, D, &K);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen, D);
+            lines720_800(screen, D, &K);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen, D);
+            lines720_800(screen, D, &K);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -131,12 +131,12 @@ int main(int argc, char *argv[]) {
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J, &H);
+                lines610_670(BR, J, &H, K);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen, BR, C, J, &H);
+                lines570_600(screen, BR, C, J, &H, K);
             }
     // 330 GOSUB 860
             lines860_890(screen, H);
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
 int P[24];
 int PR;
 
-void lines570_600(screen_t *screen, int BR, int C, int J, int *H) {
+void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K) {
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen, *H);
@@ -254,10 +254,10 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H) {
     free(IN$);
     // 600 GOSUB 680
     lines680_710(C);
-    lines610_670(BR, J, H);
+    lines610_670(BR, J, H, K);
 }
 
-void lines610_670(int BR, int J, int *H) {
+void lines610_670(int BR, int J, int *H, int K) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
@@ -303,7 +303,7 @@ void lines680_710(int C) {
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen, int D) {
+void lines720_800(screen_t *screen, int D, int *K) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
@@ -314,15 +314,15 @@ void lines720_800(screen_t *screen, int D) {
     tab(screen->cursor, 1, P_);
     print_text(screen, " ");
     // 760 IF I$="A" AND K>1 THEN LET K=K-1
-    if (*I$ == 'a' && K > 1) {
-        K -= 1;
+    if (*I$ == 'a' && *K > 1) {
+        *K -= 1;
     }
     // 770 IF I$="Z" AND K<D THEN LET K=K+1
-    else if (*I$ == 'z' && K < D) {
-        K += 1;
+    else if (*I$ == 'z' && *K < D) {
+        *K += 1;
     }
     // 780 LET P=K*2+T-1
-    P_ = K * 2 + T - 1;
+    P_ = *K * 2 + T - 1;
     // 790 PRINT tab(1,P);">";
     tab(screen->cursor, 1, P_);
     print_text(screen, ">");

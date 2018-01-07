@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-char * IN$;
 char * M$;
 char * N$;
 
@@ -21,14 +20,14 @@ void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]);
 void lines920_970(screen_t *screen, int J, int T, int F[5][9]);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
                     int ** O, const char * C$[5]);
-void lines1700_1730(screen_t *screen, int X, int Y);
+void lines1700_1730(screen_t *screen, int X, int Y, char * IN$);
 
 int main(int argc, char *argv[]) {
     int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
     int F[5][9];
     int * O;
     const char * C$[5], * H$;
-    char * I$;
+    char * I$, * IN$ = NULL;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$);
     // 20 paper 0:CLS
@@ -166,7 +165,7 @@ int main(int argc, char *argv[]) {
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         X = 1;
         Y = 3;
-        lines1700_1730(screen, X, Y);
+        lines1700_1730(screen, X, Y, IN$);
         strcpy(N$, IN$);
         free(IN$);
     // 390 IF LEN(N$)>10 THEN GOTO 360
@@ -244,6 +243,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N, int F[5][9], int * O, const char * C$[5],
                   const char * H$) {
     int OF, X, Y;
+    char * IN$ = NULL;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen, *H, H$);
@@ -255,7 +255,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     X = 14;
     Y = 2;
-    lines1700_1730(screen, X, Y);
+    lines1700_1730(screen, X, Y, IN$);
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
@@ -670,7 +670,7 @@ void lines1600_1650(int *W) {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen, int X, int Y) {
+void lines1700_1730(screen_t *screen, int X, int Y, char * IN$) {
     // 1700 IN$=""
     int ind = 0;
     char * I$ = (char *) malloc(sizeof(char));

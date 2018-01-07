@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int T, W, X, Y;
+int W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -17,16 +17,16 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
                   int N);
 void lines610_670(int BR, int J, int *H, int K, int N, int OF);
 void lines680_710(int C, int N);
-void lines720_800(screen_t *screen, int D, int *K, int *P_);
-void lines810_850(screen_t *screen, int J, int H);
+void lines720_800(screen_t *screen, int D, int *K, int *P_, int T);
+void lines810_850(screen_t *screen, int J, int H, int *T);
 void lines860_890(screen_t *screen, int H);
-void lines900_910(screen_t *screen, int J);
-void lines920_970(screen_t *screen, int J);
+void lines900_910(screen_t *screen, int J, int *T);
+void lines920_970(screen_t *screen, int J, int T);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_;
+    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T;
     // 10 GOSUB 1060
     lines1060_1590(&AS, &D, &GC, &MP);
     // 20 paper 0:CLS
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
     H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, J, H);
-    lines900_910(screen, J);
+    lines810_850(screen, J, H, &T);
+    lines900_910(screen, J, &T);
     // 50 LET K=1:LET P=T+1
     K = 1;
     P_ = T + 1;
@@ -57,22 +57,22 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(screen, D, &K, &P_);
+        lines720_800(screen, D, &K, &P_, T);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen, D, &K, &P_);
+            lines720_800(screen, D, &K, &P_, T);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
             F[J][K] += 1;
             H -= 1;
-            lines920_970(screen, J);
+            lines920_970(screen, J, T);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*I$ == '-' && F[J][K] > 1) {
             F[J][K] -=1;
             H += 1;
-            lines920_970(screen, J);
+            lines920_970(screen, J, T);
         }
     // 110 LET C=1
         C = 1;
@@ -110,16 +110,16 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, J, H);
+        lines810_850(screen, J, H, &T);
     // 240 GOSUB 900
-        lines900_910(screen, J);
+        lines900_910(screen, J, &T);
     // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, P_);
         print_text(screen, ">");
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen, D, &K, &P_);
+            lines720_800(screen, D, &K, &P_, T);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -306,7 +306,7 @@ void lines680_710(int C, int N) {
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen, int D, int *K, int *P_) {
+void lines720_800(screen_t *screen, int D, int *K, int *P_, int T) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
@@ -332,11 +332,11 @@ void lines720_800(screen_t *screen, int D, int *K, int *P_) {
     // 800 RETURN
 }
 
-void lines980_1050(screen_t *screen);
+void lines980_1050(screen_t *screen, int T);
 
 int BG, FG, L;
 const char * F$[5][10];
-void lines810_850(screen_t *screen, int J, int H) {
+void lines810_850(screen_t *screen, int J, int H, int *T) {
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
@@ -349,10 +349,10 @@ void lines810_850(screen_t *screen, int J, int H) {
     // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
     BG = 2;
     FG = 3;
-    T = 1;
+    *T = 1;
     L = 2;
     // 850 GOSUB 980
-    lines980_1050(screen);
+    lines980_1050(screen, *T);
     lines860_890(screen, H);
 }
 
@@ -383,18 +383,18 @@ void lines860_890(screen_t *screen, int H) {
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, int J) {
+void lines900_910(screen_t *screen, int J, int *T) {
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     BG = 3;
     FG = 2;
-    T = 5;
+    *T = 5;
     L = 15;
     // 910 GOSUB 980
-    lines980_1050(screen);
-    lines920_970(screen, J);
+    lines980_1050(screen, *T);
+    lines920_970(screen, J, *T);
 }
 
-void lines920_970(screen_t *screen, int J) {
+void lines920_970(screen_t *screen, int J, int T) {
     int I;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
@@ -424,7 +424,7 @@ void lines920_970(screen_t *screen, int J) {
     // 970 RETURN
 }
 
-void lines980_1050(screen_t *screen) {
+void lines980_1050(screen_t *screen, int T) {
     int I;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, T);

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "dungeon_lib.h"
 
-int BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
+int C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
 int F[5][9];
 int * O;
 const char * C$[5];
@@ -13,8 +13,8 @@ char * IN$;
 char * M$;
 char * N$;
 
-void lines570_600(screen_t *screen);
-void lines610_670();
+void lines570_600(screen_t *screen, int BR);
+void lines610_670(int BR);
 void lines680_710();
 void lines720_800(screen_t *screen);
 void lines810_850(screen_t *screen);
@@ -25,7 +25,7 @@ void lines1060_1590(int *AS);
 void lines1700_1730(screen_t *screen);
 
 int main(int argc, char *argv[]) {
-    int AS;
+    int AS, BR;
     // 10 GOSUB 1060
     lines1060_1590(&AS);
     // 20 paper 0:CLS
@@ -131,12 +131,12 @@ int main(int argc, char *argv[]) {
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670();
+                lines610_670(BR);
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
                 BR = rand() % 3;
-                lines570_600(screen);
+                lines570_600(screen, BR);
             }
     // 330 GOSUB 860
             lines860_890(screen);
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
 int P[24];
 int PR;
 
-void lines570_600(screen_t *screen) {
+void lines570_600(screen_t *screen, int BR) {
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen);
@@ -254,10 +254,10 @@ void lines570_600(screen_t *screen) {
     free(IN$);
     // 600 GOSUB 680
     lines680_710();
-    lines610_670();
+    lines610_670(BR);
 }
 
-void lines610_670() {
+void lines610_670(int BR) {
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");

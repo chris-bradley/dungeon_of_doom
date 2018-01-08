@@ -18,16 +18,14 @@ using namespace std;
 
 void lines230_270();
 void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW);
-void lines360_420(screen_t *screen);
+void lines360_420(screen_t *screen, int W);
 void lines430_440();
-void lines450_600(screen_t *screen);
-void lines610_690();
+void lines450_600(screen_t *screen, int W);
+void lines610_690(int *W);
 void lines700_770();
-void lines790_800();
+void lines790_800(int *W);
 void lines810_840();
 void lines5000_5080();
-
-int W;
 
 int LE, X, Y, OS;
 int R[16][16];
@@ -35,11 +33,12 @@ char *I$;
 int IX, IY, CO;
 
 int main(int argc, char *argv[]) {
+    int W;
     // 5 GOSUB 5000
     lines5000_5080();
     // GOSUB 610
 
-    lines610_690();
+    lines610_690(&W);
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
@@ -89,7 +88,7 @@ int main(int argc, char *argv[]) {
         // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
 
         if (*I$ == 'h') {
-            lines360_420(screen);
+            lines360_420(screen, W);
         } else if (*I$ == 'a' and Y > 1) {
             Y -= 1;
         } else if (*I$ == 'z' and Y < 15) {
@@ -116,7 +115,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*I$ == 's' && IX > 0) {
-            lines450_600(screen);
+            lines450_600(screen, W);
         }
         // 210 IF I$<>"F" THEN GOTO 100
         if (*I$ == 'f') {
@@ -180,7 +179,7 @@ void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW) {
 
 const char * H$[10];
 
-void lines360_420(screen_t *screen) {
+void lines360_420(screen_t *screen, int W) {
 
     int H;
     // 360 paper 1:ink 3
@@ -210,7 +209,7 @@ void lines430_440() {
     inkey$();
 }
 
-void lines450_600(screen_t *screen) {
+void lines450_600(screen_t *screen, int W) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
     print_text(screen, "ONE MOMENT PLEASE");
@@ -261,10 +260,10 @@ void lines450_600(screen_t *screen) {
     // 600 RETURN
 }
 
-void lines610_690() {
+void lines610_690(int *W) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
-    lines790_800();
+    lines790_800(W);
     // 630 DATA "PRESS ANY KEY","TO MOVE A Z N M","1 WALL    2 VASE"
     // 640 DATA "3 CHEST 4 * idol *","5 WAY IN  6 EXIT","7 TRAP", "8 SAFE PLACE"
     // 650 DATA "9 GUARD","0 TO ERASE","S TO SAVE"
@@ -307,11 +306,11 @@ void lines700_770() {
     // 770 RETURN
 }
 
-void lines790_800() {
+void lines790_800(int *W) {
   // 790 OS=96:CO=OS+6:W=40:GOSUB 4000
   OS = 96;
   CO = OS + 6;
-  W = 40;
+  *W = 40;
   // 800 RETURN
 }
 

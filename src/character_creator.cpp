@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
     // 330 GOSUB 860
             lines860_890(screen, H, H$, M$);
     // 340 IF I$<>" " THEN GOTO 260
-        } while (*I$ != ' '); 
+        } while (*I$ != ' ');
     // 350 NEXT J
     }
     N$ = (char *) malloc(sizeof(char) * 40);
@@ -483,7 +483,7 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
         fprintf(stderr, "*O is NULL!\n");
         exit(1);
     }
-   
+
     int i;
     for (i = 0; i < *D * 3; i += 1) {
         O[i] = 0;

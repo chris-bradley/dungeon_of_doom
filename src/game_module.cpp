@@ -234,7 +234,7 @@ void lines350_355() {
     // C64:
     // 350 POKE VS+1,J:POKE VS+4,33
     // 355 POKE VS+4,32:RETURN
-    
+
     // TODO: SOUND!
 }
 
@@ -242,7 +242,7 @@ void lines360_365() {
     // C64:
     // 360 POKE VS+8,J:POKE VS+11,129
     // 365 POKE VS+11,128:RETURN
-    
+
     // TODO: SOUND!
 }
 
@@ -836,7 +836,7 @@ void lines1550_1650(screen_t *screen) {
     // 1580 LET J=T(I):GOSUB350
         J = T[I];
         lines350_355();
-        
+
     // 1590 LET X=NX:LET Y=NY
         X = NX;
         Y = NY;
@@ -1084,7 +1084,7 @@ void lines2010_2250(screen_t *screen) {
     for (I = 1; I <= 8; I += 1) {
     // 2090 LET F(I)=ASC(MID$(S$,P,1)) - AS
         F[I] = (int) S$[P - 1] - AS;
-    // 2100 LET P=P+1 
+    // 2100 LET P=P+1
         P += 1;
     // 2110 NEXT I
     }

@@ -20,25 +20,24 @@ void lines230_270(int X, int Y);
 void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW);
 void lines360_420(screen_t *screen, int W);
 void lines430_440();
-void lines450_600(screen_t *screen, int W, int *LE);
-void lines610_690(int *W, int *LE);
+void lines450_600(screen_t *screen, int W, int *LE, int OS);
+void lines610_690(int *W, int *LE, int *OS);
 void lines700_770();
-void lines790_800(int *W);
+void lines790_800(int *OS, int *W);
 void lines810_840();
 void lines5000_5080();
 
-int OS;
 int R[16][16];
 char *I$;
 int IX, IY, CO;
 
 int main(int argc, char *argv[]) {
-    int LE, W, X, Y;
+    int LE, OS, W, X, Y;
     // 5 GOSUB 5000
     lines5000_5080();
     // GOSUB 610
 
-    lines610_690(&W, &LE);
+    lines610_690(&W, &LE, &OS);
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
@@ -115,7 +114,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*I$ == 's' && IX > 0) {
-            lines450_600(screen, W, &LE);
+            lines450_600(screen, W, &LE, OS);
         }
         // 210 IF I$<>"F" THEN GOTO 100
         if (*I$ == 'f') {
@@ -209,7 +208,7 @@ void lines430_440() {
     inkey$();
 }
 
-void lines450_600(screen_t *screen, int W, int *LE) {
+void lines450_600(screen_t *screen, int W, int *LE, int OS) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
     print_text(screen, "ONE MOMENT PLEASE");
@@ -260,10 +259,10 @@ void lines450_600(screen_t *screen, int W, int *LE) {
     // 600 RETURN
 }
 
-void lines610_690(int *W, int *LE) {
+void lines610_690(int *W, int *LE, int *OS) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
-    lines790_800(W);
+    lines790_800(OS, W);
     // 630 DATA "PRESS ANY KEY","TO MOVE A Z N M","1 WALL    2 VASE"
     // 640 DATA "3 CHEST 4 * idol *","5 WAY IN  6 EXIT","7 TRAP", "8 SAFE PLACE"
     // 650 DATA "9 GUARD","0 TO ERASE","S TO SAVE"
@@ -306,10 +305,10 @@ void lines700_770() {
     // 770 RETURN
 }
 
-void lines790_800(int *W) {
+void lines790_800(int *OS, int *W) {
   // 790 OS=96:CO=OS+6:W=40:GOSUB 4000
-  OS = 96;
-  CO = OS + 6;
+  *OS = 96;
+  CO = *OS + 6;
   *W = 40;
   // 800 RETURN
 }

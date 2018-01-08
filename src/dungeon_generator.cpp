@@ -16,28 +16,28 @@
 
 using namespace std;
 
-void lines230_270(int X, int Y);
+void lines230_270(int X, int Y, int R[16][16]);
 void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW);
 void lines360_420(screen_t *screen, int W);
 void lines430_440();
-void lines450_600(screen_t *screen, int W, int *LE, int OS);
-void lines610_690(int *W, int *LE, int *OS);
-void lines700_770();
+void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16]);
+void lines610_690(int *W, int *LE, int *OS, int R[16][16]);
+void lines700_770(int R[16][16]);
 void lines790_800(int *OS, int *W);
 void lines810_840();
 void lines5000_5080();
 
-int R[16][16];
 char *I$;
 int IX, IY, CO;
 
 int main(int argc, char *argv[]) {
     int LE, OS, W, X, Y;
+    int R[16][16];
     // 5 GOSUB 5000
     lines5000_5080();
     // GOSUB 610
 
-    lines610_690(&W, &LE, &OS);
+    lines610_690(&W, &LE, &OS, R);
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
         } else if (*I$ == 'm' and X < 15) {
             X += 1;
         } else if (*I$ > '/' and *I$ < ':') {
-            lines230_270(X, Y);
+            lines230_270(X, Y, R);
         }
         // 170 paper 3:ink 0
         paper(screen->cursor, 3);
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*I$ == 's' && IX > 0) {
-            lines450_600(screen, W, &LE, OS);
+            lines450_600(screen, W, &LE, OS, R);
         }
         // 210 IF I$<>"F" THEN GOTO 100
         if (*I$ == 'f') {
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines230_270(int X, int Y) {
+void lines230_270(int X, int Y, int R[16][16]) {
     // 230 LET I=VAL(I$)
     int I = atoi(I$);
     // 240 IF I=9 THEN LET I=8+rnd(3)
@@ -208,7 +208,7 @@ void lines430_440() {
     inkey$();
 }
 
-void lines450_600(screen_t *screen, int W, int *LE, int OS) {
+void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16]) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
     print_text(screen, "ONE MOMENT PLEASE");
@@ -255,11 +255,11 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS) {
     SDL_RenderPresent(screen->ren);
     // 590 LET LE=LE+1:GOSUB 700
     *LE = *LE + 1;
-    lines700_770();
+    lines700_770(R);
     // 600 RETURN
 }
 
-void lines610_690(int *W, int *LE, int *OS) {
+void lines610_690(int *W, int *LE, int *OS, int R[16][16]) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
     lines790_800(OS, W);
@@ -283,10 +283,10 @@ void lines610_690(int *W, int *LE, int *OS) {
 
     // 690 NEXT I:GOSUB 810
     lines810_840();
-    lines700_770();
+    lines700_770(R);
 }
 
-void lines700_770() {
+void lines700_770(int R[16][16]) {
     // 700 FOR J=1 to 15
     // 710 FOR K=1 to 15
     // 720 LET R(J,K) = CO

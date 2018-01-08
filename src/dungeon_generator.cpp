@@ -307,8 +307,7 @@ void lines700_770() {
     // 770 RETURN
 }
 
-void lines790_800()
-{
+void lines790_800() {
   // 790 OS=96:CO=OS+6:W=40:GOSUB 4000
   OS = 96;
   CO = OS + 6;
@@ -316,8 +315,7 @@ void lines790_800()
   // 800 RETURN
 }
 
-void lines810_840()
-{
+void lines810_840() {
   // 810 REM SET UP THE CHARACTERS
   // 820 FOR I=0 TO 7:READ A:POKE 36352+I, 255-A:NEXT I
   // 830 FOR I=0 TO 95:READ A:POKE 36400+I, 255-A:NEXT I
@@ -326,8 +324,7 @@ void lines810_840()
 
 // Graphic Memory setup stuff
 
-void lines5000_5080()
-{
+void lines5000_5080() {
     // Memory remapping; Not needed by us:
     // 5000 POKE 52, 128:POKE 56,128
     // Stop Timer A; Switch the character generator ROM ; Not needed by us?

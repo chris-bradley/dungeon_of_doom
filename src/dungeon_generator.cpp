@@ -16,7 +16,7 @@
 
 using namespace std;
 
-void lines230_270();
+void lines230_270(int X);
 void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW);
 void lines360_420(screen_t *screen, int W);
 void lines430_440();
@@ -27,13 +27,13 @@ void lines790_800(int *W);
 void lines810_840();
 void lines5000_5080();
 
-int X, Y, OS;
+int Y, OS;
 int R[16][16];
 char *I$;
 int IX, IY, CO;
 
 int main(int argc, char *argv[]) {
-    int LE, W;
+    int LE, W, X;
     // 5 GOSUB 5000
     lines5000_5080();
     // GOSUB 610
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
         } else if (*I$ == 'm' and X < 15) {
             X += 1;
         } else if (*I$ > '/' and *I$ < ':') {
-            lines230_270();
+            lines230_270(X);
         }
         // 170 paper 3:ink 0
         paper(screen->cursor, 3);
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines230_270() {
+void lines230_270(int X) {
     // 230 LET I=VAL(I$)
     int I = atoi(I$);
     // 240 IF I=9 THEN LET I=8+rnd(3)

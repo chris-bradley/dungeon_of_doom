@@ -12,13 +12,15 @@ void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$,
                   const char * O$[25]);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
-                  const char * H$, char * M$);
+                  const char * H$, char * M$, const char * F$[5][10]);
 void lines860_890(screen_t *screen, int H, const char * H$, char * M$);
-void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]);
-void lines920_970(screen_t *screen, int J, int T, int F[5][9]);
+void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
+                  const char * F$[5][10]);
+void lines920_970(screen_t *screen, int J, int T, int F[5][9],
+                  const char * F$[5][10]);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
                     int ** O, const char * C$[5], char * M$, int P[24],
-                    const char * O$[25]);
+                    const char * O$[25], const char * F$[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char * IN$);
 
 int main(int argc, char *argv[]) {
@@ -28,8 +30,9 @@ int main(int argc, char *argv[]) {
     const char * C$[5], * H$, * O$[25];
     char * I$, * IN$ = NULL, * M$ = NULL, * N$;
     int P[24];
+    const char * F$[5][10];
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, M$, P, O$);
+    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, M$, P, O$, F$);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -41,8 +44,8 @@ int main(int argc, char *argv[]) {
     H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, J, H, &T, W, H$, M$);
-    lines900_910(screen, J, &T, W, F);
+    lines810_850(screen, J, H, &T, W, H$, M$, F$);
+    lines900_910(screen, J, &T, W, F, F$);
     // 50 LET K=1:LET P=T+1
     K = 1;
     P_ = T + 1;
@@ -66,13 +69,13 @@ int main(int argc, char *argv[]) {
         if (*I$ == ';' && H > 0) {
             F[J][K] += 1;
             H -= 1;
-            lines920_970(screen, J, T, F);
+            lines920_970(screen, J, T, F, F$);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*I$ == '-' && F[J][K] > 1) {
             F[J][K] -=1;
             H += 1;
-            lines920_970(screen, J, T, F);
+            lines920_970(screen, J, T, F, F$);
         }
     // 110 LET C=1
         C = 1;
@@ -110,9 +113,9 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, J, H, &T, W, H$, M$);
+        lines810_850(screen, J, H, &T, W, H$, M$, F$);
     // 240 GOSUB 900
-        lines900_910(screen, J, &T, W, F);
+        lines900_910(screen, J, &T, W, F, F$);
     // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, P_);
         print_text(screen, ">");
@@ -337,9 +340,8 @@ void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$) {
 
 void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L);
 
-const char * F$[5][10];
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
-                  const char * H$, char * M$) {
+                  const char * H$, char * M$, const char * F$[5][10]) {
     int BG, FG, L;
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
@@ -387,7 +389,8 @@ void lines860_890(screen_t *screen, int H, const char * H$, char * M$) {
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]) {
+void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
+                  const char * F$[5][10]) {
     int BG, FG, L;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     BG = 3;
@@ -396,10 +399,11 @@ void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]) {
     L = 15;
     // 910 GOSUB 980
     lines980_1050(screen, W, BG, FG, *T, L);
-    lines920_970(screen, J, *T, F);
+    lines920_970(screen, J, *T, F, F$);
 }
 
-void lines920_970(screen_t *screen, int J, int T, int F[5][9]) {
+void lines920_970(screen_t *screen, int J, int T, int F[5][9],
+                  const char * F$[5][10]) {
     int I, Y;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
@@ -464,7 +468,7 @@ void lines1600_1650(int *W);
 
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
                     int ** O, const char * C$[5], char * M$, int P[24],
-                    const char * O$[25]) {
+                    const char * O$[25], const char * F$[5][10]) {
     int I;
     // 1060 GOSUB 1600
     lines1600_1650(W);

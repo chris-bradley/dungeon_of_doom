@@ -20,25 +20,25 @@ void lines230_270();
 void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW);
 void lines360_420(screen_t *screen, int W);
 void lines430_440();
-void lines450_600(screen_t *screen, int W);
-void lines610_690(int *W);
+void lines450_600(screen_t *screen, int W, int *LE);
+void lines610_690(int *W, int *LE);
 void lines700_770();
 void lines790_800(int *W);
 void lines810_840();
 void lines5000_5080();
 
-int LE, X, Y, OS;
+int X, Y, OS;
 int R[16][16];
 char *I$;
 int IX, IY, CO;
 
 int main(int argc, char *argv[]) {
-    int W;
+    int LE, W;
     // 5 GOSUB 5000
     lines5000_5080();
     // GOSUB 610
 
-    lines610_690(&W);
+    lines610_690(&W, &LE);
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*I$ == 's' && IX > 0) {
-            lines450_600(screen, W);
+            lines450_600(screen, W, &LE);
         }
         // 210 IF I$<>"F" THEN GOTO 100
         if (*I$ == 'f') {
@@ -209,7 +209,7 @@ void lines430_440() {
     inkey$();
 }
 
-void lines450_600(screen_t *screen, int W) {
+void lines450_600(screen_t *screen, int W, int *LE) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
     print_text(screen, "ONE MOMENT PLEASE");
@@ -231,7 +231,7 @@ void lines450_600(screen_t *screen, int W) {
     S$[225] = (char) IX + OS;
     S$[226] = (char) IY + OS;
     // 530 LET S$=S$+CHR$(LE+OS)
-    S$[227] = (char) LE + OS;
+    S$[227] = (char) *LE + OS;
     S$[228] = 0;
     // 540 PRINT tab(1,4);"ANY KEY TO SAVE   ";GOSUB 430
     tab(screen->cursor, 1, 4);
@@ -255,12 +255,12 @@ void lines450_600(screen_t *screen, int W) {
     print_left$_b$(screen, W);
     SDL_RenderPresent(screen->ren);
     // 590 LET LE=LE+1:GOSUB 700
-    LE = LE + 1;
+    *LE = *LE + 1;
     lines700_770();
     // 600 RETURN
 }
 
-void lines610_690(int *W) {
+void lines610_690(int *W, int *LE) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
     lines790_800(W);
@@ -268,7 +268,7 @@ void lines610_690(int *W) {
     // 640 DATA "3 CHEST 4 * idol *","5 WAY IN  6 EXIT","7 TRAP", "8 SAFE PLACE"
     // 650 DATA "9 GUARD","0 TO ERASE","S TO SAVE"
     // 660 LET LE = 1
-    LE = 1;
+    *LE = 1;
     // 670 FOR I=1 to 10
     // 680 READ H$(I)
     H$[0] = "PRESS ANY KEY     ";

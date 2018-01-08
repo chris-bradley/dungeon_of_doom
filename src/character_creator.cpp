@@ -335,13 +335,12 @@ void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$) {
     // 800 RETURN
 }
 
-void lines980_1050(screen_t *screen, int W, int BG, int FG, int T);
+void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L);
 
-int L;
 const char * F$[5][10];
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
                   const char * H$, char * M$) {
-    int BG, FG;
+    int BG, FG, L;
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
@@ -357,7 +356,7 @@ void lines810_850(screen_t *screen, int J, int H, int *T, int W,
     *T = 1;
     L = 2;
     // 850 GOSUB 980
-    lines980_1050(screen, W, BG, FG, *T);
+    lines980_1050(screen, W, BG, FG, *T, L);
     lines860_890(screen, H, H$, M$);
 }
 
@@ -389,14 +388,14 @@ void lines860_890(screen_t *screen, int H, const char * H$, char * M$) {
 }
 
 void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9]) {
-    int BG, FG;
+    int BG, FG, L;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     BG = 3;
     FG = 2;
     *T = 5;
     L = 15;
     // 910 GOSUB 980
-    lines980_1050(screen, W, BG, FG, *T);
+    lines980_1050(screen, W, BG, FG, *T, L);
     lines920_970(screen, J, *T, F);
 }
 
@@ -430,7 +429,7 @@ void lines920_970(screen_t *screen, int J, int T, int F[5][9]) {
     // 970 RETURN
 }
 
-void lines980_1050(screen_t *screen, int W, int BG, int FG, int T) {
+void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L) {
     int I;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, T);

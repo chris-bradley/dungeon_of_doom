@@ -17,10 +17,9 @@ void lines1760_1950(screen_t *screen);
 void lines1770_1950(screen_t *screen);
 void lines2010_2250(screen_t *screen);
 void lines2260_2490(screen_t *screen);
-void lines2500_2780(int *C1);
+void lines2500_2780(int *C1, int *C5);
 
-int C5,  // Symbol for Way In
-    C6,  // Symbol for Exit
+int C6,  // Symbol for Exit
     DX,
     NF,  // Facing. NESW
     NX,
@@ -49,7 +48,8 @@ int ** R;
 int * T;
 
 int main(int argc, char *argv[]) {
-    int C1;  // Symbol for Wall
+    int C1,  // Symbol for Wall
+        C5;  // Symbol for Way In
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     clear_screen(screen);
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
-    lines2500_2780(&C1);
+    lines2500_2780(&C1, &C5);
     // 20 GOSUB2010
     lines2010_2250(screen);
     // 30 GOSUB1770
@@ -1235,11 +1235,11 @@ void lines2260_2490(screen_t *screen) {
     // 2490 RETURN
 }
 
-void lines2930_3200(int *C1);
+void lines2930_3200(int *C1, int *C5);
 
 int RE;
 
-void lines2500_2780(int *C1) {
+void lines2500_2780(int *C1, int *C5) {
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     free(C$);
     C$ = (char *) malloc(sizeof(char) * 18);
@@ -1407,7 +1407,7 @@ void lines2500_2780(int *C1) {
     T[16] = 145;
     T[17] = 101;
     T[18] = 149;
-    lines2930_3200(C1);
+    lines2930_3200(C1, C5);
     // 2780 RETURN
 }
 
@@ -1461,7 +1461,7 @@ void lines2790_2920(screen_t *screen) {
 
 int C8;
 
-void lines2930_3200(int *C1) {
+void lines2930_3200(int *C1, int *C5) {
     // 2930 REM ** USER DEF'D CHARACTERS **
     // 2940 GOSUB 4000
     // Not needed due to dungeon_lib
@@ -1481,7 +1481,7 @@ void lines2930_3200(int *C1) {
     C3 = C0 + 3;
     C4 = C0 + 4;
     // 3190 LET C5=C0+6:LET C6=C0+7:LET C7=C0+8:LET C8=C0+12
-    C5 = C0 + 6;
+    *C5 = C0 + 6;
     C6 = C0 + 7;
     C7 = C0 + 8;
     C8 = C0 + 12;

@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     I$ = (char *) malloc(sizeof(char));
     int done = 0;
     while (!done) {
-	*I$ = inkey$();
+        *I$ = inkey$();
         // 110 IF I$="H" THEN GOSUB 360
         // 120 IF I$="A" AND Y>1 THEN LET Y=Y-1
         // 130 IF I$="Z" AND Y<15 THEN LET Y=Y+1

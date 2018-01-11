@@ -22,11 +22,9 @@ void lines1770_1950(screen_t *screen, int *DX, int *NX, int *NY, int *OX,
 void lines2010_2250(screen_t *screen);
 void lines2260_2490(screen_t *screen, int NX, int NY);
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, int *NF, int *NX,
-                    int *NY, int *TF);
+                    int *NY, int *TF, int *TX, int *TY);
 
-int TX,
-    TY,
-    X,
+int X,
     Y;
 double FI, S1;
 char * C$;
@@ -54,7 +52,9 @@ int main(int argc, char *argv[]) {
         OX,
         OY,
         RH,  // Object at NX / NY
-        TF;  // Flag to see if we can exit.
+        TF,  // Flag to see if we can exit.
+        TX,
+        TY;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     clear_screen(screen);
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
-    lines2500_2780(&C1, &C5, &C6, &DX, &NF, &NX, &NY, &TF);
+    lines2500_2780(&C1, &C5, &C6, &DX, &NF, &NX, &NY, &TF, &TX, &TY);
     // 20 GOSUB2010
     lines2010_2250(screen);
     // 30 GOSUB1770
@@ -1249,7 +1249,7 @@ void lines2930_3200(int *C1, int *C5, int *C6);
 int RE;
 
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, int *NF, int *NX,
-                    int *NY, int *TF) {
+                    int *NY, int *TF, int *TX, int *TY) {
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     free(C$);
     C$ = (char *) malloc(sizeof(char) * 18);
@@ -1372,8 +1372,8 @@ void lines2500_2780(int *C1, int *C5, int *C6, int *DX, int *NF, int *NX,
     *DX = 255;
     *NF = 0;
     // 2700 LET TX=0:LET TY=0:LET TF=0:LET TR=0
-    TX = 0;
-    TY = 0;
+    *TX = 0;
+    *TY = 0;
     *TF = 0;
     TR = 0;
     // 2710 LET MX=0:LET MY=0:LET DY=12:LET F$=""

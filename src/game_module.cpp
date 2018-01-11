@@ -14,16 +14,16 @@ void lines1410_1520(screen_t *screen, int C1, int *DX, int *NF, int NX,
 void lines1550_1650(screen_t *screen, int *NF, int NX, int NY);
 void lines1660_1680();
 void lines1690_1750(screen_t *screen, int *DX, int NX, int NY);
-void lines1760_1950(screen_t *screen, int *DX, int *NX, int *NY);
-void lines1770_1950(screen_t *screen, int *DX, int *NX, int *NY);
+void lines1760_1950(screen_t *screen, int *DX, int *NX, int *NY, int *OX,
+                    int *OY);
+void lines1770_1950(screen_t *screen, int *DX, int *NX, int *NY, int *OX,
+                    int *OY);
 void lines2010_2250(screen_t *screen);
 void lines2260_2490(screen_t *screen, int NX, int NY);
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, int *NF, int *NX,
                     int *NY);
 
-int OX,
-    OY,
-    RH,  // Object at NX / NY
+int RH,  // Object at NX / NY
     TF,  // Flag to see if we can exit.
     TX,
     TY,
@@ -51,7 +51,9 @@ int main(int argc, char *argv[]) {
         DX,
         NF,  // Facing. NESW
         NX,
-        NY;
+        NY,
+        OX,
+        OY;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
 
@@ -67,7 +69,7 @@ int main(int argc, char *argv[]) {
     // 20 GOSUB2010
     lines2010_2250(screen);
     // 30 GOSUB1770
-    lines1770_1950(screen, &DX, &NX, &NY);
+    lines1770_1950(screen, &DX, &NX, &NY, &OX, &OY);
     int game_over = 0;
     do {
         SDL_RenderPresent(screen->ren);
@@ -198,7 +200,7 @@ int main(int argc, char *argv[]) {
             strcpy(M$, T$[12]);
             M$[strlen(T$[12])] = 0;
             lines430_430(screen);
-            lines1760_1950(screen, &DX, &NX, &NY);
+            lines1760_1950(screen, &DX, &NX, &NY, &OX, &OY);
             game_over = 0;
         } else {
             game_over = 1;
@@ -923,7 +925,7 @@ void lines2790_2920(screen_t *screen);
 int IX, IY, LE, OS, S3;
 
 void lines1760_1770_1950(screen_t *screen, int start_at_1770, int *DX, int *NX,
-                         int *NY) {
+                         int *NY, int *OX, int *OY) {
     // The original BASIC code sometimes used 'GOSUB 1760' and sometimes
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
@@ -940,8 +942,8 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, int *DX, int *NX,
                 exit(1);
             }
             strcpy(M$, T$[11]);
-            *NX = OX;
-            *NY = OY;
+            *NX = *OX;
+            *NY = *OY;
             lines430_430(screen);
             return;
         }
@@ -1008,18 +1010,20 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, int *DX, int *NX,
     // 1940 LET NX=IX:LET NY=IY:LET OX=NX:LET OY=NY:LET DX=255
     *NX = IX;
     *NY = IY;
-    OX = *NX;
-    OY = *NY;
+    *OX = *NX;
+    *OY = *NY;
     *DX = 255;
     // 1950 RETURN
 }
 
-void lines1760_1950(screen_t *screen, int *DX, int *NX, int *NY) {
-    lines1760_1770_1950(screen, 0, DX, NX, NY);
+void lines1760_1950(screen_t *screen, int *DX, int *NX, int *NY, int *OX,
+                    int *OY) {
+    lines1760_1770_1950(screen, 0, DX, NX, NY, OX, OY);
 }
 
-void lines1770_1950(screen_t *screen, int *DX, int *NX, int *NY) {
-    lines1760_1770_1950(screen, 1, DX, NX, NY);
+void lines1770_1950(screen_t *screen, int *DX, int *NX, int *NY, int *OX,
+                    int *OY) {
+    lines1760_1770_1950(screen, 1, DX, NX, NY, OX, OY);
 }
 
 void lines1960_2000(screen_t *screen) {

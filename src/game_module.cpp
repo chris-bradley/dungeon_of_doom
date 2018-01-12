@@ -845,8 +845,7 @@ void lines1550_1650(screen_t *screen, int *NF, int NX, int NY) {
         lines350_355();
 
     // 1590 LET X=NX:LET Y=NY
-        X = NX;
-        Y = NY;
+        // X and Y are overwritten before the above values are used.
     // 1600 FOR N=1 TO 4:LET NF=N:GOSUB480:NEXT N
         for (N = 1; N <=4; N += 1) {
             *NF = N;

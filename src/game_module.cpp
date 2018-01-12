@@ -835,8 +835,8 @@ void lines1550_1650(screen_t *screen, int *NF, int NX, int NY) {
     // 1550 paper 2:ink 1
     paper(screen->cursor, 2);
     ink(screen->cursor, 1);
-    // 1560 PRINT tab(0,10);" THY QUEST IS OVER! "
-    tab(screen->cursor, 0, 10);
+    // 1560 PRINT tab(0,1);" THY QUEST IS OVER! "
+    tab(screen->cursor, 0, 1);
     print_text(screen, " THY QUEST IS OVER! ");
     // 1570 FOR I = 1 TO 18
     for (I = 1; I <= 18; I += 1) {

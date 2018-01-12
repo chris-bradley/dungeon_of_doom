@@ -10,22 +10,21 @@ void lines810_860(screen_t *screen, int *DX, int *NF, int NX, int NY, int X,
                   int Y);
 void lines870_930(screen_t *screen, int *DX, int X, int Y);
 void lines990_1130(screen_t *screen, int *DX, int NF, int *NX, int *NY,
-                   int RH);
+                   int RH, double S1);
 void lines1410_1520(screen_t *screen, int C1, int *DX, int *FI, int *NF,
                     int NX, int NY);
 void lines1550_1650(screen_t *screen, int *FI, int *NF, int NX, int NY);
-void lines1660_1680();
+void lines1660_1680(double S1);
 void lines1690_1750(screen_t *screen, int *DX, int NX, int NY);
 void lines1760_1950(screen_t *screen, int *DX, int *NX, int *NY, int *OX,
                     int *OY);
 void lines1770_1950(screen_t *screen, int *DX, int *NX, int *NY, int *OX,
                     int *OY);
-void lines2010_2250(screen_t *screen);
+void lines2010_2250(screen_t *screen, double *S1);
 void lines2260_2490(screen_t *screen, int *FI, int NX, int NY);
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, int *FI, int *NF,
                     int *NX, int *NY, int *TF, int *TX, int *TY);
 
-double S1;
 char * C$;
 char * F$;
 char I$;
@@ -57,6 +56,7 @@ int main(int argc, char *argv[]) {
         TY,
         X,
         Y;
+    double S1;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
 
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     // 10 GOSUB2500
     lines2500_2780(&C1, &C5, &C6, &DX, &FI, &NF, &NX, &NY, &TF, &TX, &TY);
     // 20 GOSUB2010
-    lines2010_2250(screen);
+    lines2010_2250(screen, &S1);
     // 30 GOSUB1770
     lines1770_1950(screen, &DX, &NX, &NY, &OX, &OY);
     int game_over = 0;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
         }
     // 60 IF I$="C" AND F(7)>0 AND O(17)+O(18)>0 THEN GOSUB990
         if (I$ == 'c' && F[7] > 0 && O[17] + O[18] > 0) {
-            lines990_1130(screen, &DX, NF, &NX, &NY, RH);
+            lines990_1130(screen, &DX, NF, &NX, &NY, RH, S1);
         }
     // 70 IF I$="G" THEN GOSUB1410
         if (I$ == 'g') {
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
         }
     // 80 IF I$="P" THEN GOSUB1660
         if (I$ == 'p') {
-            lines1660_1680();
+            lines1660_1680(S1);
         }
     // 90 IF I$="R" THEN GOSUB1690
         if (I$ == 'r') {
@@ -591,12 +591,12 @@ void lines1220_1270(screen_t *screen, int NF, int *NX, int *NY);
 void lines1280_1290();
 void lines1300_1380(screen_t *screen, int *DX, int NX, int NY, int RH, int X,
                     int Y);
-void lines1390_1400();
+void lines1390_1400(double S1);
 
 int SL;
 
 void lines990_1130(screen_t *screen, int *DX, int NF, int *NX, int *NY,
-                   int RH) {
+                   int RH, double S1) {
     int X, Y;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(screen, NF, *NX, *NY);
@@ -681,7 +681,7 @@ void lines990_1130(screen_t *screen, int *DX, int NF, int *NX, int *NY,
             lines1300_1380(screen, DX, *NX, *NY, RH, X, Y);
             break;
         case 6:
-            lines1390_1400();
+            lines1390_1400(S1);
             break;
         case 7:
             // Line 1130 is just a return statement.
@@ -774,7 +774,7 @@ void lines1300_1380(screen_t *screen, int *DX, int NX, int NY, int RH, int X,
     // 1380 RETURN
 }
 
-void lines1390_1400() {
+void lines1390_1400(double S1) {
     // 1390 LET F(2)=S2:LET F(1)=S1:LET F(7)=F(7)-1
     F[2] = S2;
     F[1] = S1;
@@ -883,7 +883,7 @@ void lines1550_1650(screen_t *screen, int *FI, int *NF, int NX, int NY) {
     // 1650 RETURN
 }
 
-void lines1660_1680() {
+void lines1660_1680(double S1) {
     // 1660 IF O(24)>0 AND F(1)<S1 THEN LET F(1)=S1:LET O(24)=O(24)-1
     if (O[24] > 0 && F[1] < S1) {
         F[1] = S1;
@@ -1062,7 +1062,7 @@ void lines1960_2000(screen_t *screen) {
 
 int AS, OT, P;
 
-void lines2010_2250(screen_t *screen) {
+void lines2010_2250(screen_t *screen, double *S1) {
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -1127,7 +1127,7 @@ void lines2010_2250(screen_t *screen) {
     }
     strcpy(C$, S$ + P + 1);
     // 2190 LET S1=F(1):LET S2=F(2):LET S3=F(5)
-    S1 = F[1];
+    *S1 = F[1];
     S2 = F[2];
     S3 = F[5];
     // 2200 FOR I=1 TO 2

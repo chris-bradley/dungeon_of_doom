@@ -25,7 +25,8 @@ void lines2260_2490(screen_t *screen, int NX, int NY);
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, int *NF, int *NX,
                     int *NY, int *TF, int *TX, int *TY);
 
-double FI, S1;
+int FI;
+double S1;
 char * C$;
 char * F$;
 char I$;

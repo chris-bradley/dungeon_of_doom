@@ -1119,7 +1119,6 @@ void lines2010_2250(screen_t *screen, double *S1) {
     // 2170 LET TR=ASC(MID$(S$,P+1,1))-AS
     TR = (int) S$[P] - AS;
     // 2180 LET C$=RIGHT$(S$,LEN(S$)-(P+1))
-    free(C$);
     C$ = (char *) malloc(sizeof(char) * (P + 2));
     if (C$ == NULL) {
         fprintf(stderr, "C$ is NULL!\n");
@@ -1261,13 +1260,7 @@ int RE;
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, int *FI, int *NF,
                     int *NX, int *NY, int *TF, int *TX, int *TY) {
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
-    free(C$);
-    C$ = (char *) malloc(sizeof(char) * 18);
-    if (C$ == NULL) {
-        fprintf(stderr, "C$ is NULL!\n");
-        exit(1);
-    }
-    strcpy(C$, "ROLE PLAYING GAME");
+    // C$ is overwritten before being accessed again.
     // dungeon_lib removes the need for B$
     // 2510 LET W=40:LET OS=96
     W = 40;

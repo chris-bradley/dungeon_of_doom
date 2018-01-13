@@ -26,7 +26,6 @@ void lines2260_2490(screen_t *screen, char *C$, int *FI, int NX, int NY);
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, char **F$, int *FI,
                     int *NF, int *NX, int *NY, int *TF, int *TX, int *TY);
 
-char I$;
 char * M$;
 const char ** T$;
 const char ** W$;
@@ -57,6 +56,7 @@ int main(int argc, char *argv[]) {
         Y;
     double S1;
     char * C$ = NULL,
+         I$,
          * F$ = NULL;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
@@ -256,7 +256,7 @@ void lines360_365() {
 
 int W;
 
-void lines370_420(screen_t *screen) {
+void lines370_420(screen_t *screen, char *I$) {
     // 370 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);
@@ -266,7 +266,7 @@ void lines370_420(screen_t *screen) {
     // 390 LET I$=inkey$
     // 400 IF I$="" THEN GOTO390
     SDL_RenderPresent(screen->ren);
-    I$ = inkey$();
+    *I$ = inkey$();
     // 410 PRINT tab(0,5);LEFT(B$, W);:LET M$=""
     tab(screen->cursor, 0, 5);
     print_left$_b$(screen, W);
@@ -599,6 +599,7 @@ int SL;
 void lines990_1130(screen_t *screen, int *DX, char *F$, int NF, int *NX,
                    int *NY, int RH, double S1) {
     int X, Y;
+    char I$;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(screen, F$, NF, *NX, *NY);
     paper(screen->cursor, 2);
@@ -628,7 +629,7 @@ void lines990_1130(screen_t *screen, int *DX, char *F$, int NF, int *NX,
             exit(1);
         }
         strcpy(M$, "USE SPELL NUMBER?");
-        lines370_420(screen);
+        lines370_420(screen, &I$);
         char * outstring = (char *) malloc(sizeof(char) * 2);
         sprintf(outstring, "%c", I$);
     // 1050 LET SL=VAL(I$)
@@ -931,7 +932,7 @@ void lines1690_1750(screen_t *screen, int *DX, int NX, int NY) {
     // 1750 RETURN
 }
 
-void lines370_420(screen_t *screen);
+void lines370_420(screen_t *screen, char *I$);
 void lines1960_2000(screen_t *screen);
 void lines2790_2920(screen_t *screen, char *C$);
 
@@ -944,6 +945,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
     int correct_level_loaded, X, Y;
+    char I$;
     do {
 
     // 1760 IF F(5)<S3+1 THEN LET M$=T$(11):LET NX=OX:LET NY=OY:GOSUB 430:RETURN
@@ -973,7 +975,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
             exit(1);
         }
         strcpy(M$, T$[10]);
-        lines370_420(screen);
+        lines370_420(screen, &I$);
         size_t filesize;
     // 1790 S=OPENIN"LEVEL"
         FILE *S = fopen("LEVEL", "r");
@@ -1065,6 +1067,7 @@ void lines1960_2000(screen_t *screen) {
 int AS, OT, P;
 
 void lines2010_2250(screen_t *screen, char **C$, double *S1) {
+    char I$;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -1077,7 +1080,7 @@ void lines2010_2250(screen_t *screen, char **C$, double *S1) {
         exit(1);
     }
     strcpy(M$, T$[10]);
-    lines370_420(screen);
+    lines370_420(screen, &I$);
     // 2030 S=OPENIN "HERO"
     FILE *S = fopen("HERO", "r");
     // 2040 INPUT#S,S$
@@ -1150,6 +1153,7 @@ void lines2010_2250(screen_t *screen, char **C$, double *S1) {
 
 void lines2260_2490(screen_t *screen, char *C$, int *FI, int NX, int NY) {
     int X, Y;
+    char I$;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
     free(M$);
     M$ = (char *) malloc(sizeof(char) * 18);
@@ -1227,7 +1231,7 @@ void lines2260_2490(screen_t *screen, char *C$, int *FI, int NX, int NY) {
         exit(1);
     }
     strcpy(M$, "ANY KEY TO SAVE");
-    lines370_420(screen);
+    lines370_420(screen, &I$);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
     FILE *S = fopen("HERO", "w");
     int error = fputs(S$, S);

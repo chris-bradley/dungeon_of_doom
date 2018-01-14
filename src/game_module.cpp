@@ -6,7 +6,7 @@ void lines430_430(screen_t *screen, char *M$);
 void lines480_560(screen_t *screen, char *F$, int NF, int NX, int NY);
 void lines570_610(screen_t *screen, int *DX, int X, int Y);
 void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH,
-                  const char **T$);
+                  const char **T$, const char **W$);
 void lines810_860(screen_t *screen, int *DX, char *F$, int *NF, int NX, int NY,
                   int X, int Y);
 void lines870_930(screen_t *screen, int *DX, const char **T$, int X, int Y);
@@ -27,9 +27,8 @@ void lines2010_2250(screen_t *screen, char **C$, double *S1, const char **T$);
 void lines2260_2490(screen_t *screen, char *C$, int *FI, int NX, int NY);
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, char **F$, int *FI,
                     int *NF, int *NX, int *NY, const char ***T$, int *TF,
-                    int *TX, int *TY);
+                    int *TX, int *TY, const char ***W$);
 
-const char ** W$;
 double * F;
 
 int ** D;
@@ -60,7 +59,7 @@ int main(int argc, char *argv[]) {
          I$,
          * F$ = NULL,
          * M$;
-    const char ** T$;
+    const char ** T$, **W$;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
 
@@ -73,7 +72,7 @@ int main(int argc, char *argv[]) {
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
     lines2500_2780(
-        &C1, &C5, &C6, &DX, &F$, &FI, &NF, &NX, &NY, &T$, &TF, &TX, &TY
+        &C1, &C5, &C6, &DX, &F$, &FI, &NF, &NX, &NY, &T$, &TF, &TX, &TY, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(screen, &C$, &S1, T$);
@@ -192,7 +191,7 @@ int main(int argc, char *argv[]) {
         OY = NY;
     // 300 IF DX<255 THEN GOSUB620
         if (DX < 255) {
-            lines620_770(screen, &DX, NX, NY, RH, T$);
+            lines620_770(screen, &DX, NX, NY, RH, T$, W$);
         }
     // 310 IF F(1)>0 AND FI<1 AND RH<>C5 THEN GOTO 40
         if (F[1] > 0 && FI < 1 && RH != C5) {
@@ -389,12 +388,12 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800(screen_t *screen, const char **T$);
+void lines780_800(screen_t *screen, const char **T$, const char **W$);
 
 int C0, DY, H, I, J, MB, MX, MY, SX, SY, WB;
 
 void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH,
-                  const char **T$) {
+                  const char **T$, const char **W$) {
     int X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
@@ -462,7 +461,7 @@ void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH,
     int done = 0;
     do {
         if (MB == 1 && O[I] > 0) {
-            lines780_800(screen, T$);
+            lines780_800(screen, T$, W$);
         }
         if (I < 11) {
             I += 1;
@@ -473,7 +472,7 @@ void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH,
     // 770 RETURN
 }
 
-void lines780_800(screen_t *screen, const char **T$) {
+void lines780_800(screen_t *screen, const char **T$, const char **W$) {
     char * M$;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     O[I] = 0;
@@ -1289,7 +1288,7 @@ int RE;
 
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, char **F$, int *FI,
                     int *NF, int *NX, int *NY, const char ***T$, int *TF,
-                    int *TX, int *TY) {
+                    int *TX, int *TY, const char ***W$) {
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
     // dungeon_lib removes the need for B$
@@ -1318,9 +1317,9 @@ void lines2500_2780(int *C1, int *C5, int *C6, int *DX, char **F$, int *FI,
         exit(1);
     }
     // 2540 DIM W$(11),T$(12)
-    W$ = (const char **) malloc(sizeof(const char *) * (12));
-    if (W$ == NULL) {
-        fprintf(stderr, "W$ is NULL!\n");
+    *W$ = (const char **) malloc(sizeof(const char *) * (12));
+    if (*W$ == NULL) {
+        fprintf(stderr, "*W$ is NULL!\n");
         exit(1);
     }
     // 2550 DIM M(6),D(4,2),T(18)
@@ -1351,17 +1350,17 @@ void lines2500_2780(int *C1, int *C5, int *C6, int *DX, char **F$, int *FI,
     // 2580 FOR I = 1 TO 11
     // 2590 READ W$(I)
     // 2600 NEXT I
-    W$[1] = "GR SWORD";
-    W$[2] = "SWORD";
-    W$[3] = "AXE";
-    W$[4] = "MACE";
-    W$[5] = "FLAIL";
-    W$[6] = "DAGGER";
-    W$[7] = "ARMOUR";
-    W$[8] = "ARMOUR";
-    W$[9] = "ARMOUR";
-    W$[10] = "HELMET";
-    W$[11] = "HEADPC.";
+    *W$[1] = "GR SWORD";
+    *W$[2] = "SWORD";
+    *W$[3] = "AXE";
+    *W$[4] = "MACE";
+    *W$[5] = "FLAIL";
+    *W$[6] = "DAGGER";
+    *W$[7] = "ARMOUR";
+    *W$[8] = "ARMOUR";
+    *W$[9] = "ARMOUR";
+    *W$[10] = "HELMET";
+    *W$[11] = "HEADPC.";
 
     // 2610 DATA"A GOOD BLOW","WELL HIT SIRE","THY AIM IS TRUE","MISSED!","HIT THEE!!"
     // 2620 DATA"THE MONSTER IS SLAIN","NO LIGHT","BROKEN THY ","SPELL EXHAUSTED"

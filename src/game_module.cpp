@@ -270,13 +270,7 @@ void lines370_420(screen_t *screen, char *I$) {
     // 410 PRINT tab(0,5);LEFT(B$, W);:LET M$=""
     tab(screen->cursor, 0, 5);
     print_left$_b$(screen, W);
-    free(M$);
-    M$ = (char *) malloc(sizeof(char) * 2);
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
-        exit(1);
-    }
-    strcpy(M$, "");
+    // To decrease variable scope, we clear M$ elsewhere.
     // 420 RETURN
 }
 
@@ -301,13 +295,7 @@ void lines440_470(screen_t *screen) {
     // 460 PRINT tab(0,5);LEFT$(B$,W);:LET M$=""
     tab(screen->cursor, 0, 5);
     print_left$_b$(screen, W);
-    free(M$);
-    M$ = (char *) malloc(sizeof(char) * 2);
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
-        exit(1);
-    }
-    strcpy(M$, "");
+    // To decrease variable scope, we clear M$ elsewhere.
     // 470 RETURN
 }
 
@@ -502,6 +490,17 @@ void lines810_860(screen_t *screen, int *DX, char *F$, int *NF, int NX, int NY,
     // 810 LET NF=5;LET F(1)=0:GOSUB 440
     *NF = 5;
     F[1] = 0;
+    // This is one of two places where we call a method for rendering M$
+    // without setting it first. The original BASIC code emptied M$ after each
+    // time it was rendered. To aid de-globalization of variables, we empty M$
+    // in those two places instead.
+    free(M$);
+    M$ = (char *) malloc(sizeof(char));
+    if (M$ == NULL) {
+        fprintf(stderr, "M$ is NULL!\n");
+        exit(1);
+    }
+    strcpy(M$, "");
     lines440_470(screen);
     // 820 PRINT tab(1,5);"THOU HAST EXPIRED!"
     tab(screen->cursor, 1, 5);
@@ -710,6 +709,11 @@ void lines1140_1180(screen_t *screen, int *DX) {
         X = MX;
         Y = MY;
         lines940_980(screen, DX, X, Y);
+        M$[0] = 0;
+        // This is the other place where we may call a method for rendering M$
+        // without setting it first. The original BASIC code emptied M$ after
+        // each time it was rendered. In this case, we empty after the call to
+        // lines940_980(), since we don't know when it will be used next.
     }
     // 1180 RETURN
 }

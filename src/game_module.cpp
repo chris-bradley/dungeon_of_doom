@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "dungeon_lib.h"
 
-void lines430_430(screen_t *screen);
+void lines430_430(screen_t *screen, char *M$);
 void lines480_560(screen_t *screen, char *F$, int NF, int NX, int NY);
 void lines570_610(screen_t *screen, int *DX, int X, int Y);
 void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH);
@@ -26,7 +26,6 @@ void lines2260_2490(screen_t *screen, char *C$, int *FI, int NX, int NY);
 void lines2500_2780(int *C1, int *C5, int *C6, int *DX, char **F$, int *FI,
                     int *NF, int *NX, int *NY, int *TF, int *TX, int *TY);
 
-char * M$;
 const char ** T$;
 const char ** W$;
 double * F;
@@ -57,7 +56,8 @@ int main(int argc, char *argv[]) {
     double S1;
     char * C$ = NULL,
          I$,
-         * F$ = NULL;
+         * F$ = NULL,
+         * M$;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
 
@@ -195,7 +195,6 @@ int main(int argc, char *argv[]) {
         }
     // 320 IF RH=C5 THEN LET M$=T$(12):GOSUB430:GOSUB1760:GOTO40
         else if (RH == C5) {
-            free(M$);
             M$ = (char *) malloc(sizeof(char) * (strlen(T$[12]) + 1));
             if (M$ == NULL) {
                 fprintf(stderr, "M$ is NULL!\n");
@@ -203,7 +202,8 @@ int main(int argc, char *argv[]) {
             }
             strcpy(M$, T$[12]);
             M$[strlen(T$[12])] = 0;
-            lines430_430(screen);
+            lines430_430(screen, M$);
+            free(M$);
             lines1760_1950(screen, C$, &DX, &NX, &NY, &OX, &OY);
             game_over = 0;
         } else {
@@ -232,7 +232,6 @@ int main(int argc, char *argv[]) {
     }
     free(R);
     free(T);
-    free(M$);
     free(T$);
     free(W$);
     return 0;
@@ -256,7 +255,7 @@ void lines360_365() {
 
 int W;
 
-void lines370_420(screen_t *screen, char *I$) {
+void lines370_420(screen_t *screen, char *I$, char *M$) {
     // 370 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);
@@ -274,17 +273,17 @@ void lines370_420(screen_t *screen, char *I$) {
     // 420 RETURN
 }
 
-void lines440_470(screen_t *screen);
+void lines440_470(screen_t *screen, char *M$);
 
 int S2;
-void lines430_430(screen_t *screen) {
+void lines430_430(screen_t *screen, char *M$) {
     // 430 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);
-    lines440_470(screen);
+    lines440_470(screen, M$);
 }
 
-void lines440_470(screen_t *screen) {
+void lines440_470(screen_t *screen, char *M$) {
     // 440 PRINT tab(0,5);M$;
     tab(screen->cursor, 0, 5);
     print_text(screen, M$);
@@ -391,6 +390,7 @@ int C0, DY, H, I, J, MB, MX, MY, SX, SY, WB;
 
 void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH) {
     int X, Y;
+    char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *DX = LX - NX;
     SX = sign(*DX);
@@ -430,14 +430,14 @@ void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH) {
         return;
     }
     // 700 LET M$=T$(5):GOSUB430:GOSUB360
-    free(M$);
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[5]) + 1));
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
     strcpy(M$, T$[5]);
-    lines430_430(screen);
+    lines430_430(screen, M$);
+    free(M$);
     lines360_365();
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
     H /= (3 + O[9] + O[10] + O[11] + O[12] + O[13] + O[14]);
@@ -468,16 +468,17 @@ void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH) {
 }
 
 void lines780_800(screen_t *screen) {
+    char * M$;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     O[I] = 0;
-    free(M$);
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[8]) + strlen(W$[I]) + 2));
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
     sprintf(M$, "%s %s", T$[8], W$[I]);
-    lines430_430(screen);
+    lines430_430(screen, M$);
+    free(M$);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
     MB = 0;
     lines360_365();
@@ -488,6 +489,7 @@ void lines780_800(screen_t *screen) {
 
 void lines810_860(screen_t *screen, int *DX, char *F$, int *NF, int NX, int NY,
                   int X, int Y) {
+    char * M$;
     // 810 LET NF=5;LET F(1)=0:GOSUB 440
     *NF = 5;
     F[1] = 0;
@@ -495,14 +497,14 @@ void lines810_860(screen_t *screen, int *DX, char *F$, int *NF, int NX, int NY,
     // without setting it first. The original BASIC code emptied M$ after each
     // time it was rendered. To aid de-globalization of variables, we empty M$
     // in those two places instead.
-    free(M$);
     M$ = (char *) malloc(sizeof(char));
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
     strcpy(M$, "");
-    lines440_470(screen);
+    lines440_470(screen, M$);
+    free(M$);
     // 820 PRINT tab(1,5);"THOU HAST EXPIRED!"
     tab(screen->cursor, 1, 5);
     print_text(screen, "THOU HAST EXPIRED!");
@@ -524,8 +526,8 @@ int HT;
 
 void lines870_930(screen_t *screen, int *DX, int X, int Y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
-    free(M$);
     int t$_ind = rand() % 3 + 1;
+    char * M$;
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[t$_ind]) + 1));
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
@@ -533,13 +535,13 @@ void lines870_930(screen_t *screen, int *DX, int X, int Y) {
     }
     strcpy(M$, T$[t$_ind]);
     lines360_365();
+    free(M$);
     // 880 LET H=F(1)+O(1) + O(2) + O(3) + O(4) + O(5) + O(6) + O(7) + O(8) + rnd(F(6))
     H =
         F[1] + O[1] + O[2] + O[3] + O[4] + O[5] + O[6] + O[7] + O[8] + \
         (rand() * F[6] / RAND_MAX);
     // 890 IF F(3)+F(6)< rnd(M)+2 THEN LET M$=T$(4):LET HT=0
     if (F[3] + F[6] < rand() % M_ + 2) {
-        free(M$);
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[4]) + 1));
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
@@ -550,7 +552,8 @@ void lines870_930(screen_t *screen, int *DX, int X, int Y) {
     }
     // 900 LET MS=MS-H:GOSUB430
     MS -= H;
-    lines430_430(screen);
+    lines430_430(screen, M$);
+    free(M$);
     // 910 LET F(1)=F(1)-(H/100):LET F(5)=F(5)+0.05
     F[1] -= H / 100;
     F[5] += 0.05;
@@ -562,6 +565,7 @@ void lines870_930(screen_t *screen, int *DX, int X, int Y) {
 }
 
 void lines940_980(screen_t *screen, int *DX, int X, int Y) {
+    char * M$;
     // 940 LET DX=255:LET MS=0:LET R(MX,MY)=C0
     *DX = 255;
     MS = 0;
@@ -569,14 +573,14 @@ void lines940_980(screen_t *screen, int *DX, int X, int Y) {
     // 950 LET F(5)=F(5)+.1
     F[5] += 0.1;
     // 960 LET M$=T$(6):GOSUB430
-    free(M$);
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[6]) + 1));
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
     strcpy(M$, T$[6]);
-    lines430_430(screen);
+    lines430_430(screen, M$);
+    free(M$);
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
     for (J = 200; J >= 150; J -= 8) {
         lines350_355();
@@ -599,7 +603,7 @@ int SL;
 void lines990_1130(screen_t *screen, int *DX, char *F$, int NF, int *NX,
                    int *NY, int RH, double S1) {
     int X, Y;
-    char I$;
+    char I$, * M$;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(screen, F$, NF, *NX, *NY);
     paper(screen->cursor, 2);
@@ -622,14 +626,14 @@ void lines990_1130(screen_t *screen, int *DX, char *F$, int NF, int *NX,
     print_text(screen, "CONSULT THE LORE");
     // 1040 LET M$="USE SPELL NUMBER?":GOSUB370
     do {
-        free(M$);
         M$ = (char *) malloc(sizeof(char) * 18);
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
             exit(1);
         }
         strcpy(M$, "USE SPELL NUMBER?");
-        lines370_420(screen, &I$);
+        lines370_420(screen, &I$, M$);
+        free(M$);
         char * outstring = (char *) malloc(sizeof(char) * 2);
         sprintf(outstring, "%c", I$);
     // 1050 LET SL=VAL(I$)
@@ -649,7 +653,6 @@ void lines990_1130(screen_t *screen, int *DX, char *F$, int NF, int *NX,
     Y = *NY;
     // 1080 IF M(SL)<0 THEN LET M$=T$(9):LET SL=7
     if (M[SL] < 0) {
-        free(M$);
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[9]) + 1));
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
@@ -657,6 +660,17 @@ void lines990_1130(screen_t *screen, int *DX, char *F$, int NF, int *NX,
         }
         strcpy(M$, T$[9]);
         SL = 7;
+    } else {
+        // This is the other place where we may call a method for rendering M$
+        // without setting it first. The original BASIC code emptied M$ after
+        // each time it was rendered. In this case, we empty after the call to
+        // lines940_980(), since we don't know when it will be used next.
+        M$ = (char *) malloc(sizeof(char));
+        if (M$ == NULL) {
+            fprintf(stderr, "M$ is NULL!\n");
+            exit(1);
+        }
+        strcpy(M$, "");
     }
     // 1090 FOR J=1 TO 5:PRINT tab(0,J);LEFT$(B$, W);:NEXT J:GOSUB570
     for (J = 1; J <= 5; J += 1) {
@@ -692,7 +706,8 @@ void lines990_1130(screen_t *screen, int *DX, char *F$, int NF, int *NX,
     // 1110 LET F(5)=F(5)+.2
     F[5] += 0.2;
     // 1120 GOSUB430
-    lines430_430(screen);
+    lines430_430(screen, M$);
+    free(M$);
     // 1130 RETURN
 }
 
@@ -710,11 +725,6 @@ void lines1140_1180(screen_t *screen, int *DX) {
         X = MX;
         Y = MY;
         lines940_980(screen, DX, X, Y);
-        M$[0] = 0;
-        // This is the other place where we may call a method for rendering M$
-        // without setting it first. The original BASIC code emptied M$ after
-        // each time it was rendered. In this case, we empty after the call to
-        // lines940_980(), since we don't know when it will be used next.
     }
     // 1180 RETURN
 }
@@ -909,16 +919,17 @@ int LT;
 
 void lines1690_1750(screen_t *screen, int *DX, int NX, int NY) {
     int X, Y;
+    char * M$;
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN
     if (LT == 0) {
-        free(M$);
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[7]) + 1));
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
             exit(1);
         }
         strcpy(M$, T$[7]);
-        lines430_430(screen);
+        lines430_430(screen, M$);
+        free(M$);
         return;
     }
     // 1700 FOR Y=NY-3 TO NY+3
@@ -937,7 +948,7 @@ void lines1690_1750(screen_t *screen, int *DX, int NX, int NY) {
     // 1750 RETURN
 }
 
-void lines370_420(screen_t *screen, char *I$);
+void lines370_420(screen_t *screen, char *I$, char *M$);
 void lines1960_2000(screen_t *screen);
 void lines2790_2920(screen_t *screen, char *C$);
 
@@ -950,12 +961,11 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
     int correct_level_loaded, X, Y;
-    char I$;
+    char I$, * M$;
     do {
 
     // 1760 IF F(5)<S3+1 THEN LET M$=T$(11):LET NX=OX:LET NY=OY:GOSUB 430:RETURN
         if (!start_at_1770 && F[5] < S3 + 1) {
-            free(M$);
             M$ = (char *) malloc(sizeof(char) * (strlen(T$[11]) + 1));
             if (M$ == NULL) {
                 fprintf(stderr, "M$ is NULL!\n");
@@ -964,7 +974,8 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
             strcpy(M$, T$[11]);
             *NX = *OX;
             *NY = *OY;
-            lines430_430(screen);
+            lines430_430(screen, M$);
+            free(M$);
             return;
         }
         start_at_1770 = 0;
@@ -973,14 +984,14 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
         tab(screen->cursor, 0, 3);
         print_text(screen, "PREPARE DUNGEON TAPE");
     // 1780 LET M$=T$(10):GOSUB370
-        free(M$);
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
             exit(1);
         }
         strcpy(M$, T$[10]);
-        lines370_420(screen, &I$);
+        lines370_420(screen, &I$, M$);
+        free(M$);
         size_t filesize;
     // 1790 S=OPENIN"LEVEL"
         FILE *S = fopen("LEVEL", "r");
@@ -1072,20 +1083,20 @@ void lines1960_2000(screen_t *screen) {
 int AS, OT, P;
 
 void lines2010_2250(screen_t *screen, char **C$, double *S1) {
-    char I$;
+    char I$, * M$;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
     print_text(screen, "PREPARE HERO TAPE");
     // 2020 LET M$=T$(10):GOSUB370
-    free(M$);
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
     strcpy(M$, T$[10]);
-    lines370_420(screen, &I$);
+    lines370_420(screen, &I$, M$);
+    free(M$);
     // 2030 S=OPENIN "HERO"
     FILE *S = fopen("HERO", "r");
     // 2040 INPUT#S,S$
@@ -1158,16 +1169,16 @@ void lines2010_2250(screen_t *screen, char **C$, double *S1) {
 
 void lines2260_2490(screen_t *screen, char *C$, int *FI, int NX, int NY) {
     int X, Y;
-    char I$;
+    char I$, * M$;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
-    free(M$);
     M$ = (char *) malloc(sizeof(char) * 18);
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
     strcpy(M$, "ONE MOMENT PLEASE");
-    lines430_430(screen);
+    lines430_430(screen, M$);
+    free(M$);
     // 2270 LET S$="":LET T$=""
     char * S$ = (char *) malloc(sizeof(char) * (12 + OT + strlen(C$)));
     if (S$ == NULL) {
@@ -1229,14 +1240,14 @@ void lines2260_2490(screen_t *screen, char *C$, int *FI, int NX, int NY) {
     s_index += strlen(C$);
     S$[s_index] = 0;
     // 2450 LET M$="ANY KEY TO SAVE":GOSUB 370
-    free(M$);
     M$ = (char *) malloc(sizeof(char) * 16);
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
     strcpy(M$, "ANY KEY TO SAVE");
-    lines370_420(screen, &I$);
+    lines370_420(screen, &I$, M$);
+    free(M$);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
     FILE *S = fopen("HERO", "w");
     int error = fputs(S$, S);

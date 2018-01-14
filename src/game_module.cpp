@@ -385,7 +385,7 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800();
+void lines780_800(screen_t *screen);
 
 int C0, DY, H, I, J, MB, MX, MY, SX, SY, WB;
 
@@ -456,7 +456,7 @@ void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH) {
     int done = 0;
     do {
         if (MB == 1 && O[I] > 0) {
-            lines780_800();
+            lines780_800(screen);
         }
         if (I < 11) {
             I += 1;
@@ -467,7 +467,7 @@ void lines620_770(screen_t *screen, int *DX, int NX, int NY, int RH) {
     // 770 RETURN
 }
 
-void lines780_800() {
+void lines780_800(screen_t *screen) {
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     O[I] = 0;
     free(M$);
@@ -477,6 +477,7 @@ void lines780_800() {
         exit(1);
     }
     sprintf(M$, "%s %s", T$[8], W$[I]);
+    lines430_430(screen);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
     MB = 0;
     lines360_365();

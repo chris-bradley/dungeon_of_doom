@@ -14,8 +14,8 @@ void lines870_930(screen_t *screen, int *DX, double *F, const char **T$, int X,
                   int Y);
 void lines990_1130(screen_t *screen, int *DX, double *F, char *F$, int NF,
                    int *NX, int *NY, int RH, double S1, const char **T$);
-void lines1410_1520(screen_t *screen, int C1, int *DX, double *F, char *F$,
-                    int *FI, int *NF, int NX, int NY);
+void lines1410_1520(screen_t *screen, int C1, int **D, int *DX, double *F,
+                    char *F$, int *FI, int *NF, int NX, int NY);
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int *NF,
                     int NX, int NY);
 void lines1660_1680(double *F, double S1);
@@ -29,11 +29,11 @@ void lines2010_2250(screen_t *screen, char **C$, double *F, double *S1,
                     const char **T$);
 void lines2260_2490(screen_t *screen, char *C$, double *F, int *FI, int NX,
                     int NY);
-void lines2500_2780(int *C1, int *C5, int *C6, int *DX, double **F, char **F$,
-                    int *FI, int *NF, int *NX, int *NY, const char ***T$,
-                    int *TF, int *TX, int *TY, const char ***W$);
+void lines2500_2780(int *C1, int *C5, int *C6, int ***D, int *DX, double **F,
+                    char **F$, int *FI, int *NF, int *NX, int *NY,
+                    const char ***T$, int *TF, int *TX, int *TY,
+                    const char ***W$);
 
-int ** D;
 int * M;
 int O[25];
 int ** R;
@@ -42,7 +42,8 @@ int * T;
 int main(int argc, char *argv[]) {
     int C1,  // Symbol for Wall
         C5,  // Symbol for Way In
-        C6,  // Symbol for Exit
+        C6,  // Symbiol for Exit
+        ** D,
         DX,
         FI,
         NF,  // Facing. NESW
@@ -74,8 +75,8 @@ int main(int argc, char *argv[]) {
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
     lines2500_2780(
-        &C1, &C5, &C6, &DX, &F, &F$, &FI, &NF, &NX, &NY, &T$, &TF, &TX, &TY,
-        &W$
+        &C1, &C5, &C6, &D, &DX, &F, &F$, &FI, &NF, &NX, &NY, &T$, &TF, &TX,
+        &TY, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(screen, &C$, F, &S1, T$);
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]) {
         }
     // 70 IF I$="G" THEN GOSUB1410
         if (I$ == 'g') {
-            lines1410_1520(screen, C1, &DX, F, F$, &FI, &NF, NX, NY);
+            lines1410_1520(screen, C1, D, &DX, F, F$, &FI, &NF, NX, NY);
         }
     // 80 IF I$="P" THEN GOSUB1660
         if (I$ == 'p') {
@@ -815,8 +816,8 @@ void lines1390_1400(double *F, double S1) {
 
 int C3, C4, GT, GX, GY, TR;
 
-void lines1410_1520(screen_t *screen, int C1, int *DX, double *F, char *F$,
-                    int *FI, int *NF, int NX, int NY) {
+void lines1410_1520(screen_t *screen, int C1, int **D, int *DX, double *F,
+                    char *F$, int *FI, int *NF, int NX, int NY) {
     int X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
     GX = NX + D[*NF][1];
@@ -1297,9 +1298,10 @@ void lines2930_3200(int *C1, int *C5, int *C6);
 
 int RE;
 
-void lines2500_2780(int *C1, int *C5, int *C6, int *DX, double **F, char **F$,
-                    int *FI, int *NF, int *NX, int *NY, const char ***T$,
-                    int *TF, int *TX, int *TY, const char ***W$) {
+void lines2500_2780(int *C1, int *C5, int *C6, int ***D, int *DX, double **F,
+                    char **F$, int *FI, int *NF, int *NX, int *NY,
+                    const char ***T$, int *TF, int *TX, int *TY,
+                    const char ***W$) {
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
     // dungeon_lib removes the need for B$
@@ -1339,15 +1341,15 @@ void lines2500_2780(int *C1, int *C5, int *C6, int *DX, double **F, char **F$,
         fprintf(stderr, "M is NULL!\n");
         exit(1);
     }
-    D = (int **) malloc(sizeof(int *) * 5);
-    if (D == NULL) {
-        fprintf(stderr, "D is NULL!\n");
+    *D = (int **) malloc(sizeof(int *) * 5);
+    if (*D == NULL) {
+        fprintf(stderr, "*D is NULL!\n");
         exit(1);
     }
     for (i = 0; i < 5; i += 1) {
-        D[i] = (int *) malloc(sizeof(int) * 3);
-        if (D[i] == NULL) {
-            fprintf(stderr, "D[%i] is NULL!\n", i);
+        *D[i] = (int *) malloc(sizeof(int) * 3);
+        if (*D[i] == NULL) {
+            fprintf(stderr, "*D[%i] is NULL!\n", i);
             exit(1);
         }
     }
@@ -1402,14 +1404,14 @@ void lines2500_2780(int *C1, int *C5, int *C6, int *DX, double **F, char **F$,
 
     // 2670 DATA0,-1,1,0,0,1,-1,0
     // 2680 FOR I=1 TO 4:READ D(I,1),D(I,2):NEXT I
-    D[1][1] = 0;
-    D[1][2] = -1;
-    D[2][1] = 1;
-    D[2][2] = 0;
-    D[3][1] = 0;
-    D[3][2] = 1;
-    D[4][1] = -1;
-    D[4][2] = 0;
+    *D[1][1] = 0;
+    *D[1][2] = -1;
+    *D[2][1] = 1;
+    *D[2][2] = 0;
+    *D[3][1] = 0;
+    *D[3][2] = 1;
+    *D[4][1] = -1;
+    *D[4][2] = 0;
 
     // 2690 LET FI=0:LET DX=255:LET NF=0
     *FI = 0;

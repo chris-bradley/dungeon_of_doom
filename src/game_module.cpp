@@ -18,9 +18,9 @@ void lines990_1130(screen_t *screen, int *DX, double *F, char *F$, int *M,
                    double S1, const char **T$);
 void lines1410_1520(screen_t *screen, int C1, int **D, int *DX, double *F,
                     char *F$, int *FI, int *NF, int NX, int NY, int O[25],
-                    int **R);
+                    int **R, int *T);
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int *NF,
-                    int NX, int NY);
+                    int NX, int NY, int *T);
 void lines1660_1680(double *F, int O[25], double S1);
 void lines1690_1750(screen_t *screen, int *DX, int NX, int NY, int **R,
                     const char **T$);
@@ -34,10 +34,8 @@ void lines2260_2490(screen_t *screen, char *C$, double *F, int *FI, int NX,
                     int NY, int O[25], int **R);
 void lines2500_2780(int *C1, int *C5, int *C6, int ***D, int *DX, double **F,
                     char **F$, int *FI, int **M, int *NF, int *NX, int *NY,
-                    int ***R, const char ***T$, int *TF, int *TX, int *TY,
-                    const char ***W$);
-
-int * T;
+                    int ***R, int **T, const char ***T$, int *TF, int *TX,
+                    int *TY, const char ***W$);
 
 int main(int argc, char *argv[]) {
     int C1,  // Symbol for Wall
@@ -55,6 +53,7 @@ int main(int argc, char *argv[]) {
         OY,
         ** R,
         RH,  // Object at NX / NY
+        * T,
         TF,  // Flag to see if we can exit.
         TX,
         TY,
@@ -78,8 +77,8 @@ int main(int argc, char *argv[]) {
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
     lines2500_2780(
-        &C1, &C5, &C6, &D, &DX, &F, &F$, &FI, &M, &NF, &NX, &NY, &R, &T$, &TF,
-        &TX, &TY, &W$
+        &C1, &C5, &C6, &D, &DX, &F, &F$, &FI, &M, &NF, &NX, &NY, &R, &T, &T$,
+        &TF, &TX, &TY, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(screen, &C$, F, M, O, &S1, T$);
@@ -102,7 +101,9 @@ int main(int argc, char *argv[]) {
         }
     // 70 IF I$="G" THEN GOSUB1410
         if (I$ == 'g') {
-            lines1410_1520(screen, C1, D, &DX, F, F$, &FI, &NF, NX, NY, O, R);
+            lines1410_1520(
+                screen, C1, D, &DX, F, F$, &FI, &NF, NX, NY, O, R, T
+            );
         }
     // 80 IF I$="P" THEN GOSUB1660
         if (I$ == 'p') {
@@ -829,7 +830,7 @@ int C3, C4, GT, GX, GY, TR;
 
 void lines1410_1520(screen_t *screen, int C1, int **D, int *DX, double *F,
                     char *F$, int *FI, int *NF, int NX, int NY, int O[25],
-                    int **R) {
+                    int **R, int *T) {
     int X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
     GX = NX + D[*NF][1];
@@ -866,7 +867,7 @@ void lines1410_1520(screen_t *screen, int C1, int **D, int *DX, double *F,
     }
     // 1490 IF GT=C4 THEN GOSUB 1550
     if (GT == C4) {
-        lines1550_1650(screen, F, F$, FI, NF, NX, NY);
+        lines1550_1650(screen, F, F$, FI, NF, NX, NY, T);
     }
     // 1500 LET X=GX:LET Y=GY:GOSUB570
     X = GX;
@@ -885,7 +886,7 @@ void lines1410_1520(screen_t *screen, int C1, int **D, int *DX, double *F,
 int GC, N;
 
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int *NF,
-                    int NX, int NY) {
+                    int NX, int NY, int *T) {
     // 1550 paper 2:ink 1
     paper(screen->cursor, 2);
     ink(screen->cursor, 1);
@@ -1312,8 +1313,8 @@ int RE;
 
 void lines2500_2780(int *C1, int *C5, int *C6, int ***D, int *DX, double **F,
                     char **F$, int *FI, int **M, int *NF, int *NX, int *NY,
-                    int ***R, const char ***T$, int *TF, int *TX, int *TY,
-                    const char ***W$) {
+                    int ***R, int **T, const char ***T$, int *TF, int *TX,
+                    int *TY, const char ***W$) {
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
     // dungeon_lib removes the need for B$
@@ -1365,9 +1366,9 @@ void lines2500_2780(int *C1, int *C5, int *C6, int ***D, int *DX, double **F,
             exit(1);
         }
     }
-    T = (int *) malloc(sizeof(int) * 19);
-    if (T == NULL) {
-        fprintf(stderr, "T is NULL!\n");
+    *T = (int *) malloc(sizeof(int) * 19);
+    if (*T == NULL) {
+        fprintf(stderr, "*T is NULL!\n");
         exit(1);
     }
     // 2560 DATA"GR SWORD","SWORD","AXE","MACE","FLAIL","DAGGER","ARMOUR","ARMOUR"
@@ -1457,24 +1458,24 @@ void lines2500_2780(int *C1, int *C5, int *C6, int ***D, int *DX, double **F,
     *F$[6] = 0;
     // 2760 DATA69,117,73,121,81,129,69,117,73,121,81,129,89,137,97,145,101,149
     // 2770 FOR I=1 TO 18:READ T(I):NEXT I:GOSUB 2930
-    T[1] = 69;
-    T[2] = 117;
-    T[3] = 73;
-    T[4] = 121;
-    T[5] = 81;
-    T[6] = 129;
-    T[7] = 69;
-    T[8] = 117;
-    T[9] = 73;
-    T[10] = 121;
-    T[11] = 81;
-    T[12] = 129;
-    T[13] = 89;
-    T[14] = 137;
-    T[15] = 97;
-    T[16] = 145;
-    T[17] = 101;
-    T[18] = 149;
+    *T[1] = 69;
+    *T[2] = 117;
+    *T[3] = 73;
+    *T[4] = 121;
+    *T[5] = 81;
+    *T[6] = 129;
+    *T[7] = 69;
+    *T[8] = 117;
+    *T[9] = 73;
+    *T[10] = 121;
+    *T[11] = 81;
+    *T[12] = 129;
+    *T[13] = 89;
+    *T[14] = 137;
+    *T[15] = 97;
+    *T[16] = 145;
+    *T[17] = 101;
+    *T[18] = 149;
     lines2930_3200(C1, C5, C6);
     // 2780 RETURN
 }

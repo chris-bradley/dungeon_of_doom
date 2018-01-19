@@ -42,7 +42,7 @@ void lines2500_2780(int *C1, int *C5, int *C6, int ***D, int *DX, double **F,
 int main(int argc, char *argv[]) {
     int C1,  // Symbol for Wall
         C5,  // Symbol for Way In
-        C6,  // Symbiol for Exit
+        C6,  // Symbol for Exit
         ** D,
         DX,
         FI,

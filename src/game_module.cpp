@@ -290,7 +290,7 @@ void lines370_420(screen_t *screen, char *I$, char *M$, int W) {
 
 void lines440_470(screen_t *screen, char *M$, int W);
 
-int S2;
+double S2;
 void lines430_430(screen_t *screen, char *M$, int W) {
     // 430 paper 2:ink 0
     paper(screen->cursor, 2);
@@ -982,7 +982,8 @@ void lines370_420(screen_t *screen, char *I$, char *M$, int W);
 void lines1960_2000(screen_t *screen, double *F);
 void lines2790_2920(screen_t *screen, char *C$, int W);
 
-int IX, IY, LE, OS, S3;
+int IX, IY, LE, OS;
+double S3;
 
 void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
                          int *DX, double *F, int *NX, int *NY, int *OX,

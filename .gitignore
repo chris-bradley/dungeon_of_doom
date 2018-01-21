@@ -4,3 +4,4 @@ src/game_module
 *.exe
 *.o
 *~
+.*.swp

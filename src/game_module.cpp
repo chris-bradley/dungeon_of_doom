@@ -455,10 +455,10 @@ void lines620_770(screen_t *screen, int C2, int C7, int *DX, double *F,
     MX = *LX - (*MV * SX);
     MY = *LY - (*MV * SY);
     RM = R[MX][MY];
-    // 640 IF RM>C0 AND RM<>MT THEN LET MY=LY-(MV*SY):LET RM=R(MX,MY)
+    // 640 IF RM>C0 AND RM<>MT THEN LET MY=LY:LET MX=LX
     if (RM > C0 && RM != *MT) {
-        MY = *LY - (*MV * SY);
-        RM = R[MX][MY];
+        MY = *LY;
+        MX = *LX;
     }
     // 650 LET R(LX,LY)=C0:LET X=LX:LET Y=LY:GOSUB 570
     R[*LX][*LY] = C0;
@@ -481,7 +481,7 @@ void lines620_770(screen_t *screen, int C2, int C7, int *DX, double *F,
         lines350_355();
     }
     // 690 IF H*12<F(6)+F(3) THEN RETURN
-    if (H * 12 < F[7] + F[3]) {
+    if (H * 12 < F[6] + F[3]) {
         return;
     }
     // 700 LET M$=T$(5):GOSUB430:GOSUB360
@@ -513,12 +513,12 @@ void lines620_770(screen_t *screen, int C2, int C7, int *DX, double *F,
         if (MB == 1 && O[I] > 0) {
             lines780_800(screen, O, T$, W, W$);
         }
+    // 760 IF I<11 THEN LET I=I+1:GOTO750
         if (I < 11) {
             I += 1;
             done = 1;
         }
     } while (!done);
-    // 760 IF I<11 THEN LET I=I+1:GOTO750
     // 770 RETURN
 }
 

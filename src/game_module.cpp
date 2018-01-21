@@ -439,13 +439,13 @@ int sign(int x) {
 void lines780_800(screen_t *screen, int O[25], const char **T$,
                   int W, const char **W$);
 
-int DY, H, I, J, MB, MX, MY, SX, SY, WB;
+int H, I, J, MB, MX, MY, SX, SY, WB;
 
 void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
                   int NY, int O[25], int **R, int RH, const char **T$, int W,
                   const char **W$) {
-    int RM, X, Y;
+    int DY, RM, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *DX = *LX - NX;
@@ -1504,7 +1504,7 @@ void lines2500_2780(int *C0, int *C1, int *C2, int *C5, int *C6, int *C7,
     // 2710 LET MX=0:LET MY=0:LET DY=12:LET F$=""
     MX = 0;
     MY = 0;
-    DY = 12;
+    // The value of DY set here is never used.
     *F$ = (char *) malloc(sizeof(char) * 7);
     if (*F$ == NULL) {
         fprintf(stderr, "F$ is NULL!\n");

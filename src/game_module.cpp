@@ -392,10 +392,9 @@ void lines480_560(screen_t *screen, double *F, char *F$, int NF, int NX,
     SDL_RenderPresent(screen->ren);
 }
 
-int RM;
-
 void lines570_610(screen_t *screen, int C2, int C7, int *DX, int *LX, int *LY,
                   int *M_, int *MS, int *MT, int *MV, int **R, int X, int Y) {
+    int RM;
     // 570 paper 1:ink 2
     paper(screen->cursor, 1);
     ink(screen->cursor, 2);
@@ -444,7 +443,7 @@ void lines620_770(screen_t *screen, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
                   int NY, int O[25], int **R, int RH, const char **T$, int W,
                   const char **W$) {
-    int X, Y;
+    int RM, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *DX = *LX - NX;

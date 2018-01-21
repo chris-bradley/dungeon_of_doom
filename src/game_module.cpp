@@ -436,16 +436,16 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800(screen_t *screen, int O[25], const char **T$,
+void lines780_800(screen_t *screen, int I, int O[25], const char **T$,
                   int W, const char **W$);
 
-int I, J, MB, MX, MY, SX, SY, WB;
+int J, MB, MX, MY, SX, SY, WB;
 
 void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
                   int NY, int O[25], int **R, int RH, const char **T$, int W,
                   const char **W$) {
-    int DY, H, RM, X, Y;
+    int DY, H, I, RM, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *DX = *LX - NX;
@@ -512,7 +512,7 @@ void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
     int done = 0;
     do {
         if (MB == 1 && O[I] > 0) {
-            lines780_800(screen, O, T$, W, W$);
+            lines780_800(screen, I, O, T$, W, W$);
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
         if (I < 11) {
@@ -523,7 +523,7 @@ void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
     // 770 RETURN
 }
 
-void lines780_800(screen_t *screen, int O[25], const char **T$,
+void lines780_800(screen_t *screen, int I, int O[25], const char **T$,
                   int W, const char **W$) {
     char * M$;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
@@ -946,6 +946,7 @@ int GC, N;
 
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int *MS,
                     int *NF, int NX, int NY, int *T) {
+    int I;
     // 1550 paper 2:ink 1
     paper(screen->cursor, 2);
     ink(screen->cursor, 1);
@@ -1053,7 +1054,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
-    int correct_level_loaded, X, Y;
+    int correct_level_loaded, I, X, Y;
     char I$, * M$;
     do {
 
@@ -1180,6 +1181,7 @@ int AS, OT, P;
 void lines2010_2250(screen_t *screen, char **C$, double *F, int *M, int O[25],
                     double *S1, double *S2, const char **T$, int W) {
     char I$, * M$;
+    int I;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -1265,7 +1267,7 @@ void lines2010_2250(screen_t *screen, char **C$, double *F, int *M, int O[25],
 
 void lines2260_2490(screen_t *screen, char *C$, double *F, int *FI, int NX,
                     int NY, int O[25], int **R, int W) {
-    int X, Y;
+    int I, X, Y;
     char I$, * M$;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
     M$ = (char *) malloc(sizeof(char) * 18);
@@ -1381,6 +1383,7 @@ void lines2500_2780(int *C0, int *C1, int *C2, int *C5, int *C6, int *C7,
                     int *NF, int *NX, int *NY, int ***R, int **T,
                     const char ***T$, int *TF, int *TX, int *TY, int *W,
                     const char ***W$) {
+    int I;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
     // dungeon_lib removes the need for B$
@@ -1547,6 +1550,7 @@ void lines2500_2780(int *C0, int *C1, int *C2, int *C5, int *C6, int *C7,
 }
 
 void lines2790_2920(screen_t *screen, char *C$, int W) {
+    int I;
     // 2790 paper 1:CLS
     paper(screen->cursor, 1);
     clear_screen(screen);

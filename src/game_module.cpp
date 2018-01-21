@@ -439,13 +439,13 @@ int sign(int x) {
 void lines780_800(screen_t *screen, int O[25], const char **T$,
                   int W, const char **W$);
 
-int H, I, J, MB, MX, MY, SX, SY, WB;
+int I, J, MB, MX, MY, SX, SY, WB;
 
 void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
                   int NY, int O[25], int **R, int RH, const char **T$, int W,
                   const char **W$) {
-    int DY, RM, X, Y;
+    int DY, H, RM, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *DX = *LX - NX;
@@ -589,7 +589,7 @@ void lines870_930(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
                   int O[25], int **R, const char **T$, int W, int X, int Y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
-    int t$_ind = rand() % 3 + 1;
+    int H, t$_ind = rand() % 3 + 1;
     char * M$;
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[t$_ind]) + 1));
     if (M$ == NULL) {

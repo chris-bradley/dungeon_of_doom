@@ -436,16 +436,16 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800(screen_t *screen, int I, int J, int O[25], const char **T$,
-                  int W, const char **W$);
+void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
+                  const char **T$, int W, const char **W$);
 
-int MB, MX, MY, SX, SY, WB;
+int MX, MY, SX, SY, WB;
 
 void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
                   int NY, int O[25], int **R, int RH, const char **T$, int W,
                   const char **W$) {
-    int DY, H, I, J, RM, X, Y;
+    int DY, H, I, J, MB, RM, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *DX = *LX - NX;
@@ -519,7 +519,7 @@ void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
     int done = 0;
     do {
         if (MB == 1 && O[I] > 0) {
-            lines780_800(screen, I, J, O, T$, W, W$);
+            lines780_800(screen, I, J, &MB, O, T$, W, W$);
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
         if (I < 11) {
@@ -530,8 +530,8 @@ void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
     // 770 RETURN
 }
 
-void lines780_800(screen_t *screen, int I, int J, int O[25], const char **T$,
-                  int W, const char **W$) {
+void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
+                  const char **T$, int W, const char **W$) {
     char * M$;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     O[I] = 0;
@@ -544,7 +544,7 @@ void lines780_800(screen_t *screen, int I, int J, int O[25], const char **T$,
     lines430_430(screen, M$, W);
     free(M$);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
-    MB = 0;
+    *MB = 0;
     lines360_365(J);
     J = I;
     lines350_355(J);

@@ -442,8 +442,6 @@ int sign(int x) {
 void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
                   const char **T$, int W, const char **W$);
 
-int WB;
-
 void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
                   int *MX, int *MY, int NX, int NY, int O[25], int **R, int RH,
@@ -512,7 +510,7 @@ void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
     F[2] -= H / 101;
     // 730 LET I=1:LET WB=0:LET MB=rnd(M)
     I = 1;
-    WB = 0;
+    // WB is ony set here and not used anywhere.
     MB = rand() % *M_;
     // 740 LET J=MT:GOSUB350:GOSUB360
     J = *MT;

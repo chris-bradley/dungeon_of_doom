@@ -592,8 +592,6 @@ void lines940_980(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV, int MX,
                   int MY, int **R, const char **T$, int W, int X, int Y);
 
-int HT;
-
 void lines870_930(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV, int MX,
                   int MY, int O[25], int **R, const char **T$, int W, int X,
@@ -625,7 +623,9 @@ void lines870_930(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
             exit(1);
         }
         strcpy(M$, T$[4]);
-        HT = 0;
+        // Probably a bug in the original game: HT is never set or referenced
+        // anywhere else. It should be H instead.
+        H = 0;
     }
     // 900 LET MS=MS-H:GOSUB430
     *MS -= H;

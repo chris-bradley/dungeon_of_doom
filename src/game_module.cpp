@@ -442,13 +442,13 @@ int sign(int x) {
 void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
                   const char **T$, int W, const char **W$);
 
-int SX, SY, WB;
+int WB;
 
 void lines620_770(screen_t *screen, int C0, int C2, int C7, int *DX, double *F,
                   int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
                   int *MX, int *MY, int NX, int NY, int O[25], int **R, int RH,
                   const char **T$, int W, const char **W$) {
-    int DY, H, I, J, MB, RM, X, Y;
+    int DY, H, I, J, MB, RM, SX, SY, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *DX = *LX - NX;

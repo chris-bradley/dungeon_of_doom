@@ -679,20 +679,18 @@ void lines1140_1180(screen_t *screen, int C0, int C2, int C7, int *DX,
 void lines1190_1210(int C0, int C7, int NX, int NY, int **R, int RH);
 void lines1220_1270(screen_t *screen, double *F, char *F$, int NF, int *NX,
                     int *NY);
-void lines1280_1290(double *F, int *M);
+void lines1280_1290(double *F, int *M, int SL);
 void lines1300_1380(screen_t *screen, int C0, int C2, int C7, int *DX, int *LX,
                     int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
                     int NY, int **R, int RH, int X, int Y);
 void lines1390_1400(double *F, double S1, double S2);
-
-int SL;
 
 void lines990_1130(screen_t *screen, int C0, int C2, int C7, int *DX,
                    double *F, char *F$, int *LX, int *LY, int *M, int *M_,
                    int *MS, int *MT, int *MV, int MX, int MY, int NF, int *NX,
                    int *NY, int O[25], int **R, int RH, double S1, double S2,
                    const char **T$, int W) {
-    int J, X, Y;
+    int J, SL, X, Y;
     char I$, * M$;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(screen, F, F$, NF, *NX, *NY);
@@ -784,7 +782,7 @@ void lines990_1130(screen_t *screen, int C0, int C2, int C7, int *DX,
             lines1220_1270(screen, F, F$, NF, NX, NY);
             break;
         case 4:
-            lines1280_1290(F, M);
+            lines1280_1290(F, M, SL);
             break;
         case 5:
             lines1300_1380(
@@ -862,7 +860,7 @@ void lines1220_1270(screen_t *screen, double *F, char *F$, int NF, int *NX,
     // 1270 RETURN
 }
 
-void lines1280_1290(double *F, int *M) {
+void lines1280_1290(double *F, int *M, int SL) {
     // 1280 LET F(2)=F(2)+rnd(M(SL)):LET F(1)=F(1)+rnd(M(SL)):LET F(7)=F(7)-1
     F[2] += rand() * M[SL];
     F[1] += rand() * M[SL];

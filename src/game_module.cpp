@@ -905,13 +905,13 @@ void lines1390_1400(double *F, double S1, double S2) {
     // 1400 RETURN
 }
 
-int GT, GX, GY, TR;
+int TR;
 
 void lines1410_1520(screen_t *screen, int C0, int C1, int C2, int C3, int C4,
                     int C7, int **D, int *DX, double *F, char *F$, int *FI,
                     int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
                     int *NF, int NX, int NY, int O[25], int **R, int *T) {
-    int J, X, Y;
+    int J, GT, GX, GY, X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
     GX = NX + D[*NF][1];
     GY = NY + D[*NF][2];

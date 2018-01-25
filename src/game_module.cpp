@@ -966,11 +966,9 @@ void lines1410_1520(screen_t *screen, int C0, int C1, int C2, int C3, int C4,
     // 1520 RETURN
 }
 
-int N;
-
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int GC,
                     int *MS, int *NF, int NX, int NY, int *T, int TR) {
-    int I, J;
+    int I, J, N;
     // 1550 paper 2:ink 1
     paper(screen->cursor, 2);
     ink(screen->cursor, 1);

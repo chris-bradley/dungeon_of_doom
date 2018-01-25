@@ -44,7 +44,7 @@ void lines2010_2250(screen_t *screen, char **C$, double *F, int *M, int O[25],
                     double *S1, double *S2, const char **T$, int W);
 void lines2260_2490(screen_t *screen, char *C$, double *F, int *FI, int NX,
                     int NY, int O[25], int **R, int W);
-void lines2500_2780(int *C0, int *C1, int *C5, int *C2, int *C6, int *C7,
+void lines2500_2780(int *C0, int *C1, int *C2, int *C5, int *C6, int *C7,
                     int ***D, int *DX, double **F, char **F$, int *FI, int **M,
                     int *MX, int *MY, int *NF, int *NX, int *NY, int ***R,
                     int **T, const char ***T$, int *TF, int *TX, int *TY,

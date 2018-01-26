@@ -1214,13 +1214,11 @@ void lines1960_2000(screen_t *screen, double *F) {
     // 2000 RETURN
 }
 
-int P;
-
 void lines2010_2250(screen_t *screen, int AS, char **C$, double *F, int *GC,
                     int *LT, int *M, int O[25], int *OT, double *S1,
                     double *S2, double *S3, const char **T$, int *TR, int W) {
     char I$, * M$;
-    int I, J;
+    int I, J, P;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -1417,8 +1415,6 @@ void lines2260_2490(screen_t *screen, int AS, char *C$, double *F, int *FI,
 void lines2930_3200(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
                     int *C5, int *C6, int *C7, int OS);
 
-int RE;
-
 void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
                     int *C5, int *C6, int *C7, int ***D, int *DX, double **F,
                     char **F$, int *FI, int *LT, int **M, int *MX, int *MY,
@@ -1559,7 +1555,7 @@ void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
     // 2720 LET NX=1:LET NY=1:LET RE=0:LET LT=0
     *NX = 1;
     *NY = 1;
-    RE = 0;
+    // RE is never actually used.
     *LT = 0;
     // 2730 FOR I = 1 TO 5
     for (I = 1; I <= 5; I += 1) {
@@ -1641,8 +1637,6 @@ void lines2790_2920(screen_t *screen, char *C$, int W) {
     // 2920 RETURN
 }
 
-int C8;
-
 void lines2930_3200(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
                     int *C5, int *C6, int *C7, int OS) {
     // 2930 REM ** USER DEF'D CHARACTERS **
@@ -1667,7 +1661,7 @@ void lines2930_3200(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
     *C5 = *C0 + 6;
     *C6 = *C0 + 7;
     *C7 = *C0 + 8;
-    C8 = *C0 + 12;
+    // C8 is never acyually used.
 
     // 3200 RETURN
 }

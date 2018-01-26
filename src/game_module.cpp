@@ -32,25 +32,25 @@ void lines1410_1520(screen_t *screen, int C0, int C1, int C2, int C3, int C4,
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int GC,
                     int *MS, int *NF, int NX, int NY, int *T, int TR);
 void lines1660_1680(double *F, int O[25], double S1, double S2);
-void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LX,
-                    int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
-                    int NY, int **R, const char **T$, int W);
+void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LT,
+                    int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
+                    int NX, int NY, int **R, const char **T$, int W);
 void lines1760_1950(screen_t *screen, char *C$, int *DX, double *F, int *NX,
                     int *NY, int *OX, int *OY, int **R, const char **T$,
                     int W);
 void lines1770_1950(screen_t *screen, char *C$, int *DX, double *F, int *NX,
                     int *NY, int *OX, int *OY, int **R, const char **T$,
                     int W);
-void lines2010_2250(screen_t *screen, char **C$, double *F, int *GC, int *M,
-                    int O[25], double *S1, double *S2, const char **T$,
+void lines2010_2250(screen_t *screen, char **C$, double *F, int *GC, int *LT,
+                    int *M, int O[25], double *S1, double *S2, const char **T$,
                     int *TR, int W);
 void lines2260_2490(screen_t *screen, char *C$, double *F, int *FI, int GC,
                     int NX, int NY, int O[25], int **R, int TR, int W);
 void lines2500_2780(int *C0, int *C1, int *C2, int *C3, int *C4, int *C5,
                     int *C6, int *C7, int ***D, int *DX, double **F, char **F$,
-                    int *FI, int **M, int *MX, int *MY, int *NF, int *NX,
-                    int *NY, int ***R, int **T, const char ***T$, int *TF,
-                    int *TX, int *TY, int *W, const char ***W$);
+                    int *FI, int *LT, int **M, int *MX, int *MY, int *NF,
+                    int *NX, int *NY, int ***R, int **T, const char ***T$,
+                    int *TF, int *TX, int *TY, int *W, const char ***W$);
 
 int main(int argc, char *argv[]) {
     int C0,
@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
         DX,
         FI,
         GC,
+        LT,
         LX,
         LY,
         M_,
@@ -108,11 +109,11 @@ int main(int argc, char *argv[]) {
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
     lines2500_2780(
-        &C0, &C1, &C2, &C3, &C4, &C5, &C6, &C7, &D, &DX, &F, &F$, &FI, &M, &MX,
-        &MY, &NF, &NX, &NY, &R, &T,  &T$, &TF, &TX, &TY, &W, &W$
+        &C0, &C1, &C2, &C3, &C4, &C5, &C6, &C7, &D, &DX, &F, &F$, &FI, &LT, &M,
+        &MX, &MY, &NF, &NX, &NY, &R, &T,  &T$, &TF, &TX, &TY, &W, &W$
     );
     // 20 GOSUB2010
-    lines2010_2250(screen, &C$, F, &GC, M, O, &S1, &S2, T$, &TR, W);
+    lines2010_2250(screen, &C$, F, &GC, &LT, M, O, &S1, &S2, T$, &TR, W);
     // 30 GOSUB1770
     lines1770_1950(screen, C$, &DX, F, &NX, &NY, &OX, &OY, R, T$, W);
     int game_over = 0;
@@ -148,8 +149,8 @@ int main(int argc, char *argv[]) {
     // 90 IF I$="R" THEN GOSUB1690
         if (I$ == 'r') {
             lines1690_1750(
-                screen, C2, C7, &DX, &LX, &LY, &M_, &MS, &MT, &MV, NX, NY, R,
-                T$, W
+                screen, C2, C7, &DX, &LT, &LX, &LY, &M_, &MS, &MT, &MV, NX, NY,
+                R, T$, W
             );
         }
     // 100 IF I$="S" THEN GOSUB2260
@@ -1025,15 +1026,13 @@ void lines1660_1680(double *F, int O[25], double S1, double S2) {
     // 1680 RETURN
 }
 
-int LT;
-
-void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LX,
-                    int *LY, int *M_, int *MS, int *MT, int *MV, int NX,
-                    int NY, int **R, const char **T$, int W) {
+void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LT,
+                    int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
+                    int NX, int NY, int **R, const char **T$, int W) {
     int X, Y;
     char * M$;
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN
-    if (LT == 0) {
+    if (*LT == 0) {
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[7]) + 1));
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
@@ -1058,7 +1057,7 @@ void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LX,
         }
     }
     // 1740 LET LT=LT-1
-    LT -= 1;
+    *LT -= 1;
     // 1750 RETURN
 }
 
@@ -1200,8 +1199,8 @@ void lines1960_2000(screen_t *screen, double *F) {
 
 int AS, OT, P;
 
-void lines2010_2250(screen_t *screen, char **C$, double *F, int *GC, int *M,
-                    int O[25], double *S1, double *S2, const char **T$,
+void lines2010_2250(screen_t *screen, char **C$, double *F, int *GC, int *LT,
+                    int *M, int O[25], double *S1, double *S2, const char **T$,
                     int *TR, int W) {
     char I$, * M$;
     int I, J;
@@ -1282,7 +1281,7 @@ void lines2010_2250(screen_t *screen, char **C$, double *F, int *GC, int *M,
     }
     // 2240 IF O(16)=1 THEN LET LT=20
     if (O[16] == 1) {
-        LT = 20;
+        *LT = 20;
     }
     // 2250 RETURN
     free(S$);
@@ -1404,9 +1403,9 @@ int RE;
 
 void lines2500_2780(int *C0, int *C1, int *C2, int *C3, int *C4, int *C5,
                     int *C6, int *C7, int ***D, int *DX, double **F, char **F$,
-                    int *FI, int **M, int *MX, int *MY, int *NF, int *NX,
-                    int *NY, int ***R, int **T, const char ***T$, int *TF,
-                    int *TX, int *TY, int *W, const char ***W$) {
+                    int *FI, int *LT, int **M, int *MX, int *MY, int *NF,
+                    int *NX, int *NY, int ***R, int **T, const char ***T$,
+                    int *TF, int *TX, int *TY, int *W, const char ***W$) {
     int I;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
@@ -1542,7 +1541,7 @@ void lines2500_2780(int *C0, int *C1, int *C2, int *C3, int *C4, int *C5,
     *NX = 1;
     *NY = 1;
     RE = 0;
-    LT = 0;
+    *LT = 0;
     // 2730 FOR I = 1 TO 5
     for (I = 1; I <= 5; I += 1) {
     // 2740 LET F$=F$+CHR$(OS+I)

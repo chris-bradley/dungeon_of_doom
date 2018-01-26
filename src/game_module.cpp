@@ -35,17 +35,17 @@ void lines1660_1680(double *F, int O[25], double S1, double S2);
 void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LT,
                     int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
                     int NX, int NY, int **R, const char **T$, int W);
-void lines1760_1950(screen_t *screen, char *C$, int *DX, double *F, int *NX,
-                    int *NY, int *OX, int *OY, int **R, const char **T$,
-                    int W);
-void lines1770_1950(screen_t *screen, char *C$, int *DX, double *F, int *NX,
-                    int *NY, int *OX, int *OY, int **R, const char **T$,
-                    int W);
+void lines1760_1950(screen_t *screen, char *C$, int *DX, double *F, int *LE,
+                    int *NX, int *NY, int *OX, int *OY, int **R,
+                    const char **T$, int W);
+void lines1770_1950(screen_t *screen, char *C$, int *DX, double *F, int *LE,
+                    int *NX, int *NY, int *OX, int *OY, int **R,
+                    const char **T$, int W);
 void lines2010_2250(screen_t *screen, char **C$, double *F, int *GC, int *LT,
                     int *M, int O[25], double *S1, double *S2, const char **T$,
                     int *TR, int W);
 void lines2260_2490(screen_t *screen, char *C$, double *F, int *FI, int GC,
-                    int NX, int NY, int O[25], int **R, int TR, int W);
+                    int LE, int NX, int NY, int O[25], int **R, int TR, int W);
 void lines2500_2780(int *C0, int *C1, int *C2, int *C3, int *C4, int *C5,
                     int *C6, int *C7, int ***D, int *DX, double **F, char **F$,
                     int *FI, int *LT, int **M, int *MX, int *MY, int *NF,
@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
         DX,
         FI,
         GC,
+        LE,
         LT,
         LX,
         LY,
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]) {
     // 20 GOSUB2010
     lines2010_2250(screen, &C$, F, &GC, &LT, M, O, &S1, &S2, T$, &TR, W);
     // 30 GOSUB1770
-    lines1770_1950(screen, C$, &DX, F, &NX, &NY, &OX, &OY, R, T$, W);
+    lines1770_1950(screen, C$, &DX, F, &LE, &NX, &NY, &OX, &OY, R, T$, W);
     int game_over = 0;
     do {
         SDL_RenderPresent(screen->ren);
@@ -155,7 +156,7 @@ int main(int argc, char *argv[]) {
         }
     // 100 IF I$="S" THEN GOSUB2260
         if (I$ == 's') {
-            lines2260_2490(screen, C$, F, &FI, GC, NX, NY, O, R, TR, W);
+            lines2260_2490(screen, C$, F, &FI, GC, LE, NX, NY, O, R, TR, W);
         }
     // 110 IF I$="B" THEN LET NF=NF-1
         if (I$ == 'b') {
@@ -265,7 +266,9 @@ int main(int argc, char *argv[]) {
             M$[strlen(T$[12])] = 0;
             lines430_430(screen, M$, W);
             free(M$);
-            lines1760_1950(screen, C$, &DX, F, &NX, &NY, &OX, &OY, R, T$, W);
+            lines1760_1950(
+                screen, C$, &DX, F, &LE, &NX, &NY, &OX, &OY, R, T$, W
+            );
             game_over = 0;
         } else {
             game_over = 1;
@@ -1065,12 +1068,12 @@ void lines370_420(screen_t *screen, char *I$, char *M$, int W);
 void lines1960_2000(screen_t *screen, double *F);
 void lines2790_2920(screen_t *screen, char *C$, int W);
 
-int LE, OS;
+int OS;
 double S3;
 
 void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
-                         int *DX, double *F, int *NX, int *NY, int *OX,
-                         int *OY, int **R, const char **T$, int W) {
+                         int *DX, double *F, int *LE, int *NX, int *NY,
+                         int *OX, int *OY, int **R, const char **T$, int W) {
     // The original BASIC code sometimes used 'GOSUB 1760' and sometimes
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
@@ -1142,9 +1145,9 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
     // 1900 LET IY=ASC(MID$(S$,I+1,1))-OS
         IY = (int) S$[I] - OS;
     // 1910 LET LE=ASC(MID$(S$,I+2,1))-OS
-        LE = (int) S$[I + 1] - OS;
+        *LE = (int) S$[I + 1] - OS;
     // 1920 IF LE>F(5) THEN GOSUB 1960:GOTO 1760
-        if (LE > F[5]) {
+        if (*LE > F[5]) {
             lines1960_2000(screen, F);
             correct_level_loaded = 1;
         } else {
@@ -1162,16 +1165,16 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
     // 1950 RETURN
 }
 
-void lines1760_1950(screen_t *screen, char *C$, int *DX, double *F, int *NX,
-                    int *NY, int *OX, int *OY, int **R, const char **T$, int W
-                    ) {
-    lines1760_1770_1950(screen, 0, C$, DX, F, NX, NY, OX, OY, R, T$, W);
+void lines1760_1950(screen_t *screen, char *C$, int *DX, double *F, int *LE,
+                    int *NX, int *NY, int *OX, int *OY, int **R,
+                    const char **T$, int W) {
+    lines1760_1770_1950(screen, 0, C$, DX, F, LE, NX, NY, OX, OY, R, T$, W);
 }
 
-void lines1770_1950(screen_t *screen, char *C$, int *DX, double *F, int *NX,
-                    int *NY, int *OX, int *OY, int **R, const char **T$, int W
-                    ) {
-    lines1760_1770_1950(screen, 1, C$, DX, F, NX, NY, OX, OY, R, T$, W);
+void lines1770_1950(screen_t *screen, char *C$, int *DX, double *F, int *LE,
+                    int *NX, int *NY, int *OX, int *OY, int **R,
+                    const char **T$, int W) {
+    lines1760_1770_1950(screen, 1, C$, DX, F, LE, NX, NY, OX, OY, R, T$, W);
 }
 
 void lines1960_2000(screen_t *screen, double *F) {
@@ -1288,7 +1291,8 @@ void lines2010_2250(screen_t *screen, char **C$, double *F, int *GC, int *LT,
 }
 
 void lines2260_2490(screen_t *screen, char *C$, double *F, int *FI, int GC,
-                    int NX, int NY, int O[25], int **R, int TR, int W) {
+                    int LE, int NX, int NY, int O[25], int **R, int TR, int W
+                    ) {
     int I, X, Y;
     char I$, * M$;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430

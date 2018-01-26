@@ -1065,7 +1065,7 @@ void lines370_420(screen_t *screen, char *I$, char *M$, int W);
 void lines1960_2000(screen_t *screen, double *F);
 void lines2790_2920(screen_t *screen, char *C$, int W);
 
-int IX, IY, LE, OS;
+int LE, OS;
 double S3;
 
 void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
@@ -1075,7 +1075,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
-    int correct_level_loaded, I, X, Y;
+    int correct_level_loaded, I, IX, IY, X, Y;
     char I$, * M$;
     do {
 

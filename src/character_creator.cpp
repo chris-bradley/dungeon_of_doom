@@ -19,9 +19,9 @@ void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
 void lines920_970(screen_t *screen, int J, int T, int F[5][9],
                   const char * F$[5][10]);
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char * M$, int P[24],
+                    int ** O, const char * C$[5], char ** M$, int P[24],
                     const char * O$[25], const char * F$[5][10]);
-void lines1700_1730(screen_t *screen, int X, int Y, char * IN$);
+void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
     int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     int P[24];
     const char * F$[5][10];
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, M$, P, O$, F$);
+    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, &M$, P, O$, F$);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         X = 1;
         Y = 3;
-        lines1700_1730(screen, X, Y, IN$);
+        lines1700_1730(screen, X, Y, &IN$);
         strcpy(N$, IN$);
         free(IN$);
     // 390 IF LEN(N$)>10 THEN GOTO 360
@@ -256,7 +256,7 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     X = 14;
     Y = 2;
-    lines1700_1730(screen, X, Y, IN$);
+    lines1700_1730(screen, X, Y, &IN$);
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
@@ -467,7 +467,7 @@ void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L) {
 void lines1600_1650(int *W);
 
 void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char * M$, int P[24],
+                    int ** O, const char * C$[5], char ** M$, int P[24],
                     const char * O$[25], const char * F$[5][10]) {
     int I;
     // 1060 GOSUB 1600
@@ -655,12 +655,12 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
     // 1560 LET GC=120+rnd(60)
     *GC = 120 + (rand() % 60);
     // 1570 LET M$="":LET AS=65
-    M$ = (char *) malloc(sizeof(char) * 40);
-    if (M$ == NULL) {
+    *M$ = (char *) malloc(sizeof(char) * 40);
+    if (*M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
-    strcpy(M$, "");
+    strcpy(*M$, "");
     *AS = 65;
     // 1580 LET B$="":FOR I=1 TO W:LET B$=B$+" ":NEXT I
     // dungeon_libs' print_left$_b$() removes the need for B$
@@ -675,16 +675,16 @@ void lines1600_1650(int *W) {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen, int X, int Y, char * IN$) {
+void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$) {
     // 1700 IN$=""
     int ind = 0;
     char * I$ = (char *) malloc(sizeof(char));
-    IN$ = (char *) malloc(sizeof(char) * 40);
-    if (IN$ == NULL) {
-        fprintf(stderr, "IN$ is NULL!\n");
+    *IN$ = (char *) malloc(sizeof(char) * 40);
+    if (*IN$ == NULL) {
+        fprintf(stderr, "*IN$ is NULL!\n");
         exit(1);
     }
-    IN$[0] = 0;
+    (*IN$)[0] = 0;
     // 1710 GET I$:IF I$=CHR$(13) THEN RETURN
     SDL_Event event;
     int done = 0;
@@ -706,15 +706,15 @@ void lines1700_1730(screen_t *screen, int X, int Y, char * IN$) {
         }
     // 1720 IF I$>"/" AND I$<"[" THEN LET IN$=IN$+I$:PRINT HM$;LEFT$(CU$,Y);SPC(X);IN$;
         if (text_entered && *I$ > '/' && *I$ < ']' && ind < 39) {
-            IN$[ind] = *I$;
+            (*IN$)[ind] = *I$;
             ind += 1;
-            IN$[ind] = 0;
+            (*IN$)[ind] = 0;
             tab(screen->cursor, X, Y);
-            print_text(screen, IN$);
+            print_text(screen, *IN$);
             SDL_RenderPresent(screen->ren);
         }
     // 1730 GOTO 1710
     }
-    IN$[ind] = 0;
+    (*IN$)[ind] = 0;
     free(I$);
 }

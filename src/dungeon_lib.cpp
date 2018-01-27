@@ -3,7 +3,7 @@
 
 #include "dungeon_lib.h"
 
-Uint8 BG$ [4][4] {
+uint8_t BG$ [4][4] {
     {0x00, 0x00, 0x00, 0},
     {0x88, 0x20, 0x00, 0},
     {0xf0, 0xe8, 0x58, 0},
@@ -29,7 +29,7 @@ void print_text(screen_t *screen, const char *message) {
     };
     screen->cursor->curs_x += message_length;
 
-    Uint8 r, g, b;
+    uint8_t r, g, b;
     // Background
     int error = SDL_SetRenderDrawColor(
         screen->ren,

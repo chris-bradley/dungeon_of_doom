@@ -486,7 +486,7 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
 
     int i;
     for (i = 0; i < *D * 3; i += 1) {
-        O[i] = 0;
+        (*O)[i] = 0;
     }
 
     // 1120 DIM O$(D*3)

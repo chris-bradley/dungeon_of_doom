@@ -1,4 +1,3 @@
-#include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -136,7 +135,7 @@ void newline(cursor_t *cursor) {
 
 int init_screen(screen_t **screen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "SDL_Init error:" << SDL_GetError() << std::endl;
+        fprintf(stderr, "SDL_Init error:%s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
@@ -162,8 +161,7 @@ int init_screen(screen_t **screen) {
     );
     if ((*screen)->ren == NULL) {
         SDL_DestroyWindow((*screen)->win);
-        std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() <<
-            std::endl;
+        fprintf(stdout, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }

@@ -1438,9 +1438,9 @@ void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
     }
     int i;
     for (i = 0; i < 16; i += 1) {
-        *R[i] = (int *) malloc(sizeof(int) * 16);
-        if (*R[i] == NULL) {
-            fprintf(stderr, "*R[%i] is NULL!\n", i);
+        (*R)[i] = (int *) malloc(sizeof(int) * 16);
+        if ((*R)[i] == NULL) {
+            fprintf(stderr, "(*R)[%i] is NULL!\n", i);
             exit(1);
         }
     }
@@ -1467,9 +1467,9 @@ void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
         exit(1);
     }
     for (i = 0; i < 5; i += 1) {
-        *D[i] = (int *) malloc(sizeof(int) * 3);
-        if (*D[i] == NULL) {
-            fprintf(stderr, "*D[%i] is NULL!\n", i);
+        (*D)[i] = (int *) malloc(sizeof(int) * 3);
+        if ((*D)[i] == NULL) {
+            fprintf(stderr, "(*D)[%i] is NULL!\n", i);
             exit(1);
         }
     }
@@ -1483,17 +1483,17 @@ void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
     // 2580 FOR I = 1 TO 11
     // 2590 READ W$(I)
     // 2600 NEXT I
-    *W$[1] = "GR SWORD";
-    *W$[2] = "SWORD";
-    *W$[3] = "AXE";
-    *W$[4] = "MACE";
-    *W$[5] = "FLAIL";
-    *W$[6] = "DAGGER";
-    *W$[7] = "ARMOUR";
-    *W$[8] = "ARMOUR";
-    *W$[9] = "ARMOUR";
-    *W$[10] = "HELMET";
-    *W$[11] = "HEADPC.";
+    (*W$)[1] = "GR SWORD";
+    (*W$)[2] = "SWORD";
+    (*W$)[3] = "AXE";
+    (*W$)[4] = "MACE";
+    (*W$)[5] = "FLAIL";
+    (*W$)[6] = "DAGGER";
+    (*W$)[7] = "ARMOUR";
+    (*W$)[8] = "ARMOUR";
+    (*W$)[9] = "ARMOUR";
+    (*W$)[10] = "HELMET";
+    (*W$)[11] = "HEADPC.";
 
     // 2610 DATA"A GOOD BLOW","WELL HIT SIRE","THY AIM IS TRUE","MISSED!","HIT THEE!!"
     // 2620 DATA"THE MONSTER IS SLAIN","NO LIGHT","BROKEN THY ","SPELL EXHAUSTED"
@@ -1508,30 +1508,30 @@ void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
         exit(1);
     }
 
-    *T$[1] = "A GOOD BLOW";
-    *T$[2] = "WELL HIT SIRE";
-    *T$[3] = "THY AIM IS TRUE";
-    *T$[4] = "MISSED!";
-    *T$[5] = "HIT THEE!!";
-    *T$[6] = "THE MONSTER IS SLAIN";
-    *T$[7] = "NO LIGHT";
-    *T$[8] = "BROKEN THY ";
-    *T$[9] = "SPELL EXHAUSTED";
-    *T$[10] = "PRESS ANY KEY";
-    *T$[11] = "YOU NEED EXPERIENCE";
-    *T$[12] = "EXIT FROM THIS LEVEL";
+    (*T$)[1] = "A GOOD BLOW";
+    (*T$)[2] = "WELL HIT SIRE";
+    (*T$)[3] = "THY AIM IS TRUE";
+    (*T$)[4] = "MISSED!";
+    (*T$)[5] = "HIT THEE!!";
+    (*T$)[6] = "THE MONSTER IS SLAIN";
+    (*T$)[7] = "NO LIGHT";
+    (*T$)[8] = "BROKEN THY ";
+    (*T$)[9] = "SPELL EXHAUSTED";
+    (*T$)[10] = "PRESS ANY KEY";
+    (*T$)[11] = "YOU NEED EXPERIENCE";
+    (*T$)[12] = "EXIT FROM THIS LEVEL";
 
 
     // 2670 DATA0,-1,1,0,0,1,-1,0
     // 2680 FOR I=1 TO 4:READ D(I,1),D(I,2):NEXT I
-    *D[1][1] = 0;
-    *D[1][2] = -1;
-    *D[2][1] = 1;
-    *D[2][2] = 0;
-    *D[3][1] = 0;
-    *D[3][2] = 1;
-    *D[4][1] = -1;
-    *D[4][2] = 0;
+    (*D)[1][1] = 0;
+    (*D)[1][2] = -1;
+    (*D)[2][1] = 1;
+    (*D)[2][2] = 0;
+    (*D)[3][1] = 0;
+    (*D)[3][2] = 1;
+    (*D)[4][1] = -1;
+    (*D)[4][2] = 0;
 
     // 2690 LET FI=0:LET DX=255:LET NF=0
     *FI = 0;
@@ -1560,30 +1560,30 @@ void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
     // 2730 FOR I = 1 TO 5
     for (I = 1; I <= 5; I += 1) {
     // 2740 LET F$=F$+CHR$(OS+I)
-        *F$[I] = *OS + I;
+        (*F$)[I] = *OS + I;
     // 2750 NEXT I
     }
-    *F$[6] = 0;
+    (*F$)[6] = 0;
     // 2760 DATA69,117,73,121,81,129,69,117,73,121,81,129,89,137,97,145,101,149
     // 2770 FOR I=1 TO 18:READ T(I):NEXT I:GOSUB 2930
-    *T[1] = 69;
-    *T[2] = 117;
-    *T[3] = 73;
-    *T[4] = 121;
-    *T[5] = 81;
-    *T[6] = 129;
-    *T[7] = 69;
-    *T[8] = 117;
-    *T[9] = 73;
-    *T[10] = 121;
-    *T[11] = 81;
-    *T[12] = 129;
-    *T[13] = 89;
-    *T[14] = 137;
-    *T[15] = 97;
-    *T[16] = 145;
-    *T[17] = 101;
-    *T[18] = 149;
+    (*T)[1] = 69;
+    (*T)[2] = 117;
+    (*T)[3] = 73;
+    (*T)[4] = 121;
+    (*T)[5] = 81;
+    (*T)[6] = 129;
+    (*T)[7] = 69;
+    (*T)[8] = 117;
+    (*T)[9] = 73;
+    (*T)[10] = 121;
+    (*T)[11] = 81;
+    (*T)[12] = 129;
+    (*T)[13] = 89;
+    (*T)[14] = 137;
+    (*T)[15] = 97;
+    (*T)[16] = 145;
+    (*T)[17] = 101;
+    (*T)[18] = 149;
     lines2930_3200(AS, C0, C1, C2, C3, C4, C5, C6, C7, *OS);
     // 2780 RETURN
 }

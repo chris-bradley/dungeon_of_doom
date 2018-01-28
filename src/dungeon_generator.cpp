@@ -12,8 +12,6 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-using namespace std;
-
 void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
                   int CO);
 void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW);

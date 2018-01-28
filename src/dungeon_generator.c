@@ -1,14 +1,3 @@
-
-
-// #ifdef HAVE_CONFIG_H
-// #include <config.h>
-// #endif
-//
-// #include <iostream>
-// #include <cstdlib>
-//
-// using namespace std;
-
 #include <SDL.h>
 #include "dungeon_lib.h"
 

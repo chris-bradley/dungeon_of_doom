@@ -192,21 +192,21 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    S$[0] = char (O_ + AS);
+    S$[0] = (char) (O_ + AS);
     // 440 FOR I=1 TO 8
     for (I = 1; I <= 8; I +=1 ) {
     // 450 LET S$=S$+CHR(F(1,I)+AS)
-        S$[I] += char (F[1][I] + AS);
+        S$[I] += (char) (F[1][I] + AS);
     }
     // 460 NEXT I
     // 470 FOR I = 1 TO O
     for (I = 1; I <= O_; I += 1) {
     // 480 LET S$=S$+CHR$(O(I)+AS)
-        S$[8 + I] = char (O[I] + AS);
+        S$[8 + I] = (char) (O[I] + AS);
     // 490 NEXT I
     }
     // 500 LET S$=S$+CHR$(H+AS)
-    S$[9 + O_] = char (H + AS);
+    S$[9 + O_] = (char) (H + AS);
     // 510 LET S$=S$+CHR$(AS)
     S$[10 + O_] = (char) AS;
     // 520 LET S$=S$+N$+" -"+C$(C)

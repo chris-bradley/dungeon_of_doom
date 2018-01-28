@@ -1,4 +1,4 @@
-all: dungeon_lib.cpp dungeon_generator.cpp dungeon_lib_win.o dungeon_lib_lin.o character_creator.cpp
+all: dungeon_lib.c dungeon_generator.c dungeon_lib_win.o dungeon_lib_lin.o character_creator.c
 	make \
 		dungeon_lib_win.o \
 		dungeon_lib_lin.o \
@@ -9,11 +9,10 @@ all: dungeon_lib.cpp dungeon_generator.cpp dungeon_lib_win.o dungeon_lib_lin.o c
 		game_module.exe \
 		game_module
 
-dungeon_lib_win.o : dungeon_lib.cpp
-	i686-w64-mingw32-g++ \
+dungeon_lib_win.o : dungeon_lib.c
+	i686-w64-mingw32-gcc \
 		-Wall \
-		-c dungeon_lib.cpp \
-		-static-libstdc++ \
+		-c dungeon_lib.c \
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
@@ -36,24 +35,21 @@ dungeon_lib_win.o : dungeon_lib.cpp
 		-l oleaut32 \
 		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
 		-D main=SDL_main \
-		-std=gnu++11 \
 		-o dungeon_lib_win.o
 
-dungeon_lib_lin.o : dungeon_lib.cpp
-	g++ \
-		-c dungeon_lib.cpp \
+dungeon_lib_lin.o : dungeon_lib.c
+	gcc \
+		-c dungeon_lib.c \
 		-l SDL2 \
 		-l SDL2_ttf \
 		-D main=SDL_main \
 		-I /usr/include/SDL2 \
-		-std=gnu++11 \
 		-o dungeon_lib_lin.o
 
-dungeon_generator.exe : dungeon_generator.cpp dungeon_lib_win.o
-	i686-w64-mingw32-g++ \
+dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
+	i686-w64-mingw32-gcc \
 		dungeon_lib_win.o \
-		dungeon_generator.cpp \
-		-static-libstdc++ \
+		dungeon_generator.c \
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
@@ -80,20 +76,19 @@ dungeon_generator.exe : dungeon_generator.cpp dungeon_lib_win.o
 		-D main=SDL_main \
 		-o dungeon_generator.exe
 
-dungeon_generator : dungeon_generator.cpp dungeon_lib_lin.o
-	g++ \
+dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
+	gcc \
 		-l SDL2 \
 		-l SDL2_ttf \
 		-I /usr/include/SDL2 \
 		-o dungeon_generator \
 		dungeon_lib_lin.o \
-		dungeon_generator.cpp
+		dungeon_generator.c
 
-character_creator.exe : character_creator.cpp dungeon_lib_win.o
-	i686-w64-mingw32-g++ \
+character_creator.exe : character_creator.c dungeon_lib_win.o
+	i686-w64-mingw32-gcc \
 		dungeon_lib_win.o \
-		character_creator.cpp \
-		-static-libstdc++ \
+		character_creator.c \
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
@@ -120,20 +115,19 @@ character_creator.exe : character_creator.cpp dungeon_lib_win.o
 		-D main=SDL_main \
 		-o character_creator.exe
 
-character_creator : character_creator.cpp dungeon_lib_lin.o
-	g++ \
+character_creator : character_creator.c dungeon_lib_lin.o
+	gcc \
 		-l SDL2 \
 		-l SDL2_ttf \
 		-I /usr/include/SDL2 \
 		-o character_creator \
 		dungeon_lib_lin.o \
-		character_creator.cpp
+		character_creator.c
 
-game_module.exe : game_module.cpp dungeon_lib_win.o
-	i686-w64-mingw32-g++ \
+game_module.exe : game_module.c dungeon_lib_win.o
+	i686-w64-mingw32-gcc \
 		dungeon_lib_win.o \
-		game_module.cpp \
-		-static-libstdc++ \
+		game_module.c \
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
@@ -160,11 +154,11 @@ game_module.exe : game_module.cpp dungeon_lib_win.o
 		-D main=SDL_main \
 		-o game_module.exe
 
-game_module : game_module.cpp dungeon_lib_lin.o
-	g++ \
+game_module : game_module.c dungeon_lib_lin.o
+	gcc \
 		-l SDL2 \
 		-l SDL2_ttf \
 		-I /usr/include/SDL2 \
 		-o game_module \
 		dungeon_lib_lin.o \
-		game_module.cpp
+		game_module.c

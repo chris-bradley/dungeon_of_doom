@@ -90,15 +90,15 @@ int main(int argc, char *argv[]) {
 
         if (*I$ == 'h') {
             lines360_420(screen, W, H$);
-        } else if (*I$ == 'a' and Y > 1) {
+        } else if (*I$ == 'a' && Y > 1) {
             Y -= 1;
-        } else if (*I$ == 'z' and Y < 15) {
+        } else if (*I$ == 'z' && Y < 15) {
             Y += 1;
-        } else if (*I$ == 'n' and X > 1) {
+        } else if (*I$ == 'n' && X > 1) {
             X -= 1;
-        } else if (*I$ == 'm' and X < 15) {
+        } else if (*I$ == 'm' && X < 15) {
             X += 1;
-        } else if (*I$ > '/' and *I$ < ':') {
+        } else if (*I$ > '/' && *I$ < ':') {
             lines230_270(X, Y, R, I$, IX, IY, CO);
         }
         // 170 paper 3:ink 0

@@ -689,7 +689,7 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$) {
     SDL_Event event;
     int done = 0;
     int text_entered;
-    while (not done) {
+    while (!done) {
         text_entered = 0;
         if (SDL_PollEvent(&event)) {
             switch (event.type) {

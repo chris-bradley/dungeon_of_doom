@@ -1,6 +1,4 @@
 #include <SDL.h>
-#include <unistd.h>
-#include <stdio.h>
 #include "dungeon_lib.h"
 
 void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,

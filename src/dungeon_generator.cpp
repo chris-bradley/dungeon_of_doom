@@ -9,9 +9,7 @@
 //
 // using namespace std;
 
-#include <bits/stdc++.h>
 #include <SDL.h>
-#include <unistd.h>
 #include "dungeon_lib.h"
 
 using namespace std;

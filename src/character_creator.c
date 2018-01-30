@@ -1,11 +1,12 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
-                  int N, int F[5][9], int * O, const char * C$[5],
-                  const char * H$, char * M$, int P[24], const char * O$[25]);
-void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
-                  int F[5][9], int * O, char * M$, int P[24]);
+void lines570_600(screen_t *screen, int max_accepted_discount, int C, int J,
+                  int *H, int K, int N, int F[5][9], int * O,
+                  const char * C$[5], const char * H$, char * M$, int P[24],
+                  const char * O$[25]);
+void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
+                  int OF, int Y, int F[5][9], int * O, char * M$, int P[24]);
 void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$,
                   const char * O$[25]);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$);
@@ -22,7 +23,8 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
 void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
-    int AS, BR, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
+    int AS, max_accepted_discount, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T,
+        W, X, Y;
     int F[5][9];
     int * O;
     const char * C$[5], * H$, * O$[25];
@@ -128,18 +130,21 @@ int main(int argc, char *argv[]) {
     // 290 GOSUB 680
             lines680_710(C, N, &Y, C$, M$, O$);
     // 300 LET BR=0:LET OF=0
-            BR = 0;
+            max_accepted_discount = 0;
             OF = 0;
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
                 OF = F[J][K];
-                lines610_670(BR, J, &H, K, N, OF, Y, F, O, M$, P);
+                lines610_670(
+                    max_accepted_discount, J, &H, K, N, OF, Y, F, O, M$, P
+                );
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*I$ == '-') {
-                BR = rand() % 3;
+                max_accepted_discount = rand() % 3;
                 lines570_600(
-                    screen, BR, C, J, &H, K, N, F, O, C$, H$, M$, P, O$
+                    screen, max_accepted_discount, C, J, &H, K, N, F, O, C$,
+                    H$, M$, P, O$
                 );
             }
     // 330 GOSUB 860
@@ -238,9 +243,10 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
-                  int N, int F[5][9], int * O, const char * C$[5],
-                  const char * H$, char * M$, int P[24], const char * O$[25]) {
+void lines570_600(screen_t *screen, int max_accepted_discount, int C, int J,
+                  int *H, int K, int N, int F[5][9], int * O,
+                  const char * C$[5], const char * H$, char * M$, int P[24],
+                  const char * O$[25]) {
     int OF, X, Y;
     char * IN$ = NULL;
     // 570 LET M$="";GOSUB 860
@@ -259,18 +265,18 @@ void lines570_600(screen_t *screen, int BR, int C, int J, int *H, int K,
     free(IN$);
     // 600 GOSUB 680
     lines680_710(C, N, &Y, C$, M$, O$);
-    lines610_670(BR, J, H, K, N, OF, Y, F, O, M$, P);
+    lines610_670(max_accepted_discount, J, H, K, N, OF, Y, F, O, M$, P);
 }
 
-void lines610_670(int BR, int J, int *H, int K, int N, int OF, int Y,
-                  int F[5][9], int * O, char * M$, int P[24]) {
+void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
+                  int OF, int Y, int F[5][9], int * O, char * M$, int P[24]) {
     int PR;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
     } else {
     // 620 LET PR=F(J,K)-BR
-        PR = F[J][K] - BR;
+        PR = F[J][K] - max_accepted_discount;
     // 630 IF H<PR THEN LET M$="YOU CANNOT AFFORD":RETURN
         if (*H < PR) {
             strcpy(M$, "YOU CANNOT AFFORD");

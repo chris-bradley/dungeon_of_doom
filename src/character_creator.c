@@ -17,14 +17,14 @@ void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
                   const char * F$[5][10]);
 void lines920_970(screen_t *screen, int J, int T, int F[5][9],
                   const char * F$[5][10]);
-void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char ** M$, int P[24],
-                    const char * O$[25], const char * F$[5][10]);
+void lines1060_1590(int *char_base, int *D, int *GC, int *MP, int *W,
+                    int F[5][9], int ** O, const char * C$[5], char ** M$,
+                    int P[24], const char * O$[25], const char * F$[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
-    int AS, max_accepted_discount, C, D, GC, I, J, H, K, MP, N, O_, OF, P_, T,
-        W, X, Y;
+    int char_base, max_accepted_discount, C, D, GC, I, J, H, K, MP, N, O_, OF,
+        P_, T, W, X, Y;
     int F[5][9];
     int * O;
     const char * C$[5], * H$, * O$[25];
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     int P[24];
     const char * F$[5][10];
     // 10 GOSUB 1060
-    lines1060_1590(&AS, &D, &GC, &MP, &W, F, &O, C$, &M$, P, O$, F$);
+    lines1060_1590(&char_base, &D, &GC, &MP, &W, F, &O, C$, &M$, P, O$, F$);
     // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -195,23 +195,23 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    S$[0] = (char) (O_ + AS);
+    S$[0] = (char) (O_ + char_base);
     // 440 FOR I=1 TO 8
     for (I = 1; I <= 8; I +=1 ) {
     // 450 LET S$=S$+CHR(F(1,I)+AS)
-        S$[I] += (char) (F[1][I] + AS);
+        S$[I] += (char) (F[1][I] + char_base);
     }
     // 460 NEXT I
     // 470 FOR I = 1 TO O
     for (I = 1; I <= O_; I += 1) {
     // 480 LET S$=S$+CHR$(O(I)+AS)
-        S$[8 + I] = (char) (O[I] + AS);
+        S$[8 + I] = (char) (O[I] + char_base);
     // 490 NEXT I
     }
     // 500 LET S$=S$+CHR$(H+AS)
-    S$[9 + O_] = (char) (H + AS);
+    S$[9 + O_] = (char) (H + char_base);
     // 510 LET S$=S$+CHR$(AS)
-    S$[10 + O_] = (char) AS;
+    S$[10 + O_] = (char) char_base;
     // 520 LET S$=S$+N$+" -"+C$(C)
     strcpy(S$ + 11 + O_, N$);
     strcpy(S$ + 11 + O_ + strlen(N$), " -");
@@ -470,9 +470,9 @@ void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L) {
 
 void lines1600_1650(int *W);
 
-void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
-                    int ** O, const char * C$[5], char ** M$, int P[24],
-                    const char * O$[25], const char * F$[5][10]) {
+void lines1060_1590(int *char_base, int *D, int *GC, int *MP, int *W,
+                    int F[5][9], int ** O, const char * C$[5], char ** M$,
+                    int P[24], const char * O$[25], const char * F$[5][10]) {
     int I;
     // 1060 GOSUB 1600
     lines1600_1650(W);
@@ -665,7 +665,7 @@ void lines1060_1590(int *AS, int *D, int *GC, int *MP, int *W, int F[5][9],
         exit(1);
     }
     strcpy(*M$, "");
-    *AS = 65;
+    *char_base = 65;
     // 1580 LET B$="":FOR I=1 TO W:LET B$=B$+" ":NEXT I
     // dungeon_libs' print_left$_b$() removes the need for B$
     // 1590 RETURN

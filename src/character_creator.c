@@ -342,11 +342,12 @@ void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$) {
     // 800 RETURN
 }
 
-void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L);
+void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
+                   int T, int L);
 
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
                   const char * H$, char * M$, const char * F$[5][10]) {
-    int BG, FG, L;
+    int background_colour, FG, L;
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
@@ -357,12 +358,12 @@ void lines810_850(screen_t *screen, int J, int H, int *T, int W,
     tab(screen->cursor, 0, 0);
     print_text(screen, F$[J][9]);
     // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
-    BG = 2;
+    background_colour = 2;
     FG = 3;
     *T = 1;
     L = 2;
     // 850 GOSUB 980
-    lines980_1050(screen, W, BG, FG, *T, L);
+    lines980_1050(screen, W, background_colour, FG, *T, L);
     lines860_890(screen, H, H$, M$);
 }
 
@@ -395,14 +396,14 @@ void lines860_890(screen_t *screen, int H, const char * H$, char * M$) {
 
 void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
                   const char * F$[5][10]) {
-    int BG, FG, L;
+    int background_colour, FG, L;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
-    BG = 3;
+    background_colour = 3;
     FG = 2;
     *T = 5;
     L = 15;
     // 910 GOSUB 980
-    lines980_1050(screen, W, BG, FG, *T, L);
+    lines980_1050(screen, W, background_colour, FG, *T, L);
     lines920_970(screen, J, *T, F, F$);
 }
 
@@ -437,7 +438,8 @@ void lines920_970(screen_t *screen, int J, int T, int F[5][9],
     // 970 RETURN
 }
 
-void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L) {
+void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
+                   int T, int L) {
     int I;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
@@ -446,7 +448,7 @@ void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L) {
     print_left$_b$(screen, W);
     newline(screen->cursor);
     // 1000 paper BG:ink FG
-    paper(screen->cursor, BG);
+    paper(screen->cursor, background_colour);
     ink(screen->cursor, FG);
     // 1010 FOR I=1 TO L
     for (I = 1; I <= L; I += 1) {
@@ -454,7 +456,7 @@ void lines980_1050(screen_t *screen, int W, int BG, int FG, int T, int L) {
     // C64: 1020 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,W-2);BG$(FG);" ";
         paper(screen->cursor, FG);
         print_text(screen, " ");
-        paper(screen->cursor, BG);
+        paper(screen->cursor, background_colour);
         print_left$_b$(screen, W - 2);
         paper(screen->cursor, FG);
         print_text(screen, " ");

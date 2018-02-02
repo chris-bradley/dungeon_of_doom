@@ -14,9 +14,9 @@ void lines680_710(int character_class_id, int N, int *Y,
                   const char * O$[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
                   int T, char * I$);
-void lines810_850(screen_t *screen, int J, int H, int *T, int W,
+void lines810_850(screen_t *screen, int J, int num_points, int *T, int W,
                   const char * H$, char * M$, const char * F$[5][10]);
-void lines860_890(screen_t *screen, int H, const char * H$, char * M$);
+void lines860_890(screen_t *screen, int num_points, const char * H$, char * M$);
 void lines900_910(screen_t *screen, int J, int *T, int W,
                   int attrs_and_prices[5][9], const char * F$[5][10]);
 void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
@@ -382,7 +382,7 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
 void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
                    int T, int L);
 
-void lines810_850(screen_t *screen, int J, int H, int *T, int W,
+void lines810_850(screen_t *screen, int J, int num_points, int *T, int W,
                   const char * H$, char * M$, const char * F$[5][10]) {
     int background_colour, FG, L;
     // 810 paper 0:ink 2
@@ -401,10 +401,11 @@ void lines810_850(screen_t *screen, int J, int H, int *T, int W,
     L = 2;
     // 850 GOSUB 980
     lines980_1050(screen, W, background_colour, FG, *T, L);
-    lines860_890(screen, H, H$, M$);
+    lines860_890(screen, num_points, H$, M$);
 }
 
-void lines860_890(screen_t *screen, int H, const char * H$, char * M$) {
+void lines860_890(screen_t *screen, int num_points, const char * H$,
+                  char * M$) {
     // 860 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);
@@ -425,7 +426,7 @@ void lines860_890(screen_t *screen, int H, const char * H$, char * M$) {
         fprintf(stderr, "outstring is NULL!\n");
         exit(1);
     }
-    sprintf(outstring, "%i ", H);
+    sprintf(outstring, "%i ", num_points);
     print_text(screen, outstring);
     free(outstring);
     // 890 RETURN

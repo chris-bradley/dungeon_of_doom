@@ -21,15 +21,16 @@ void lines900_910(screen_t *screen, int J, int *T, int W,
                   int attrs_and_prices[5][9], const char * F$[5][10]);
 void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
                   const char * F$[5][10]);
-void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
-                    int *W, int attrs_and_prices[5][9], int ** O,
+void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
+                    int *MP, int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
-        interface_num_rows, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
+        interface_num_rows, gold_coins, I, J, H, K, MP, N, O_, OF, P_, T, W, X,
+        Y;
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * H$, * O$[25];
@@ -38,8 +39,8 @@ int main(int argc, char *argv[]) {
     const char * F$[5][10];
     // 10 GOSUB 1060
     lines1060_1590(
-        &char_base, &interface_num_rows, &GC, &MP, &W, attrs_and_prices, &O,
-        character_class_names, &M$, P, O$, F$
+        &char_base, &interface_num_rows, &gold_coins, &MP, &W,
+        attrs_and_prices, &O, character_class_names, &M$, P, O$, F$
     );
     // 20 paper 0:CLS
     screen_t *screen = NULL;
@@ -118,7 +119,7 @@ int main(int argc, char *argv[]) {
     // 180 IF I$<>" " THEN GOTO 70
     } while (*I$ != ' ');
     // 190 LET H=GC:LET H$="GOLD COINS:"
-    H = GC;
+    H = gold_coins;
     H$ = "GOLD COINS";
     // 200 FOR J=2 TO 4
     for (J = 2; J <= 4; J += 1) {
@@ -508,8 +509,8 @@ void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
 
 void lines1600_1650(int *W);
 
-void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
-                    int *W, int attrs_and_prices[5][9], int ** O,
+void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
+                    int *MP, int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]) {
     int I;
@@ -696,7 +697,7 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
     // 1550 LET MP=3+rnd(5)
     *MP = 3 + (rand() % 5);
     // 1560 LET GC=120+rnd(60)
-    *GC = 120 + (rand() % 60);
+    *gold_coins = 120 + (rand() % 60);
     // 1570 LET M$="":LET AS=65
     *M$ = (char *) malloc(sizeof(char) * 40);
     if (*M$ == NULL) {

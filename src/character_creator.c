@@ -10,7 +10,8 @@ void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
 void lines680_710(int character_class_id, int N, int *Y,
                   const char * character_class_names[5], char * M$,
                   const char * O$[25]);
-void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$);
+void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
+                  int T, char * I$);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
                   const char * H$, char * M$, const char * F$[5][10]);
 void lines860_890(screen_t *screen, int H, const char * H$, char * M$);
@@ -18,15 +19,15 @@ void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
                   const char * F$[5][10]);
 void lines920_970(screen_t *screen, int J, int T, int F[5][9],
                   const char * F$[5][10]);
-void lines1060_1590(int *char_base, int *D, int *GC, int *MP, int *W,
-                    int F[5][9], int ** O,
+void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
+                    int *W, int F[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
-    int char_base, max_accepted_discount, character_class_id, D, GC, I, J, H,
-        K, MP, N, O_, OF, P_, T, W, X, Y;
+    int char_base, max_accepted_discount, character_class_id,
+        interface_num_rows, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
     int F[5][9];
     int * O;
     const char * character_class_names[5], * H$, * O$[25];
@@ -35,8 +36,8 @@ int main(int argc, char *argv[]) {
     const char * F$[5][10];
     // 10 GOSUB 1060
     lines1060_1590(
-        &char_base, &D, &GC, &MP, &W, F, &O, character_class_names, &M$, P, O$,
-        F$
+        &char_base, &interface_num_rows, &GC, &MP, &W, F, &O,
+        character_class_names, &M$, P, O$, F$
     );
     // 20 paper 0:CLS
     screen_t *screen = NULL;
@@ -65,10 +66,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(screen, D, &K, &P_, T, I$);
+        lines720_800(screen, interface_num_rows, &K, &P_, T, I$);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen, D, &K, &P_, T, I$);
+            lines720_800(screen, interface_num_rows, &K, &P_, T, I$);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
@@ -127,7 +128,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen, D, &K, &P_, T, I$);
+            lines720_800(screen, interface_num_rows, &K, &P_, T, I$);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -191,7 +192,7 @@ int main(int argc, char *argv[]) {
     // 410 PRINT tab(1,3);
     tab(screen->cursor, 1, 3);
     // 420 LET O=D*3
-    O_ = D * 3;
+    O_ = interface_num_rows * 3;
     // 430 LET S$=CHR$(O+AS)
 
     char * S$ = (char *) malloc(
@@ -335,7 +336,8 @@ void lines680_710(int character_class_id, int N, int *Y,
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$) {
+void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
+                  int T, char * I$) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *I$ = inkey$();
@@ -350,7 +352,7 @@ void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$) {
         *K -= 1;
     }
     // 770 IF I$="Z" AND K<D THEN LET K=K+1
-    else if (*I$ == 'z' && *K < D) {
+    else if (*I$ == 'z' && *K < interface_num_rows) {
         *K += 1;
     }
     // 780 LET P=K*2+T-1
@@ -491,27 +493,27 @@ void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
 
 void lines1600_1650(int *W);
 
-void lines1060_1590(int *char_base, int *D, int *GC, int *MP, int *W,
-                    int F[5][9], int ** O,
+void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
+                    int *W, int F[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]) {
     int I;
     // 1060 GOSUB 1600
     lines1600_1650(W);
     // 1070 LET D=8
-    *D = 8;
+    *interface_num_rows = 8;
     // 1080 DIM F(4,D+1)
     // 1090 DIM F$(4,D+1)
     // 1100 DIM C$(5)
     // 1110 DIM O(D*3)
-    *O = (int *) malloc(sizeof(int) * (*D) * 3);
+    *O = (int *) malloc(sizeof(int) * (*interface_num_rows) * 3);
     if (*O == NULL) {
         fprintf(stderr, "*O is NULL!\n");
         exit(1);
     }
 
     int i;
-    for (i = 0; i < *D * 3; i += 1) {
+    for (i = 0; i < *interface_num_rows * 3; i += 1) {
         (*O)[i] = 0;
     }
 

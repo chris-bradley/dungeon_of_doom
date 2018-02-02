@@ -29,8 +29,7 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
-        interface_num_rows, gold_coins, I, J, H, K, MP, N, O_, OF, P_, T, W, X,
-        Y;
+        interface_num_rows, gold_coins, I, J, K, MP, N, O_, OF, P_, T, W, X, Y;
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * H$, * O$[25];
@@ -50,10 +49,9 @@ int main(int argc, char *argv[]) {
     paper(screen->cursor, 0);
     // 30 LET J=1:LET H=MP:LET H$="POINTS"
     J = 1;
-    H = MP;
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, J, H, &T, W, H$, M$, F$);
+    lines810_850(screen, J, MP, &T, W, H$, M$, F$);
     lines900_910(screen, J, &T, W, attrs_and_prices, F$);
     // 50 LET K=1:LET P=T+1
     K = 1;
@@ -75,15 +73,15 @@ int main(int argc, char *argv[]) {
             lines720_800(screen, interface_num_rows, &K, &P_, T, I$);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
-        if (*I$ == ';' && H > 0) {
+        if (*I$ == ';' && MP > 0) {
             attrs_and_prices[J][K] += 1;
-            H -= 1;
+            MP -= 1;
             lines920_970(screen, J, T, attrs_and_prices, F$);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*I$ == '-' && attrs_and_prices[J][K] > 1) {
             attrs_and_prices[J][K] -=1;
-            H += 1;
+            MP += 1;
             lines920_970(screen, J, T, attrs_and_prices, F$);
         }
     // 110 LET C=1
@@ -114,7 +112,7 @@ int main(int argc, char *argv[]) {
     // 160 LET M$=C$(C)
         strcpy(M$, character_class_names[character_class_id]);
     // 170 GOSUB 860
-        lines860_890(screen, H, H$, M$);
+        lines860_890(screen, MP, H$, M$);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
     } while (*I$ != ' ');

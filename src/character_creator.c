@@ -1,14 +1,14 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines570_600(screen_t *screen, int max_accepted_discount, int C, int J,
-                  int *H, int K, int N, int F[5][9], int * O,
-                  const char * C$[5], const char * H$, char * M$, int P[24],
-                  const char * O$[25]);
+void lines570_600(screen_t *screen, int max_accepted_discount,
+                  int character_class_id, int J, int *H, int K, int N,
+                  int F[5][9], int * O, const char * C$[5], const char * H$,
+                  char * M$, int P[24], const char * O$[25]);
 void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
                   int OF, int Y, int F[5][9], int * O, char * M$, int P[24]);
-void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$,
-                  const char * O$[25]);
+void lines680_710(int character_class_id, int N, int *Y, const char * C$[5],
+                  char * M$, const char * O$[25]);
 void lines720_800(screen_t *screen, int D, int *K, int *P_, int T, char * I$);
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
                   const char * H$, char * M$, const char * F$[5][10]);
@@ -23,8 +23,8 @@ void lines1060_1590(int *char_base, int *D, int *GC, int *MP, int *W,
 void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
-    int char_base, max_accepted_discount, C, D, GC, I, J, H, K, MP, N, O_, OF,
-        P_, T, W, X, Y;
+    int char_base, max_accepted_discount, character_class_id, D, GC, I, J, H,
+        K, MP, N, O_, OF, P_, T, W, X, Y;
     int F[5][9];
     int * O;
     const char * C$[5], * H$, * O$[25];
@@ -78,25 +78,25 @@ int main(int argc, char *argv[]) {
             lines920_970(screen, J, T, F, F$);
         }
     // 110 LET C=1
-        C = 1;
+        character_class_id = 1;
     // 120 IF F(1,4)>6 AND F(1,8)>7 THEN LET C=2
         if (F[1][4] > 6 && F[1][8] > 7) {
-            C = 2;
+            character_class_id = 2;
         }
     // 130 IF F(1,4)>8 AND F(1,7)>7 THEN LET C=3
         if (F[1][4] > 8 && F[1][7] > 7) {
-            C = 3;
+            character_class_id = 3;
         }
     // 140 IF F(1,1)>7 AND F(1,8)>5 AND F(1,1)+F(1,2)>10 THEN LET C=4
         if (F[1][1] > 7 && F[1][8] > 5 && F[1][1] + F[1][2] > 10) {
-            C = 4;
+            character_class_id = 4;
         }
     // 150 IF F(1,1)>8 AND F(1,2)+F(1,3)>12 and F(1,8)<6 THEN LET C=5
         if (F[1][1] > 8 && F[1][2] + F[1][3] > 12 && F[1][8]) {
-            C = 5;
+            character_class_id = 5;
         }
     // 160 LET M$=C$(C)
-        strcpy(M$, C$[C]);
+        strcpy(M$, C$[character_class_id]);
     // 170 GOSUB 860
         lines860_890(screen, H, H$, M$);
         SDL_RenderPresent(screen->ren);
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
     // 280 LET M$="MAKE YOUR CHOICE"
             strcpy(M$, "MAKE YOUR CHOICE");
     // 290 GOSUB 680
-            lines680_710(C, N, &Y, C$, M$, O$);
+            lines680_710(character_class_id, N, &Y, C$, M$, O$);
     // 300 LET BR=0:LET OF=0
             max_accepted_discount = 0;
             OF = 0;
@@ -143,8 +143,8 @@ int main(int argc, char *argv[]) {
             if (*I$ == '-') {
                 max_accepted_discount = rand() % 3;
                 lines570_600(
-                    screen, max_accepted_discount, C, J, &H, K, N, F, O, C$,
-                    H$, M$, P, O$
+                    screen, max_accepted_discount, character_class_id, J, &H,
+                    K, N, F, O, C$, H$, M$, P, O$
                 );
             }
     // 330 GOSUB 860
@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
     // 430 LET S$=CHR$(O+AS)
 
     char * S$ = (char *) malloc(
-        sizeof(char) * (14 + O_ + strlen(N$) + strlen(C$[C]))
+        sizeof(char) * (14 + O_ + strlen(N$) + strlen(C$[character_class_id]))
     );
     if (S$ == NULL) {
         fprintf(stderr, "S$ is NULL!\n");
@@ -215,8 +215,8 @@ int main(int argc, char *argv[]) {
     // 520 LET S$=S$+N$+" -"+C$(C)
     strcpy(S$ + 11 + O_, N$);
     strcpy(S$ + 11 + O_ + strlen(N$), " -");
-    strcpy(S$ + 13 + O_ + strlen(N$), C$[C]);
-    S$[13 + O_ + strlen(N$) + strlen(C$[C])] = 0;
+    strcpy(S$ + 13 + O_ + strlen(N$), C$[character_class_id]);
+    S$[13 + O_ + strlen(N$) + strlen(C$[character_class_id])] = 0;
     // 530 LET S=OPENOUT "HERO"
     FILE *S = fopen("HERO", "w");
     // 540 PRINT#S,S$
@@ -243,10 +243,10 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines570_600(screen_t *screen, int max_accepted_discount, int C, int J,
-                  int *H, int K, int N, int F[5][9], int * O,
-                  const char * C$[5], const char * H$, char * M$, int P[24],
-                  const char * O$[25]) {
+void lines570_600(screen_t *screen, int max_accepted_discount,
+                  int character_class_id, int J, int *H, int K, int N,
+                  int F[5][9], int * O, const char * C$[5], const char * H$,
+                  char * M$, int P[24], const char * O$[25]) {
     int OF, X, Y;
     char * IN$ = NULL;
     // 570 LET M$="";GOSUB 860
@@ -264,7 +264,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount, int C, int J,
     OF = atoi(IN$);
     free(IN$);
     // 600 GOSUB 680
-    lines680_710(C, N, &Y, C$, M$, O$);
+    lines680_710(character_class_id, N, &Y, C$, M$, O$);
     lines610_670(max_accepted_discount, J, H, K, N, OF, Y, F, O, M$, P);
 }
 
@@ -301,17 +301,17 @@ void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
 }
 
 
-void lines680_710(int C, int N, int *Y, const char * C$[5], char * M$,
-                  const char * O$[25]) {
+void lines680_710(int character_class_id, int N, int *Y, const char * C$[5],
+                  char * M$, const char * O$[25]) {
     // 680 LET Y=0
     *Y = 0;
     // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1
-    if (O$[N][C] == '1') {
+    if (O$[N][character_class_id] == '1') {
         *Y = 1;
     }
     // 700 IF Y=0 THEN LET M$="NOT FOR "+C$(C)
     if (*Y == 0) {
-        sprintf(M$, "NOT FOR %s", C$[C]);
+        sprintf(M$, "NOT FOR %s", C$[character_class_id]);
     }
     // 710 RETURN
 }

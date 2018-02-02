@@ -3,10 +3,12 @@
 
 void lines570_600(screen_t *screen, int max_accepted_discount,
                   int character_class_id, int J, int *H, int K, int N,
-                  int F[5][9], int * O, const char * character_class_names[5],
-                  const char * H$, char * M$, int P[24], const char * O$[25]);
+                  int attrs_and_prices[5][9], int * O,
+                  const char * character_class_names[5], const char * H$,
+                  char * M$, int P[24], const char * O$[25]);
 void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
-                  int OF, int Y, int F[5][9], int * O, char * M$, int P[24]);
+                  int OF, int Y, int attrs_and_prices[5][9], int * O,
+                  char * M$, int P[24]);
 void lines680_710(int character_class_id, int N, int *Y,
                   const char * character_class_names[5], char * M$,
                   const char * O$[25]);
@@ -15,12 +17,12 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
 void lines810_850(screen_t *screen, int J, int H, int *T, int W,
                   const char * H$, char * M$, const char * F$[5][10]);
 void lines860_890(screen_t *screen, int H, const char * H$, char * M$);
-void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
-                  const char * F$[5][10]);
-void lines920_970(screen_t *screen, int J, int T, int F[5][9],
+void lines900_910(screen_t *screen, int J, int *T, int W,
+                  int attrs_and_prices[5][9], const char * F$[5][10]);
+void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
                   const char * F$[5][10]);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
-                    int *W, int F[5][9], int ** O,
+                    int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
@@ -28,7 +30,7 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
         interface_num_rows, GC, I, J, H, K, MP, N, O_, OF, P_, T, W, X, Y;
-    int F[5][9];
+    int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * H$, * O$[25];
     char * I$, * IN$ = NULL, * M$ = NULL, * N$;
@@ -36,7 +38,7 @@ int main(int argc, char *argv[]) {
     const char * F$[5][10];
     // 10 GOSUB 1060
     lines1060_1590(
-        &char_base, &interface_num_rows, &GC, &MP, &W, F, &O,
+        &char_base, &interface_num_rows, &GC, &MP, &W, attrs_and_prices, &O,
         character_class_names, &M$, P, O$, F$
     );
     // 20 paper 0:CLS
@@ -51,7 +53,7 @@ int main(int argc, char *argv[]) {
     H$ = "POINTS";
     // 40 GOSUB 810:GOSUB900
     lines810_850(screen, J, H, &T, W, H$, M$, F$);
-    lines900_910(screen, J, &T, W, F, F$);
+    lines900_910(screen, J, &T, W, attrs_and_prices, F$);
     // 50 LET K=1:LET P=T+1
     K = 1;
     P_ = T + 1;
@@ -73,32 +75,39 @@ int main(int argc, char *argv[]) {
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*I$ == ';' && H > 0) {
-            F[J][K] += 1;
+            attrs_and_prices[J][K] += 1;
             H -= 1;
-            lines920_970(screen, J, T, F, F$);
+            lines920_970(screen, J, T, attrs_and_prices, F$);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
-        if (*I$ == '-' && F[J][K] > 1) {
-            F[J][K] -=1;
+        if (*I$ == '-' && attrs_and_prices[J][K] > 1) {
+            attrs_and_prices[J][K] -=1;
             H += 1;
-            lines920_970(screen, J, T, F, F$);
+            lines920_970(screen, J, T, attrs_and_prices, F$);
         }
     // 110 LET C=1
         character_class_id = 1;
     // 120 IF F(1,4)>6 AND F(1,8)>7 THEN LET C=2
-        if (F[1][4] > 6 && F[1][8] > 7) {
+        if (attrs_and_prices[1][4] > 6 && attrs_and_prices[1][8] > 7) {
             character_class_id = 2;
         }
     // 130 IF F(1,4)>8 AND F(1,7)>7 THEN LET C=3
-        if (F[1][4] > 8 && F[1][7] > 7) {
+        if (attrs_and_prices[1][4] > 8 && attrs_and_prices[1][7] > 7) {
             character_class_id = 3;
         }
     // 140 IF F(1,1)>7 AND F(1,8)>5 AND F(1,1)+F(1,2)>10 THEN LET C=4
-        if (F[1][1] > 7 && F[1][8] > 5 && F[1][1] + F[1][2] > 10) {
+        if (
+                attrs_and_prices[1][1] > 7 && attrs_and_prices[1][8] > 5 &&
+                attrs_and_prices[1][1] + attrs_and_prices[1][2] > 10
+        ) {
             character_class_id = 4;
         }
     // 150 IF F(1,1)>8 AND F(1,2)+F(1,3)>12 and F(1,8)<6 THEN LET C=5
-        if (F[1][1] > 8 && F[1][2] + F[1][3] > 12 && F[1][8]) {
+        if (
+                attrs_and_prices[1][1] > 8 &&
+                attrs_and_prices[1][2] + attrs_and_prices[1][3] > 12 &&
+                attrs_and_prices[1][8]
+        ) {
             character_class_id = 5;
         }
     // 160 LET M$=C$(C)
@@ -121,7 +130,7 @@ int main(int argc, char *argv[]) {
     // 230 GOSUB 810
         lines810_850(screen, J, H, &T, W, H$, M$, F$);
     // 240 GOSUB 900
-        lines900_910(screen, J, &T, W, F, F$);
+        lines900_910(screen, J, &T, W, attrs_and_prices, F$);
     // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, P_);
         print_text(screen, ">");
@@ -142,9 +151,10 @@ int main(int argc, char *argv[]) {
             OF = 0;
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*I$ == ';') {
-                OF = F[J][K];
+                OF = attrs_and_prices[J][K];
                 lines610_670(
-                    max_accepted_discount, J, &H, K, N, OF, Y, F, O, M$, P
+                    max_accepted_discount, J, &H, K, N, OF, Y,
+                    attrs_and_prices, O, M$, P
                 );
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
@@ -152,7 +162,8 @@ int main(int argc, char *argv[]) {
                 max_accepted_discount = rand() % 3;
                 lines570_600(
                     screen, max_accepted_discount, character_class_id, J, &H,
-                    K, N, F, O, character_class_names, H$, M$, P, O$
+                    K, N, attrs_and_prices, O, character_class_names, H$, M$,
+                    P, O$
                 );
             }
     // 330 GOSUB 860
@@ -211,7 +222,7 @@ int main(int argc, char *argv[]) {
     // 440 FOR I=1 TO 8
     for (I = 1; I <= 8; I +=1 ) {
     // 450 LET S$=S$+CHR(F(1,I)+AS)
-        S$[I] += (char) (F[1][I] + char_base);
+        S$[I] += (char) (attrs_and_prices[1][I] + char_base);
     }
     // 460 NEXT I
     // 470 FOR I = 1 TO O
@@ -264,8 +275,9 @@ int main(int argc, char *argv[]) {
 
 void lines570_600(screen_t *screen, int max_accepted_discount,
                   int character_class_id, int J, int *H, int K, int N,
-                  int F[5][9], int * O, const char * character_class_names[5],
-                  const char * H$, char * M$, int P[24], const char * O$[25]) {
+                  int attrs_and_prices[5][9], int * O,
+                  const char * character_class_names[5], const char * H$,
+                  char * M$, int P[24], const char * O$[25]) {
     int OF, X, Y;
     char * IN$ = NULL;
     // 570 LET M$="";GOSUB 860
@@ -284,18 +296,21 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     free(IN$);
     // 600 GOSUB 680
     lines680_710(character_class_id, N, &Y, character_class_names, M$, O$);
-    lines610_670(max_accepted_discount, J, H, K, N, OF, Y, F, O, M$, P);
+    lines610_670(
+        max_accepted_discount, J, H, K, N, OF, Y, attrs_and_prices, O, M$, P
+    );
 }
 
 void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
-                  int OF, int Y, int F[5][9], int * O, char * M$, int P[24]) {
+                  int OF, int Y, int attrs_and_prices[5][9], int * O,
+                  char * M$, int P[24]) {
     int PR;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (O[N] > 0 && N < 23) {
         strcpy(M$, "YOU HAVE IT SIRE");
     } else {
     // 620 LET PR=F(J,K)-BR
-        PR = F[J][K] - max_accepted_discount;
+        PR = attrs_and_prices[J][K] - max_accepted_discount;
     // 630 IF H<PR THEN LET M$="YOU CANNOT AFFORD":RETURN
         if (*H < PR) {
             strcpy(M$, "YOU CANNOT AFFORD");
@@ -415,8 +430,8 @@ void lines860_890(screen_t *screen, int H, const char * H$, char * M$) {
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
-                  const char * F$[5][10]) {
+void lines900_910(screen_t *screen, int J, int *T, int W,
+                  int attrs_and_prices[5][9], const char * F$[5][10]) {
     int background_colour, FG, L;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     background_colour = 3;
@@ -425,10 +440,10 @@ void lines900_910(screen_t *screen, int J, int *T, int W, int F[5][9],
     L = 15;
     // 910 GOSUB 980
     lines980_1050(screen, W, background_colour, FG, *T, L);
-    lines920_970(screen, J, *T, F, F$);
+    lines920_970(screen, J, *T, attrs_and_prices, F$);
 }
 
-void lines920_970(screen_t *screen, int J, int T, int F[5][9],
+void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
                   const char * F$[5][10]) {
     int I, Y;
     // 920 paper 3:ink 0
@@ -451,7 +466,7 @@ void lines920_970(screen_t *screen, int J, int T, int F[5][9],
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
-        sprintf(outstring, "%i ", F[J][I]);
+        sprintf(outstring, "%i ", attrs_and_prices[J][I]);
         print_text(screen, outstring);
         free(outstring);
     // 960 NEXT I
@@ -494,7 +509,7 @@ void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
 void lines1600_1650(int *W);
 
 void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
-                    int *W, int F[5][9], int ** O,
+                    int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]) {
     int I;
@@ -552,11 +567,11 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
     // 1200 FOR I=1 TO 8
     for (I = 1; I <= 8; I += 1) {
     // 1210 LET F(1,I)=rnd(5)+2
-        F[1][I] = (rand() % 5) + 2;
+        attrs_and_prices[1][I] = (rand() % 5) + 2;
     // 1220 NEXT I
     }
     // 1230 LET F(1,5)=1
-    F[1][5] = 1;
+    attrs_and_prices[1][5] = 1;
     // 1240 DATA 20,16,12,15,8,10,8,6
     // 1250 DATA 18,15,9,9,14,8,6,6
     // 1260 DATA 20,15,14,12,10,8,6,6
@@ -565,30 +580,30 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *GC, int *MP,
     // 1290 READ F(J,I)
     // 1300 NEXT I
     // 1310 NEXT J
-    F[2][1] = 20;
-    F[2][2] = 16;
-    F[2][3] = 12;
-    F[2][4] = 15;
-    F[2][5] = 8;
-    F[2][6] = 10;
-    F[2][7] = 8;
-    F[2][8] = 6;
-    F[3][1] = 18;
-    F[3][2] = 15;
-    F[3][3] = 9;
-    F[3][4] = 9;
-    F[3][5] = 14;
-    F[3][6] = 8;
-    F[3][7] = 6;
-    F[3][8] = 6;
-    F[4][1] = 20;
-    F[4][2] = 15;
-    F[4][3] = 14;
-    F[4][4] = 12;
-    F[4][5] = 10;
-    F[4][6] = 8;
-    F[4][7] = 6;
-    F[4][8] = 6;
+    attrs_and_prices[2][1] = 20;
+    attrs_and_prices[2][2] = 16;
+    attrs_and_prices[2][3] = 12;
+    attrs_and_prices[2][4] = 15;
+    attrs_and_prices[2][5] = 8;
+    attrs_and_prices[2][6] = 10;
+    attrs_and_prices[2][7] = 8;
+    attrs_and_prices[2][8] = 6;
+    attrs_and_prices[3][1] = 18;
+    attrs_and_prices[3][2] = 15;
+    attrs_and_prices[3][3] = 9;
+    attrs_and_prices[3][4] = 9;
+    attrs_and_prices[3][5] = 14;
+    attrs_and_prices[3][6] = 8;
+    attrs_and_prices[3][7] = 6;
+    attrs_and_prices[3][8] = 6;
+    attrs_and_prices[4][1] = 20;
+    attrs_and_prices[4][2] = 15;
+    attrs_and_prices[4][3] = 14;
+    attrs_and_prices[4][4] = 12;
+    attrs_and_prices[4][5] = 10;
+    attrs_and_prices[4][6] = 8;
+    attrs_and_prices[4][7] = 6;
+    attrs_and_prices[4][8] = 6;
     // 1320 DATA 5,4,3,3,2,2,1,1
     // 1330 DATA 5,4,3,1,2,1,3,1
     // 1340 DATA 4,3,2,2,3,1,1,1

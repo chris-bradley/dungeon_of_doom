@@ -119,7 +119,6 @@ int main(int argc, char *argv[]) {
     // 180 IF I$<>" " THEN GOTO 70
     } while (*I$ != ' ');
     // 190 LET H=GC:LET H$="GOLD COINS:"
-    H = gold_coins;
     H$ = "GOLD COINS";
     // 200 FOR J=2 TO 4
     for (J = 2; J <= 4; J += 1) {
@@ -129,7 +128,7 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, J, H, &T, W, H$, M$, F$);
+        lines810_850(screen, J, gold_coins, &T, W, H$, M$, F$);
     // 240 GOSUB 900
         lines900_910(screen, J, &T, W, attrs_and_prices, F$);
     // 250 PRINT tab(1,P);">";
@@ -154,7 +153,7 @@ int main(int argc, char *argv[]) {
             if (*I$ == ';') {
                 OF = attrs_and_prices[J][K];
                 lines610_670(
-                    max_accepted_discount, J, &H, K, N, OF, Y,
+                    max_accepted_discount, J, &gold_coins, K, N, OF, Y,
                     attrs_and_prices, O, M$, P
                 );
             }
@@ -162,13 +161,13 @@ int main(int argc, char *argv[]) {
             if (*I$ == '-') {
                 max_accepted_discount = rand() % 3;
                 lines570_600(
-                    screen, max_accepted_discount, character_class_id, J, &H,
-                    K, N, attrs_and_prices, O, character_class_names, H$, M$,
-                    P, O$
+                    screen, max_accepted_discount, character_class_id, J,
+                    &gold_coins, K, N, attrs_and_prices, O,
+                    character_class_names, H$, M$, P, O$
                 );
             }
     // 330 GOSUB 860
-            lines860_890(screen, H, H$, M$);
+            lines860_890(screen, gold_coins, H$, M$);
     // 340 IF I$<>" " THEN GOTO 260
         } while (*I$ != ' ');
     // 350 NEXT J
@@ -233,7 +232,7 @@ int main(int argc, char *argv[]) {
     // 490 NEXT I
     }
     // 500 LET S$=S$+CHR$(H+AS)
-    S$[9 + O_] = (char) (H + char_base);
+    S$[9 + O_] = (char) (gold_coins + char_base);
     // 510 LET S$=S$+CHR$(AS)
     S$[10 + O_] = (char) char_base;
     // 520 LET S$=S$+N$+" -"+C$(C)

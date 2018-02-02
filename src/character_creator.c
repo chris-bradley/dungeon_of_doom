@@ -2,12 +2,12 @@
 #include "dungeon_lib.h"
 
 void lines570_600(screen_t *screen, int max_accepted_discount,
-                  int character_class_id, int J, int *H, int K, int N,
+                  int character_class_id, int J, int *gold_coins, int K, int N,
                   int attrs_and_prices[5][9], int * O,
                   const char * character_class_names[5], const char * H$,
                   char * M$, int P[24], const char * O$[25]);
-void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
-                  int OF, int Y, int attrs_and_prices[5][9], int * O,
+void lines610_670(int max_accepted_discount, int J, int *gold_coins, int K,
+                  int N, int OF, int Y, int attrs_and_prices[5][9], int * O,
                   char * M$, int P[24]);
 void lines680_710(int character_class_id, int N, int *Y,
                   const char * character_class_names[5], char * M$,
@@ -275,7 +275,7 @@ int main(int argc, char *argv[]) {
 }
 
 void lines570_600(screen_t *screen, int max_accepted_discount,
-                  int character_class_id, int J, int *H, int K, int N,
+                  int character_class_id, int J, int *gold_coins, int K, int N,
                   int attrs_and_prices[5][9], int * O,
                   const char * character_class_names[5], const char * H$,
                   char * M$, int P[24], const char * O$[25]) {
@@ -283,7 +283,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     char * IN$ = NULL;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
-    lines860_890(screen, *H, H$, M$);
+    lines860_890(screen, *gold_coins, H$, M$);
     // 580 PRINT tab(2,2);"YOUR OFFER";
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
@@ -298,12 +298,13 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     // 600 GOSUB 680
     lines680_710(character_class_id, N, &Y, character_class_names, M$, O$);
     lines610_670(
-        max_accepted_discount, J, H, K, N, OF, Y, attrs_and_prices, O, M$, P
+        max_accepted_discount, J, gold_coins, K, N, OF, Y, attrs_and_prices, O,
+        M$, P
     );
 }
 
-void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
-                  int OF, int Y, int attrs_and_prices[5][9], int * O,
+void lines610_670(int max_accepted_discount, int J, int *gold_coins, int K,
+                  int N, int OF, int Y, int attrs_and_prices[5][9], int * O,
                   char * M$, int P[24]) {
     int PR;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
@@ -313,13 +314,13 @@ void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
     // 620 LET PR=F(J,K)-BR
         PR = attrs_and_prices[J][K] - max_accepted_discount;
     // 630 IF H<PR THEN LET M$="YOU CANNOT AFFORD":RETURN
-        if (*H < PR) {
+        if (*gold_coins < PR) {
             strcpy(M$, "YOU CANNOT AFFORD");
         } else {
     // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
             if (OF >= PR && Y == 1) {
                 O[N] += P[N];
-                *H -= PR;
+                *gold_coins -= PR;
                 strcpy(M$, "TIS YOURS!");
             }
     // 650 IF OF<PR AND Y=1 THEN LET M$="OFFER REJECTED";
@@ -327,8 +328,8 @@ void lines610_670(int max_accepted_discount, int J, int *H, int K, int N,
                 strcpy(M$, "OFFER REJECTED");
             }
     // 660 IF H<0 THEN LET H=0
-            if (*H < 0) {
-                *H = 0;
+            if (*gold_coins < 0) {
+                *gold_coins = 0;
             }
         }
     }

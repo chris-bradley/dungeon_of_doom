@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
         if (
                 attrs_and_prices[1][1] > 8 &&
                 attrs_and_prices[1][2] + attrs_and_prices[1][3] > 12 &&
-                attrs_and_prices[1][8]
+                attrs_and_prices[1][8] < 6
         ) {
             character_class_id = 5;
         }

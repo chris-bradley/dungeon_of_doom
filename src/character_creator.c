@@ -406,13 +406,13 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
     // 800 RETURN
 }
 
-void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
-                   int T, int L);
+void lines980_1050(screen_t *screen, int W, int background_colour,
+                   int border_colour, int T, int L);
 
 void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
                   const char * point_label, char * M$,
                   const char * attr_item_and_stage_names[5][10]) {
-    int background_colour, FG, L;
+    int background_colour, border_colour, L;
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
@@ -424,11 +424,11 @@ void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
     print_text(screen, attr_item_and_stage_names[stage][9]);
     // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
     background_colour = 2;
-    FG = 3;
+    border_colour = 3;
     *T = 1;
     L = 2;
     // 850 GOSUB 980
-    lines980_1050(screen, W, background_colour, FG, *T, L);
+    lines980_1050(screen, W, background_colour, border_colour, *T, L);
     lines860_890(screen, num_points, point_label, M$);
 }
 
@@ -463,14 +463,14 @@ void lines860_890(screen_t *screen, int num_points, const char * point_label,
 void lines900_910(screen_t *screen, int stage, int *T, int W,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]) {
-    int background_colour, FG, L;
+    int background_colour, border_colour, L;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     background_colour = 3;
-    FG = 2;
+    border_colour = 2;
     *T = 5;
     L = 15;
     // 910 GOSUB 980
-    lines980_1050(screen, W, background_colour, FG, *T, L);
+    lines980_1050(screen, W, background_colour, border_colour, *T, L);
     lines920_970(
         screen, stage, *T, attrs_and_prices, attr_item_and_stage_names
     );
@@ -508,34 +508,34 @@ void lines920_970(screen_t *screen, int stage, int T,
     // 970 RETURN
 }
 
-void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
-                   int T, int L) {
+void lines980_1050(screen_t *screen, int W, int background_colour,
+                   int border_colour, int T, int L) {
     int index;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
     // 990 paper FG:PRINT LEFT$(B$,W);
-    paper(screen->cursor, FG);
+    paper(screen->cursor, border_colour);
     print_left$_b$(screen, W);
     newline(screen->cursor);
     // 1000 paper BG:ink FG
     paper(screen->cursor, background_colour);
-    ink(screen->cursor, FG);
+    ink(screen->cursor, border_colour);
     // 1010 FOR I=1 TO L
     for (index = 1; index <= L; index += 1) {
     // 1020 PRINT CHR$(B);LEFT$(B$,W-2);CHR$(B);
     // C64: 1020 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,W-2);BG$(FG);" ";
-        paper(screen->cursor, FG);
+        paper(screen->cursor, border_colour);
         print_text(screen, " ");
         paper(screen->cursor, background_colour);
         print_left$_b$(screen, W - 2);
-        paper(screen->cursor, FG);
+        paper(screen->cursor, border_colour);
         print_text(screen, " ");
         // print_text() doesn't support wrapping yet, so we do our own newline:
         newline(screen->cursor);
     // 1030 NEXT I
     }
     // 1040 paper FG:PRINT LEFT$(B$,W);
-    paper(screen->cursor, FG);
+    paper(screen->cursor, border_colour);
     print_left$_b$(screen, W);
     // 1050 RETURN
 }

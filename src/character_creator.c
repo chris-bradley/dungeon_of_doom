@@ -8,7 +8,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   const char * point_label, char * message, int P[24],
                   const char * item_char_class_avail[25]);
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
-                  int selected_row, int item_num, int OF, int Y,
+                  int selected_row, int item_num, int offer, int Y,
                   int attrs_and_prices[5][9], int * inventory, char * message,
                   int P[24]);
 void lines680_710(int character_class_id, int item_num, int *Y,
@@ -38,7 +38,7 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
         interface_num_rows, gold_coins, index, stage, selected_row,
-        attr_points, item_num, num_item_types, OF, P_, T, W, X, Y;
+        attr_points, item_num, num_item_types, offer, P_, T, W, X, Y;
     int attrs_and_prices[5][9];
     int * inventory;
     const char * character_class_names[5], * point_label,
@@ -179,13 +179,13 @@ int main(int argc, char *argv[]) {
             );
     // 300 LET BR=0:LET OF=0
             max_accepted_discount = 0;
-            OF = 0;
+            offer = 0;
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*pressed_key == ';') {
-                OF = attrs_and_prices[stage][selected_row];
+                offer = attrs_and_prices[stage][selected_row];
                 lines610_670(
                     max_accepted_discount, stage, &gold_coins, selected_row,
-                    item_num, OF, Y, attrs_and_prices, inventory, message, P
+                    item_num, offer, Y, attrs_and_prices, inventory, message, P
                 );
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
@@ -311,7 +311,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   int * inventory, const char * character_class_names[5],
                   const char * point_label, char * message, int P[24],
                   const char * item_char_class_avail[25]) {
-    int OF, X, Y;
+    int offer, X, Y;
     char * typed_string = NULL;
     // 570 LET M$="";GOSUB 860
     strcpy(message, "");
@@ -325,7 +325,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     X = 14;
     Y = 2;
     lines1700_1730(screen, X, Y, &typed_string);
-    OF = atoi(typed_string);
+    offer = atoi(typed_string);
     free(typed_string);
     // 600 GOSUB 680
     lines680_710(
@@ -333,13 +333,13 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
         item_char_class_avail
     );
     lines610_670(
-        max_accepted_discount, stage, gold_coins, selected_row, item_num, OF,
-        Y, attrs_and_prices, inventory, message, P
+        max_accepted_discount, stage, gold_coins, selected_row, item_num,
+        offer, Y, attrs_and_prices, inventory, message, P
     );
 }
 
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
-                  int selected_row, int item_num, int OF, int Y,
+                  int selected_row, int item_num, int offer, int Y,
                   int attrs_and_prices[5][9], int * inventory, char * message,
                   int P[24]) {
     int PR;
@@ -354,13 +354,13 @@ void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
     // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
-            if (OF >= PR && Y == 1) {
+            if (offer >= PR && Y == 1) {
                 inventory[item_num] += P[item_num];
                 *gold_coins -= PR;
                 strcpy(message, "TIS YOURS!");
             }
     // 650 IF OF<PR AND Y=1 THEN LET M$="OFFER REJECTED";
-            if (OF < PR && Y == 1) {
+            if (offer < PR && Y == 1) {
                 strcpy(message, "OFFER REJECTED");
             }
     // 660 IF H<0 THEN LET H=0

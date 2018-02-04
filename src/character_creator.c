@@ -31,7 +31,8 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
-        interface_num_rows, gold_coins, I, J, K, MP, N, O_, OF, P_, T, W, X, Y;
+        interface_num_rows, gold_coins, index, J, K, MP, N, O_, OF, P_, T, W,
+        X, Y;
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * point_label, * O$[25];
@@ -220,15 +221,15 @@ int main(int argc, char *argv[]) {
 
     S$[0] = (char) (O_ + char_base);
     // 440 FOR I=1 TO 8
-    for (I = 1; I <= 8; I +=1 ) {
+    for (index = 1; index <= 8; index +=1 ) {
     // 450 LET S$=S$+CHR(F(1,I)+AS)
-        S$[I] += (char) (attrs_and_prices[1][I] + char_base);
+        S$[index] += (char) (attrs_and_prices[1][index] + char_base);
     }
     // 460 NEXT I
     // 470 FOR I = 1 TO O
-    for (I = 1; I <= O_; I += 1) {
+    for (index = 1; index <= O_; index += 1) {
     // 480 LET S$=S$+CHR$(O(I)+AS)
-        S$[8 + I] = (char) (O[I] + char_base);
+        S$[8 + index] = (char) (O[index] + char_base);
     // 490 NEXT I
     }
     // 500 LET S$=S$+CHR$(H+AS)
@@ -449,28 +450,28 @@ void lines900_910(screen_t *screen, int J, int *T, int W,
 
 void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
                   const char * F$[5][10]) {
-    int I, Y;
+    int index, Y;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
     // 930 FOR I=1 TO 8
-    for (I = 1; I <= 8; I += 1) {
+    for (index = 1; index <= 8; index += 1) {
     // 940 LET Y=T+(I-1)*2+1
-        Y = T + (I - 1) * 2 + 1;
+        Y = T + (index - 1) * 2 + 1;
     // C64: 945 PRINT HM$;LEFT(CU$,Y);SPC(15);LEFT(B$,5);
         tab(screen->cursor, 15, Y);
         print_left$_b$(screen, 5);
     // 950 PRINT tab(2,Y);F$(J,I);tab(16,Y);F(J,I);" ";
 
         tab(screen->cursor, 2, Y);
-        print_text(screen, F$[J][I]);
+        print_text(screen, F$[J][index]);
         tab(screen->cursor, 16, Y);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
-        sprintf(outstring, "%i ", attrs_and_prices[J][I]);
+        sprintf(outstring, "%i ", attrs_and_prices[J][index]);
         print_text(screen, outstring);
         free(outstring);
     // 960 NEXT I
@@ -480,7 +481,7 @@ void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
 
 void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
                    int T, int L) {
-    int I;
+    int index;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
     // 990 paper FG:PRINT LEFT$(B$,W);
@@ -491,7 +492,7 @@ void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
     paper(screen->cursor, background_colour);
     ink(screen->cursor, FG);
     // 1010 FOR I=1 TO L
-    for (I = 1; I <= L; I += 1) {
+    for (index = 1; index <= L; index += 1) {
     // 1020 PRINT CHR$(B);LEFT$(B$,W-2);CHR$(B);
     // C64: 1020 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,W-2);BG$(FG);" ";
         paper(screen->cursor, FG);
@@ -516,7 +517,7 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *MP, int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]) {
-    int I;
+    int index;
     // 1060 GOSUB 1600
     lines1600_1650(W);
     // 1070 LET D=8
@@ -569,9 +570,9 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
     O$[23] = "11111";
     O$[24] = "11111";
     // 1200 FOR I=1 TO 8
-    for (I = 1; I <= 8; I += 1) {
+    for (index = 1; index <= 8; index += 1) {
     // 1210 LET F(1,I)=rnd(5)+2
-        attrs_and_prices[1][I] = (rand() % 5) + 2;
+        attrs_and_prices[1][index] = (rand() % 5) + 2;
     // 1220 NEXT I
     }
     // 1230 LET F(1,5)=1

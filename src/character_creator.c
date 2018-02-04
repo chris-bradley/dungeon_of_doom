@@ -28,17 +28,16 @@ void lines920_970(screen_t *screen, int stage, int T,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
-                    int *MP, int *W, int attrs_and_prices[5][9], int ** O,
-                    const char * character_class_names[5], char ** message,
-                    int P[24], const char * O$[25],
+                    int *attr_points, int *W, int attrs_and_prices[5][9],
+                    int ** O, const char * character_class_names[5],
+                    char ** message, int P[24], const char * O$[25],
                     const char * attr_item_and_stage_names[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
-        interface_num_rows, gold_coins, index, stage, selected_row, MP, N, O_,
-        OF, P_, T,
-        W, X, Y;
+        interface_num_rows, gold_coins, index, stage, selected_row,
+        attr_points, N, O_, OF, P_, T, W, X, Y;
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * point_label, * O$[25];
@@ -47,7 +46,7 @@ int main(int argc, char *argv[]) {
     const char * attr_item_and_stage_names[5][10];
     // 10 GOSUB 1060
     lines1060_1590(
-        &char_base, &interface_num_rows, &gold_coins, &MP, &W,
+        &char_base, &interface_num_rows, &gold_coins, &attr_points, &W,
         attrs_and_prices, &O, character_class_names, &message, P, O$,
         attr_item_and_stage_names
     );
@@ -62,7 +61,7 @@ int main(int argc, char *argv[]) {
     point_label = "POINTS";
     // 40 GOSUB 810:GOSUB900
     lines810_850(
-        screen, stage, MP, &T, W, point_label, message,
+        screen, stage, attr_points, &T, W, point_label, message,
         attr_item_and_stage_names
     );
     lines900_910(
@@ -92,9 +91,9 @@ int main(int argc, char *argv[]) {
             );
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
-        if (*pressed_key == ';' && MP > 0) {
+        if (*pressed_key == ';' && attr_points > 0) {
             attrs_and_prices[stage][selected_row] += 1;
-            MP -= 1;
+            attr_points -= 1;
             lines920_970(
                 screen, stage, T, attrs_and_prices, attr_item_and_stage_names
             );
@@ -102,7 +101,7 @@ int main(int argc, char *argv[]) {
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*pressed_key == '-' && attrs_and_prices[stage][selected_row] > 1) {
             attrs_and_prices[stage][selected_row] -=1;
-            MP += 1;
+            attr_points += 1;
             lines920_970(
                 screen, stage, T, attrs_and_prices, attr_item_and_stage_names
             );
@@ -135,7 +134,7 @@ int main(int argc, char *argv[]) {
     // 160 LET M$=C$(C)
         strcpy(message, character_class_names[character_class_id]);
     // 170 GOSUB 860
-        lines860_890(screen, MP, point_label, message);
+        lines860_890(screen, attr_points, point_label, message);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
     } while (*pressed_key != ' ');
@@ -552,9 +551,9 @@ void lines980_1050(screen_t *screen, int W, int background_colour,
 void lines1600_1650(int *W);
 
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
-                    int *MP, int *W, int attrs_and_prices[5][9], int ** O,
-                    const char * character_class_names[5], char ** message,
-                    int P[24], const char * O$[25],
+                    int *attr_points, int *W, int attrs_and_prices[5][9],
+                    int ** O, const char * character_class_names[5],
+                    char ** message, int P[24], const char * O$[25],
                     const char * attr_item_and_stage_names[5][10]) {
     int index;
     // 1060 GOSUB 1600
@@ -738,7 +737,7 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
     character_class_names[4] = "WARRIOR";
     character_class_names[5] = "BARBARIAN";
     // 1550 LET MP=3+rnd(5)
-    *MP = 3 + (rand() % 5);
+    *attr_points = 3 + (rand() % 5);
     // 1560 LET GC=120+rnd(60)
     *gold_coins = 120 + (rand() % 60);
     // 1570 LET M$="":LET AS=65

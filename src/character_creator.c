@@ -14,7 +14,7 @@ void lines680_710(int character_class_id, int N, int *Y,
                   const char * character_class_names[5], char * M$,
                   const char * O$[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
-                  int T, char * I$);
+                  int T, char * pressed_key);
 void lines810_850(screen_t *screen, int J, int num_points, int *T, int W,
                   const char * point_label, char * M$, const char * F$[5][10]);
 void lines860_890(screen_t *screen, int num_points, const char * point_label,
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * point_label, * O$[25];
-    char * I$, * IN$ = NULL, * M$ = NULL, * N$;
+    char * pressed_key, * IN$ = NULL, * M$ = NULL, * N$;
     int P[24];
     const char * F$[5][10];
     // 10 GOSUB 1060
@@ -64,25 +64,25 @@ int main(int argc, char *argv[]) {
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
     // 70 GOSUB 720
-    I$ = (char *) malloc(sizeof(char));
-    if (I$ == NULL) {
-        fprintf(stderr, "I$ is NULL!\n");
+    pressed_key = (char *) malloc(sizeof(char));
+    if (pressed_key == NULL) {
+        fprintf(stderr, "pressed_key is NULL!\n");
         exit(1);
     }
     do {
-        lines720_800(screen, interface_num_rows, &K, &P_, T, I$);
+        lines720_800(screen, interface_num_rows, &K, &P_, T, pressed_key);
     // 80 IF K=5 THEN GOTO 70
         while (K == 5) {
-            lines720_800(screen, interface_num_rows, &K, &P_, T, I$);
+            lines720_800(screen, interface_num_rows, &K, &P_, T, pressed_key);
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
-        if (*I$ == ';' && MP > 0) {
+        if (*pressed_key == ';' && MP > 0) {
             attrs_and_prices[J][K] += 1;
             MP -= 1;
             lines920_970(screen, J, T, attrs_and_prices, F$);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
-        if (*I$ == '-' && attrs_and_prices[J][K] > 1) {
+        if (*pressed_key == '-' && attrs_and_prices[J][K] > 1) {
             attrs_and_prices[J][K] -=1;
             MP += 1;
             lines920_970(screen, J, T, attrs_and_prices, F$);
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
         lines860_890(screen, MP, point_label, M$);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
-    } while (*I$ != ' ');
+    } while (*pressed_key != ' ');
     // 190 LET H=GC:LET H$="GOLD COINS:"
     point_label = "GOLD COINS";
     // 200 FOR J=2 TO 4
@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(screen, interface_num_rows, &K, &P_, T, I$);
+            lines720_800(screen, interface_num_rows, &K, &P_, T, pressed_key);
     // 270 LET N=8*(J-2)+K
             N = 8 * (J - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
             max_accepted_discount = 0;
             OF = 0;
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
-            if (*I$ == ';') {
+            if (*pressed_key == ';') {
                 OF = attrs_and_prices[J][K];
                 lines610_670(
                     max_accepted_discount, J, &gold_coins, K, N, OF, Y,
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
                 );
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
-            if (*I$ == '-') {
+            if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 lines570_600(
                     screen, max_accepted_discount, character_class_id, J,
@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
     // 330 GOSUB 860
             lines860_890(screen, gold_coins, point_label, M$);
     // 340 IF I$<>" " THEN GOTO 260
-        } while (*I$ != ' ');
+        } while (*pressed_key != ' ');
     // 350 NEXT J
     }
     N$ = (char *) malloc(sizeof(char) * 40);
@@ -264,7 +264,7 @@ int main(int argc, char *argv[]) {
     free(S$);
     // 560 STOP
 
-    free(I$);
+    free(pressed_key);
     free(M$);
     free(N$);
     free(O);
@@ -355,10 +355,10 @@ void lines680_710(int character_class_id, int N, int *Y,
 }
 
 void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
-                  int T, char * I$) {
+                  int T, char * pressed_key) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
-    *I$ = inkey$();
+    *pressed_key = inkey$();
     // 740 paper 3:ink 1
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
@@ -366,11 +366,11 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
     tab(screen->cursor, 1, *P_);
     print_text(screen, " ");
     // 760 IF I$="A" AND K>1 THEN LET K=K-1
-    if (*I$ == 'a' && *K > 1) {
+    if (*pressed_key == 'a' && *K > 1) {
         *K -= 1;
     }
     // 770 IF I$="Z" AND K<D THEN LET K=K+1
-    else if (*I$ == 'z' && *K < interface_num_rows) {
+    else if (*pressed_key == 'z' && *K < interface_num_rows) {
         *K += 1;
     }
     // 780 LET P=K*2+T-1
@@ -726,7 +726,7 @@ void lines1600_1650(int *W) {
 void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$) {
     // 1700 IN$=""
     int ind = 0;
-    char * I$ = (char *) malloc(sizeof(char));
+    char * pressed_key = (char *) malloc(sizeof(char));
     *IN$ = (char *) malloc(sizeof(char) * 40);
     if (*IN$ == NULL) {
         fprintf(stderr, "*IN$ is NULL!\n");
@@ -748,13 +748,16 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$) {
                     }
                     break;
                 case SDL_TEXTINPUT:
-                    *I$ = event.text.text[0];
+                    *pressed_key = event.text.text[0];
                     text_entered = 1;
             }
         }
     // 1720 IF I$>"/" AND I$<"[" THEN LET IN$=IN$+I$:PRINT HM$;LEFT$(CU$,Y);SPC(X);IN$;
-        if (text_entered && *I$ > '/' && *I$ < ']' && ind < 39) {
-            (*IN$)[ind] = *I$;
+        if (
+                text_entered && *pressed_key > '/' && *pressed_key < ']' &&
+                ind < 39
+        ) {
+            (*IN$)[ind] = *pressed_key;
             ind += 1;
             (*IN$)[ind] = 0;
             tab(screen->cursor, X, Y);
@@ -764,5 +767,5 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$) {
     // 1730 GOTO 1710
     }
     (*IN$)[ind] = 0;
-    free(I$);
+    free(pressed_key);
 }

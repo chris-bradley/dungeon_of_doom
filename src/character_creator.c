@@ -2,12 +2,12 @@
 #include "dungeon_lib.h"
 
 void lines570_600(screen_t *screen, int max_accepted_discount,
-                  int character_class_id, int J, int *gold_coins, int K, int N,
-                  int attrs_and_prices[5][9], int * O,
+                  int character_class_id, int stage, int *gold_coins, int K,
+                  int N, int attrs_and_prices[5][9], int * O,
                   const char * character_class_names[5],
                   const char * point_label, char * M$, int P[24],
                   const char * O$[25]);
-void lines610_670(int max_accepted_discount, int J, int *gold_coins, int K,
+void lines610_670(int max_accepted_discount, int stage, int *gold_coins, int K,
                   int N, int OF, int Y, int attrs_and_prices[5][9], int * O,
                   char * M$, int P[24]);
 void lines680_710(int character_class_id, int N, int *Y,
@@ -15,14 +15,14 @@ void lines680_710(int character_class_id, int N, int *Y,
                   const char * O$[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
                   int T, char * pressed_key);
-void lines810_850(screen_t *screen, int J, int num_points, int *T, int W,
+void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
                   const char * point_label, char * M$, const char * F$[5][10]);
 void lines860_890(screen_t *screen, int num_points, const char * point_label,
                   char * M$);
-void lines900_910(screen_t *screen, int J, int *T, int W,
+void lines900_910(screen_t *screen, int stage, int *T, int W,
                   int attrs_and_prices[5][9], const char * F$[5][10]);
-void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
-                  const char * F$[5][10]);
+void lines920_970(screen_t *screen, int stage, int T,
+                  int attrs_and_prices[5][9], const char * F$[5][10]);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *MP, int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
@@ -31,8 +31,8 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
-        interface_num_rows, gold_coins, index, J, K, MP, N, O_, OF, P_, T, W,
-        X, Y;
+        interface_num_rows, gold_coins, index, stage, K, MP, N, O_, OF, P_, T,
+        W, X, Y;
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * point_label, * O$[25];
@@ -51,11 +51,11 @@ int main(int argc, char *argv[]) {
     }
     paper(screen->cursor, 0);
     // 30 LET J=1:LET H=MP:LET H$="POINTS"
-    J = 1;
+    stage = 1;
     point_label = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, J, MP, &T, W, point_label, M$, F$);
-    lines900_910(screen, J, &T, W, attrs_and_prices, F$);
+    lines810_850(screen, stage, MP, &T, W, point_label, M$, F$);
+    lines900_910(screen, stage, &T, W, attrs_and_prices, F$);
     // 50 LET K=1:LET P=T+1
     K = 1;
     P_ = T + 1;
@@ -77,15 +77,15 @@ int main(int argc, char *argv[]) {
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*pressed_key == ';' && MP > 0) {
-            attrs_and_prices[J][K] += 1;
+            attrs_and_prices[stage][K] += 1;
             MP -= 1;
-            lines920_970(screen, J, T, attrs_and_prices, F$);
+            lines920_970(screen, stage, T, attrs_and_prices, F$);
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
-        if (*pressed_key == '-' && attrs_and_prices[J][K] > 1) {
-            attrs_and_prices[J][K] -=1;
+        if (*pressed_key == '-' && attrs_and_prices[stage][K] > 1) {
+            attrs_and_prices[stage][K] -=1;
             MP += 1;
-            lines920_970(screen, J, T, attrs_and_prices, F$);
+            lines920_970(screen, stage, T, attrs_and_prices, F$);
         }
     // 110 LET C=1
         character_class_id = 1;
@@ -122,16 +122,16 @@ int main(int argc, char *argv[]) {
     // 190 LET H=GC:LET H$="GOLD COINS:"
     point_label = "GOLD COINS";
     // 200 FOR J=2 TO 4
-    for (J = 2; J <= 4; J += 1) {
+    for (stage = 2; stage <= 4; stage += 1) {
     // 210 LET K=1:LET P=T+1
         K = 1;
         P_ = T + 1;
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, J, gold_coins, &T, W, point_label, M$, F$);
+        lines810_850(screen, stage, gold_coins, &T, W, point_label, M$, F$);
     // 240 GOSUB 900
-        lines900_910(screen, J, &T, W, attrs_and_prices, F$);
+        lines900_910(screen, stage, &T, W, attrs_and_prices, F$);
     // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, P_);
         print_text(screen, ">");
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
         do {
             lines720_800(screen, interface_num_rows, &K, &P_, T, pressed_key);
     // 270 LET N=8*(J-2)+K
-            N = 8 * (J - 2) + K;
+            N = 8 * (stage - 2) + K;
     // 280 LET M$="MAKE YOUR CHOICE"
             strcpy(M$, "MAKE YOUR CHOICE");
     // 290 GOSUB 680
@@ -152,9 +152,9 @@ int main(int argc, char *argv[]) {
             OF = 0;
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*pressed_key == ';') {
-                OF = attrs_and_prices[J][K];
+                OF = attrs_and_prices[stage][K];
                 lines610_670(
-                    max_accepted_discount, J, &gold_coins, K, N, OF, Y,
+                    max_accepted_discount, stage, &gold_coins, K, N, OF, Y,
                     attrs_and_prices, O, M$, P
                 );
             }
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 lines570_600(
-                    screen, max_accepted_discount, character_class_id, J,
+                    screen, max_accepted_discount, character_class_id, stage,
                     &gold_coins, K, N, attrs_and_prices, O,
                     character_class_names, point_label, M$, P, O$
                 );
@@ -275,8 +275,8 @@ int main(int argc, char *argv[]) {
 }
 
 void lines570_600(screen_t *screen, int max_accepted_discount,
-                  int character_class_id, int J, int *gold_coins, int K, int N,
-                  int attrs_and_prices[5][9], int * O,
+                  int character_class_id, int stage, int *gold_coins, int K,
+                  int N, int attrs_and_prices[5][9], int * O,
                   const char * character_class_names[5],
                   const char * point_label, char * M$, int P[24],
                   const char * O$[25]) {
@@ -299,12 +299,12 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     // 600 GOSUB 680
     lines680_710(character_class_id, N, &Y, character_class_names, M$, O$);
     lines610_670(
-        max_accepted_discount, J, gold_coins, K, N, OF, Y, attrs_and_prices, O,
-        M$, P
+        max_accepted_discount, stage, gold_coins, K, N, OF, Y,
+        attrs_and_prices, O, M$, P
     );
 }
 
-void lines610_670(int max_accepted_discount, int J, int *gold_coins, int K,
+void lines610_670(int max_accepted_discount, int stage, int *gold_coins, int K,
                   int N, int OF, int Y, int attrs_and_prices[5][9], int * O,
                   char * M$, int P[24]) {
     int PR;
@@ -313,7 +313,7 @@ void lines610_670(int max_accepted_discount, int J, int *gold_coins, int K,
         strcpy(M$, "YOU HAVE IT SIRE");
     } else {
     // 620 LET PR=F(J,K)-BR
-        PR = attrs_and_prices[J][K] - max_accepted_discount;
+        PR = attrs_and_prices[stage][K] - max_accepted_discount;
     // 630 IF H<PR THEN LET M$="YOU CANNOT AFFORD":RETURN
         if (*gold_coins < PR) {
             strcpy(M$, "YOU CANNOT AFFORD");
@@ -384,7 +384,7 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *K, int *P_,
 void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
                    int T, int L);
 
-void lines810_850(screen_t *screen, int J, int num_points, int *T, int W,
+void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
                   const char * point_label, char * M$,
                   const char * F$[5][10]) {
     int background_colour, FG, L;
@@ -396,7 +396,7 @@ void lines810_850(screen_t *screen, int J, int num_points, int *T, int W,
     print_left$_b$(screen, W);
     // 830 PRINT tab(0,0);F$(J,9)
     tab(screen->cursor, 0, 0);
-    print_text(screen, F$[J][9]);
+    print_text(screen, F$[stage][9]);
     // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
     background_colour = 2;
     FG = 3;
@@ -435,7 +435,7 @@ void lines860_890(screen_t *screen, int num_points, const char * point_label,
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, int J, int *T, int W,
+void lines900_910(screen_t *screen, int stage, int *T, int W,
                   int attrs_and_prices[5][9], const char * F$[5][10]) {
     int background_colour, FG, L;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
@@ -445,11 +445,11 @@ void lines900_910(screen_t *screen, int J, int *T, int W,
     L = 15;
     // 910 GOSUB 980
     lines980_1050(screen, W, background_colour, FG, *T, L);
-    lines920_970(screen, J, *T, attrs_and_prices, F$);
+    lines920_970(screen, stage, *T, attrs_and_prices, F$);
 }
 
-void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
-                  const char * F$[5][10]) {
+void lines920_970(screen_t *screen, int stage, int T,
+                  int attrs_and_prices[5][9], const char * F$[5][10]) {
     int index, Y;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
@@ -464,14 +464,14 @@ void lines920_970(screen_t *screen, int J, int T, int attrs_and_prices[5][9],
     // 950 PRINT tab(2,Y);F$(J,I);tab(16,Y);F(J,I);" ";
 
         tab(screen->cursor, 2, Y);
-        print_text(screen, F$[J][index]);
+        print_text(screen, F$[stage][index]);
         tab(screen->cursor, 16, Y);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
-        sprintf(outstring, "%i ", attrs_and_prices[J][index]);
+        sprintf(outstring, "%i ", attrs_and_prices[stage][index]);
         print_text(screen, outstring);
         free(outstring);
     // 960 NEXT I

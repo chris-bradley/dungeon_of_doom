@@ -6,14 +6,14 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   int selected_row, int item_num, int attrs_and_prices[5][9],
                   int * inventory, const char * character_class_names[5],
                   const char * point_label, char * message, int P[24],
-                  const char * O$[25]);
+                  const char * item_char_class_avail[25]);
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
                   int selected_row, int item_num, int OF, int Y,
                   int attrs_and_prices[5][9], int * inventory, char * message,
                   int P[24]);
 void lines680_710(int character_class_id, int item_num, int *Y,
                   const char * character_class_names[5], char * message,
-                  const char * O$[25]);
+                  const char * item_char_class_avail[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
                   int *P_, int T, char * pressed_key);
 void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
@@ -30,7 +30,8 @@ void lines920_970(screen_t *screen, int stage, int T,
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *attr_points, int *W, int attrs_and_prices[5][9],
                     int ** inventory, const char * character_class_names[5],
-                    char ** message, int P[24], const char * O$[25],
+                    char ** message, int P[24],
+                    const char * item_char_class_avail[25],
                     const char * attr_item_and_stage_names[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 
@@ -40,7 +41,8 @@ int main(int argc, char *argv[]) {
         attr_points, item_num, O_, OF, P_, T, W, X, Y;
     int attrs_and_prices[5][9];
     int * inventory;
-    const char * character_class_names[5], * point_label, * O$[25];
+    const char * character_class_names[5], * point_label,
+               * item_char_class_avail[25];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     int P[24];
@@ -48,8 +50,8 @@ int main(int argc, char *argv[]) {
     // 10 GOSUB 1060
     lines1060_1590(
         &char_base, &interface_num_rows, &gold_coins, &attr_points, &W,
-        attrs_and_prices, &inventory, character_class_names, &message, P, O$,
-        attr_item_and_stage_names
+        attrs_and_prices, &inventory, character_class_names, &message, P,
+        item_char_class_avail, attr_item_and_stage_names
     );
     // 20 paper 0:CLS
     screen_t *screen = NULL;
@@ -173,7 +175,7 @@ int main(int argc, char *argv[]) {
     // 290 GOSUB 680
             lines680_710(
                 character_class_id, item_num, &Y, character_class_names,
-                message, O$
+                message, item_char_class_avail
             );
     // 300 LET BR=0:LET OF=0
             max_accepted_discount = 0;
@@ -193,7 +195,7 @@ int main(int argc, char *argv[]) {
                     screen, max_accepted_discount, character_class_id, stage,
                     &gold_coins, selected_row, item_num, attrs_and_prices,
                     inventory, character_class_names, point_label, message, P,
-                    O$
+                    item_char_class_avail
                 );
             }
     // 330 GOSUB 860
@@ -308,7 +310,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   int selected_row, int item_num, int attrs_and_prices[5][9],
                   int * inventory, const char * character_class_names[5],
                   const char * point_label, char * message, int P[24],
-                  const char * O$[25]) {
+                  const char * item_char_class_avail[25]) {
     int OF, X, Y;
     char * typed_string = NULL;
     // 570 LET M$="";GOSUB 860
@@ -327,7 +329,8 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     free(typed_string);
     // 600 GOSUB 680
     lines680_710(
-        character_class_id, item_num, &Y, character_class_names, message, O$
+        character_class_id, item_num, &Y, character_class_names, message,
+        item_char_class_avail
     );
     lines610_670(
         max_accepted_discount, stage, gold_coins, selected_row, item_num, OF,
@@ -372,11 +375,11 @@ void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
 
 void lines680_710(int character_class_id, int item_num, int *Y,
                   const char * character_class_names[5], char * message,
-                  const char * O$[25]) {
+                  const char * item_char_class_avail[25]) {
     // 680 LET Y=0
     *Y = 0;
     // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1
-    if (O$[item_num][character_class_id] == '1') {
+    if (item_char_class_avail[item_num][character_class_id] == '1') {
         *Y = 1;
     }
     // 700 IF Y=0 THEN LET M$="NOT FOR "+C$(C)
@@ -556,7 +559,8 @@ void lines1600_1650(int *W);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *attr_points, int *W, int attrs_and_prices[5][9],
                     int ** inventory, const char * character_class_names[5],
-                    char ** message, int P[24], const char * O$[25],
+                    char ** message, int P[24],
+                    const char * item_char_class_avail[25],
                     const char * attr_item_and_stage_names[5][10]) {
     int index;
     // 1060 GOSUB 1600
@@ -586,30 +590,30 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
     // 1170 FOR I=1 TO D*3
     // 1180 READ O$(I)
     // 1190 NEXT I
-    O$[1] = "00001";
-    O$[2] = "00011";
-    O$[3] = "10011";
-    O$[4] = "10011";
-    O$[5] = "10011";
-    O$[6] = "00011";
-    O$[7] = "11111";
-    O$[8] = "10011";
-    O$[9] = "00011";
-    O$[10] = "00011";
-    O$[11] = "10011";
-    O$[12] = "11111";
-    O$[13] = "00011";
-    O$[14] = "11011";
-    O$[15] = "11011";
-    O$[16] = "11111";
-    O$[17] = "11100";
-    O$[18] = "00100";
-    O$[19] = "11100";
-    O$[20] = "10100";
-    O$[21] = "11100";
-    O$[22] = "11100";
-    O$[23] = "11111";
-    O$[24] = "11111";
+    item_char_class_avail[1] = "00001";
+    item_char_class_avail[2] = "00011";
+    item_char_class_avail[3] = "10011";
+    item_char_class_avail[4] = "10011";
+    item_char_class_avail[5] = "10011";
+    item_char_class_avail[6] = "00011";
+    item_char_class_avail[7] = "11111";
+    item_char_class_avail[8] = "10011";
+    item_char_class_avail[9] = "00011";
+    item_char_class_avail[10] = "00011";
+    item_char_class_avail[11] = "10011";
+    item_char_class_avail[12] = "11111";
+    item_char_class_avail[13] = "00011";
+    item_char_class_avail[14] = "11011";
+    item_char_class_avail[15] = "11011";
+    item_char_class_avail[16] = "11111";
+    item_char_class_avail[17] = "11100";
+    item_char_class_avail[18] = "00100";
+    item_char_class_avail[19] = "11100";
+    item_char_class_avail[20] = "10100";
+    item_char_class_avail[21] = "11100";
+    item_char_class_avail[22] = "11100";
+    item_char_class_avail[23] = "11111";
+    item_char_class_avail[24] = "11111";
     // 1200 FOR I=1 TO 8
     for (index = 1; index <= 8; index += 1) {
     // 1210 LET F(1,I)=rnd(5)+2

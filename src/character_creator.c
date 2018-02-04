@@ -41,7 +41,8 @@ int main(int argc, char *argv[]) {
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * point_label, * O$[25];
-    char * pressed_key, * typed_string = NULL, * message = NULL, * N$;
+    char * pressed_key, * typed_string = NULL, * message = NULL,
+         * character_name;
     int P[24];
     const char * attr_item_and_stage_names[5][10];
     // 10 GOSUB 1060
@@ -200,9 +201,9 @@ int main(int argc, char *argv[]) {
         } while (*pressed_key != ' ');
     // 350 NEXT J
     }
-    N$ = (char *) malloc(sizeof(char) * 40);
-    if (N$ == NULL) {
-        fprintf(stderr, "N$ is NULL!\n");
+    character_name = (char *) malloc(sizeof(char) * 40);
+    if (character_name == NULL) {
+        fprintf(stderr, "character_name is NULL!\n");
         exit(1);
     }
     do {
@@ -220,10 +221,10 @@ int main(int argc, char *argv[]) {
         X = 1;
         Y = 3;
         lines1700_1730(screen, X, Y, &typed_string);
-        strcpy(N$, typed_string);
+        strcpy(character_name, typed_string);
         free(typed_string);
     // 390 IF LEN(N$)>10 THEN GOTO 360
-    } while (strlen(N$) > 10);
+    } while (strlen(character_name) > 10);
     // 400 PRINT tab(1,3);"ONE MOMENT PLEASE";
     tab(screen->cursor, 1, 3);
     print_text(screen, "ONE MOMENT PLEASE");
@@ -236,7 +237,7 @@ int main(int argc, char *argv[]) {
 
     char * S$ = (char *) malloc(
         sizeof(char) * (
-            14 + O_ + strlen(N$) + strlen(
+            14 + O_ + strlen(character_name) + strlen(
                 character_class_names[character_class_id]
             )
         )
@@ -264,14 +265,14 @@ int main(int argc, char *argv[]) {
     // 510 LET S$=S$+CHR$(AS)
     S$[10 + O_] = (char) char_base;
     // 520 LET S$=S$+N$+" -"+C$(C)
-    strcpy(S$ + 11 + O_, N$);
-    strcpy(S$ + 11 + O_ + strlen(N$), " -");
+    strcpy(S$ + 11 + O_, character_name);
+    strcpy(S$ + 11 + O_ + strlen(character_name), " -");
     strcpy(
-        S$ + 13 + O_ + strlen(N$),
+        S$ + 13 + O_ + strlen(character_name),
         character_class_names[character_class_id]
     );
     S$[
-        13 + O_ + strlen(N$) + strlen(
+        13 + O_ + strlen(character_name) + strlen(
             character_class_names[character_class_id]
         )
     ] = 0;
@@ -293,7 +294,7 @@ int main(int argc, char *argv[]) {
 
     free(pressed_key);
     free(message);
-    free(N$);
+    free(character_name);
     free(O);
 
     destroy_screen(screen);

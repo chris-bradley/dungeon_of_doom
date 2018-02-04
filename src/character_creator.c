@@ -16,17 +16,21 @@ void lines680_710(int character_class_id, int N, int *Y,
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
                   int *P_, int T, char * pressed_key);
 void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
-                  const char * point_label, char * M$, const char * F$[5][10]);
+                  const char * point_label, char * M$,
+                  const char * attr_item_and_stage_names[5][10]);
 void lines860_890(screen_t *screen, int num_points, const char * point_label,
                   char * M$);
 void lines900_910(screen_t *screen, int stage, int *T, int W,
-                  int attrs_and_prices[5][9], const char * F$[5][10]);
+                  int attrs_and_prices[5][9],
+                  const char * attr_item_and_stage_names[5][10]);
 void lines920_970(screen_t *screen, int stage, int T,
-                  int attrs_and_prices[5][9], const char * F$[5][10]);
+                  int attrs_and_prices[5][9],
+                  const char * attr_item_and_stage_names[5][10]);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *MP, int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
-                    int P[24], const char * O$[25], const char * F$[5][10]);
+                    int P[24], const char * O$[25],
+                    const char * attr_item_and_stage_names[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 
 int main(int argc, char *argv[]) {
@@ -39,11 +43,12 @@ int main(int argc, char *argv[]) {
     const char * character_class_names[5], * point_label, * O$[25];
     char * pressed_key, * typed_string = NULL, * M$ = NULL, * N$;
     int P[24];
-    const char * F$[5][10];
+    const char * attr_item_and_stage_names[5][10];
     // 10 GOSUB 1060
     lines1060_1590(
         &char_base, &interface_num_rows, &gold_coins, &MP, &W,
-        attrs_and_prices, &O, character_class_names, &M$, P, O$, F$
+        attrs_and_prices, &O, character_class_names, &M$, P, O$,
+        attr_item_and_stage_names
     );
     // 20 paper 0:CLS
     screen_t *screen = NULL;
@@ -55,8 +60,12 @@ int main(int argc, char *argv[]) {
     stage = 1;
     point_label = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(screen, stage, MP, &T, W, point_label, M$, F$);
-    lines900_910(screen, stage, &T, W, attrs_and_prices, F$);
+    lines810_850(
+        screen, stage, MP, &T, W, point_label, M$, attr_item_and_stage_names
+    );
+    lines900_910(
+        screen, stage, &T, W, attrs_and_prices, attr_item_and_stage_names
+    );
     // 50 LET K=1:LET P=T+1
     selected_row = 1;
     P_ = T + 1;
@@ -84,13 +93,17 @@ int main(int argc, char *argv[]) {
         if (*pressed_key == ';' && MP > 0) {
             attrs_and_prices[stage][selected_row] += 1;
             MP -= 1;
-            lines920_970(screen, stage, T, attrs_and_prices, F$);
+            lines920_970(
+                screen, stage, T, attrs_and_prices, attr_item_and_stage_names
+            );
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*pressed_key == '-' && attrs_and_prices[stage][selected_row] > 1) {
             attrs_and_prices[stage][selected_row] -=1;
             MP += 1;
-            lines920_970(screen, stage, T, attrs_and_prices, F$);
+            lines920_970(
+                screen, stage, T, attrs_and_prices, attr_item_and_stage_names
+            );
         }
     // 110 LET C=1
         character_class_id = 1;
@@ -134,9 +147,14 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(M$, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(screen, stage, gold_coins, &T, W, point_label, M$, F$);
+        lines810_850(
+            screen, stage, gold_coins, &T, W, point_label, M$,
+            attr_item_and_stage_names
+        );
     // 240 GOSUB 900
-        lines900_910(screen, stage, &T, W, attrs_and_prices, F$);
+        lines900_910(
+            screen, stage, &T, W, attrs_and_prices, attr_item_and_stage_names
+        );
     // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, P_);
         print_text(screen, ">");
@@ -393,7 +411,7 @@ void lines980_1050(screen_t *screen, int W, int background_colour, int FG,
 
 void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
                   const char * point_label, char * M$,
-                  const char * F$[5][10]) {
+                  const char * attr_item_and_stage_names[5][10]) {
     int background_colour, FG, L;
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);
@@ -403,7 +421,7 @@ void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
     print_left$_b$(screen, W);
     // 830 PRINT tab(0,0);F$(J,9)
     tab(screen->cursor, 0, 0);
-    print_text(screen, F$[stage][9]);
+    print_text(screen, attr_item_and_stage_names[stage][9]);
     // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
     background_colour = 2;
     FG = 3;
@@ -443,7 +461,8 @@ void lines860_890(screen_t *screen, int num_points, const char * point_label,
 }
 
 void lines900_910(screen_t *screen, int stage, int *T, int W,
-                  int attrs_and_prices[5][9], const char * F$[5][10]) {
+                  int attrs_and_prices[5][9],
+                  const char * attr_item_and_stage_names[5][10]) {
     int background_colour, FG, L;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     background_colour = 3;
@@ -452,11 +471,14 @@ void lines900_910(screen_t *screen, int stage, int *T, int W,
     L = 15;
     // 910 GOSUB 980
     lines980_1050(screen, W, background_colour, FG, *T, L);
-    lines920_970(screen, stage, *T, attrs_and_prices, F$);
+    lines920_970(
+        screen, stage, *T, attrs_and_prices, attr_item_and_stage_names
+    );
 }
 
 void lines920_970(screen_t *screen, int stage, int T,
-                  int attrs_and_prices[5][9], const char * F$[5][10]) {
+                  int attrs_and_prices[5][9],
+                  const char * attr_item_and_stage_names[5][10]) {
     int index, Y;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
@@ -471,7 +493,7 @@ void lines920_970(screen_t *screen, int stage, int T,
     // 950 PRINT tab(2,Y);F$(J,I);tab(16,Y);F(J,I);" ";
 
         tab(screen->cursor, 2, Y);
-        print_text(screen, F$[stage][index]);
+        print_text(screen, attr_item_and_stage_names[stage][index]);
         tab(screen->cursor, 16, Y);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
@@ -523,7 +545,8 @@ void lines1600_1650(int *W);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *MP, int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
-                    int P[24], const char * O$[25], const char * F$[5][10]) {
+                    int P[24], const char * O$[25],
+                    const char * attr_item_and_stage_names[5][10]) {
     int index;
     // 1060 GOSUB 1600
     lines1600_1650(W);
@@ -660,42 +683,42 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
     // 1480 READ F$(J,I)
     // 1490 NEXT I
     // 1500 NEXT J
-    F$[1][1] = "STRENGTH";
-    F$[1][2] = "VITALITY";
-    F$[1][3] = "AGILITY";
-    F$[1][4] = "INTELLIGENCE";
-    F$[1][5] = "EXPERIENCE";
-    F$[1][6] = "LUCK";
-    F$[1][7] = "AURA";
-    F$[1][8] = "MORALITY";
-    F$[1][9] = "CHARACTER CREATION";
-    F$[2][1] = "2 HAND SWORD";
-    F$[2][2] = "BROADSWORD";
-    F$[2][3] = "SHORTSWORD";
-    F$[2][4] = "AXE";
-    F$[2][5] = "MACE";
-    F$[2][6] = "FLAIL";
-    F$[2][7] = "DAGGER";
-    F$[2][8] = "GAUNTLET";
-    F$[2][9] = "ARMOURY";
-    F$[3][1] = "HEAVY ARMOUR";
-    F$[3][2] = "CHAIN ARMOUR";
-    F$[3][3] = "LEATHER ARMOUR";
-    F$[3][4] = "HEAVY ROBE";
-    F$[3][5] = "GOLD HELMET";
-    F$[3][6] = "HEADPIECE";
-    F$[3][7] = "SHIELD";
-    F$[3][8] = "TORCH";
-    F$[3][9] = "ACCOUTREMENTS";
-    F$[4][1] = "NECRONOMICON";
-    F$[4][2] = "SCROLLS";
-    F$[4][3] = "RING";
-    F$[4][4] = "MYSTIC AMULET";
-    F$[4][5] = "SASH";
-    F$[4][6] = "CLOAK";
-    F$[4][7] = "HEALING SALVE";
-    F$[4][8] = "POTIONS";
-    F$[4][9] = "EMPORIUM";
+    attr_item_and_stage_names[1][1] = "STRENGTH";
+    attr_item_and_stage_names[1][2] = "VITALITY";
+    attr_item_and_stage_names[1][3] = "AGILITY";
+    attr_item_and_stage_names[1][4] = "INTELLIGENCE";
+    attr_item_and_stage_names[1][5] = "EXPERIENCE";
+    attr_item_and_stage_names[1][6] = "LUCK";
+    attr_item_and_stage_names[1][7] = "AURA";
+    attr_item_and_stage_names[1][8] = "MORALITY";
+    attr_item_and_stage_names[1][9] = "CHARACTER CREATION";
+    attr_item_and_stage_names[2][1] = "2 HAND SWORD";
+    attr_item_and_stage_names[2][2] = "BROADSWORD";
+    attr_item_and_stage_names[2][3] = "SHORTSWORD";
+    attr_item_and_stage_names[2][4] = "AXE";
+    attr_item_and_stage_names[2][5] = "MACE";
+    attr_item_and_stage_names[2][6] = "FLAIL";
+    attr_item_and_stage_names[2][7] = "DAGGER";
+    attr_item_and_stage_names[2][8] = "GAUNTLET";
+    attr_item_and_stage_names[2][9] = "ARMOURY";
+    attr_item_and_stage_names[3][1] = "HEAVY ARMOUR";
+    attr_item_and_stage_names[3][2] = "CHAIN ARMOUR";
+    attr_item_and_stage_names[3][3] = "LEATHER ARMOUR";
+    attr_item_and_stage_names[3][4] = "HEAVY ROBE";
+    attr_item_and_stage_names[3][5] = "GOLD HELMET";
+    attr_item_and_stage_names[3][6] = "HEADPIECE";
+    attr_item_and_stage_names[3][7] = "SHIELD";
+    attr_item_and_stage_names[3][8] = "TORCH";
+    attr_item_and_stage_names[3][9] = "ACCOUTREMENTS";
+    attr_item_and_stage_names[4][1] = "NECRONOMICON";
+    attr_item_and_stage_names[4][2] = "SCROLLS";
+    attr_item_and_stage_names[4][3] = "RING";
+    attr_item_and_stage_names[4][4] = "MYSTIC AMULET";
+    attr_item_and_stage_names[4][5] = "SASH";
+    attr_item_and_stage_names[4][6] = "CLOAK";
+    attr_item_and_stage_names[4][7] = "HEALING SALVE";
+    attr_item_and_stage_names[4][8] = "POTIONS";
+    attr_item_and_stage_names[4][9] = "EMPORIUM";
     // 1510 DATA "WANDERER","CLERIC","MAGE","WARRIOR","BARBARIAN"
     // 1520 FOR I=1 TO 5
     // 1530 READ C$(I)

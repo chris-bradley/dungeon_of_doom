@@ -27,7 +27,7 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *MP, int *W, int attrs_and_prices[5][9], int ** O,
                     const char * character_class_names[5], char ** M$,
                     int P[24], const char * O$[25], const char * F$[5][10]);
-void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$);
+void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     int attrs_and_prices[5][9];
     int * O;
     const char * character_class_names[5], * point_label, * O$[25];
-    char * pressed_key, * IN$ = NULL, * M$ = NULL, * N$;
+    char * pressed_key, * typed_string = NULL, * M$ = NULL, * N$;
     int P[24];
     const char * F$[5][10];
     // 10 GOSUB 1060
@@ -192,9 +192,9 @@ int main(int argc, char *argv[]) {
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         X = 1;
         Y = 3;
-        lines1700_1730(screen, X, Y, &IN$);
-        strcpy(N$, IN$);
-        free(IN$);
+        lines1700_1730(screen, X, Y, &typed_string);
+        strcpy(N$, typed_string);
+        free(typed_string);
     // 390 IF LEN(N$)>10 THEN GOTO 360
     } while (strlen(N$) > 10);
     // 400 PRINT tab(1,3);"ONE MOMENT PLEASE";
@@ -281,7 +281,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   const char * point_label, char * M$, int P[24],
                   const char * O$[25]) {
     int OF, X, Y;
-    char * IN$ = NULL;
+    char * typed_string = NULL;
     // 570 LET M$="";GOSUB 860
     strcpy(M$, "");
     lines860_890(screen, *gold_coins, point_label, M$);
@@ -293,9 +293,9 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     X = 14;
     Y = 2;
-    lines1700_1730(screen, X, Y, &IN$);
-    OF = atoi(IN$);
-    free(IN$);
+    lines1700_1730(screen, X, Y, &typed_string);
+    OF = atoi(typed_string);
+    free(typed_string);
     // 600 GOSUB 680
     lines680_710(character_class_id, N, &Y, character_class_names, M$, O$);
     lines610_670(
@@ -723,16 +723,16 @@ void lines1600_1650(int *W) {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$) {
+void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string) {
     // 1700 IN$=""
     int ind = 0;
     char * pressed_key = (char *) malloc(sizeof(char));
-    *IN$ = (char *) malloc(sizeof(char) * 40);
-    if (*IN$ == NULL) {
-        fprintf(stderr, "*IN$ is NULL!\n");
+    *typed_string = (char *) malloc(sizeof(char) * 40);
+    if (*typed_string == NULL) {
+        fprintf(stderr, "*typed_string is NULL!\n");
         exit(1);
     }
-    (*IN$)[0] = 0;
+    (*typed_string)[0] = 0;
     // 1710 GET I$:IF I$=CHR$(13) THEN RETURN
     SDL_Event event;
     int done = 0;
@@ -757,15 +757,15 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** IN$) {
                 text_entered && *pressed_key > '/' && *pressed_key < ']' &&
                 ind < 39
         ) {
-            (*IN$)[ind] = *pressed_key;
+            (*typed_string)[ind] = *pressed_key;
             ind += 1;
-            (*IN$)[ind] = 0;
+            (*typed_string)[ind] = 0;
             tab(screen->cursor, X, Y);
-            print_text(screen, *IN$);
+            print_text(screen, *typed_string);
             SDL_RenderPresent(screen->ren);
         }
     // 1730 GOTO 1710
     }
-    (*IN$)[ind] = 0;
+    (*typed_string)[ind] = 0;
     free(pressed_key);
 }

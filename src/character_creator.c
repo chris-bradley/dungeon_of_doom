@@ -38,7 +38,7 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
         interface_num_rows, gold_coins, index, stage, selected_row,
-        attr_points, item_num, O_, OF, P_, T, W, X, Y;
+        attr_points, item_num, num_item_types, OF, P_, T, W, X, Y;
     int attrs_and_prices[5][9];
     int * inventory;
     const char * character_class_names[5], * point_label,
@@ -235,12 +235,12 @@ int main(int argc, char *argv[]) {
     // 410 PRINT tab(1,3);
     tab(screen->cursor, 1, 3);
     // 420 LET O=D*3
-    O_ = interface_num_rows * 3;
+    num_item_types = interface_num_rows * 3;
     // 430 LET S$=CHR$(O+AS)
 
     char * S$ = (char *) malloc(
         sizeof(char) * (
-            14 + O_ + strlen(character_name) + strlen(
+            14 + num_item_types + strlen(character_name) + strlen(
                 character_class_names[character_class_id]
             )
         )
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    S$[0] = (char) (O_ + char_base);
+    S$[0] = (char) (num_item_types + char_base);
     // 440 FOR I=1 TO 8
     for (index = 1; index <= 8; index +=1 ) {
     // 450 LET S$=S$+CHR(F(1,I)+AS)
@@ -258,24 +258,24 @@ int main(int argc, char *argv[]) {
     }
     // 460 NEXT I
     // 470 FOR I = 1 TO O
-    for (index = 1; index <= O_; index += 1) {
+    for (index = 1; index <= num_item_types; index += 1) {
     // 480 LET S$=S$+CHR$(O(I)+AS)
         S$[8 + index] = (char) (inventory[index] + char_base);
     // 490 NEXT I
     }
     // 500 LET S$=S$+CHR$(H+AS)
-    S$[9 + O_] = (char) (gold_coins + char_base);
+    S$[9 + num_item_types] = (char) (gold_coins + char_base);
     // 510 LET S$=S$+CHR$(AS)
-    S$[10 + O_] = (char) char_base;
+    S$[10 + num_item_types] = (char) char_base;
     // 520 LET S$=S$+N$+" -"+C$(C)
-    strcpy(S$ + 11 + O_, character_name);
-    strcpy(S$ + 11 + O_ + strlen(character_name), " -");
+    strcpy(S$ + 11 + num_item_types, character_name);
+    strcpy(S$ + 11 + num_item_types + strlen(character_name), " -");
     strcpy(
-        S$ + 13 + O_ + strlen(character_name),
+        S$ + 13 + num_item_types + strlen(character_name),
         character_class_names[character_class_id]
     );
     S$[
-        13 + O_ + strlen(character_name) + strlen(
+        13 + num_item_types + strlen(character_name) + strlen(
             character_class_names[character_class_id]
         )
     ] = 0;

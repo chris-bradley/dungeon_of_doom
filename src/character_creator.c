@@ -4,12 +4,12 @@
 void lines570_600(screen_t *screen, int max_accepted_discount,
                   int character_class_id, int stage, int *gold_coins,
                   int selected_row, int item_num, int attrs_and_prices[5][9],
-                  int * O, const char * character_class_names[5],
+                  int * inventory, const char * character_class_names[5],
                   const char * point_label, char * message, int P[24],
                   const char * O$[25]);
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
                   int selected_row, int item_num, int OF, int Y,
-                  int attrs_and_prices[5][9], int * O, char * message,
+                  int attrs_and_prices[5][9], int * inventory, char * message,
                   int P[24]);
 void lines680_710(int character_class_id, int item_num, int *Y,
                   const char * character_class_names[5], char * message,
@@ -29,7 +29,7 @@ void lines920_970(screen_t *screen, int stage, int T,
                   const char * attr_item_and_stage_names[5][10]);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *attr_points, int *W, int attrs_and_prices[5][9],
-                    int ** O, const char * character_class_names[5],
+                    int ** inventory, const char * character_class_names[5],
                     char ** message, int P[24], const char * O$[25],
                     const char * attr_item_and_stage_names[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
         interface_num_rows, gold_coins, index, stage, selected_row,
         attr_points, item_num, O_, OF, P_, T, W, X, Y;
     int attrs_and_prices[5][9];
-    int * O;
+    int * inventory;
     const char * character_class_names[5], * point_label, * O$[25];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     // 10 GOSUB 1060
     lines1060_1590(
         &char_base, &interface_num_rows, &gold_coins, &attr_points, &W,
-        attrs_and_prices, &O, character_class_names, &message, P, O$,
+        attrs_and_prices, &inventory, character_class_names, &message, P, O$,
         attr_item_and_stage_names
     );
     // 20 paper 0:CLS
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
                 OF = attrs_and_prices[stage][selected_row];
                 lines610_670(
                     max_accepted_discount, stage, &gold_coins, selected_row,
-                    item_num, OF, Y, attrs_and_prices, O, message, P
+                    item_num, OF, Y, attrs_and_prices, inventory, message, P
                 );
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
@@ -191,8 +191,9 @@ int main(int argc, char *argv[]) {
                 max_accepted_discount = rand() % 3;
                 lines570_600(
                     screen, max_accepted_discount, character_class_id, stage,
-                    &gold_coins, selected_row, item_num, attrs_and_prices, O,
-                    character_class_names, point_label, message, P, O$
+                    &gold_coins, selected_row, item_num, attrs_and_prices,
+                    inventory, character_class_names, point_label, message, P,
+                    O$
                 );
             }
     // 330 GOSUB 860
@@ -257,7 +258,7 @@ int main(int argc, char *argv[]) {
     // 470 FOR I = 1 TO O
     for (index = 1; index <= O_; index += 1) {
     // 480 LET S$=S$+CHR$(O(I)+AS)
-        S$[8 + index] = (char) (O[index] + char_base);
+        S$[8 + index] = (char) (inventory[index] + char_base);
     // 490 NEXT I
     }
     // 500 LET S$=S$+CHR$(H+AS)
@@ -295,7 +296,7 @@ int main(int argc, char *argv[]) {
     free(pressed_key);
     free(message);
     free(character_name);
-    free(O);
+    free(inventory);
 
     destroy_screen(screen);
 
@@ -305,7 +306,7 @@ int main(int argc, char *argv[]) {
 void lines570_600(screen_t *screen, int max_accepted_discount,
                   int character_class_id, int stage, int *gold_coins,
                   int selected_row, int item_num, int attrs_and_prices[5][9],
-                  int * O, const char * character_class_names[5],
+                  int * inventory, const char * character_class_names[5],
                   const char * point_label, char * message, int P[24],
                   const char * O$[25]) {
     int OF, X, Y;
@@ -330,17 +331,17 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     );
     lines610_670(
         max_accepted_discount, stage, gold_coins, selected_row, item_num, OF,
-        Y, attrs_and_prices, O, message, P
+        Y, attrs_and_prices, inventory, message, P
     );
 }
 
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
                   int selected_row, int item_num, int OF, int Y,
-                  int attrs_and_prices[5][9], int * O, char * message,
+                  int attrs_and_prices[5][9], int * inventory, char * message,
                   int P[24]) {
     int PR;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
-    if (O[item_num] > 0 && item_num < 23) {
+    if (inventory[item_num] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
     // 620 LET PR=F(J,K)-BR
@@ -351,7 +352,7 @@ void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
         } else {
     // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
             if (OF >= PR && Y == 1) {
-                O[item_num] += P[item_num];
+                inventory[item_num] += P[item_num];
                 *gold_coins -= PR;
                 strcpy(message, "TIS YOURS!");
             }
@@ -554,7 +555,7 @@ void lines1600_1650(int *W);
 
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *attr_points, int *W, int attrs_and_prices[5][9],
-                    int ** O, const char * character_class_names[5],
+                    int ** inventory, const char * character_class_names[5],
                     char ** message, int P[24], const char * O$[25],
                     const char * attr_item_and_stage_names[5][10]) {
     int index;
@@ -566,15 +567,15 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
     // 1090 DIM F$(4,D+1)
     // 1100 DIM C$(5)
     // 1110 DIM O(D*3)
-    *O = (int *) malloc(sizeof(int) * (*interface_num_rows) * 3);
-    if (*O == NULL) {
-        fprintf(stderr, "*O is NULL!\n");
+    *inventory = (int *) malloc(sizeof(int) * (*interface_num_rows) * 3);
+    if (*inventory == NULL) {
+        fprintf(stderr, "*inventory is NULL!\n");
         exit(1);
     }
 
     int i;
     for (i = 0; i < *interface_num_rows * 3; i += 1) {
-        (*O)[i] = 0;
+        (*inventory)[i] = 0;
     }
 
     // 1120 DIM O$(D*3)

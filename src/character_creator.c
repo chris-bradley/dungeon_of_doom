@@ -5,12 +5,13 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   int character_class_id, int stage, int *gold_coins,
                   int selected_row, int item_num, int attrs_and_prices[5][9],
                   int * inventory, const char * character_class_names[5],
-                  const char * point_label, char * message, int P[24],
+                  const char * point_label, char * message,
+                  int item_batch_size[24],
                   const char * item_char_class_avail[25]);
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
                   int selected_row, int item_num, int offer, int Y,
                   int attrs_and_prices[5][9], int * inventory, char * message,
-                  int P[24]);
+                  int item_batch_size[24]);
 void lines680_710(int character_class_id, int item_num, int *Y,
                   const char * character_class_names[5], char * message,
                   const char * item_char_class_avail[25]);
@@ -30,7 +31,7 @@ void lines920_970(screen_t *screen, int stage, int T,
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *attr_points, int *W, int attrs_and_prices[5][9],
                     int ** inventory, const char * character_class_names[5],
-                    char ** message, int P[24],
+                    char ** message, int item_batch_size[24],
                     const char * item_char_class_avail[25],
                     const char * attr_item_and_stage_names[5][10]);
 void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
@@ -45,13 +46,13 @@ int main(int argc, char *argv[]) {
                * item_char_class_avail[25];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
-    int P[24];
+    int item_batch_size[24];
     const char * attr_item_and_stage_names[5][10];
     // 10 GOSUB 1060
     lines1060_1590(
         &char_base, &interface_num_rows, &gold_coins, &attr_points, &W,
-        attrs_and_prices, &inventory, character_class_names, &message, P,
-        item_char_class_avail, attr_item_and_stage_names
+        attrs_and_prices, &inventory, character_class_names, &message,
+        item_batch_size, item_char_class_avail, attr_item_and_stage_names
     );
     // 20 paper 0:CLS
     screen_t *screen = NULL;
@@ -185,7 +186,8 @@ int main(int argc, char *argv[]) {
                 offer = attrs_and_prices[stage][selected_row];
                 lines610_670(
                     max_accepted_discount, stage, &gold_coins, selected_row,
-                    item_num, offer, Y, attrs_and_prices, inventory, message, P
+                    item_num, offer, Y, attrs_and_prices, inventory, message,
+                    item_batch_size
                 );
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
@@ -194,8 +196,8 @@ int main(int argc, char *argv[]) {
                 lines570_600(
                     screen, max_accepted_discount, character_class_id, stage,
                     &gold_coins, selected_row, item_num, attrs_and_prices,
-                    inventory, character_class_names, point_label, message, P,
-                    item_char_class_avail
+                    inventory, character_class_names, point_label, message,
+                    item_batch_size, item_char_class_avail
                 );
             }
     // 330 GOSUB 860
@@ -309,7 +311,8 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   int character_class_id, int stage, int *gold_coins,
                   int selected_row, int item_num, int attrs_and_prices[5][9],
                   int * inventory, const char * character_class_names[5],
-                  const char * point_label, char * message, int P[24],
+                  const char * point_label, char * message,
+                  int item_batch_size[24],
                   const char * item_char_class_avail[25]) {
     int offer, X, Y;
     char * typed_string = NULL;
@@ -334,14 +337,14 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     );
     lines610_670(
         max_accepted_discount, stage, gold_coins, selected_row, item_num,
-        offer, Y, attrs_and_prices, inventory, message, P
+        offer, Y, attrs_and_prices, inventory, message, item_batch_size
     );
 }
 
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
                   int selected_row, int item_num, int offer, int Y,
                   int attrs_and_prices[5][9], int * inventory, char * message,
-                  int P[24]) {
+                  int item_batch_size[24]) {
     int PR;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (inventory[item_num] > 0 && item_num < 23) {
@@ -355,7 +358,7 @@ void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
         } else {
     // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
             if (offer >= PR && Y == 1) {
-                inventory[item_num] += P[item_num];
+                inventory[item_num] += item_batch_size[item_num];
                 *gold_coins -= PR;
                 strcpy(message, "TIS YOURS!");
             }
@@ -559,7 +562,7 @@ void lines1600_1650(int *W);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *attr_points, int *W, int attrs_and_prices[5][9],
                     int ** inventory, const char * character_class_names[5],
-                    char ** message, int P[24],
+                    char ** message, int item_batch_size[24],
                     const char * item_char_class_avail[25],
                     const char * attr_item_and_stage_names[5][10]) {
     int index;
@@ -660,30 +663,30 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
     // 1350 FOR I=1 TO D*3
     // 1360 READ P(I)
     // 1370 NEXT I
-    P[1] = 5;
-    P[2] = 4;
-    P[3] = 3;
-    P[4] = 3;
-    P[5] = 2;
-    P[6] = 2;
-    P[7] = 1;
-    P[8] = 1;
-    P[9] = 5;
-    P[10] = 4;
-    P[11] = 3;
-    P[12] = 1;
-    P[13] = 2;
-    P[14] = 1;
-    P[15] = 3;
-    P[16] = 1;
-    P[17] = 4;
-    P[18] = 3;
-    P[19] = 2;
-    P[20] = 2;
-    P[21] = 3;
-    P[22] = 1;
-    P[23] = 1;
-    P[24] = 1;
+    item_batch_size[1] = 5;
+    item_batch_size[2] = 4;
+    item_batch_size[3] = 3;
+    item_batch_size[4] = 3;
+    item_batch_size[5] = 2;
+    item_batch_size[6] = 2;
+    item_batch_size[7] = 1;
+    item_batch_size[8] = 1;
+    item_batch_size[9] = 5;
+    item_batch_size[10] = 4;
+    item_batch_size[11] = 3;
+    item_batch_size[12] = 1;
+    item_batch_size[13] = 2;
+    item_batch_size[14] = 1;
+    item_batch_size[15] = 3;
+    item_batch_size[16] = 1;
+    item_batch_size[17] = 4;
+    item_batch_size[18] = 3;
+    item_batch_size[19] = 2;
+    item_batch_size[20] = 2;
+    item_batch_size[21] = 3;
+    item_batch_size[22] = 1;
+    item_batch_size[23] = 1;
+    item_batch_size[24] = 1;
 
     // 1380 DATA "STRENGTH","VITALITY","AGILITY","INTELLIGENCE"
     // 1390 DATA "EXPERIENCE","LUCK","AURA","MORALITY","CHARACTER CREATION"

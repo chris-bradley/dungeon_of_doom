@@ -16,7 +16,7 @@ void lines680_710(int character_class_id, int item_num, int *Y,
                   const char * character_class_names[5], char * message,
                   const char * item_char_class_avail[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
-                  int *P_, int T, char * pressed_key);
+                  int *selected_row_pos, int T, char * pressed_key);
 void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
                   const char * point_label, char * message,
                   const char * attr_item_and_stage_names[5][10]);
@@ -39,7 +39,8 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
         interface_num_rows, gold_coins, index, stage, selected_row,
-        attr_points, item_num, num_item_types, offer, P_, T, W, X, Y;
+        attr_points, item_num, num_item_types, offer, selected_row_pos, T, W,
+        X, Y;
     int attrs_and_prices[5][9];
     int * inventory;
     const char * character_class_names[5], * point_label,
@@ -73,9 +74,9 @@ int main(int argc, char *argv[]) {
     );
     // 50 LET K=1:LET P=T+1
     selected_row = 1;
-    P_ = T + 1;
+    selected_row_pos = T + 1;
     // 60 PRINT tab(1,P);">";
-    tab(screen->cursor, 1, P_);
+    tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
     // 70 GOSUB 720
@@ -86,12 +87,14 @@ int main(int argc, char *argv[]) {
     }
     do {
         lines720_800(
-            screen, interface_num_rows, &selected_row, &P_, T, pressed_key
+            screen, interface_num_rows, &selected_row, &selected_row_pos, T,
+            pressed_key
         );
     // 80 IF K=5 THEN GOTO 70
         while (selected_row == 5) {
             lines720_800(
-                screen, interface_num_rows, &selected_row, &P_, T, pressed_key
+                screen, interface_num_rows, &selected_row, &selected_row_pos,
+                T, pressed_key
             );
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
@@ -148,7 +151,7 @@ int main(int argc, char *argv[]) {
     for (stage = 2; stage <= 4; stage += 1) {
     // 210 LET K=1:LET P=T+1
         selected_row = 1;
-        P_ = T + 1;
+        selected_row_pos = T + 1;
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(message, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
@@ -161,13 +164,14 @@ int main(int argc, char *argv[]) {
             screen, stage, &T, W, attrs_and_prices, attr_item_and_stage_names
         );
     // 250 PRINT tab(1,P);">";
-        tab(screen->cursor, 1, P_);
+        tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
             lines720_800(
-                screen, interface_num_rows, &selected_row, &P_, T, pressed_key
+                screen, interface_num_rows, &selected_row, &selected_row_pos,
+                T, pressed_key
             );
     // 270 LET N=8*(J-2)+K
             item_num = 8 * (stage - 2) + selected_row;
@@ -397,7 +401,7 @@ void lines680_710(int character_class_id, int item_num, int *Y,
 }
 
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
-                  int *P_, int T, char * pressed_key) {
+                  int *selected_row_pos, int T, char * pressed_key) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *pressed_key = inkey$();
@@ -405,7 +409,7 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     // 750 print tab(1,P);" ";
-    tab(screen->cursor, 1, *P_);
+    tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, " ");
     // 760 IF I$="A" AND K>1 THEN LET K=K-1
     if (*pressed_key == 'a' && *selected_row > 1) {
@@ -416,9 +420,9 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
         *selected_row += 1;
     }
     // 780 LET P=K*2+T-1
-    *P_ = *selected_row * 2 + T - 1;
+    *selected_row_pos = *selected_row * 2 + T - 1;
     // 790 PRINT tab(1,P);">";
-    tab(screen->cursor, 1, *P_);
+    tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, ">");
     // 800 RETURN
 }

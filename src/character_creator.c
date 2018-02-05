@@ -9,10 +9,10 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          const char * point_label, char * message,
                          int item_batch_size[24],
                          const char * item_char_class_avail[25]);
-void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
-                  int selected_row, int item_num, int offer,
-                  int item_for_class, int attrs_and_prices[5][9],
-                  int * inventory, char * message, int item_batch_size[24]);
+void buy_item(int max_accepted_discount, int stage, int *gold_coins,
+              int selected_row, int item_num, int offer, int item_for_class,
+              int attrs_and_prices[5][9], int * inventory, char * message,
+              int item_batch_size[24]);
 void lines680_710(int character_class_id, int item_num, int *item_for_class,
                   const char * character_class_names[5], char * message,
                   const char * item_char_class_avail[25]);
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
     // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*pressed_key == ';') {
                 offer = attrs_and_prices[stage][selected_row];
-                lines610_670(
+                buy_item(
                     max_accepted_discount, stage, &gold_coins, selected_row,
                     item_num, offer, item_for_class, attrs_and_prices,
                     inventory, message, item_batch_size
@@ -352,17 +352,17 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
         character_class_id, item_num, &item_for_class, character_class_names,
         message, item_char_class_avail
     );
-    lines610_670(
+    buy_item(
         max_accepted_discount, stage, gold_coins, selected_row, item_num,
         offer, item_for_class, attrs_and_prices, inventory, message,
         item_batch_size
     );
 }
 
-void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
-                  int selected_row, int item_num, int offer,
-                  int item_for_class, int attrs_and_prices[5][9],
-                  int * inventory, char * message, int item_batch_size[24]) {
+void buy_item(int max_accepted_discount, int stage, int *gold_coins,
+              int selected_row, int item_num, int offer, int item_for_class,
+              int attrs_and_prices[5][9], int * inventory, char * message,
+              int item_batch_size[24]) {
     int price;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (inventory[item_num] > 0 && item_num < 23) {

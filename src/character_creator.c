@@ -286,15 +286,15 @@ int main(int argc, char *argv[]) {
         )
     ] = 0;
     // 530 LET S=OPENOUT "HERO"
-    FILE *S = fopen("HERO", "w");
+    FILE *save_file_handle = fopen("HERO", "w");
     // 540 PRINT#S,S$
-    int error = fputs(S$, S);
+    int error = fputs(S$, save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the character!", error);
     }
 
     // 550 CLOSE#S
-    error = fclose(S);
+    error = fclose(save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i saving the character!", error);
     }

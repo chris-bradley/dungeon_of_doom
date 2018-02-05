@@ -244,43 +244,48 @@ int main(int argc, char *argv[]) {
     num_item_types = interface_num_rows * 3;
     // 430 LET S$=CHR$(O+AS)
 
-    char * S$ = (char *) malloc(
+    char * save_file_contents = (char *) malloc(
         sizeof(char) * (
             14 + num_item_types + strlen(character_name) + strlen(
                 character_class_names[character_class_id]
             )
         )
     );
-    if (S$ == NULL) {
-        fprintf(stderr, "S$ is NULL!\n");
+    if (save_file_contents == NULL) {
+        fprintf(stderr, "save_file_contents is NULL!\n");
         exit(1);
     }
 
-    S$[0] = (char) (num_item_types + char_base);
+    save_file_contents[0] = (char) (num_item_types + char_base);
     // 440 FOR I=1 TO 8
     for (index = 1; index <= 8; index +=1 ) {
     // 450 LET S$=S$+CHR(F(1,I)+AS)
-        S$[index] += (char) (attrs_and_prices[1][index] + char_base);
+        save_file_contents[index] += (char) (
+            attrs_and_prices[1][index] + char_base
+        );
     }
     // 460 NEXT I
     // 470 FOR I = 1 TO O
     for (index = 1; index <= num_item_types; index += 1) {
     // 480 LET S$=S$+CHR$(O(I)+AS)
-        S$[8 + index] = (char) (inventory[index] + char_base);
+        save_file_contents[8 + index] = (char) (inventory[index] + char_base);
     // 490 NEXT I
     }
     // 500 LET S$=S$+CHR$(H+AS)
-    S$[9 + num_item_types] = (char) (gold_coins + char_base);
+    save_file_contents[9 + num_item_types] = (char) (gold_coins + char_base);
     // 510 LET S$=S$+CHR$(AS)
-    S$[10 + num_item_types] = (char) char_base;
+    save_file_contents[10 + num_item_types] = (char) char_base;
     // 520 LET S$=S$+N$+" -"+C$(C)
-    strcpy(S$ + 11 + num_item_types, character_name);
-    strcpy(S$ + 11 + num_item_types + strlen(character_name), " -");
+    strcpy(save_file_contents + 11 + num_item_types, character_name);
     strcpy(
-        S$ + 13 + num_item_types + strlen(character_name),
+        save_file_contents + 11 + num_item_types + strlen(character_name),
+        " -"
+    );
+    strcpy(
+        save_file_contents + 13 + num_item_types + strlen(character_name),
         character_class_names[character_class_id]
     );
-    S$[
+    save_file_contents[
         13 + num_item_types + strlen(character_name) + strlen(
             character_class_names[character_class_id]
         )
@@ -288,7 +293,7 @@ int main(int argc, char *argv[]) {
     // 530 LET S=OPENOUT "HERO"
     FILE *save_file_handle = fopen("HERO", "w");
     // 540 PRINT#S,S$
-    int error = fputs(S$, save_file_handle);
+    int error = fputs(save_file_contents, save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the character!", error);
     }
@@ -298,7 +303,7 @@ int main(int argc, char *argv[]) {
     if (error) {
         fprintf(stderr, "Error %i saving the character!", error);
     }
-    free(S$);
+    free(save_file_contents);
     // 560 STOP
 
     free(pressed_key);

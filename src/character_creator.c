@@ -16,16 +16,16 @@ void lines680_710(int character_class_id, int item_num, int *Y,
                   const char * character_class_names[5], char * message,
                   const char * item_char_class_avail[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
-                  int *selected_row_pos, int T, char * pressed_key);
-void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
-                  const char * point_label, char * message,
+                  int *selected_row_pos, int top_row, char * pressed_key);
+void lines810_850(screen_t *screen, int stage, int num_points, int *top_row,
+                  int W, const char * point_label, char * message,
                   const char * attr_item_and_stage_names[5][10]);
 void lines860_890(screen_t *screen, int num_points, const char * point_label,
                   char * message);
-void lines900_910(screen_t *screen, int stage, int *T, int W,
+void lines900_910(screen_t *screen, int stage, int *top_row, int W,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]);
-void lines920_970(screen_t *screen, int stage, int T,
+void lines920_970(screen_t *screen, int stage, int top_row,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
@@ -39,8 +39,8 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
         interface_num_rows, gold_coins, index, stage, selected_row,
-        attr_points, item_num, num_item_types, offer, selected_row_pos, T, W,
-        X, Y;
+        attr_points, item_num, num_item_types, offer, selected_row_pos,
+        top_row, W, X, Y;
     int attrs_and_prices[5][9];
     int * inventory;
     const char * character_class_names[5], * point_label,
@@ -66,15 +66,15 @@ int main(int argc, char *argv[]) {
     point_label = "POINTS";
     // 40 GOSUB 810:GOSUB900
     lines810_850(
-        screen, stage, attr_points, &T, W, point_label, message,
+        screen, stage, attr_points, &top_row, W, point_label, message,
         attr_item_and_stage_names
     );
     lines900_910(
-        screen, stage, &T, W, attrs_and_prices, attr_item_and_stage_names
+        screen, stage, &top_row, W, attrs_and_prices, attr_item_and_stage_names
     );
     // 50 LET K=1:LET P=T+1
     selected_row = 1;
-    selected_row_pos = T + 1;
+    selected_row_pos = top_row + 1;
     // 60 PRINT tab(1,P);">";
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
@@ -87,14 +87,14 @@ int main(int argc, char *argv[]) {
     }
     do {
         lines720_800(
-            screen, interface_num_rows, &selected_row, &selected_row_pos, T,
-            pressed_key
+            screen, interface_num_rows, &selected_row, &selected_row_pos,
+            top_row, pressed_key
         );
     // 80 IF K=5 THEN GOTO 70
         while (selected_row == 5) {
             lines720_800(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
-                T, pressed_key
+                top_row, pressed_key
             );
         }
     // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
@@ -102,7 +102,8 @@ int main(int argc, char *argv[]) {
             attrs_and_prices[stage][selected_row] += 1;
             attr_points -= 1;
             lines920_970(
-                screen, stage, T, attrs_and_prices, attr_item_and_stage_names
+                screen, stage, top_row, attrs_and_prices,
+                attr_item_and_stage_names
             );
         }
     // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
@@ -110,7 +111,8 @@ int main(int argc, char *argv[]) {
             attrs_and_prices[stage][selected_row] -=1;
             attr_points += 1;
             lines920_970(
-                screen, stage, T, attrs_and_prices, attr_item_and_stage_names
+                screen, stage, top_row, attrs_and_prices,
+                attr_item_and_stage_names
             );
         }
     // 110 LET C=1
@@ -151,17 +153,18 @@ int main(int argc, char *argv[]) {
     for (stage = 2; stage <= 4; stage += 1) {
     // 210 LET K=1:LET P=T+1
         selected_row = 1;
-        selected_row_pos = T + 1;
+        selected_row_pos = top_row + 1;
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(message, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
         lines810_850(
-            screen, stage, gold_coins, &T, W, point_label, message,
+            screen, stage, gold_coins, &top_row, W, point_label, message,
             attr_item_and_stage_names
         );
     // 240 GOSUB 900
         lines900_910(
-            screen, stage, &T, W, attrs_and_prices, attr_item_and_stage_names
+            screen, stage, &top_row, W, attrs_and_prices,
+            attr_item_and_stage_names
         );
     // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, selected_row_pos);
@@ -171,7 +174,7 @@ int main(int argc, char *argv[]) {
         do {
             lines720_800(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
-                T, pressed_key
+                top_row, pressed_key
             );
     // 270 LET N=8*(J-2)+K
             item_num = 8 * (stage - 2) + selected_row;
@@ -406,7 +409,7 @@ void lines680_710(int character_class_id, int item_num, int *Y,
 }
 
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
-                  int *selected_row_pos, int T, char * pressed_key) {
+                  int *selected_row_pos, int top_row, char * pressed_key) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *pressed_key = inkey$();
@@ -425,7 +428,7 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
         *selected_row += 1;
     }
     // 780 LET P=K*2+T-1
-    *selected_row_pos = *selected_row * 2 + T - 1;
+    *selected_row_pos = *selected_row * 2 + top_row - 1;
     // 790 PRINT tab(1,P);">";
     tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, ">");
@@ -433,10 +436,10 @@ void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
 }
 
 void lines980_1050(screen_t *screen, int W, int background_colour,
-                   int border_colour, int T, int rows);
+                   int border_colour, int top_row, int rows);
 
-void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
-                  const char * point_label, char * message,
+void lines810_850(screen_t *screen, int stage, int num_points, int *top_row,
+                  int W, const char * point_label, char * message,
                   const char * attr_item_and_stage_names[5][10]) {
     int background_colour, border_colour, rows;
     // 810 paper 0:ink 2
@@ -451,10 +454,10 @@ void lines810_850(screen_t *screen, int stage, int num_points, int *T, int W,
     // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
     background_colour = 2;
     border_colour = 3;
-    *T = 1;
+    *top_row = 1;
     rows = 2;
     // 850 GOSUB 980
-    lines980_1050(screen, W, background_colour, border_colour, *T, rows);
+    lines980_1050(screen, W, background_colour, border_colour, *top_row, rows);
     lines860_890(screen, num_points, point_label, message);
 }
 
@@ -486,23 +489,23 @@ void lines860_890(screen_t *screen, int num_points, const char * point_label,
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, int stage, int *T, int W,
+void lines900_910(screen_t *screen, int stage, int *top_row, int W,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]) {
     int background_colour, border_colour, rows;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     background_colour = 3;
     border_colour = 2;
-    *T = 5;
+    *top_row = 5;
     rows = 15;
     // 910 GOSUB 980
-    lines980_1050(screen, W, background_colour, border_colour, *T, rows);
+    lines980_1050(screen, W, background_colour, border_colour, *top_row, rows);
     lines920_970(
-        screen, stage, *T, attrs_and_prices, attr_item_and_stage_names
+        screen, stage, *top_row, attrs_and_prices, attr_item_and_stage_names
     );
 }
 
-void lines920_970(screen_t *screen, int stage, int T,
+void lines920_970(screen_t *screen, int stage, int top_row,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]) {
     int index, Y;
@@ -512,7 +515,7 @@ void lines920_970(screen_t *screen, int stage, int T,
     // 930 FOR I=1 TO 8
     for (index = 1; index <= 8; index += 1) {
     // 940 LET Y=T+(I-1)*2+1
-        Y = T + (index - 1) * 2 + 1;
+        Y = top_row + (index - 1) * 2 + 1;
     // C64: 945 PRINT HM$;LEFT(CU$,Y);SPC(15);LEFT(B$,5);
         tab(screen->cursor, 15, Y);
         print_left$_b$(screen, 5);
@@ -535,10 +538,10 @@ void lines920_970(screen_t *screen, int stage, int T,
 }
 
 void lines980_1050(screen_t *screen, int W, int background_colour,
-                   int border_colour, int T, int rows) {
+                   int border_colour, int top_row, int rows) {
     int index;
     // 980 PRINT tab(0,T);
-    tab(screen->cursor, 0, T);
+    tab(screen->cursor, 0, top_row);
     // 990 paper FG:PRINT LEFT$(B$,W);
     paper(screen->cursor, border_colour);
     print_left$_b$(screen, W);

@@ -35,13 +35,13 @@ void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int item_batch_size[24],
                     const char * item_char_class_avail[25],
                     const char * attr_item_and_stage_names[5][10]);
-void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string);
+void lines1700_1730(screen_t *screen, int col, int row, char ** typed_string);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
         interface_num_rows, gold_coins, index, stage, selected_row,
         attr_points, item_num, num_item_types, offer, selected_row_pos,
-        top_row, screen_cols, X, Y, item_for_class;
+        top_row, screen_cols, col, row, item_for_class;
     int attrs_and_prices[5][9];
     int * inventory;
     const char * character_class_names[5], * point_label,
@@ -233,9 +233,9 @@ int main(int argc, char *argv[]) {
     // 380 INPUT N$
 
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
-        X = 1;
-        Y = 3;
-        lines1700_1730(screen, X, Y, &typed_string);
+        col = 1;
+        row = 3;
+        lines1700_1730(screen, col, row, &typed_string);
         strcpy(character_name, typed_string);
         free(typed_string);
     // 390 IF LEN(N$)>10 THEN GOTO 360
@@ -329,7 +329,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   const char * point_label, char * message,
                   int item_batch_size[24],
                   const char * item_char_class_avail[25]) {
-    int item_for_class, offer, X, Y;
+    int item_for_class, offer, col, row;
     char * typed_string = NULL;
     // 570 LET M$="";GOSUB 860
     strcpy(message, "");
@@ -340,9 +340,9 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     SDL_RenderPresent(screen->ren);
     // 590 INPUT OF
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
-    X = 14;
-    Y = 2;
-    lines1700_1730(screen, X, Y, &typed_string);
+    col = 14;
+    row = 2;
+    lines1700_1730(screen, col, row, &typed_string);
     offer = atoi(typed_string);
     free(typed_string);
     // 600 GOSUB 680
@@ -516,22 +516,22 @@ void lines900_910(screen_t *screen, int stage, int *top_row, int screen_cols,
 void lines920_970(screen_t *screen, int stage, int top_row,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]) {
-    int index, Y;
+    int index, row;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
     // 930 FOR I=1 TO 8
     for (index = 1; index <= 8; index += 1) {
     // 940 LET Y=T+(I-1)*2+1
-        Y = top_row + (index - 1) * 2 + 1;
+        row = top_row + (index - 1) * 2 + 1;
     // C64: 945 PRINT HM$;LEFT(CU$,Y);SPC(15);LEFT(B$,5);
-        tab(screen->cursor, 15, Y);
+        tab(screen->cursor, 15, row);
         print_left$_b$(screen, 5);
     // 950 PRINT tab(2,Y);F$(J,I);tab(16,Y);F(J,I);" ";
 
-        tab(screen->cursor, 2, Y);
+        tab(screen->cursor, 2, row);
         print_text(screen, attr_item_and_stage_names[stage][index]);
-        tab(screen->cursor, 16, Y);
+        tab(screen->cursor, 16, row);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
@@ -792,7 +792,7 @@ void lines1600_1650(int *screen_cols) {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string) {
+void lines1700_1730(screen_t *screen, int col, int row, char ** typed_string) {
     // 1700 IN$=""
     int ind = 0;
     char * pressed_key = (char *) malloc(sizeof(char));
@@ -829,7 +829,7 @@ void lines1700_1730(screen_t *screen, int X, int Y, char ** typed_string) {
             (*typed_string)[ind] = *pressed_key;
             ind += 1;
             (*typed_string)[ind] = 0;
-            tab(screen->cursor, X, Y);
+            tab(screen->cursor, col, row);
             print_text(screen, *typed_string);
             SDL_RenderPresent(screen->ren);
         }

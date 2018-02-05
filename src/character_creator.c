@@ -9,10 +9,10 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   int item_batch_size[24],
                   const char * item_char_class_avail[25]);
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
-                  int selected_row, int item_num, int offer, int Y,
-                  int attrs_and_prices[5][9], int * inventory, char * message,
-                  int item_batch_size[24]);
-void lines680_710(int character_class_id, int item_num, int *Y,
+                  int selected_row, int item_num, int offer,
+                  int item_for_class, int attrs_and_prices[5][9],
+                  int * inventory, char * message, int item_batch_size[24]);
+void lines680_710(int character_class_id, int item_num, int *item_for_class,
                   const char * character_class_names[5], char * message,
                   const char * item_char_class_avail[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
         interface_num_rows, gold_coins, index, stage, selected_row,
         attr_points, item_num, num_item_types, offer, selected_row_pos,
-        top_row, screen_cols, X, Y;
+        top_row, screen_cols, X, Y, item_for_class;
     int attrs_and_prices[5][9];
     int * inventory;
     const char * character_class_names[5], * point_label,
@@ -185,8 +185,8 @@ int main(int argc, char *argv[]) {
             strcpy(message, "MAKE YOUR CHOICE");
     // 290 GOSUB 680
             lines680_710(
-                character_class_id, item_num, &Y, character_class_names,
-                message, item_char_class_avail
+                character_class_id, item_num, &item_for_class,
+                character_class_names, message, item_char_class_avail
             );
     // 300 LET BR=0:LET OF=0
             max_accepted_discount = 0;
@@ -196,8 +196,8 @@ int main(int argc, char *argv[]) {
                 offer = attrs_and_prices[stage][selected_row];
                 lines610_670(
                     max_accepted_discount, stage, &gold_coins, selected_row,
-                    item_num, offer, Y, attrs_and_prices, inventory, message,
-                    item_batch_size
+                    item_num, offer, item_for_class, attrs_and_prices,
+                    inventory, message, item_batch_size
                 );
             }
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
@@ -329,7 +329,7 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
                   const char * point_label, char * message,
                   int item_batch_size[24],
                   const char * item_char_class_avail[25]) {
-    int offer, X, Y;
+    int item_for_class, offer, X, Y;
     char * typed_string = NULL;
     // 570 LET M$="";GOSUB 860
     strcpy(message, "");
@@ -347,19 +347,20 @@ void lines570_600(screen_t *screen, int max_accepted_discount,
     free(typed_string);
     // 600 GOSUB 680
     lines680_710(
-        character_class_id, item_num, &Y, character_class_names, message,
-        item_char_class_avail
+        character_class_id, item_num, &item_for_class, character_class_names,
+        message, item_char_class_avail
     );
     lines610_670(
         max_accepted_discount, stage, gold_coins, selected_row, item_num,
-        offer, Y, attrs_and_prices, inventory, message, item_batch_size
+        offer, item_for_class, attrs_and_prices, inventory, message,
+        item_batch_size
     );
 }
 
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
-                  int selected_row, int item_num, int offer, int Y,
-                  int attrs_and_prices[5][9], int * inventory, char * message,
-                  int item_batch_size[24]) {
+                  int selected_row, int item_num, int offer,
+                  int item_for_class, int attrs_and_prices[5][9],
+                  int * inventory, char * message, int item_batch_size[24]) {
     int price;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (inventory[item_num] > 0 && item_num < 23) {
@@ -372,13 +373,13 @@ void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
     // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
-            if (offer >= price && Y == 1) {
+            if (offer >= price && item_for_class == 1) {
                 inventory[item_num] += item_batch_size[item_num];
                 *gold_coins -= price;
                 strcpy(message, "TIS YOURS!");
             }
     // 650 IF OF<PR AND Y=1 THEN LET M$="OFFER REJECTED";
-            if (offer < price && Y == 1) {
+            if (offer < price && item_for_class == 1) {
                 strcpy(message, "OFFER REJECTED");
             }
     // 660 IF H<0 THEN LET H=0
@@ -391,17 +392,17 @@ void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
 }
 
 
-void lines680_710(int character_class_id, int item_num, int *Y,
+void lines680_710(int character_class_id, int item_num, int *item_for_class,
                   const char * character_class_names[5], char * message,
                   const char * item_char_class_avail[25]) {
     // 680 LET Y=0
-    *Y = 0;
+    *item_for_class = 0;
     // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1
     if (item_char_class_avail[item_num][character_class_id] == '1') {
-        *Y = 1;
+        *item_for_class = 1;
     }
     // 700 IF Y=0 THEN LET M$="NOT FOR "+C$(C)
-    if (*Y == 0) {
+    if (*item_for_class == 0) {
         sprintf(
             message,
             "NOT FOR %s",

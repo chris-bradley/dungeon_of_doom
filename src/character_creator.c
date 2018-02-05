@@ -13,9 +13,11 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
               int selected_row, int item_num, int offer, int item_for_class,
               int attrs_and_prices[5][9], int * inventory, char * message,
               int item_batch_size[24]);
-void lines680_710(int character_class_id, int item_num, int *item_for_class,
-                  const char * character_class_names[5], char * message,
-                  const char * item_char_class_avail[25]);
+void can_class_buy_item(int character_class_id, int item_num,
+                        int *item_for_class,
+                        const char * character_class_names[5],
+                        char * message,
+                        const char * item_char_class_avail[25]);
 void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
                   int *selected_row_pos, int top_row, char * pressed_key);
 void lines810_850(screen_t *screen, int stage, int num_points, int *top_row,
@@ -185,7 +187,7 @@ int main(int argc, char *argv[]) {
     // 280 LET M$="MAKE YOUR CHOICE"
             strcpy(message, "MAKE YOUR CHOICE");
     // 290 GOSUB 680
-            lines680_710(
+            can_class_buy_item(
                 character_class_id, item_num, &item_for_class,
                 character_class_names, message, item_char_class_avail
             );
@@ -348,7 +350,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     offer = atoi(typed_string);
     free(typed_string);
     // 600 GOSUB 680
-    lines680_710(
+    can_class_buy_item(
         character_class_id, item_num, &item_for_class, character_class_names,
         message, item_char_class_avail
     );
@@ -394,9 +396,10 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
 }
 
 
-void lines680_710(int character_class_id, int item_num, int *item_for_class,
-                  const char * character_class_names[5], char * message,
-                  const char * item_char_class_avail[25]) {
+void can_class_buy_item(int character_class_id, int item_num,
+                        int *item_for_class,
+                        const char * character_class_names[5], char * message,
+                        const char * item_char_class_avail[25]) {
     // 680 LET Y=0
     *item_for_class = 0;
     // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1

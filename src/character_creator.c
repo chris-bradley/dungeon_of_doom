@@ -1,13 +1,14 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines570_600(screen_t *screen, int max_accepted_discount,
-                  int character_class_id, int stage, int *gold_coins,
-                  int selected_row, int item_num, int attrs_and_prices[5][9],
-                  int * inventory, const char * character_class_names[5],
-                  const char * point_label, char * message,
-                  int item_batch_size[24],
-                  const char * item_char_class_avail[25]);
+void make_offer_for_item(screen_t *screen, int max_accepted_discount,
+                         int character_class_id, int stage, int *gold_coins,
+                         int selected_row, int item_num,
+                         int attrs_and_prices[5][9], int * inventory,
+                         const char * character_class_names[5],
+                         const char * point_label, char * message,
+                         int item_batch_size[24],
+                         const char * item_char_class_avail[25]);
 void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
                   int selected_row, int item_num, int offer,
                   int item_for_class, int attrs_and_prices[5][9],
@@ -203,7 +204,7 @@ int main(int argc, char *argv[]) {
     // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
-                lines570_600(
+                make_offer_for_item(
                     screen, max_accepted_discount, character_class_id, stage,
                     &gold_coins, selected_row, item_num, attrs_and_prices,
                     inventory, character_class_names, point_label, message,
@@ -322,13 +323,14 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines570_600(screen_t *screen, int max_accepted_discount,
-                  int character_class_id, int stage, int *gold_coins,
-                  int selected_row, int item_num, int attrs_and_prices[5][9],
-                  int * inventory, const char * character_class_names[5],
-                  const char * point_label, char * message,
-                  int item_batch_size[24],
-                  const char * item_char_class_avail[25]) {
+void make_offer_for_item(screen_t *screen, int max_accepted_discount,
+                         int character_class_id, int stage, int *gold_coins,
+                         int selected_row, int item_num,
+                         int attrs_and_prices[5][9], int * inventory,
+                         const char * character_class_names[5],
+                         const char * point_label, char * message,
+                         int item_batch_size[24],
+                         const char * item_char_class_avail[25]) {
     int item_for_class, offer, col, row;
     char * typed_string = NULL;
     // 570 LET M$="";GOSUB 860

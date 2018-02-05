@@ -349,25 +349,25 @@ void lines610_670(int max_accepted_discount, int stage, int *gold_coins,
                   int selected_row, int item_num, int offer, int Y,
                   int attrs_and_prices[5][9], int * inventory, char * message,
                   int item_batch_size[24]) {
-    int PR;
+    int price;
     // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (inventory[item_num] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
     // 620 LET PR=F(J,K)-BR
-        PR = attrs_and_prices[stage][selected_row] - max_accepted_discount;
+        price = attrs_and_prices[stage][selected_row] - max_accepted_discount;
     // 630 IF H<PR THEN LET M$="YOU CANNOT AFFORD":RETURN
-        if (*gold_coins < PR) {
+        if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
     // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
-            if (offer >= PR && Y == 1) {
+            if (offer >= price && Y == 1) {
                 inventory[item_num] += item_batch_size[item_num];
-                *gold_coins -= PR;
+                *gold_coins -= price;
                 strcpy(message, "TIS YOURS!");
             }
     // 650 IF OF<PR AND Y=1 THEN LET M$="OFFER REJECTED";
-            if (offer < PR && Y == 1) {
+            if (offer < price && Y == 1) {
                 strcpy(message, "OFFER REJECTED");
             }
     // 660 IF H<0 THEN LET H=0

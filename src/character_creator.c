@@ -1,16 +1,16 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void get_player_string(screen_t *screen, int col, int row,
-                       char ** typed_string) {
+char * get_player_string(screen_t *screen, int col, int row) {
     int ind = 0;
-    char * pressed_key = (char *) malloc(sizeof(char));
-    *typed_string = (char *) malloc(sizeof(char) * 40);
-    if (*typed_string == NULL) {
-        fprintf(stderr, "*typed_string is NULL!\n");
+    char * pressed_key = (char *) malloc(sizeof(char)),
+         * typed_string;
+    typed_string = (char *) malloc(sizeof(char) * 40);
+    if (typed_string == NULL) {
+        fprintf(stderr, "typed_string is NULL!\n");
         exit(1);
     }
-    (*typed_string)[0] = 0;
+    typed_string[0] = 0;
     SDL_Event event;
     int done = 0;
     int text_entered;
@@ -33,16 +33,17 @@ void get_player_string(screen_t *screen, int col, int row,
                 text_entered && *pressed_key > '/' && *pressed_key < ']' &&
                 ind < 39
         ) {
-            (*typed_string)[ind] = *pressed_key;
+            typed_string[ind] = *pressed_key;
             ind += 1;
-            (*typed_string)[ind] = 0;
+            typed_string[ind] = 0;
             tab(screen->cursor, col, row);
-            print_text(screen, *typed_string);
+            print_text(screen, typed_string);
             SDL_RenderPresent(screen->ren);
         }
     }
-    (*typed_string)[ind] = 0;
+    typed_string[ind] = 0;
     free(pressed_key);
+    return typed_string;
 }
 
 void update_header(screen_t *screen, int num_points, const char * point_label,
@@ -129,7 +130,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     SDL_RenderPresent(screen->ren);
     col = 14;
     row = 2;
-    get_player_string(screen, col, row, &typed_string);
+    typed_string = get_player_string(screen, col, row);
     offer = atoi(typed_string);
     free(typed_string);
     can_class_buy_item(
@@ -558,7 +559,7 @@ int main(int argc, char *argv[]) {
 
         col = 1;
         row = 3;
-        get_player_string(screen, col, row, &typed_string);
+        typed_string = get_player_string(screen, col, row);
         strcpy(character_name, typed_string);
         free(typed_string);
     } while (strlen(character_name) > 10);

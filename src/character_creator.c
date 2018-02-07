@@ -1,6 +1,117 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
+void get_player_string(screen_t *screen, int col, int row,
+                       char ** typed_string) {
+    int ind = 0;
+    char * pressed_key = (char *) malloc(sizeof(char));
+    *typed_string = (char *) malloc(sizeof(char) * 40);
+    if (*typed_string == NULL) {
+        fprintf(stderr, "*typed_string is NULL!\n");
+        exit(1);
+    }
+    (*typed_string)[0] = 0;
+    SDL_Event event;
+    int done = 0;
+    int text_entered;
+    while (!done) {
+        text_entered = 0;
+        if (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_KEYUP:
+                    if (event.key.keysym.sym == SDLK_RETURN ||
+                        event.key.keysym.sym == SDLK_RETURN2) {
+                        done = 1 ;
+                    }
+                    break;
+                case SDL_TEXTINPUT:
+                    *pressed_key = event.text.text[0];
+                    text_entered = 1;
+            }
+        }
+        if (
+                text_entered && *pressed_key > '/' && *pressed_key < ']' &&
+                ind < 39
+        ) {
+            (*typed_string)[ind] = *pressed_key;
+            ind += 1;
+            (*typed_string)[ind] = 0;
+            tab(screen->cursor, col, row);
+            print_text(screen, *typed_string);
+            SDL_RenderPresent(screen->ren);
+        }
+    }
+    (*typed_string)[ind] = 0;
+    free(pressed_key);
+}
+
+void update_header(screen_t *screen, int num_points, const char * point_label,
+                   char * message) {
+    paper(screen->cursor, 2);
+    ink(screen->cursor, 0);
+    tab(screen->cursor, 2, 2);
+    print_left$_b$(screen, 17);
+    tab(screen->cursor, 2, 2);
+    print_text(screen, message);
+    tab(screen->cursor, 15, 3);
+    print_left$_b$(screen, 4);
+    tab(screen->cursor, 2, 3);
+    print_text(screen, point_label);
+    tab(screen->cursor, 15, 3);
+    char * outstring = (char *) malloc(sizeof(char) * 40);
+    if (outstring == NULL) {
+        fprintf(stderr, "outstring is NULL!\n");
+        exit(1);
+    }
+    sprintf(outstring, "%i ", num_points);
+    print_text(screen, outstring);
+    free(outstring);
+}
+
+void can_class_buy_item(int character_class_id, int item_num,
+                        int *item_for_class,
+                        const char * character_class_names[5], char * message,
+                        const char * item_char_class_avail[25]) {
+    *item_for_class = 0;
+    if (item_char_class_avail[item_num][character_class_id] == '1') {
+        *item_for_class = 1;
+    }
+    if (*item_for_class == 0) {
+        sprintf(
+            message,
+            "NOT FOR %s",
+            character_class_names[character_class_id]
+        );
+    }
+}
+
+void buy_item(int max_accepted_discount, int stage, int *gold_coins,
+              int selected_row, int item_num, int offer, int item_for_class,
+              int attrs_and_prices[5][9], int * inventory, char * message,
+              int item_batch_size[24]) {
+    int price;
+    if (inventory[item_num] > 0 && item_num < 23) {
+        strcpy(message, "YOU HAVE IT SIRE");
+    } else {
+        price = attrs_and_prices[stage][selected_row] - max_accepted_discount;
+        if (*gold_coins < price) {
+            strcpy(message, "YOU CANNOT AFFORD");
+        } else {
+            if (offer >= price && item_for_class == 1) {
+                inventory[item_num] += item_batch_size[item_num];
+                *gold_coins -= price;
+                strcpy(message, "TIS YOURS!");
+            }
+            if (offer < price && item_for_class == 1) {
+                strcpy(message, "OFFER REJECTED");
+            }
+            if (*gold_coins < 0) {
+                *gold_coins = 0;
+            }
+        }
+    }
+}
+
 void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          int character_class_id, int stage, int *gold_coins,
                          int selected_row, int item_num,
@@ -8,38 +119,285 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          const char * character_class_names[5],
                          const char * point_label, char * message,
                          int item_batch_size[24],
-                         const char * item_char_class_avail[25]);
-void buy_item(int max_accepted_discount, int stage, int *gold_coins,
-              int selected_row, int item_num, int offer, int item_for_class,
-              int attrs_and_prices[5][9], int * inventory, char * message,
-              int item_batch_size[24]);
-void can_class_buy_item(int character_class_id, int item_num,
-                        int *item_for_class,
-                        const char * character_class_names[5],
-                        char * message,
-                        const char * item_char_class_avail[25]);
+                         const char * item_char_class_avail[25]) {
+    int item_for_class, offer, col, row;
+    char * typed_string = NULL;
+    strcpy(message, "");
+    update_header(screen, *gold_coins, point_label, message);
+    tab(screen->cursor, 2, 2);
+    print_text(screen, "YOUR OFFER");
+    SDL_RenderPresent(screen->ren);
+    col = 14;
+    row = 2;
+    get_player_string(screen, col, row, &typed_string);
+    offer = atoi(typed_string);
+    free(typed_string);
+    can_class_buy_item(
+        character_class_id, item_num, &item_for_class, character_class_names,
+        message, item_char_class_avail
+    );
+    buy_item(
+        max_accepted_discount, stage, gold_coins, selected_row, item_num,
+        offer, item_for_class, attrs_and_prices, inventory, message,
+        item_batch_size
+    );
+}
+
 void get_input_and_select_row(screen_t *screen, int interface_num_rows,
                               int *selected_row, int *selected_row_pos,
-                              int top_row, char * pressed_key);
+                              int top_row, char * pressed_key) {
+    *pressed_key = inkey$();
+    paper(screen->cursor, 3);
+    ink(screen->cursor, 1);
+    tab(screen->cursor, 1, *selected_row_pos);
+    print_text(screen, " ");
+    if (*pressed_key == 'a' && *selected_row > 1) {
+        *selected_row -= 1;
+    }
+    else if (*pressed_key == 'z' && *selected_row < interface_num_rows) {
+        *selected_row += 1;
+    }
+    *selected_row_pos = *selected_row * 2 + top_row - 1;
+    tab(screen->cursor, 1, *selected_row_pos);
+    print_text(screen, ">");
+}
+
+void draw_box(screen_t *screen, int screen_cols, int background_colour,
+              int border_colour, int top_row, int rows) {
+    int index;
+    tab(screen->cursor, 0, top_row);
+    paper(screen->cursor, border_colour);
+    print_left$_b$(screen, screen_cols);
+    newline(screen->cursor);
+    paper(screen->cursor, background_colour);
+    ink(screen->cursor, border_colour);
+    for (index = 1; index <= rows; index += 1) {
+        paper(screen->cursor, border_colour);
+        print_text(screen, " ");
+        paper(screen->cursor, background_colour);
+        print_left$_b$(screen, screen_cols - 2);
+        paper(screen->cursor, border_colour);
+        print_text(screen, " ");
+        // print_text() doesn't support wrapping yet, so we do our own newline:
+        newline(screen->cursor);
+    }
+    paper(screen->cursor, border_colour);
+    print_left$_b$(screen, screen_cols);
+}
+
 void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
                  int screen_cols, const char * point_label, char * message,
-                 const char * attr_item_and_stage_names[5][10]);
-void update_header(screen_t *screen, int num_points, const char * point_label,
-                   char * message);
-void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
-               int attrs_and_prices[5][9],
-               const char * attr_item_and_stage_names[5][10]);
+                 const char * attr_item_and_stage_names[5][10]) {
+    int background_colour, border_colour, rows;
+    paper(screen->cursor, 0);
+    ink(screen->cursor, 2);
+    tab(screen->cursor, 0, 0);
+    print_left$_b$(screen, screen_cols);
+    tab(screen->cursor, 0, 0);
+    print_text(screen, attr_item_and_stage_names[stage][9]);
+    background_colour = 2;
+    border_colour = 3;
+    *top_row = 1;
+    rows = 2;
+    draw_box(
+        screen, screen_cols, background_colour, border_colour, *top_row, rows
+    );
+    update_header(screen, num_points, point_label, message);
+}
+
 void update_main(screen_t *screen, int stage, int top_row,
                  int attrs_and_prices[5][9],
-                 const char * attr_item_and_stage_names[5][10]);
+                 const char * attr_item_and_stage_names[5][10]) {
+    int index, row;
+    paper(screen->cursor, 3);
+    ink(screen->cursor, 0);
+    for (index = 1; index <= 8; index += 1) {
+        row = top_row + (index - 1) * 2 + 1;
+        tab(screen->cursor, 15, row);
+        print_left$_b$(screen, 5);
+
+        tab(screen->cursor, 2, row);
+        print_text(screen, attr_item_and_stage_names[stage][index]);
+        tab(screen->cursor, 16, row);
+        char * outstring = (char *) malloc(sizeof(char) * 40);
+        if (outstring == NULL) {
+            fprintf(stderr, "outstring is NULL!\n");
+            exit(1);
+        }
+        sprintf(outstring, "%i ", attrs_and_prices[stage][index]);
+        print_text(screen, outstring);
+        free(outstring);
+    }
+}
+
+void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
+               int attrs_and_prices[5][9],
+               const char * attr_item_and_stage_names[5][10]) {
+    int background_colour, border_colour, rows;
+    background_colour = 3;
+    border_colour = 2;
+    *top_row = 5;
+    rows = 15;
+    draw_box(
+        screen, screen_cols, background_colour, border_colour, *top_row, rows
+    );
+    update_main(
+        screen, stage, *top_row, attrs_and_prices, attr_item_and_stage_names
+    );
+}
+
+void init_platform_vars(int *screen_cols) {
+    *screen_cols = 40;
+}
+
 void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs_and_prices[5][9],
                int ** inventory, const char * character_class_names[5],
                char ** message, int item_batch_size[24],
                const char * item_char_class_avail[25],
-               const char * attr_item_and_stage_names[5][10]);
-void get_player_string(screen_t *screen, int col, int row,
-                       char ** typed_string);
+               const char * attr_item_and_stage_names[5][10]) {
+    int index;
+    init_platform_vars(screen_cols);
+    *interface_num_rows = 8;
+    *inventory = (int *) malloc(sizeof(int) * (*interface_num_rows) * 3);
+    if (*inventory == NULL) {
+        fprintf(stderr, "*inventory is NULL!\n");
+        exit(1);
+    }
+
+    int i;
+    for (i = 0; i < *interface_num_rows * 3; i += 1) {
+        (*inventory)[i] = 0;
+    }
+
+    item_char_class_avail[1] = "00001";
+    item_char_class_avail[2] = "00011";
+    item_char_class_avail[3] = "10011";
+    item_char_class_avail[4] = "10011";
+    item_char_class_avail[5] = "10011";
+    item_char_class_avail[6] = "00011";
+    item_char_class_avail[7] = "11111";
+    item_char_class_avail[8] = "10011";
+    item_char_class_avail[9] = "00011";
+    item_char_class_avail[10] = "00011";
+    item_char_class_avail[11] = "10011";
+    item_char_class_avail[12] = "11111";
+    item_char_class_avail[13] = "00011";
+    item_char_class_avail[14] = "11011";
+    item_char_class_avail[15] = "11011";
+    item_char_class_avail[16] = "11111";
+    item_char_class_avail[17] = "11100";
+    item_char_class_avail[18] = "00100";
+    item_char_class_avail[19] = "11100";
+    item_char_class_avail[20] = "10100";
+    item_char_class_avail[21] = "11100";
+    item_char_class_avail[22] = "11100";
+    item_char_class_avail[23] = "11111";
+    item_char_class_avail[24] = "11111";
+    for (index = 1; index <= 8; index += 1) {
+        attrs_and_prices[1][index] = (rand() % 5) + 2;
+    }
+    attrs_and_prices[1][5] = 1;
+    attrs_and_prices[2][1] = 20;
+    attrs_and_prices[2][2] = 16;
+    attrs_and_prices[2][3] = 12;
+    attrs_and_prices[2][4] = 15;
+    attrs_and_prices[2][5] = 8;
+    attrs_and_prices[2][6] = 10;
+    attrs_and_prices[2][7] = 8;
+    attrs_and_prices[2][8] = 6;
+    attrs_and_prices[3][1] = 18;
+    attrs_and_prices[3][2] = 15;
+    attrs_and_prices[3][3] = 9;
+    attrs_and_prices[3][4] = 9;
+    attrs_and_prices[3][5] = 14;
+    attrs_and_prices[3][6] = 8;
+    attrs_and_prices[3][7] = 6;
+    attrs_and_prices[3][8] = 6;
+    attrs_and_prices[4][1] = 20;
+    attrs_and_prices[4][2] = 15;
+    attrs_and_prices[4][3] = 14;
+    attrs_and_prices[4][4] = 12;
+    attrs_and_prices[4][5] = 10;
+    attrs_and_prices[4][6] = 8;
+    attrs_and_prices[4][7] = 6;
+    attrs_and_prices[4][8] = 6;
+    item_batch_size[1] = 5;
+    item_batch_size[2] = 4;
+    item_batch_size[3] = 3;
+    item_batch_size[4] = 3;
+    item_batch_size[5] = 2;
+    item_batch_size[6] = 2;
+    item_batch_size[7] = 1;
+    item_batch_size[8] = 1;
+    item_batch_size[9] = 5;
+    item_batch_size[10] = 4;
+    item_batch_size[11] = 3;
+    item_batch_size[12] = 1;
+    item_batch_size[13] = 2;
+    item_batch_size[14] = 1;
+    item_batch_size[15] = 3;
+    item_batch_size[16] = 1;
+    item_batch_size[17] = 4;
+    item_batch_size[18] = 3;
+    item_batch_size[19] = 2;
+    item_batch_size[20] = 2;
+    item_batch_size[21] = 3;
+    item_batch_size[22] = 1;
+    item_batch_size[23] = 1;
+    item_batch_size[24] = 1;
+
+    attr_item_and_stage_names[1][1] = "STRENGTH";
+    attr_item_and_stage_names[1][2] = "VITALITY";
+    attr_item_and_stage_names[1][3] = "AGILITY";
+    attr_item_and_stage_names[1][4] = "INTELLIGENCE";
+    attr_item_and_stage_names[1][5] = "EXPERIENCE";
+    attr_item_and_stage_names[1][6] = "LUCK";
+    attr_item_and_stage_names[1][7] = "AURA";
+    attr_item_and_stage_names[1][8] = "MORALITY";
+    attr_item_and_stage_names[1][9] = "CHARACTER CREATION";
+    attr_item_and_stage_names[2][1] = "2 HAND SWORD";
+    attr_item_and_stage_names[2][2] = "BROADSWORD";
+    attr_item_and_stage_names[2][3] = "SHORTSWORD";
+    attr_item_and_stage_names[2][4] = "AXE";
+    attr_item_and_stage_names[2][5] = "MACE";
+    attr_item_and_stage_names[2][6] = "FLAIL";
+    attr_item_and_stage_names[2][7] = "DAGGER";
+    attr_item_and_stage_names[2][8] = "GAUNTLET";
+    attr_item_and_stage_names[2][9] = "ARMOURY";
+    attr_item_and_stage_names[3][1] = "HEAVY ARMOUR";
+    attr_item_and_stage_names[3][2] = "CHAIN ARMOUR";
+    attr_item_and_stage_names[3][3] = "LEATHER ARMOUR";
+    attr_item_and_stage_names[3][4] = "HEAVY ROBE";
+    attr_item_and_stage_names[3][5] = "GOLD HELMET";
+    attr_item_and_stage_names[3][6] = "HEADPIECE";
+    attr_item_and_stage_names[3][7] = "SHIELD";
+    attr_item_and_stage_names[3][8] = "TORCH";
+    attr_item_and_stage_names[3][9] = "ACCOUTREMENTS";
+    attr_item_and_stage_names[4][1] = "NECRONOMICON";
+    attr_item_and_stage_names[4][2] = "SCROLLS";
+    attr_item_and_stage_names[4][3] = "RING";
+    attr_item_and_stage_names[4][4] = "MYSTIC AMULET";
+    attr_item_and_stage_names[4][5] = "SASH";
+    attr_item_and_stage_names[4][6] = "CLOAK";
+    attr_item_and_stage_names[4][7] = "HEALING SALVE";
+    attr_item_and_stage_names[4][8] = "POTIONS";
+    attr_item_and_stage_names[4][9] = "EMPORIUM";
+    character_class_names[1] = "WANDERER";
+    character_class_names[2] = "CLERIC";
+    character_class_names[3] = "MAGE";
+    character_class_names[4] = "WARRIOR";
+    character_class_names[5] = "BARBARIAN";
+    *attr_points = 3 + (rand() % 5);
+    *gold_coins = 120 + (rand() % 60);
+    *message = (char *) malloc(sizeof(char) * 40);
+    if (*message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
+        exit(1);
+    }
+    strcpy(*message, "");
+    *char_base = 65;
+}
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
@@ -267,408 +625,4 @@ int main(int argc, char *argv[]) {
     destroy_screen(screen);
 
     return 0;
-}
-
-void make_offer_for_item(screen_t *screen, int max_accepted_discount,
-                         int character_class_id, int stage, int *gold_coins,
-                         int selected_row, int item_num,
-                         int attrs_and_prices[5][9], int * inventory,
-                         const char * character_class_names[5],
-                         const char * point_label, char * message,
-                         int item_batch_size[24],
-                         const char * item_char_class_avail[25]) {
-    int item_for_class, offer, col, row;
-    char * typed_string = NULL;
-    strcpy(message, "");
-    update_header(screen, *gold_coins, point_label, message);
-    tab(screen->cursor, 2, 2);
-    print_text(screen, "YOUR OFFER");
-    SDL_RenderPresent(screen->ren);
-    col = 14;
-    row = 2;
-    get_player_string(screen, col, row, &typed_string);
-    offer = atoi(typed_string);
-    free(typed_string);
-    can_class_buy_item(
-        character_class_id, item_num, &item_for_class, character_class_names,
-        message, item_char_class_avail
-    );
-    buy_item(
-        max_accepted_discount, stage, gold_coins, selected_row, item_num,
-        offer, item_for_class, attrs_and_prices, inventory, message,
-        item_batch_size
-    );
-}
-
-void buy_item(int max_accepted_discount, int stage, int *gold_coins,
-              int selected_row, int item_num, int offer, int item_for_class,
-              int attrs_and_prices[5][9], int * inventory, char * message,
-              int item_batch_size[24]) {
-    int price;
-    if (inventory[item_num] > 0 && item_num < 23) {
-        strcpy(message, "YOU HAVE IT SIRE");
-    } else {
-        price = attrs_and_prices[stage][selected_row] - max_accepted_discount;
-        if (*gold_coins < price) {
-            strcpy(message, "YOU CANNOT AFFORD");
-        } else {
-            if (offer >= price && item_for_class == 1) {
-                inventory[item_num] += item_batch_size[item_num];
-                *gold_coins -= price;
-                strcpy(message, "TIS YOURS!");
-            }
-            if (offer < price && item_for_class == 1) {
-                strcpy(message, "OFFER REJECTED");
-            }
-            if (*gold_coins < 0) {
-                *gold_coins = 0;
-            }
-        }
-    }
-}
-
-
-void can_class_buy_item(int character_class_id, int item_num,
-                        int *item_for_class,
-                        const char * character_class_names[5], char * message,
-                        const char * item_char_class_avail[25]) {
-    *item_for_class = 0;
-    if (item_char_class_avail[item_num][character_class_id] == '1') {
-        *item_for_class = 1;
-    }
-    if (*item_for_class == 0) {
-        sprintf(
-            message,
-            "NOT FOR %s",
-            character_class_names[character_class_id]
-        );
-    }
-}
-
-void get_input_and_select_row(screen_t *screen, int interface_num_rows,
-                              int *selected_row, int *selected_row_pos,
-                              int top_row, char * pressed_key) {
-    *pressed_key = inkey$();
-    paper(screen->cursor, 3);
-    ink(screen->cursor, 1);
-    tab(screen->cursor, 1, *selected_row_pos);
-    print_text(screen, " ");
-    if (*pressed_key == 'a' && *selected_row > 1) {
-        *selected_row -= 1;
-    }
-    else if (*pressed_key == 'z' && *selected_row < interface_num_rows) {
-        *selected_row += 1;
-    }
-    *selected_row_pos = *selected_row * 2 + top_row - 1;
-    tab(screen->cursor, 1, *selected_row_pos);
-    print_text(screen, ">");
-}
-
-void draw_box(screen_t *screen, int screen_cols, int background_colour,
-              int border_colour, int top_row, int rows);
-
-void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
-                 int screen_cols, const char * point_label, char * message,
-                 const char * attr_item_and_stage_names[5][10]) {
-    int background_colour, border_colour, rows;
-    paper(screen->cursor, 0);
-    ink(screen->cursor, 2);
-    tab(screen->cursor, 0, 0);
-    print_left$_b$(screen, screen_cols);
-    tab(screen->cursor, 0, 0);
-    print_text(screen, attr_item_and_stage_names[stage][9]);
-    background_colour = 2;
-    border_colour = 3;
-    *top_row = 1;
-    rows = 2;
-    draw_box(
-        screen, screen_cols, background_colour, border_colour, *top_row, rows
-    );
-    update_header(screen, num_points, point_label, message);
-}
-
-void update_header(screen_t *screen, int num_points, const char * point_label,
-                   char * message) {
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
-    tab(screen->cursor, 2, 2);
-    print_left$_b$(screen, 17);
-    tab(screen->cursor, 2, 2);
-    print_text(screen, message);
-    tab(screen->cursor, 15, 3);
-    print_left$_b$(screen, 4);
-    tab(screen->cursor, 2, 3);
-    print_text(screen, point_label);
-    tab(screen->cursor, 15, 3);
-    char * outstring = (char *) malloc(sizeof(char) * 40);
-    if (outstring == NULL) {
-        fprintf(stderr, "outstring is NULL!\n");
-        exit(1);
-    }
-    sprintf(outstring, "%i ", num_points);
-    print_text(screen, outstring);
-    free(outstring);
-}
-
-void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
-               int attrs_and_prices[5][9],
-               const char * attr_item_and_stage_names[5][10]) {
-    int background_colour, border_colour, rows;
-    background_colour = 3;
-    border_colour = 2;
-    *top_row = 5;
-    rows = 15;
-    draw_box(
-        screen, screen_cols, background_colour, border_colour, *top_row, rows
-    );
-    update_main(
-        screen, stage, *top_row, attrs_and_prices, attr_item_and_stage_names
-    );
-}
-
-void update_main(screen_t *screen, int stage, int top_row,
-                 int attrs_and_prices[5][9],
-                 const char * attr_item_and_stage_names[5][10]) {
-    int index, row;
-    paper(screen->cursor, 3);
-    ink(screen->cursor, 0);
-    for (index = 1; index <= 8; index += 1) {
-        row = top_row + (index - 1) * 2 + 1;
-        tab(screen->cursor, 15, row);
-        print_left$_b$(screen, 5);
-
-        tab(screen->cursor, 2, row);
-        print_text(screen, attr_item_and_stage_names[stage][index]);
-        tab(screen->cursor, 16, row);
-        char * outstring = (char *) malloc(sizeof(char) * 40);
-        if (outstring == NULL) {
-            fprintf(stderr, "outstring is NULL!\n");
-            exit(1);
-        }
-        sprintf(outstring, "%i ", attrs_and_prices[stage][index]);
-        print_text(screen, outstring);
-        free(outstring);
-    }
-}
-
-void draw_box(screen_t *screen, int screen_cols, int background_colour,
-              int border_colour, int top_row, int rows) {
-    int index;
-    tab(screen->cursor, 0, top_row);
-    paper(screen->cursor, border_colour);
-    print_left$_b$(screen, screen_cols);
-    newline(screen->cursor);
-    paper(screen->cursor, background_colour);
-    ink(screen->cursor, border_colour);
-    for (index = 1; index <= rows; index += 1) {
-        paper(screen->cursor, border_colour);
-        print_text(screen, " ");
-        paper(screen->cursor, background_colour);
-        print_left$_b$(screen, screen_cols - 2);
-        paper(screen->cursor, border_colour);
-        print_text(screen, " ");
-        // print_text() doesn't support wrapping yet, so we do our own newline:
-        newline(screen->cursor);
-    }
-    paper(screen->cursor, border_colour);
-    print_left$_b$(screen, screen_cols);
-}
-
-void init_platform_vars(int *screen_cols);
-
-void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
-               int *attr_points, int *screen_cols, int attrs_and_prices[5][9],
-               int ** inventory, const char * character_class_names[5],
-               char ** message, int item_batch_size[24],
-               const char * item_char_class_avail[25],
-               const char * attr_item_and_stage_names[5][10]) {
-    int index;
-    init_platform_vars(screen_cols);
-    *interface_num_rows = 8;
-    *inventory = (int *) malloc(sizeof(int) * (*interface_num_rows) * 3);
-    if (*inventory == NULL) {
-        fprintf(stderr, "*inventory is NULL!\n");
-        exit(1);
-    }
-
-    int i;
-    for (i = 0; i < *interface_num_rows * 3; i += 1) {
-        (*inventory)[i] = 0;
-    }
-
-    item_char_class_avail[1] = "00001";
-    item_char_class_avail[2] = "00011";
-    item_char_class_avail[3] = "10011";
-    item_char_class_avail[4] = "10011";
-    item_char_class_avail[5] = "10011";
-    item_char_class_avail[6] = "00011";
-    item_char_class_avail[7] = "11111";
-    item_char_class_avail[8] = "10011";
-    item_char_class_avail[9] = "00011";
-    item_char_class_avail[10] = "00011";
-    item_char_class_avail[11] = "10011";
-    item_char_class_avail[12] = "11111";
-    item_char_class_avail[13] = "00011";
-    item_char_class_avail[14] = "11011";
-    item_char_class_avail[15] = "11011";
-    item_char_class_avail[16] = "11111";
-    item_char_class_avail[17] = "11100";
-    item_char_class_avail[18] = "00100";
-    item_char_class_avail[19] = "11100";
-    item_char_class_avail[20] = "10100";
-    item_char_class_avail[21] = "11100";
-    item_char_class_avail[22] = "11100";
-    item_char_class_avail[23] = "11111";
-    item_char_class_avail[24] = "11111";
-    for (index = 1; index <= 8; index += 1) {
-        attrs_and_prices[1][index] = (rand() % 5) + 2;
-    }
-    attrs_and_prices[1][5] = 1;
-    attrs_and_prices[2][1] = 20;
-    attrs_and_prices[2][2] = 16;
-    attrs_and_prices[2][3] = 12;
-    attrs_and_prices[2][4] = 15;
-    attrs_and_prices[2][5] = 8;
-    attrs_and_prices[2][6] = 10;
-    attrs_and_prices[2][7] = 8;
-    attrs_and_prices[2][8] = 6;
-    attrs_and_prices[3][1] = 18;
-    attrs_and_prices[3][2] = 15;
-    attrs_and_prices[3][3] = 9;
-    attrs_and_prices[3][4] = 9;
-    attrs_and_prices[3][5] = 14;
-    attrs_and_prices[3][6] = 8;
-    attrs_and_prices[3][7] = 6;
-    attrs_and_prices[3][8] = 6;
-    attrs_and_prices[4][1] = 20;
-    attrs_and_prices[4][2] = 15;
-    attrs_and_prices[4][3] = 14;
-    attrs_and_prices[4][4] = 12;
-    attrs_and_prices[4][5] = 10;
-    attrs_and_prices[4][6] = 8;
-    attrs_and_prices[4][7] = 6;
-    attrs_and_prices[4][8] = 6;
-    item_batch_size[1] = 5;
-    item_batch_size[2] = 4;
-    item_batch_size[3] = 3;
-    item_batch_size[4] = 3;
-    item_batch_size[5] = 2;
-    item_batch_size[6] = 2;
-    item_batch_size[7] = 1;
-    item_batch_size[8] = 1;
-    item_batch_size[9] = 5;
-    item_batch_size[10] = 4;
-    item_batch_size[11] = 3;
-    item_batch_size[12] = 1;
-    item_batch_size[13] = 2;
-    item_batch_size[14] = 1;
-    item_batch_size[15] = 3;
-    item_batch_size[16] = 1;
-    item_batch_size[17] = 4;
-    item_batch_size[18] = 3;
-    item_batch_size[19] = 2;
-    item_batch_size[20] = 2;
-    item_batch_size[21] = 3;
-    item_batch_size[22] = 1;
-    item_batch_size[23] = 1;
-    item_batch_size[24] = 1;
-
-    attr_item_and_stage_names[1][1] = "STRENGTH";
-    attr_item_and_stage_names[1][2] = "VITALITY";
-    attr_item_and_stage_names[1][3] = "AGILITY";
-    attr_item_and_stage_names[1][4] = "INTELLIGENCE";
-    attr_item_and_stage_names[1][5] = "EXPERIENCE";
-    attr_item_and_stage_names[1][6] = "LUCK";
-    attr_item_and_stage_names[1][7] = "AURA";
-    attr_item_and_stage_names[1][8] = "MORALITY";
-    attr_item_and_stage_names[1][9] = "CHARACTER CREATION";
-    attr_item_and_stage_names[2][1] = "2 HAND SWORD";
-    attr_item_and_stage_names[2][2] = "BROADSWORD";
-    attr_item_and_stage_names[2][3] = "SHORTSWORD";
-    attr_item_and_stage_names[2][4] = "AXE";
-    attr_item_and_stage_names[2][5] = "MACE";
-    attr_item_and_stage_names[2][6] = "FLAIL";
-    attr_item_and_stage_names[2][7] = "DAGGER";
-    attr_item_and_stage_names[2][8] = "GAUNTLET";
-    attr_item_and_stage_names[2][9] = "ARMOURY";
-    attr_item_and_stage_names[3][1] = "HEAVY ARMOUR";
-    attr_item_and_stage_names[3][2] = "CHAIN ARMOUR";
-    attr_item_and_stage_names[3][3] = "LEATHER ARMOUR";
-    attr_item_and_stage_names[3][4] = "HEAVY ROBE";
-    attr_item_and_stage_names[3][5] = "GOLD HELMET";
-    attr_item_and_stage_names[3][6] = "HEADPIECE";
-    attr_item_and_stage_names[3][7] = "SHIELD";
-    attr_item_and_stage_names[3][8] = "TORCH";
-    attr_item_and_stage_names[3][9] = "ACCOUTREMENTS";
-    attr_item_and_stage_names[4][1] = "NECRONOMICON";
-    attr_item_and_stage_names[4][2] = "SCROLLS";
-    attr_item_and_stage_names[4][3] = "RING";
-    attr_item_and_stage_names[4][4] = "MYSTIC AMULET";
-    attr_item_and_stage_names[4][5] = "SASH";
-    attr_item_and_stage_names[4][6] = "CLOAK";
-    attr_item_and_stage_names[4][7] = "HEALING SALVE";
-    attr_item_and_stage_names[4][8] = "POTIONS";
-    attr_item_and_stage_names[4][9] = "EMPORIUM";
-    character_class_names[1] = "WANDERER";
-    character_class_names[2] = "CLERIC";
-    character_class_names[3] = "MAGE";
-    character_class_names[4] = "WARRIOR";
-    character_class_names[5] = "BARBARIAN";
-    *attr_points = 3 + (rand() % 5);
-    *gold_coins = 120 + (rand() % 60);
-    *message = (char *) malloc(sizeof(char) * 40);
-    if (*message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(*message, "");
-    *char_base = 65;
-}
-
-void init_platform_vars(int *screen_cols) {
-    *screen_cols = 40;
-}
-
-void get_player_string(screen_t *screen, int col, int row,
-                       char ** typed_string) {
-    int ind = 0;
-    char * pressed_key = (char *) malloc(sizeof(char));
-    *typed_string = (char *) malloc(sizeof(char) * 40);
-    if (*typed_string == NULL) {
-        fprintf(stderr, "*typed_string is NULL!\n");
-        exit(1);
-    }
-    (*typed_string)[0] = 0;
-    SDL_Event event;
-    int done = 0;
-    int text_entered;
-    while (!done) {
-        text_entered = 0;
-        if (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_KEYUP:
-                    if (event.key.keysym.sym == SDLK_RETURN ||
-                        event.key.keysym.sym == SDLK_RETURN2) {
-                        done = 1 ;
-                    }
-                    break;
-                case SDL_TEXTINPUT:
-                    *pressed_key = event.text.text[0];
-                    text_entered = 1;
-            }
-        }
-        if (
-                text_entered && *pressed_key > '/' && *pressed_key < ']' &&
-                ind < 39
-        ) {
-            (*typed_string)[ind] = *pressed_key;
-            ind += 1;
-            (*typed_string)[ind] = 0;
-            tab(screen->cursor, col, row);
-            print_text(screen, *typed_string);
-            SDL_RenderPresent(screen->ren);
-        }
-    }
-    (*typed_string)[ind] = 0;
-    free(pressed_key);
 }

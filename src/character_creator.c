@@ -11,28 +11,12 @@ char * get_player_string(screen_t *screen, int col, int row) {
         exit(1);
     }
     typed_string[0] = 0;
-    SDL_Event event;
     int done = 0;
-    int text_entered;
     while (!done) {
-        text_entered = 0;
-        if (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_KEYUP:
-                    if (event.key.keysym.sym == SDLK_RETURN ||
-                        event.key.keysym.sym == SDLK_RETURN2) {
-                        done = 1 ;
-                    }
-                    break;
-                case SDL_TEXTINPUT:
-                    *pressed_key = event.text.text[0];
-                    text_entered = 1;
-            }
-        }
-        if (
-                text_entered && *pressed_key > '/' && *pressed_key < ']' &&
-                ind < 39
-        ) {
+	*pressed_key = inkey$();
+        if (*pressed_key == '\n') {
+            done = 1;
+        } else if (*pressed_key > '/' && *pressed_key < ']' && ind < 39) {
             typed_string[ind] = *pressed_key;
             ind += 1;
             typed_string[ind] = 0;

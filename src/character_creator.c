@@ -48,21 +48,18 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
     free(outstring);
 }
 
-void can_class_buy_item(int character_class_id, int item_num,
-                        int *item_for_class,
-                        const char * character_class_names[5], char * message,
-                        const char * item_char_class_avail[25]) {
-    *item_for_class = 0;
+int can_class_buy_item(int character_class_id, int item_num,
+                       const char * character_class_names[5], char * message,
+                       const char * item_char_class_avail[25]) {
     if (item_char_class_avail[item_num][character_class_id] == '1') {
-        *item_for_class = 1;
+        return 1;
     }
-    if (*item_for_class == 0) {
-        sprintf(
-            message,
-            "NOT FOR %s",
-            character_class_names[character_class_id]
-        );
-    }
+    sprintf(
+        message,
+        "NOT FOR %s",
+        character_class_names[character_class_id]
+    );
+    return 0;
 }
 
 void buy_item(int max_accepted_discount, int stage, int *gold_coins,
@@ -112,9 +109,9 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     typed_string = get_player_string(screen, col, row);
     offer = atoi(typed_string);
     free(typed_string);
-    can_class_buy_item(
-        character_class_id, item_num, &item_for_class, character_class_names,
-        message, item_char_class_avail
+    item_for_class = can_class_buy_item(
+        character_class_id, item_num, character_class_names, message,
+        item_char_class_avail
     );
     buy_item(
         max_accepted_discount, stage, gold_coins, selected_row, item_num,
@@ -497,9 +494,9 @@ int main(int argc, char *argv[]) {
             );
             item_num = 8 * (stage - 2) + selected_row;
             strcpy(message, "MAKE YOUR CHOICE");
-            can_class_buy_item(
-                character_class_id, item_num, &item_for_class,
-                character_class_names, message, item_char_class_avail
+            item_for_class = can_class_buy_item(
+                character_class_id, item_num, character_class_names, message,
+                item_char_class_avail
             );
             max_accepted_discount = 0;
             offer = 0;

@@ -10,11 +10,10 @@ char * get_player_string(screen_t *screen, int col, int row) {
         exit(1);
     }
     typed_string[0] = 0;
-    int done = 0;
-    while (!done) {
+    while (1) {
         pressed_key = inkey$();
         if (pressed_key == '\n') {
-            done = 1;
+            return typed_string;
         } else if (pressed_key > '/' && pressed_key < ']' && ind < 39) {
             typed_string[ind] = pressed_key;
             ind += 1;
@@ -24,7 +23,6 @@ char * get_player_string(screen_t *screen, int col, int row) {
             SDL_RenderPresent(screen->ren);
         }
     }
-    return typed_string;
 }
 
 void update_header(screen_t *screen, int num_points, const char * point_label,

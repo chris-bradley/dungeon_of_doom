@@ -54,23 +54,19 @@ int main(int argc, char *argv[]) {
          * character_name;
     int item_batch_size[24];
     const char * attr_item_and_stage_names[5][10];
-    // 10 GOSUB 1060
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs_and_prices, &inventory, character_class_names,
         &message, item_batch_size, item_char_class_avail,
         attr_item_and_stage_names
     );
-    // 20 paper 0:CLS
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
         return 1;
     }
     paper(screen->cursor, 0);
-    // 30 LET J=1:LET H=MP:LET H$="POINTS"
     stage = 1;
     point_label = "POINTS";
-    // 40 GOSUB 810:GOSUB900
     draw_header(
         screen, stage, attr_points, &top_row, screen_cols, point_label,
         message, attr_item_and_stage_names
@@ -79,14 +75,11 @@ int main(int argc, char *argv[]) {
         screen, stage, &top_row, screen_cols, attrs_and_prices,
         attr_item_and_stage_names
     );
-    // 50 LET K=1:LET P=T+1
     selected_row = 1;
     selected_row_pos = top_row + 1;
-    // 60 PRINT tab(1,P);">";
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
-    // 70 GOSUB 720
     pressed_key = (char *) malloc(sizeof(char));
     if (pressed_key == NULL) {
         fprintf(stderr, "pressed_key is NULL!\n");
@@ -97,14 +90,12 @@ int main(int argc, char *argv[]) {
             screen, interface_num_rows, &selected_row, &selected_row_pos,
             top_row, pressed_key
         );
-    // 80 IF K=5 THEN GOTO 70
         while (selected_row == 5) {
             get_input_and_select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
         }
-    // 90 IF I$=";" AND H>0 THEN LET F(J,K)=F(J,K)+1:LET H=H-1:GOSUB 920
         if (*pressed_key == ';' && attr_points > 0) {
             attrs_and_prices[stage][selected_row] += 1;
             attr_points -= 1;
@@ -113,7 +104,6 @@ int main(int argc, char *argv[]) {
                 attr_item_and_stage_names
             );
         }
-    // 100 IF I$="-" AND F(J,K)>1 THEN LET F(J,K)=F(J,K)-1:LET H=H+1:GOSUB 920
         if (*pressed_key == '-' && attrs_and_prices[stage][selected_row] > 1) {
             attrs_and_prices[stage][selected_row] -=1;
             attr_points += 1;
@@ -122,24 +112,19 @@ int main(int argc, char *argv[]) {
                 attr_item_and_stage_names
             );
         }
-    // 110 LET C=1
         character_class_id = 1;
-    // 120 IF F(1,4)>6 AND F(1,8)>7 THEN LET C=2
         if (attrs_and_prices[1][4] > 6 && attrs_and_prices[1][8] > 7) {
             character_class_id = 2;
         }
-    // 130 IF F(1,4)>8 AND F(1,7)>7 THEN LET C=3
         if (attrs_and_prices[1][4] > 8 && attrs_and_prices[1][7] > 7) {
             character_class_id = 3;
         }
-    // 140 IF F(1,1)>7 AND F(1,8)>5 AND F(1,1)+F(1,2)>10 THEN LET C=4
         if (
                 attrs_and_prices[1][1] > 7 && attrs_and_prices[1][8] > 5 &&
                 attrs_and_prices[1][1] + attrs_and_prices[1][2] > 10
         ) {
             character_class_id = 4;
         }
-    // 150 IF F(1,1)>8 AND F(1,2)+F(1,3)>12 and F(1,8)<6 THEN LET C=5
         if (
                 attrs_and_prices[1][1] > 8 &&
                 attrs_and_prices[1][2] + attrs_and_prices[1][3] > 12 &&
@@ -147,55 +132,39 @@ int main(int argc, char *argv[]) {
         ) {
             character_class_id = 5;
         }
-    // 160 LET M$=C$(C)
         strcpy(message, character_class_names[character_class_id]);
-    // 170 GOSUB 860
         update_header(screen, attr_points, point_label, message);
         SDL_RenderPresent(screen->ren);
-    // 180 IF I$<>" " THEN GOTO 70
     } while (*pressed_key != ' ');
-    // 190 LET H=GC:LET H$="GOLD COINS:"
     point_label = "GOLD COINS";
-    // 200 FOR J=2 TO 4
     for (stage = 2; stage <= 4; stage += 1) {
-    // 210 LET K=1:LET P=T+1
         selected_row = 1;
         selected_row_pos = top_row + 1;
-    // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(message, "CHOOSE WELL SIRE!");
-    // 230 GOSUB 810
         draw_header(
             screen, stage, gold_coins, &top_row, screen_cols, point_label,
             message, attr_item_and_stage_names
         );
-    // 240 GOSUB 900
         draw_main(
             screen, stage, &top_row, screen_cols, attrs_and_prices,
             attr_item_and_stage_names
         );
-    // 250 PRINT tab(1,P);">";
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");
         SDL_RenderPresent(screen->ren);
-    // 260 GOSUB 720
         do {
             get_input_and_select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
-    // 270 LET N=8*(J-2)+K
             item_num = 8 * (stage - 2) + selected_row;
-    // 280 LET M$="MAKE YOUR CHOICE"
             strcpy(message, "MAKE YOUR CHOICE");
-    // 290 GOSUB 680
             can_class_buy_item(
                 character_class_id, item_num, &item_for_class,
                 character_class_names, message, item_char_class_avail
             );
-    // 300 LET BR=0:LET OF=0
             max_accepted_discount = 0;
             offer = 0;
-    // 310 IF I$=";" THEN LET OF=F(J,K):GOSUB 610
             if (*pressed_key == ';') {
                 offer = attrs_and_prices[stage][selected_row];
                 buy_item(
@@ -204,7 +173,6 @@ int main(int argc, char *argv[]) {
                     inventory, message, item_batch_size
                 );
             }
-    // 320 IF I$="-" THEN LET BR=rnd(3):GOSUB 570
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
@@ -214,11 +182,8 @@ int main(int argc, char *argv[]) {
                     item_batch_size, item_char_class_avail
                 );
             }
-    // 330 GOSUB 860
             update_header(screen, gold_coins, point_label, message);
-    // 340 IF I$<>" " THEN GOTO 260
         } while (*pressed_key != ' ');
-    // 350 NEXT J
     }
     character_name = (char *) malloc(sizeof(char) * 40);
     if (character_name == NULL) {
@@ -226,33 +191,24 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-    // 360 PRINT tab(1,2);"NAME THY CHARACTER";
         tab(screen->cursor, 1, 2);
         print_text(screen, "NAME THY CHARACTER");
-    // 370 PRINT tab(1,3);LEFT$(B$,W-2);:PRINT tab(1,3);
         tab(screen->cursor, 1, 3);
         print_left$_b$(screen, screen_cols - 2);
         SDL_RenderPresent(screen->ren);
         tab(screen->cursor, 1, 3);
-    // 380 INPUT N$
 
-    // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         col = 1;
         row = 3;
         get_player_string(screen, col, row, &typed_string);
         strcpy(character_name, typed_string);
         free(typed_string);
-    // 390 IF LEN(N$)>10 THEN GOTO 360
     } while (strlen(character_name) > 10);
-    // 400 PRINT tab(1,3);"ONE MOMENT PLEASE";
     tab(screen->cursor, 1, 3);
     print_text(screen, "ONE MOMENT PLEASE");
     SDL_RenderPresent(screen->ren);
-    // 410 PRINT tab(1,3);
     tab(screen->cursor, 1, 3);
-    // 420 LET O=D*3
     num_item_types = interface_num_rows * 3;
-    // 430 LET S$=CHR$(O+AS)
 
     char * save_file_contents = (char *) malloc(
         sizeof(char) * (
@@ -267,25 +223,16 @@ int main(int argc, char *argv[]) {
     }
 
     save_file_contents[0] = (char) (num_item_types + char_base);
-    // 440 FOR I=1 TO 8
     for (index = 1; index <= 8; index +=1 ) {
-    // 450 LET S$=S$+CHR(F(1,I)+AS)
         save_file_contents[index] = (char) (
             attrs_and_prices[1][index] + char_base
         );
     }
-    // 460 NEXT I
-    // 470 FOR I = 1 TO O
     for (index = 1; index <= num_item_types; index += 1) {
-    // 480 LET S$=S$+CHR$(O(I)+AS)
         save_file_contents[8 + index] = (char) (inventory[index] + char_base);
-    // 490 NEXT I
     }
-    // 500 LET S$=S$+CHR$(H+AS)
     save_file_contents[9 + num_item_types] = (char) (gold_coins + char_base);
-    // 510 LET S$=S$+CHR$(AS)
     save_file_contents[10 + num_item_types] = (char) char_base;
-    // 520 LET S$=S$+N$+" -"+C$(C)
     strcpy(save_file_contents + 11 + num_item_types, character_name);
     strcpy(
         save_file_contents + 11 + num_item_types + strlen(character_name),
@@ -300,21 +247,17 @@ int main(int argc, char *argv[]) {
             character_class_names[character_class_id]
         )
     ] = 0;
-    // 530 LET S=OPENOUT "HERO"
     FILE *save_file_handle = fopen("HERO", "w");
-    // 540 PRINT#S,S$
     int error = fputs(save_file_contents, save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the character!", error);
     }
 
-    // 550 CLOSE#S
     error = fclose(save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i saving the character!", error);
     }
     free(save_file_contents);
-    // 560 STOP
 
     free(pressed_key);
     free(message);
@@ -336,21 +279,16 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          const char * item_char_class_avail[25]) {
     int item_for_class, offer, col, row;
     char * typed_string = NULL;
-    // 570 LET M$="";GOSUB 860
     strcpy(message, "");
     update_header(screen, *gold_coins, point_label, message);
-    // 580 PRINT tab(2,2);"YOUR OFFER";
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
     SDL_RenderPresent(screen->ren);
-    // 590 INPUT OF
-    // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     col = 14;
     row = 2;
     get_player_string(screen, col, row, &typed_string);
     offer = atoi(typed_string);
     free(typed_string);
-    // 600 GOSUB 680
     can_class_buy_item(
         character_class_id, item_num, &item_for_class, character_class_names,
         message, item_char_class_avail
@@ -367,33 +305,26 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
               int attrs_and_prices[5][9], int * inventory, char * message,
               int item_batch_size[24]) {
     int price;
-    // 610 IF O(N)>0 AND N<23 THEN LET M$="YOU HAVE IT SIRE":RETURN
     if (inventory[item_num] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
-    // 620 LET PR=F(J,K)-BR
         price = attrs_and_prices[stage][selected_row] - max_accepted_discount;
-    // 630 IF H<PR THEN LET M$="YOU CANNOT AFFORD":RETURN
         if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
-    // 640 IF OF>=PR AND Y=1 THEN LET O(N)=O(N)+P(N):LET H+H-PR:LET M$="TIS YOURS!"
             if (offer >= price && item_for_class == 1) {
                 inventory[item_num] += item_batch_size[item_num];
                 *gold_coins -= price;
                 strcpy(message, "TIS YOURS!");
             }
-    // 650 IF OF<PR AND Y=1 THEN LET M$="OFFER REJECTED";
             if (offer < price && item_for_class == 1) {
                 strcpy(message, "OFFER REJECTED");
             }
-    // 660 IF H<0 THEN LET H=0
             if (*gold_coins < 0) {
                 *gold_coins = 0;
             }
         }
     }
-    // 670 RETURN
 }
 
 
@@ -401,13 +332,10 @@ void can_class_buy_item(int character_class_id, int item_num,
                         int *item_for_class,
                         const char * character_class_names[5], char * message,
                         const char * item_char_class_avail[25]) {
-    // 680 LET Y=0
     *item_for_class = 0;
-    // 690 IF MID$(O$(N),C,1)="1" THEN LET Y=1
     if (item_char_class_avail[item_num][character_class_id] == '1') {
         *item_for_class = 1;
     }
-    // 700 IF Y=0 THEN LET M$="NOT FOR "+C$(C)
     if (*item_for_class == 0) {
         sprintf(
             message,
@@ -415,35 +343,25 @@ void can_class_buy_item(int character_class_id, int item_num,
             character_class_names[character_class_id]
         );
     }
-    // 710 RETURN
 }
 
 void get_input_and_select_row(screen_t *screen, int interface_num_rows,
                               int *selected_row, int *selected_row_pos,
                               int top_row, char * pressed_key) {
-    // 720 LET I$=inkey$;
-    // 730 IF I$="" THEN GOTO 720
     *pressed_key = inkey$();
-    // 740 paper 3:ink 1
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
-    // 750 print tab(1,P);" ";
     tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, " ");
-    // 760 IF I$="A" AND K>1 THEN LET K=K-1
     if (*pressed_key == 'a' && *selected_row > 1) {
         *selected_row -= 1;
     }
-    // 770 IF I$="Z" AND K<D THEN LET K=K+1
     else if (*pressed_key == 'z' && *selected_row < interface_num_rows) {
         *selected_row += 1;
     }
-    // 780 LET P=K*2+T-1
     *selected_row_pos = *selected_row * 2 + top_row - 1;
-    // 790 PRINT tab(1,P);">";
     tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, ">");
-    // 800 RETURN
 }
 
 void draw_box(screen_t *screen, int screen_cols, int background_colour,
@@ -453,21 +371,16 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
                  int screen_cols, const char * point_label, char * message,
                  const char * attr_item_and_stage_names[5][10]) {
     int background_colour, border_colour, rows;
-    // 810 paper 0:ink 2
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
-    // 820 PRINT tab(0,0);LEFT$(B$,W);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
-    // 830 PRINT tab(0,0);F$(J,9)
     tab(screen->cursor, 0, 0);
     print_text(screen, attr_item_and_stage_names[stage][9]);
-    // 840 LET BG=2:LET FG=3:LET T=1:LET L=2
     background_colour = 2;
     border_colour = 3;
     *top_row = 1;
     rows = 2;
-    // 850 GOSUB 980
     draw_box(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
@@ -476,18 +389,14 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
 
 void update_header(screen_t *screen, int num_points, const char * point_label,
                    char * message) {
-    // 860 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);
-    // 870 PRINT tab(2,2);LEFT$(B$,17);tab(2,2);M$;
     tab(screen->cursor, 2, 2);
     print_left$_b$(screen, 17);
     tab(screen->cursor, 2, 2);
     print_text(screen, message);
-    // C64: 875 PRINT HM$;LEFT$(CU$,3);SPC(15);LEFT$(B$,4);
     tab(screen->cursor, 15, 3);
     print_left$_b$(screen, 4);
-    // 880 PRINT tab(2,3);H$;tab(15,3);H;" ";
     tab(screen->cursor, 2, 3);
     print_text(screen, point_label);
     tab(screen->cursor, 15, 3);
@@ -499,19 +408,16 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
     sprintf(outstring, "%i ", num_points);
     print_text(screen, outstring);
     free(outstring);
-    // 890 RETURN
 }
 
 void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
                int attrs_and_prices[5][9],
                const char * attr_item_and_stage_names[5][10]) {
     int background_colour, border_colour, rows;
-    // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     background_colour = 3;
     border_colour = 2;
     *top_row = 5;
     rows = 15;
-    // 910 GOSUB 980
     draw_box(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
@@ -524,17 +430,12 @@ void update_main(screen_t *screen, int stage, int top_row,
                  int attrs_and_prices[5][9],
                  const char * attr_item_and_stage_names[5][10]) {
     int index, row;
-    // 920 paper 3:ink 0
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
-    // 930 FOR I=1 TO 8
     for (index = 1; index <= 8; index += 1) {
-    // 940 LET Y=T+(I-1)*2+1
         row = top_row + (index - 1) * 2 + 1;
-    // C64: 945 PRINT HM$;LEFT(CU$,Y);SPC(15);LEFT(B$,5);
         tab(screen->cursor, 15, row);
         print_left$_b$(screen, 5);
-    // 950 PRINT tab(2,Y);F$(J,I);tab(16,Y);F(J,I);" ";
 
         tab(screen->cursor, 2, row);
         print_text(screen, attr_item_and_stage_names[stage][index]);
@@ -547,27 +448,19 @@ void update_main(screen_t *screen, int stage, int top_row,
         sprintf(outstring, "%i ", attrs_and_prices[stage][index]);
         print_text(screen, outstring);
         free(outstring);
-    // 960 NEXT I
     }
-    // 970 RETURN
 }
 
 void draw_box(screen_t *screen, int screen_cols, int background_colour,
               int border_colour, int top_row, int rows) {
     int index;
-    // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, top_row);
-    // 990 paper FG:PRINT LEFT$(B$,W);
     paper(screen->cursor, border_colour);
     print_left$_b$(screen, screen_cols);
     newline(screen->cursor);
-    // 1000 paper BG:ink FG
     paper(screen->cursor, background_colour);
     ink(screen->cursor, border_colour);
-    // 1010 FOR I=1 TO L
     for (index = 1; index <= rows; index += 1) {
-    // 1020 PRINT CHR$(B);LEFT$(B$,W-2);CHR$(B);
-    // C64: 1020 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,W-2);BG$(FG);" ";
         paper(screen->cursor, border_colour);
         print_text(screen, " ");
         paper(screen->cursor, background_colour);
@@ -576,12 +469,9 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
         print_text(screen, " ");
         // print_text() doesn't support wrapping yet, so we do our own newline:
         newline(screen->cursor);
-    // 1030 NEXT I
     }
-    // 1040 paper FG:PRINT LEFT$(B$,W);
     paper(screen->cursor, border_colour);
     print_left$_b$(screen, screen_cols);
-    // 1050 RETURN
 }
 
 void init_platform_vars(int *screen_cols);
@@ -593,14 +483,8 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                const char * item_char_class_avail[25],
                const char * attr_item_and_stage_names[5][10]) {
     int index;
-    // 1060 GOSUB 1600
     init_platform_vars(screen_cols);
-    // 1070 LET D=8
     *interface_num_rows = 8;
-    // 1080 DIM F(4,D+1)
-    // 1090 DIM F$(4,D+1)
-    // 1100 DIM C$(5)
-    // 1110 DIM O(D*3)
     *inventory = (int *) malloc(sizeof(int) * (*interface_num_rows) * 3);
     if (*inventory == NULL) {
         fprintf(stderr, "*inventory is NULL!\n");
@@ -612,14 +496,6 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
         (*inventory)[i] = 0;
     }
 
-    // 1120 DIM O$(D*3)
-    // 1130 DIM P(D*3)
-    // 1140 DATA "00001","00011","10011","10011","10011","00011","11111","10011"
-    // 1150 DATA "00011","00011","10011","11111","00011","11011","11011","11111"
-    // 1160 DATA "11100","00100","11100","10100","11100","11100","11111","11111"
-    // 1170 FOR I=1 TO D*3
-    // 1180 READ O$(I)
-    // 1190 NEXT I
     item_char_class_avail[1] = "00001";
     item_char_class_avail[2] = "00011";
     item_char_class_avail[3] = "10011";
@@ -644,22 +520,10 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_char_class_avail[22] = "11100";
     item_char_class_avail[23] = "11111";
     item_char_class_avail[24] = "11111";
-    // 1200 FOR I=1 TO 8
     for (index = 1; index <= 8; index += 1) {
-    // 1210 LET F(1,I)=rnd(5)+2
         attrs_and_prices[1][index] = (rand() % 5) + 2;
-    // 1220 NEXT I
     }
-    // 1230 LET F(1,5)=1
     attrs_and_prices[1][5] = 1;
-    // 1240 DATA 20,16,12,15,8,10,8,6
-    // 1250 DATA 18,15,9,9,14,8,6,6
-    // 1260 DATA 20,15,14,12,10,8,6,6
-    // 1270 FOR J=2 TO 4
-    // 1280 FOR I=1 TO 8
-    // 1290 READ F(J,I)
-    // 1300 NEXT I
-    // 1310 NEXT J
     attrs_and_prices[2][1] = 20;
     attrs_and_prices[2][2] = 16;
     attrs_and_prices[2][3] = 12;
@@ -684,12 +548,6 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     attrs_and_prices[4][6] = 8;
     attrs_and_prices[4][7] = 6;
     attrs_and_prices[4][8] = 6;
-    // 1320 DATA 5,4,3,3,2,2,1,1
-    // 1330 DATA 5,4,3,1,2,1,3,1
-    // 1340 DATA 4,3,2,2,3,1,1,1
-    // 1350 FOR I=1 TO D*3
-    // 1360 READ P(I)
-    // 1370 NEXT I
     item_batch_size[1] = 5;
     item_batch_size[2] = 4;
     item_batch_size[3] = 3;
@@ -715,19 +573,6 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_batch_size[23] = 1;
     item_batch_size[24] = 1;
 
-    // 1380 DATA "STRENGTH","VITALITY","AGILITY","INTELLIGENCE"
-    // 1390 DATA "EXPERIENCE","LUCK","AURA","MORALITY","CHARACTER CREATION"
-    // 1400 DATA "2 HAND SWORD","BROADSWORD","SHORTSWORD"
-    // 1410 DATA "AXE","MACE","FLAIL","DAGGER","GAUNTLET","ARMOURY"
-    // 1420 DATA "HEAVY ARMOUR","CHAIN ARMOUR","LEATHER ARMOUR","HEAVY ROBE"
-    // 1430 DATA "GOLD HELMET","HEADPIECE","SHIELD","TORCH","ACCOUTREMENTS"
-    // 1440 DATA "NECRONOMICON","SCROLLS","RING","MYSTIC AMULET","SASH","CLOAK"
-    // 1450 DATA "HEALING SALVE","POTIONS","EMPORIUM"
-    // 1460 FOR J=1 TO 4
-    // 1470 FOR I=1 TO 9
-    // 1480 READ F$(J,I)
-    // 1490 NEXT I
-    // 1500 NEXT J
     attr_item_and_stage_names[1][1] = "STRENGTH";
     attr_item_and_stage_names[1][2] = "VITALITY";
     attr_item_and_stage_names[1][3] = "AGILITY";
@@ -764,20 +609,13 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     attr_item_and_stage_names[4][7] = "HEALING SALVE";
     attr_item_and_stage_names[4][8] = "POTIONS";
     attr_item_and_stage_names[4][9] = "EMPORIUM";
-    // 1510 DATA "WANDERER","CLERIC","MAGE","WARRIOR","BARBARIAN"
-    // 1520 FOR I=1 TO 5
-    // 1530 READ C$(I)
-    // 1540 NEXT I
     character_class_names[1] = "WANDERER";
     character_class_names[2] = "CLERIC";
     character_class_names[3] = "MAGE";
     character_class_names[4] = "WARRIOR";
     character_class_names[5] = "BARBARIAN";
-    // 1550 LET MP=3+rnd(5)
     *attr_points = 3 + (rand() % 5);
-    // 1560 LET GC=120+rnd(60)
     *gold_coins = 120 + (rand() % 60);
-    // 1570 LET M$="":LET AS=65
     *message = (char *) malloc(sizeof(char) * 40);
     if (*message == NULL) {
         fprintf(stderr, "message is NULL!\n");
@@ -785,22 +623,14 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     }
     strcpy(*message, "");
     *char_base = 65;
-    // 1580 LET B$="":FOR I=1 TO W:LET B$=B$+" ":NEXT I
-    // dungeon_libs' print_left$_b$() removes the need for B$
-    // 1590 RETURN
 }
 
 void init_platform_vars(int *screen_cols) {
-    // 1600 LET W=40
     *screen_cols = 40;
-    // 1610 GOSUB 4000
-    // not needed due to dungeon_lib
-    // 1650 RETURN
 }
 
 void get_player_string(screen_t *screen, int col, int row,
                        char ** typed_string) {
-    // 1700 IN$=""
     int ind = 0;
     char * pressed_key = (char *) malloc(sizeof(char));
     *typed_string = (char *) malloc(sizeof(char) * 40);
@@ -809,7 +639,6 @@ void get_player_string(screen_t *screen, int col, int row,
         exit(1);
     }
     (*typed_string)[0] = 0;
-    // 1710 GET I$:IF I$=CHR$(13) THEN RETURN
     SDL_Event event;
     int done = 0;
     int text_entered;
@@ -828,7 +657,6 @@ void get_player_string(screen_t *screen, int col, int row,
                     text_entered = 1;
             }
         }
-    // 1720 IF I$>"/" AND I$<"[" THEN LET IN$=IN$+I$:PRINT HM$;LEFT$(CU$,Y);SPC(X);IN$;
         if (
                 text_entered && *pressed_key > '/' && *pressed_key < ']' &&
                 ind < 39
@@ -840,7 +668,6 @@ void get_player_string(screen_t *screen, int col, int row,
             print_text(screen, *typed_string);
             SDL_RenderPresent(screen->ren);
         }
-    // 1730 GOTO 1710
     }
     (*typed_string)[ind] = 0;
     free(pressed_key);

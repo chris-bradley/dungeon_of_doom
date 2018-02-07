@@ -446,8 +446,8 @@ void get_input_and_select_row(screen_t *screen, int interface_num_rows,
     // 800 RETURN
 }
 
-void lines980_1050(screen_t *screen, int screen_cols, int background_colour,
-                   int border_colour, int top_row, int rows);
+void draw_box(screen_t *screen, int screen_cols, int background_colour,
+              int border_colour, int top_row, int rows);
 
 void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
                  int screen_cols, const char * point_label, char * message,
@@ -468,7 +468,7 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
     *top_row = 1;
     rows = 2;
     // 850 GOSUB 980
-    lines980_1050(
+    draw_box(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
     update_header(screen, num_points, point_label, message);
@@ -512,7 +512,7 @@ void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
     *top_row = 5;
     rows = 15;
     // 910 GOSUB 980
-    lines980_1050(
+    draw_box(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
     update_main(
@@ -552,8 +552,8 @@ void update_main(screen_t *screen, int stage, int top_row,
     // 970 RETURN
 }
 
-void lines980_1050(screen_t *screen, int screen_cols, int background_colour,
-                   int border_colour, int top_row, int rows) {
+void draw_box(screen_t *screen, int screen_cols, int background_colour,
+              int border_colour, int top_row, int rows) {
     int index;
     // 980 PRINT tab(0,T);
     tab(screen->cursor, 0, top_row);

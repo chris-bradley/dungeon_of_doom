@@ -26,9 +26,9 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
                  const char * attr_item_and_stage_names[5][10]);
 void update_header(screen_t *screen, int num_points, const char * point_label,
                    char * message);
-void lines900_910(screen_t *screen, int stage, int *top_row, int screen_cols,
-                  int attrs_and_prices[5][9],
-                  const char * attr_item_and_stage_names[5][10]);
+void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
+               int attrs_and_prices[5][9],
+               const char * attr_item_and_stage_names[5][10]);
 void lines920_970(screen_t *screen, int stage, int top_row,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]);
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
         screen, stage, attr_points, &top_row, screen_cols, point_label,
         message, attr_item_and_stage_names
     );
-    lines900_910(
+    draw_main(
         screen, stage, &top_row, screen_cols, attrs_and_prices,
         attr_item_and_stage_names
     );
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
             message, attr_item_and_stage_names
         );
     // 240 GOSUB 900
-        lines900_910(
+        draw_main(
             screen, stage, &top_row, screen_cols, attrs_and_prices,
             attr_item_and_stage_names
         );
@@ -502,9 +502,9 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
     // 890 RETURN
 }
 
-void lines900_910(screen_t *screen, int stage, int *top_row, int screen_cols,
-                  int attrs_and_prices[5][9],
-                  const char * attr_item_and_stage_names[5][10]) {
+void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
+               int attrs_and_prices[5][9],
+               const char * attr_item_and_stage_names[5][10]) {
     int background_colour, border_colour, rows;
     // 900 LET BG=3:LET FG=2:LET T=5:LET L=15
     background_colour = 3;

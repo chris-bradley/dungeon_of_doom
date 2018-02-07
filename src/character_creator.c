@@ -583,7 +583,7 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
     // 1050 RETURN
 }
 
-void lines1600_1650(int *screen_cols);
+void init_platform_vars(int *screen_cols);
 
 void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs_and_prices[5][9],
@@ -593,7 +593,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                const char * attr_item_and_stage_names[5][10]) {
     int index;
     // 1060 GOSUB 1600
-    lines1600_1650(screen_cols);
+    init_platform_vars(screen_cols);
     // 1070 LET D=8
     *interface_num_rows = 8;
     // 1080 DIM F(4,D+1)
@@ -789,7 +789,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     // 1590 RETURN
 }
 
-void lines1600_1650(int *screen_cols) {
+void init_platform_vars(int *screen_cols) {
     // 1600 LET W=40
     *screen_cols = 40;
     // 1610 GOSUB 4000

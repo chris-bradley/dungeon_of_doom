@@ -270,7 +270,7 @@ int main(int argc, char *argv[]) {
     // 440 FOR I=1 TO 8
     for (index = 1; index <= 8; index +=1 ) {
     // 450 LET S$=S$+CHR(F(1,I)+AS)
-        save_file_contents[index] += (char) (
+        save_file_contents[index] = (char) (
             attrs_and_prices[1][index] + char_base
         );
     }

@@ -18,8 +18,9 @@ void can_class_buy_item(int character_class_id, int item_num,
                         const char * character_class_names[5],
                         char * message,
                         const char * item_char_class_avail[25]);
-void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
-                  int *selected_row_pos, int top_row, char * pressed_key);
+void get_input_and_select_row(screen_t *screen, int interface_num_rows,
+                              int *selected_row, int *selected_row_pos,
+                              int top_row, char * pressed_key);
 void lines810_850(screen_t *screen, int stage, int num_points, int *top_row,
                   int screen_cols, const char * point_label, char * message,
                   const char * attr_item_and_stage_names[5][10]);
@@ -92,13 +93,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        lines720_800(
+        get_input_and_select_row(
             screen, interface_num_rows, &selected_row, &selected_row_pos,
             top_row, pressed_key
         );
     // 80 IF K=5 THEN GOTO 70
         while (selected_row == 5) {
-            lines720_800(
+            get_input_and_select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
@@ -178,7 +179,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     // 260 GOSUB 720
         do {
-            lines720_800(
+            get_input_and_select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
@@ -417,8 +418,9 @@ void can_class_buy_item(int character_class_id, int item_num,
     // 710 RETURN
 }
 
-void lines720_800(screen_t *screen, int interface_num_rows, int *selected_row,
-                  int *selected_row_pos, int top_row, char * pressed_key) {
+void get_input_and_select_row(screen_t *screen, int interface_num_rows,
+                              int *selected_row, int *selected_row_pos,
+                              int top_row, char * pressed_key) {
     // 720 LET I$=inkey$;
     // 730 IF I$="" THEN GOTO 720
     *pressed_key = inkey$();

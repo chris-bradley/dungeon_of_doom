@@ -24,7 +24,6 @@ char * get_player_string(screen_t *screen, int col, int row) {
             SDL_RenderPresent(screen->ren);
         }
     }
-    typed_string[ind] = 0;
     return typed_string;
 }
 

@@ -24,8 +24,8 @@ void get_input_and_select_row(screen_t *screen, int interface_num_rows,
 void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
                  int screen_cols, const char * point_label, char * message,
                  const char * attr_item_and_stage_names[5][10]);
-void lines860_890(screen_t *screen, int num_points, const char * point_label,
-                  char * message);
+void update_header(screen_t *screen, int num_points, const char * point_label,
+                   char * message);
 void lines900_910(screen_t *screen, int stage, int *top_row, int screen_cols,
                   int attrs_and_prices[5][9],
                   const char * attr_item_and_stage_names[5][10]);
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
     // 160 LET M$=C$(C)
         strcpy(message, character_class_names[character_class_id]);
     // 170 GOSUB 860
-        lines860_890(screen, attr_points, point_label, message);
+        update_header(screen, attr_points, point_label, message);
         SDL_RenderPresent(screen->ren);
     // 180 IF I$<>" " THEN GOTO 70
     } while (*pressed_key != ' ');
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
                 );
             }
     // 330 GOSUB 860
-            lines860_890(screen, gold_coins, point_label, message);
+            update_header(screen, gold_coins, point_label, message);
     // 340 IF I$<>" " THEN GOTO 260
         } while (*pressed_key != ' ');
     // 350 NEXT J
@@ -338,7 +338,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     char * typed_string = NULL;
     // 570 LET M$="";GOSUB 860
     strcpy(message, "");
-    lines860_890(screen, *gold_coins, point_label, message);
+    update_header(screen, *gold_coins, point_label, message);
     // 580 PRINT tab(2,2);"YOUR OFFER";
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
@@ -471,11 +471,11 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
     lines980_1050(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
-    lines860_890(screen, num_points, point_label, message);
+    update_header(screen, num_points, point_label, message);
 }
 
-void lines860_890(screen_t *screen, int num_points, const char * point_label,
-                  char * message) {
+void update_header(screen_t *screen, int num_points, const char * point_label,
+                   char * message) {
     // 860 paper 2:ink 0
     paper(screen->cursor, 2);
     ink(screen->cursor, 0);

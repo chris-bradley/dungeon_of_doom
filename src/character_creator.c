@@ -29,9 +29,9 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
 void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
                int attrs_and_prices[5][9],
                const char * attr_item_and_stage_names[5][10]);
-void lines920_970(screen_t *screen, int stage, int top_row,
-                  int attrs_and_prices[5][9],
-                  const char * attr_item_and_stage_names[5][10]);
+void update_main(screen_t *screen, int stage, int top_row,
+                 int attrs_and_prices[5][9],
+                 const char * attr_item_and_stage_names[5][10]);
 void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
                     int *attr_points, int *screen_cols,
                     int attrs_and_prices[5][9], int ** inventory,
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
         if (*pressed_key == ';' && attr_points > 0) {
             attrs_and_prices[stage][selected_row] += 1;
             attr_points -= 1;
-            lines920_970(
+            update_main(
                 screen, stage, top_row, attrs_and_prices,
                 attr_item_and_stage_names
             );
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
         if (*pressed_key == '-' && attrs_and_prices[stage][selected_row] > 1) {
             attrs_and_prices[stage][selected_row] -=1;
             attr_points += 1;
-            lines920_970(
+            update_main(
                 screen, stage, top_row, attrs_and_prices,
                 attr_item_and_stage_names
             );
@@ -515,14 +515,14 @@ void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
     lines980_1050(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
-    lines920_970(
+    update_main(
         screen, stage, *top_row, attrs_and_prices, attr_item_and_stage_names
     );
 }
 
-void lines920_970(screen_t *screen, int stage, int top_row,
-                  int attrs_and_prices[5][9],
-                  const char * attr_item_and_stage_names[5][10]) {
+void update_main(screen_t *screen, int stage, int top_row,
+                 int attrs_and_prices[5][9],
+                 const char * attr_item_and_stage_names[5][10]) {
     int index, row;
     // 920 paper 3:ink 0
     paper(screen->cursor, 3);

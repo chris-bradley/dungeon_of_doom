@@ -210,6 +210,13 @@ char inkey$() {
                     key = event.text.text[0];
                     text_entered = 1;
                     break;
+                case SDL_KEYUP:
+                    if (event.key.keysym.sym == SDLK_RETURN ||
+                        event.key.keysym.sym == SDLK_RETURN2) {
+                        key = '\n';
+                        text_entered = 1;
+                    }
+                    break;
                 case SDL_QUIT:
                     fprintf(stderr, "Quit through quit event.");
                     exit(1);

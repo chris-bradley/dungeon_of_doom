@@ -3,8 +3,7 @@
 
 char * get_player_string(screen_t *screen, int col, int row) {
     int ind = 0;
-    char * pressed_key = (char *) malloc(sizeof(char)),
-         * typed_string;
+    char pressed_key, * typed_string;
     typed_string = (char *) malloc(sizeof(char) * 40);
     if (typed_string == NULL) {
         fprintf(stderr, "typed_string is NULL!\n");
@@ -13,11 +12,11 @@ char * get_player_string(screen_t *screen, int col, int row) {
     typed_string[0] = 0;
     int done = 0;
     while (!done) {
-	*pressed_key = inkey$();
-        if (*pressed_key == '\n') {
+        pressed_key = inkey$();
+        if (pressed_key == '\n') {
             done = 1;
-        } else if (*pressed_key > '/' && *pressed_key < ']' && ind < 39) {
-            typed_string[ind] = *pressed_key;
+        } else if (pressed_key > '/' && pressed_key < ']' && ind < 39) {
+            typed_string[ind] = pressed_key;
             ind += 1;
             typed_string[ind] = 0;
             tab(screen->cursor, col, row);
@@ -26,7 +25,6 @@ char * get_player_string(screen_t *screen, int col, int row) {
         }
     }
     typed_string[ind] = 0;
-    free(pressed_key);
     return typed_string;
 }
 

@@ -21,9 +21,9 @@ void can_class_buy_item(int character_class_id, int item_num,
 void get_input_and_select_row(screen_t *screen, int interface_num_rows,
                               int *selected_row, int *selected_row_pos,
                               int top_row, char * pressed_key);
-void lines810_850(screen_t *screen, int stage, int num_points, int *top_row,
-                  int screen_cols, const char * point_label, char * message,
-                  const char * attr_item_and_stage_names[5][10]);
+void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
+                 int screen_cols, const char * point_label, char * message,
+                 const char * attr_item_and_stage_names[5][10]);
 void lines860_890(screen_t *screen, int num_points, const char * point_label,
                   char * message);
 void lines900_910(screen_t *screen, int stage, int *top_row, int screen_cols,
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     stage = 1;
     point_label = "POINTS";
     // 40 GOSUB 810:GOSUB900
-    lines810_850(
+    draw_header(
         screen, stage, attr_points, &top_row, screen_cols, point_label,
         message, attr_item_and_stage_names
     );
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
     // 220 LET M$="CHOOSE WELL SIRE!"
         strcpy(message, "CHOOSE WELL SIRE!");
     // 230 GOSUB 810
-        lines810_850(
+        draw_header(
             screen, stage, gold_coins, &top_row, screen_cols, point_label,
             message, attr_item_and_stage_names
         );
@@ -449,9 +449,9 @@ void get_input_and_select_row(screen_t *screen, int interface_num_rows,
 void lines980_1050(screen_t *screen, int screen_cols, int background_colour,
                    int border_colour, int top_row, int rows);
 
-void lines810_850(screen_t *screen, int stage, int num_points, int *top_row,
-                  int screen_cols, const char * point_label, char * message,
-                  const char * attr_item_and_stage_names[5][10]) {
+void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
+                 int screen_cols, const char * point_label, char * message,
+                 const char * attr_item_and_stage_names[5][10]) {
     int background_colour, border_colour, rows;
     // 810 paper 0:ink 2
     paper(screen->cursor, 0);

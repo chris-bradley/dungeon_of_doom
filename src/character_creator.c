@@ -38,7 +38,8 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                char ** message, int item_batch_size[24],
                const char * item_char_class_avail[25],
                const char * attr_item_and_stage_names[5][10]);
-void lines1700_1730(screen_t *screen, int col, int row, char ** typed_string);
+void get_player_string(screen_t *screen, int col, int row,
+                       char ** typed_string);
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, character_class_id,
@@ -238,7 +239,7 @@ int main(int argc, char *argv[]) {
     // C64 VERSION: 380 X=1:Y=3:GOSUB 1700:N$=IN$
         col = 1;
         row = 3;
-        lines1700_1730(screen, col, row, &typed_string);
+        get_player_string(screen, col, row, &typed_string);
         strcpy(character_name, typed_string);
         free(typed_string);
     // 390 IF LEN(N$)>10 THEN GOTO 360
@@ -346,7 +347,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     // C64 Version: 590 X = 14:Y=2:GOSUB 1700:OF=VAL(IN$)
     col = 14;
     row = 2;
-    lines1700_1730(screen, col, row, &typed_string);
+    get_player_string(screen, col, row, &typed_string);
     offer = atoi(typed_string);
     free(typed_string);
     // 600 GOSUB 680
@@ -797,7 +798,8 @@ void init_platform_vars(int *screen_cols) {
     // 1650 RETURN
 }
 
-void lines1700_1730(screen_t *screen, int col, int row, char ** typed_string) {
+void get_player_string(screen_t *screen, int col, int row,
+                       char ** typed_string) {
     // 1700 IN$=""
     int ind = 0;
     char * pressed_key = (char *) malloc(sizeof(char));

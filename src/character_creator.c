@@ -32,13 +32,12 @@ void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
 void update_main(screen_t *screen, int stage, int top_row,
                  int attrs_and_prices[5][9],
                  const char * attr_item_and_stage_names[5][10]);
-void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
-                    int *attr_points, int *screen_cols,
-                    int attrs_and_prices[5][9], int ** inventory,
-                    const char * character_class_names[5], char ** message,
-                    int item_batch_size[24],
-                    const char * item_char_class_avail[25],
-                    const char * attr_item_and_stage_names[5][10]);
+void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
+               int *attr_points, int *screen_cols, int attrs_and_prices[5][9],
+               int ** inventory, const char * character_class_names[5],
+               char ** message, int item_batch_size[24],
+               const char * item_char_class_avail[25],
+               const char * attr_item_and_stage_names[5][10]);
 void lines1700_1730(screen_t *screen, int col, int row, char ** typed_string);
 
 int main(int argc, char *argv[]) {
@@ -55,7 +54,7 @@ int main(int argc, char *argv[]) {
     int item_batch_size[24];
     const char * attr_item_and_stage_names[5][10];
     // 10 GOSUB 1060
-    lines1060_1590(
+    init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs_and_prices, &inventory, character_class_names,
         &message, item_batch_size, item_char_class_avail,
@@ -586,13 +585,12 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
 
 void lines1600_1650(int *screen_cols);
 
-void lines1060_1590(int *char_base, int *interface_num_rows, int *gold_coins,
-                    int *attr_points, int *screen_cols,
-                    int attrs_and_prices[5][9], int ** inventory,
-                    const char * character_class_names[5], char ** message,
-                    int item_batch_size[24],
-                    const char * item_char_class_avail[25],
-                    const char * attr_item_and_stage_names[5][10]) {
+void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
+               int *attr_points, int *screen_cols, int attrs_and_prices[5][9],
+               int ** inventory, const char * character_class_names[5],
+               char ** message, int item_batch_size[24],
+               const char * item_char_class_avail[25],
+               const char * attr_item_and_stage_names[5][10]) {
     int index;
     // 1060 GOSUB 1600
     lines1600_1650(screen_cols);

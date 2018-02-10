@@ -1,6 +1,11 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
+typedef struct {
+    int id;
+    const char * name;
+} character_class_t;
+
 char * get_player_string(screen_t *screen, int col, int row) {
     int ind = 0;
     char pressed_key, * typed_string;
@@ -48,16 +53,16 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
     free(outstring);
 }
 
-int can_class_buy_item(int character_class_id, int item_num,
-                       const char * character_class_names[5], char * message,
+int can_class_buy_item(character_class_t *character_class, int item_num,
+                       char * message,
                        const char * item_char_class_avail[25]) {
-    if (item_char_class_avail[item_num][character_class_id] == '1') {
+    if (item_char_class_avail[item_num][character_class->id] == '1') {
         return 1;
     }
     sprintf(
         message,
         "NOT FOR %s",
-        character_class_names[character_class_id]
+        character_class->name
     );
     return 0;
 }
@@ -90,10 +95,9 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
 }
 
 void make_offer_for_item(screen_t *screen, int max_accepted_discount,
-                         int character_class_id, int stage, int *gold_coins,
-                         int selected_row, int item_num,
+                         character_class_t *character_class, int stage,
+                         int *gold_coins, int selected_row, int item_num,
                          int attrs_and_prices[5][9], int * inventory,
-                         const char * character_class_names[5],
                          const char * point_label, char * message,
                          int item_batch_size[24],
                          const char * item_char_class_avail[25]) {
@@ -110,8 +114,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     offer = atoi(typed_string);
     free(typed_string);
     item_for_class = can_class_buy_item(
-        character_class_id, item_num, character_class_names, message,
-        item_char_class_avail
+        character_class, item_num, message, item_char_class_avail
     );
     buy_item(
         max_accepted_discount, stage, gold_coins, selected_row, item_num,
@@ -229,7 +232,7 @@ void init_platform_vars(int *screen_cols) {
 
 void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs_and_prices[5][9],
-               int ** inventory, const char * character_class_names[5],
+               int ** inventory, character_class_t * character_classes[5],
                char ** message, int item_batch_size[24],
                const char * item_char_class_avail[25],
                const char * attr_item_and_stage_names[5][10]) {
@@ -360,11 +363,20 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     attr_item_and_stage_names[4][7] = "HEALING SALVE";
     attr_item_and_stage_names[4][8] = "POTIONS";
     attr_item_and_stage_names[4][9] = "EMPORIUM";
-    character_class_names[1] = "WANDERER";
-    character_class_names[2] = "CLERIC";
-    character_class_names[3] = "MAGE";
-    character_class_names[4] = "WARRIOR";
-    character_class_names[5] = "BARBARIAN";
+
+    for (index = 1; index < 6; index += 1) {
+        character_classes[index] = malloc(sizeof(character_class_t));
+    }
+    character_classes[1]->id = 1;
+    character_classes[1]->name = "WANDERER";
+    character_classes[2]->id = 2;
+    character_classes[2]->name = "CLERIC";
+    character_classes[3]->id = 3;
+    character_classes[3]->name = "MAGE";
+    character_classes[4]->id = 4;
+    character_classes[4]->name = "WARRIOR";
+    character_classes[5]->id = 5;
+    character_classes[5]->name = "BARBARIAN";
     *attr_points = 3 + (rand() % 5);
     *gold_coins = 120 + (rand() % 60);
     *message = (char *) malloc(sizeof(char) * 40);
@@ -377,13 +389,16 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
 }
 
 int main(int argc, char *argv[]) {
-    int char_base, max_accepted_discount, character_class_id,
-        interface_num_rows, gold_coins, index, stage, selected_row,
-        attr_points, item_num, num_item_types, offer, selected_row_pos,
-        top_row, screen_cols, col, row, item_for_class;
+    int char_base, max_accepted_discount, interface_num_rows, gold_coins,
+        index, stage, selected_row, attr_points, item_num, num_item_types,
+        offer, selected_row_pos, top_row, screen_cols, col, row,
+        item_for_class;
     int attrs_and_prices[5][9];
     int * inventory;
-    const char * character_class_names[5], * point_label,
+    character_class_t *character_class;
+    character_class_t *character_classes[5];
+
+    const char * point_label,
                * item_char_class_avail[25];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
@@ -391,7 +406,7 @@ int main(int argc, char *argv[]) {
     const char * attr_item_and_stage_names[5][10];
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
-        &screen_cols, attrs_and_prices, &inventory, character_class_names,
+        &screen_cols, attrs_and_prices, &inventory, character_classes,
         &message, item_batch_size, item_char_class_avail,
         attr_item_and_stage_names
     );
@@ -447,27 +462,27 @@ int main(int argc, char *argv[]) {
                 attr_item_and_stage_names
             );
         }
-        character_class_id = 1;
+        character_class = character_classes[1];
         if (attrs_and_prices[1][4] > 6 && attrs_and_prices[1][8] > 7) {
-            character_class_id = 2;
+            character_class = character_classes[2];
         }
         if (attrs_and_prices[1][4] > 8 && attrs_and_prices[1][7] > 7) {
-            character_class_id = 3;
+            character_class = character_classes[3];
         }
         if (
                 attrs_and_prices[1][1] > 7 && attrs_and_prices[1][8] > 5 &&
                 attrs_and_prices[1][1] + attrs_and_prices[1][2] > 10
         ) {
-            character_class_id = 4;
+            character_class = character_classes[4];
         }
         if (
                 attrs_and_prices[1][1] > 8 &&
                 attrs_and_prices[1][2] + attrs_and_prices[1][3] > 12 &&
                 attrs_and_prices[1][8] < 6
         ) {
-            character_class_id = 5;
+            character_class = character_classes[5];
         }
-        strcpy(message, character_class_names[character_class_id]);
+        strcpy(message, character_class->name);
         update_header(screen, attr_points, point_label, message);
         SDL_RenderPresent(screen->ren);
     } while (*pressed_key != ' ');
@@ -495,8 +510,7 @@ int main(int argc, char *argv[]) {
             item_num = 8 * (stage - 2) + selected_row;
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
-                character_class_id, item_num, character_class_names, message,
-                item_char_class_avail
+                character_class, item_num, message, item_char_class_avail
             );
             max_accepted_discount = 0;
             offer = 0;
@@ -511,10 +525,10 @@ int main(int argc, char *argv[]) {
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
-                    screen, max_accepted_discount, character_class_id, stage,
+                    screen, max_accepted_discount, character_class, stage,
                     &gold_coins, selected_row, item_num, attrs_and_prices,
-                    inventory, character_class_names, point_label, message,
-                    item_batch_size, item_char_class_avail
+                    inventory, point_label, message, item_batch_size,
+                    item_char_class_avail
                 );
             }
             update_header(screen, gold_coins, point_label, message);
@@ -548,7 +562,7 @@ int main(int argc, char *argv[]) {
     char * save_file_contents = (char *) malloc(
         sizeof(char) * (
             14 + num_item_types + strlen(character_name) + strlen(
-                character_class_names[character_class_id]
+                character_class->name
             )
         )
     );
@@ -575,11 +589,11 @@ int main(int argc, char *argv[]) {
     );
     strcpy(
         save_file_contents + 13 + num_item_types + strlen(character_name),
-        character_class_names[character_class_id]
+        character_class->name
     );
     save_file_contents[
         13 + num_item_types + strlen(character_name) + strlen(
-            character_class_names[character_class_id]
+            character_class->name
         )
     ] = 0;
     FILE *save_file_handle = fopen("HERO", "w");
@@ -598,6 +612,10 @@ int main(int argc, char *argv[]) {
     free(message);
     free(character_name);
     free(inventory);
+
+    for (index = 1; index < 6; index += 1) {
+        free(character_classes[index]);
+    }
 
     destroy_screen(screen);
 

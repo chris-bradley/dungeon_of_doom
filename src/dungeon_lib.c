@@ -145,7 +145,7 @@ int init_screen(screen_t **screen) {
        fprintf(stderr, "*screen is NULL!\n");
        exit(1);
     }
-    (*screen)->zoom = 4;
+    (*screen)->zoom = 3;
     (*screen)->win = SDL_CreateWindow(
         "Dungeon of Doom",
         100 * (*screen)->zoom,

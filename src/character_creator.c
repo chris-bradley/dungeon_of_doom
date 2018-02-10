@@ -501,8 +501,8 @@ int main(int argc, char *argv[]) {
         );
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");
-        SDL_RenderPresent(screen->ren);
         do {
+            SDL_RenderPresent(screen->ren);
             get_input_and_select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key

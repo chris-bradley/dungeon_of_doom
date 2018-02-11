@@ -166,14 +166,14 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
 
 void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
                  int screen_cols, const char * point_label, char * message,
-                 const char * stage_names[5]) {
+                 const char * stage_names[4]) {
     int background_colour, border_colour, rows;
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
-    print_text(screen, stage_names[stage]);
+    print_text(screen, stage_names[stage - 1]);
     background_colour = 2;
     border_colour = 3;
     *top_row = 1;
@@ -231,7 +231,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                character_class_t * character_classes[5], char ** message,
                int item_batch_size[23], const char * item_char_class_avail[24],
                const char * attr_names[8], const char * item_names[3][8],
-               const char * stage_names[5]) {
+               const char * stage_names[4]) {
     int index;
     init_platform_vars(screen_cols);
     *interface_num_rows = 8;
@@ -331,7 +331,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     attr_names[5] = "LUCK";
     attr_names[6] = "AURA";
     attr_names[7] = "MORALITY";
-    stage_names[1] = "CHARACTER CREATION";
+    stage_names[0] = "CHARACTER CREATION";
     item_names[0][0] = "2 HAND SWORD";
     item_names[0][1] = "BROADSWORD";
     item_names[0][2] = "SHORTSWORD";
@@ -340,7 +340,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[0][5] = "FLAIL";
     item_names[0][6] = "DAGGER";
     item_names[0][7] = "GAUNTLET";
-    stage_names[2] = "ARMOURY";
+    stage_names[1] = "ARMOURY";
     item_names[1][0] = "HEAVY ARMOUR";
     item_names[1][1] = "CHAIN ARMOUR";
     item_names[1][2] = "LEATHER ARMOUR";
@@ -349,7 +349,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[1][5] = "HEADPIECE";
     item_names[1][6] = "SHIELD";
     item_names[1][7] = "TORCH";
-    stage_names[3] = "ACCOUTREMENTS";
+    stage_names[2] = "ACCOUTREMENTS";
     item_names[2][0] = "NECRONOMICON";
     item_names[2][1] = "SCROLLS";
     item_names[2][2] = "RING";
@@ -358,7 +358,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[2][5] = "CLOAK";
     item_names[2][6] = "HEALING SALVE";
     item_names[2][7] = "POTIONS";
-    stage_names[4] = "EMPORIUM";
+    stage_names[3] = "EMPORIUM";
 
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
@@ -399,7 +399,7 @@ int main(int argc, char *argv[]) {
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     int item_batch_size[23];
-    const char * attr_names[8], * item_names[3][8], * stage_names[5];
+    const char * attr_names[8], * item_names[3][8], * stage_names[4];
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs, prices, &inventory, character_classes, &message,

@@ -72,7 +72,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
               int prices[3][8], int * inventory, char * message,
               int item_batch_size[24]) {
     int price;
-    if (inventory[item_num] > 0 && item_num < 23) {
+    if (inventory[item_num - 1] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
         price = prices[stage - 2][selected_row - 1] - max_accepted_discount;
@@ -80,7 +80,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
             if (offer >= price && item_for_class == 1) {
-                inventory[item_num] += item_batch_size[item_num];
+                inventory[item_num - 1] += item_batch_size[item_num];
                 *gold_coins -= price;
                 strcpy(message, "TIS YOURS!");
             }
@@ -557,7 +557,7 @@ int main(int argc, char *argv[]) {
             attrs[index] + char_base
         );
     }
-    for (index = 1; index <= num_item_types; index += 1) {
+    for (index = 0; index < num_item_types; index += 1) {
         save_file_contents[8 + index] = (char) (inventory[index] + char_base);
     }
     save_file_contents[9 + num_item_types] = (char) (gold_coins + char_base);

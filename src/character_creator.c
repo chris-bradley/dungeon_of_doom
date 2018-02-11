@@ -56,7 +56,7 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
 int can_class_buy_item(character_class_t *character_class, int item_num,
                        char * message,
                        const char * item_char_class_avail[24]) {
-    if (item_char_class_avail[item_num - 1][character_class->id - 1] == '1') {
+    if (item_char_class_avail[item_num][character_class->id - 1] == '1') {
         return 1;
     }
     sprintf(
@@ -72,7 +72,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
               int prices[3][8], int * inventory, char * message,
               int item_batch_size[23]) {
     int price;
-    if (inventory[item_num - 1] > 0 && item_num < 23) {
+    if (inventory[item_num] > 0 && item_num < 22) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
         price = prices[stage - 1][selected_row] - max_accepted_discount;
@@ -80,7 +80,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
             if (offer >= price && item_for_class == 1) {
-                inventory[item_num - 1] += item_batch_size[item_num - 1];
+                inventory[item_num] += item_batch_size[item_num];
                 *gold_coins -= price;
                 strcpy(message, "TIS YOURS!");
             }
@@ -487,7 +487,7 @@ int main(int argc, char *argv[]) {
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
-            item_num = 8 * (stage - 1) + selected_row + 1;
+            item_num = 8 * (stage - 1) + selected_row;
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
                 character_class, item_num, message, item_char_class_avail

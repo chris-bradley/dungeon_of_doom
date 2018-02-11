@@ -55,8 +55,8 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
 
 int can_class_buy_item(character_class_t *character_class, int item_num,
                        char * message,
-                       const char * item_char_class_avail[25]) {
-    if (item_char_class_avail[item_num][character_class->id - 1] == '1') {
+                       const char * item_char_class_avail[24]) {
+    if (item_char_class_avail[item_num - 1][character_class->id - 1] == '1') {
         return 1;
     }
     sprintf(
@@ -100,7 +100,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          int prices[3][8], int * inventory,
                          const char * point_label, char * message,
                          int item_batch_size[23],
-                         const char * item_char_class_avail[25]) {
+                         const char * item_char_class_avail[24]) {
     int item_for_class, offer, col, row;
     char * typed_string = NULL;
     strcpy(message, "");
@@ -229,7 +229,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs[8],
                int prices[3][8], int ** inventory,
                character_class_t * character_classes[5], char ** message,
-               int item_batch_size[23], const char * item_char_class_avail[25],
+               int item_batch_size[23], const char * item_char_class_avail[24],
                const char * attr_names[8], const char * item_names[3][8],
                const char * stage_names[5]) {
     int index;
@@ -246,30 +246,30 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
         (*inventory)[i] = 0;
     }
 
-    item_char_class_avail[1] = "00001";
-    item_char_class_avail[2] = "00011";
+    item_char_class_avail[0] = "00001";
+    item_char_class_avail[1] = "00011";
+    item_char_class_avail[2] = "10011";
     item_char_class_avail[3] = "10011";
     item_char_class_avail[4] = "10011";
-    item_char_class_avail[5] = "10011";
-    item_char_class_avail[6] = "00011";
-    item_char_class_avail[7] = "11111";
-    item_char_class_avail[8] = "10011";
+    item_char_class_avail[5] = "00011";
+    item_char_class_avail[6] = "11111";
+    item_char_class_avail[7] = "10011";
+    item_char_class_avail[8] = "00011";
     item_char_class_avail[9] = "00011";
-    item_char_class_avail[10] = "00011";
-    item_char_class_avail[11] = "10011";
-    item_char_class_avail[12] = "11111";
-    item_char_class_avail[13] = "00011";
+    item_char_class_avail[10] = "10011";
+    item_char_class_avail[11] = "11111";
+    item_char_class_avail[12] = "00011";
+    item_char_class_avail[13] = "11011";
     item_char_class_avail[14] = "11011";
-    item_char_class_avail[15] = "11011";
-    item_char_class_avail[16] = "11111";
-    item_char_class_avail[17] = "11100";
-    item_char_class_avail[18] = "00100";
-    item_char_class_avail[19] = "11100";
-    item_char_class_avail[20] = "10100";
+    item_char_class_avail[15] = "11111";
+    item_char_class_avail[16] = "11100";
+    item_char_class_avail[17] = "00100";
+    item_char_class_avail[18] = "11100";
+    item_char_class_avail[19] = "10100";
+    item_char_class_avail[20] = "11100";
     item_char_class_avail[21] = "11100";
-    item_char_class_avail[22] = "11100";
+    item_char_class_avail[22] = "11111";
     item_char_class_avail[23] = "11111";
-    item_char_class_avail[24] = "11111";
     for (index = 0; index < 8; index += 1) {
         attrs[index] = (rand() % 5) + 2;
     }
@@ -395,7 +395,7 @@ int main(int argc, char *argv[]) {
     character_class_t *character_classes[5];
 
     const char * point_label,
-               * item_char_class_avail[25];
+               * item_char_class_avail[24];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     int item_batch_size[23];

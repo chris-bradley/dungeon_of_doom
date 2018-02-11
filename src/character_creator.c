@@ -185,9 +185,8 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
     update_header(screen, num_points, point_label, message);
 }
 
-void update_main(screen_t *screen, int stage, int top_row,
-                 int attrs_and_prices[5][9],
-                 const char * attr_item_and_stage_names[5][10]) {
+void update_main(screen_t *screen, int top_row, int values[9],
+                 const char * labels[10]) {
     int index, row;
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
@@ -197,14 +196,14 @@ void update_main(screen_t *screen, int stage, int top_row,
         print_left$_b$(screen, 5);
 
         tab(screen->cursor, 2, row);
-        print_text(screen, attr_item_and_stage_names[stage][index]);
+        print_text(screen, labels[index]);
         tab(screen->cursor, 16, row);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
-        sprintf(outstring, "%i ", attrs_and_prices[stage][index]);
+        sprintf(outstring, "%i ", values[index]);
         print_text(screen, outstring);
         free(outstring);
     }
@@ -222,7 +221,8 @@ void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
     update_main(
-        screen, stage, *top_row, attrs_and_prices, attr_item_and_stage_names
+        screen, *top_row, attrs_and_prices[stage],
+        attr_item_and_stage_names[stage]
     );
 }
 
@@ -450,16 +450,16 @@ int main(int argc, char *argv[]) {
             attrs_and_prices[stage][selected_row] += 1;
             attr_points -= 1;
             update_main(
-                screen, stage, top_row, attrs_and_prices,
-                attr_item_and_stage_names
+                screen, top_row, attrs_and_prices[stage],
+                attr_item_and_stage_names[stage]
             );
         }
         if (*pressed_key == '-' && attrs_and_prices[stage][selected_row] > 1) {
             attrs_and_prices[stage][selected_row] -=1;
             attr_points += 1;
             update_main(
-                screen, stage, top_row, attrs_and_prices,
-                attr_item_and_stage_names
+                screen, top_row, attrs_and_prices[stage],
+                attr_item_and_stage_names[stage]
             );
         }
         character_class = character_classes[1];

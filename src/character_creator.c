@@ -230,7 +230,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int prices[4][9], int ** inventory,
                character_class_t * character_classes[5], char ** message,
                int item_batch_size[24], const char * item_char_class_avail[25],
-               const char * attr_names[9], const char * item_names[4][9],
+               const char * attr_names[8], const char * item_names[4][9],
                const char * stage_names[5]) {
     int index;
     init_platform_vars(screen_cols);
@@ -323,14 +323,14 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_batch_size[23] = 1;
     item_batch_size[24] = 1;
 
-    attr_names[1] = "STRENGTH";
-    attr_names[2] = "VITALITY";
-    attr_names[3] = "AGILITY";
-    attr_names[4] = "INTELLIGENCE";
-    attr_names[5] = "EXPERIENCE";
-    attr_names[6] = "LUCK";
-    attr_names[7] = "AURA";
-    attr_names[8] = "MORALITY";
+    attr_names[0] = "STRENGTH";
+    attr_names[1] = "VITALITY";
+    attr_names[2] = "AGILITY";
+    attr_names[3] = "INTELLIGENCE";
+    attr_names[4] = "EXPERIENCE";
+    attr_names[5] = "LUCK";
+    attr_names[6] = "AURA";
+    attr_names[7] = "MORALITY";
     stage_names[1] = "CHARACTER CREATION";
     item_names[1][1] = "2 HAND SWORD";
     item_names[1][2] = "BROADSWORD";
@@ -399,7 +399,7 @@ int main(int argc, char *argv[]) {
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     int item_batch_size[24];
-    const char * attr_names[9], * item_names[4][9], * stage_names[5];
+    const char * attr_names[8], * item_names[4][9], * stage_names[5];
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs, prices, &inventory, character_classes, &message,
@@ -417,9 +417,7 @@ int main(int argc, char *argv[]) {
         screen, stage, attr_points, &top_row, screen_cols, point_label,
         message, stage_names
     );
-    draw_main(
-        screen, &top_row, screen_cols, attrs, attr_names + 1
-    );
+    draw_main(screen, &top_row, screen_cols, attrs, attr_names);
     selected_row = 1;
     selected_row_pos = top_row + 1;
     tab(screen->cursor, 1, selected_row_pos);
@@ -444,12 +442,12 @@ int main(int argc, char *argv[]) {
         if (*pressed_key == ';' && attr_points > 0) {
             attrs[selected_row - 1] += 1;
             attr_points -= 1;
-            update_main(screen, top_row, attrs, attr_names + 1);
+            update_main(screen, top_row, attrs, attr_names);
         }
         if (*pressed_key == '-' && attrs[selected_row - 1] > 1) {
             attrs[selected_row - 1] -=1;
             attr_points += 1;
-            update_main(screen, top_row, attrs, attr_names + 1);
+            update_main(screen, top_row, attrs, attr_names);
         }
         character_class = character_classes[1];
         if (attrs[3] > 6 && attrs[7] > 7) {

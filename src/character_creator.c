@@ -226,7 +226,7 @@ void init_platform_vars(int *screen_cols) {
 }
 
 void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
-               int *attr_points, int *screen_cols, int attrs[9],
+               int *attr_points, int *screen_cols, int attrs[8],
                int prices[4][9], int ** inventory,
                character_class_t * character_classes[5], char ** message,
                int item_batch_size[24], const char * item_char_class_avail[25],
@@ -270,10 +270,10 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_char_class_avail[22] = "11100";
     item_char_class_avail[23] = "11111";
     item_char_class_avail[24] = "11111";
-    for (index = 1; index <= 8; index += 1) {
+    for (index = 0; index < 8; index += 1) {
         attrs[index] = (rand() % 5) + 2;
     }
-    attrs[5] = 1;
+    attrs[4] = 1;
     prices[1][1] = 20;
     prices[1][2] = 16;
     prices[1][3] = 12;
@@ -389,7 +389,7 @@ int main(int argc, char *argv[]) {
         index, stage, selected_row, attr_points, item_num, num_item_types,
         offer, selected_row_pos, top_row, screen_cols, col, row,
         item_for_class;
-    int attrs[9], prices[4][9];
+    int attrs[8], prices[4][9];
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
@@ -418,7 +418,7 @@ int main(int argc, char *argv[]) {
         message, stage_names
     );
     draw_main(
-        screen, &top_row, screen_cols, attrs + 1, attr_names + 1
+        screen, &top_row, screen_cols, attrs, attr_names + 1
     );
     selected_row = 1;
     selected_row_pos = top_row + 1;
@@ -442,26 +442,26 @@ int main(int argc, char *argv[]) {
             );
         }
         if (*pressed_key == ';' && attr_points > 0) {
-            attrs[selected_row] += 1;
+            attrs[selected_row - 1] += 1;
             attr_points -= 1;
-            update_main(screen, top_row, attrs + 1, attr_names + 1);
+            update_main(screen, top_row, attrs, attr_names + 1);
         }
-        if (*pressed_key == '-' && attrs[selected_row] > 1) {
-            attrs[selected_row] -=1;
+        if (*pressed_key == '-' && attrs[selected_row - 1] > 1) {
+            attrs[selected_row - 1] -=1;
             attr_points += 1;
-            update_main(screen, top_row, attrs + 1, attr_names + 1);
+            update_main(screen, top_row, attrs, attr_names + 1);
         }
         character_class = character_classes[1];
-        if (attrs[4] > 6 && attrs[8] > 7) {
+        if (attrs[3] > 6 && attrs[7] > 7) {
             character_class = character_classes[2];
         }
-        if (attrs[4] > 8 && attrs[7] > 7) {
+        if (attrs[3] > 8 && attrs[6] > 7) {
             character_class = character_classes[3];
         }
-        if (attrs[1] > 7 && attrs[8] > 5 && attrs[1] + attrs[2] > 10) {
+        if (attrs[0] > 7 && attrs[7] > 5 && attrs[0] + attrs[1] > 10) {
             character_class = character_classes[4];
         }
-        if (attrs[1] > 8 && attrs[2] + attrs[3] > 12 && attrs[8] < 6) {
+        if (attrs[0] > 8 && attrs[1] + attrs[2] > 12 && attrs[7] < 6) {
             character_class = character_classes[5];
         }
         strcpy(message, character_class->name);
@@ -554,8 +554,8 @@ int main(int argc, char *argv[]) {
     }
 
     save_file_contents[0] = (char) (num_item_types + char_base);
-    for (index = 1; index <= 8; index +=1 ) {
-        save_file_contents[index] = (char) (
+    for (index = 0; index < 8; index +=1 ) {
+        save_file_contents[index + 1] = (char) (
             attrs[index] + char_base
         );
     }

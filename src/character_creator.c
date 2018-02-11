@@ -69,13 +69,13 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
 
 void buy_item(int max_accepted_discount, int stage, int *gold_coins,
               int selected_row, int item_num, int offer, int item_for_class,
-              int attrs_and_prices[5][9], int * inventory, char * message,
+              int prices[4][9], int * inventory, char * message,
               int item_batch_size[24]) {
     int price;
     if (inventory[item_num] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
-        price = attrs_and_prices[stage][selected_row] - max_accepted_discount;
+        price = prices[stage - 1][selected_row] - max_accepted_discount;
         if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
@@ -97,7 +97,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
 void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          character_class_t *character_class, int stage,
                          int *gold_coins, int selected_row, int item_num,
-                         int attrs_and_prices[5][9], int * inventory,
+                         int prices[4][9], int * inventory,
                          const char * point_label, char * message,
                          int item_batch_size[24],
                          const char * item_char_class_avail[25]) {
@@ -118,8 +118,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     );
     buy_item(
         max_accepted_discount, stage, gold_coins, selected_row, item_num,
-        offer, item_for_class, attrs_and_prices, inventory, message,
-        item_batch_size
+        offer, item_for_class, prices, inventory, message, item_batch_size
     );
 }
 
@@ -227,10 +226,10 @@ void init_platform_vars(int *screen_cols) {
 }
 
 void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
-               int *attr_points, int *screen_cols, int attrs_and_prices[5][9],
-               int ** inventory, character_class_t * character_classes[5],
-               char ** message, int item_batch_size[24],
-               const char * item_char_class_avail[25],
+               int *attr_points, int *screen_cols, int attrs[9],
+               int prices[4][9], int ** inventory,
+               character_class_t * character_classes[5], char ** message,
+               int item_batch_size[24], const char * item_char_class_avail[25],
                const char * attr_item_and_stage_names[5][10]) {
     int index;
     init_platform_vars(screen_cols);
@@ -271,33 +270,33 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_char_class_avail[23] = "11111";
     item_char_class_avail[24] = "11111";
     for (index = 1; index <= 8; index += 1) {
-        attrs_and_prices[1][index] = (rand() % 5) + 2;
+        attrs[index] = (rand() % 5) + 2;
     }
-    attrs_and_prices[1][5] = 1;
-    attrs_and_prices[2][1] = 20;
-    attrs_and_prices[2][2] = 16;
-    attrs_and_prices[2][3] = 12;
-    attrs_and_prices[2][4] = 15;
-    attrs_and_prices[2][5] = 8;
-    attrs_and_prices[2][6] = 10;
-    attrs_and_prices[2][7] = 8;
-    attrs_and_prices[2][8] = 6;
-    attrs_and_prices[3][1] = 18;
-    attrs_and_prices[3][2] = 15;
-    attrs_and_prices[3][3] = 9;
-    attrs_and_prices[3][4] = 9;
-    attrs_and_prices[3][5] = 14;
-    attrs_and_prices[3][6] = 8;
-    attrs_and_prices[3][7] = 6;
-    attrs_and_prices[3][8] = 6;
-    attrs_and_prices[4][1] = 20;
-    attrs_and_prices[4][2] = 15;
-    attrs_and_prices[4][3] = 14;
-    attrs_and_prices[4][4] = 12;
-    attrs_and_prices[4][5] = 10;
-    attrs_and_prices[4][6] = 8;
-    attrs_and_prices[4][7] = 6;
-    attrs_and_prices[4][8] = 6;
+    attrs[5] = 1;
+    prices[1][1] = 20;
+    prices[1][2] = 16;
+    prices[1][3] = 12;
+    prices[1][4] = 15;
+    prices[1][5] = 8;
+    prices[1][6] = 10;
+    prices[1][7] = 8;
+    prices[1][8] = 6;
+    prices[2][1] = 18;
+    prices[2][2] = 15;
+    prices[2][3] = 9;
+    prices[2][4] = 9;
+    prices[2][5] = 14;
+    prices[2][6] = 8;
+    prices[2][7] = 6;
+    prices[2][8] = 6;
+    prices[3][1] = 20;
+    prices[3][2] = 15;
+    prices[3][3] = 14;
+    prices[3][4] = 12;
+    prices[3][5] = 10;
+    prices[3][6] = 8;
+    prices[3][7] = 6;
+    prices[3][8] = 6;
     item_batch_size[1] = 5;
     item_batch_size[2] = 4;
     item_batch_size[3] = 3;
@@ -389,7 +388,7 @@ int main(int argc, char *argv[]) {
         index, stage, selected_row, attr_points, item_num, num_item_types,
         offer, selected_row_pos, top_row, screen_cols, col, row,
         item_for_class;
-    int attrs_and_prices[5][9];
+    int attrs[9], prices[4][9];
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
@@ -402,9 +401,8 @@ int main(int argc, char *argv[]) {
     const char * attr_item_and_stage_names[5][10];
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
-        &screen_cols, attrs_and_prices, &inventory, character_classes,
-        &message, item_batch_size, item_char_class_avail,
-        attr_item_and_stage_names
+        &screen_cols, attrs, prices, &inventory, character_classes, &message,
+        item_batch_size, item_char_class_avail, attr_item_and_stage_names
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -418,8 +416,7 @@ int main(int argc, char *argv[]) {
         message, attr_item_and_stage_names
     );
     draw_main(
-        screen, &top_row, screen_cols, attrs_and_prices[stage],
-        attr_item_and_stage_names[stage]
+        screen, &top_row, screen_cols, attrs, attr_item_and_stage_names[stage]
     );
     selected_row = 1;
     selected_row_pos = top_row + 1;
@@ -443,39 +440,30 @@ int main(int argc, char *argv[]) {
             );
         }
         if (*pressed_key == ';' && attr_points > 0) {
-            attrs_and_prices[stage][selected_row] += 1;
+            attrs[selected_row] += 1;
             attr_points -= 1;
             update_main(
-                screen, top_row, attrs_and_prices[stage],
-                attr_item_and_stage_names[stage]
+                screen, top_row, attrs, attr_item_and_stage_names[stage]
             );
         }
-        if (*pressed_key == '-' && attrs_and_prices[stage][selected_row] > 1) {
-            attrs_and_prices[stage][selected_row] -=1;
+        if (*pressed_key == '-' && attrs[selected_row] > 1) {
+            attrs[selected_row] -=1;
             attr_points += 1;
             update_main(
-                screen, top_row, attrs_and_prices[stage],
-                attr_item_and_stage_names[stage]
+                screen, top_row, attrs, attr_item_and_stage_names[stage]
             );
         }
         character_class = character_classes[1];
-        if (attrs_and_prices[1][4] > 6 && attrs_and_prices[1][8] > 7) {
+        if (attrs[4] > 6 && attrs[8] > 7) {
             character_class = character_classes[2];
         }
-        if (attrs_and_prices[1][4] > 8 && attrs_and_prices[1][7] > 7) {
+        if (attrs[4] > 8 && attrs[7] > 7) {
             character_class = character_classes[3];
         }
-        if (
-                attrs_and_prices[1][1] > 7 && attrs_and_prices[1][8] > 5 &&
-                attrs_and_prices[1][1] + attrs_and_prices[1][2] > 10
-        ) {
+        if (attrs[1] > 7 && attrs[8] > 5 && attrs[1] + attrs[2] > 10) {
             character_class = character_classes[4];
         }
-        if (
-                attrs_and_prices[1][1] > 8 &&
-                attrs_and_prices[1][2] + attrs_and_prices[1][3] > 12 &&
-                attrs_and_prices[1][8] < 6
-        ) {
+        if (attrs[1] > 8 && attrs[2] + attrs[3] > 12 && attrs[8] < 6) {
             character_class = character_classes[5];
         }
         strcpy(message, character_class->name);
@@ -492,7 +480,7 @@ int main(int argc, char *argv[]) {
             message, attr_item_and_stage_names
         );
         draw_main(
-            screen, &top_row, screen_cols, attrs_and_prices[stage],
+            screen, &top_row, screen_cols, prices[stage - 1],
             attr_item_and_stage_names[stage]
         );
         tab(screen->cursor, 1, selected_row_pos);
@@ -511,19 +499,19 @@ int main(int argc, char *argv[]) {
             max_accepted_discount = 0;
             offer = 0;
             if (*pressed_key == ';') {
-                offer = attrs_and_prices[stage][selected_row];
+                offer = prices[stage - 1][selected_row];
                 buy_item(
                     max_accepted_discount, stage, &gold_coins, selected_row,
-                    item_num, offer, item_for_class, attrs_and_prices,
-                    inventory, message, item_batch_size
+                    item_num, offer, item_for_class, prices, inventory,
+                    message, item_batch_size
                 );
             }
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
                     screen, max_accepted_discount, character_class, stage,
-                    &gold_coins, selected_row, item_num, attrs_and_prices,
-                    inventory, point_label, message, item_batch_size,
+                    &gold_coins, selected_row, item_num, prices, inventory,
+                    point_label, message, item_batch_size,
                     item_char_class_avail
                 );
             }
@@ -570,7 +558,7 @@ int main(int argc, char *argv[]) {
     save_file_contents[0] = (char) (num_item_types + char_base);
     for (index = 1; index <= 8; index +=1 ) {
         save_file_contents[index] = (char) (
-            attrs_and_prices[1][index] + char_base
+            attrs[index] + char_base
         );
     }
     for (index = 1; index <= num_item_types; index += 1) {

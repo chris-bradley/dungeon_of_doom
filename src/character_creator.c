@@ -166,14 +166,14 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
 
 void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
                  int screen_cols, const char * point_label, char * message,
-                 const char * attr_item_and_stage_names[5][10]) {
+                 const char * stage_names[5]) {
     int background_colour, border_colour, rows;
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
-    print_text(screen, attr_item_and_stage_names[stage][9]);
+    print_text(screen, stage_names[stage]);
     background_colour = 2;
     border_colour = 3;
     *top_row = 1;
@@ -230,7 +230,8 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int prices[4][9], int ** inventory,
                character_class_t * character_classes[5], char ** message,
                int item_batch_size[24], const char * item_char_class_avail[25],
-               const char * attr_item_and_stage_names[5][10]) {
+               const char * attr_names[9], const char * item_names[4][9],
+               const char * stage_names[5]) {
     int index;
     init_platform_vars(screen_cols);
     *interface_num_rows = 8;
@@ -322,42 +323,42 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_batch_size[23] = 1;
     item_batch_size[24] = 1;
 
-    attr_item_and_stage_names[1][1] = "STRENGTH";
-    attr_item_and_stage_names[1][2] = "VITALITY";
-    attr_item_and_stage_names[1][3] = "AGILITY";
-    attr_item_and_stage_names[1][4] = "INTELLIGENCE";
-    attr_item_and_stage_names[1][5] = "EXPERIENCE";
-    attr_item_and_stage_names[1][6] = "LUCK";
-    attr_item_and_stage_names[1][7] = "AURA";
-    attr_item_and_stage_names[1][8] = "MORALITY";
-    attr_item_and_stage_names[1][9] = "CHARACTER CREATION";
-    attr_item_and_stage_names[2][1] = "2 HAND SWORD";
-    attr_item_and_stage_names[2][2] = "BROADSWORD";
-    attr_item_and_stage_names[2][3] = "SHORTSWORD";
-    attr_item_and_stage_names[2][4] = "AXE";
-    attr_item_and_stage_names[2][5] = "MACE";
-    attr_item_and_stage_names[2][6] = "FLAIL";
-    attr_item_and_stage_names[2][7] = "DAGGER";
-    attr_item_and_stage_names[2][8] = "GAUNTLET";
-    attr_item_and_stage_names[2][9] = "ARMOURY";
-    attr_item_and_stage_names[3][1] = "HEAVY ARMOUR";
-    attr_item_and_stage_names[3][2] = "CHAIN ARMOUR";
-    attr_item_and_stage_names[3][3] = "LEATHER ARMOUR";
-    attr_item_and_stage_names[3][4] = "HEAVY ROBE";
-    attr_item_and_stage_names[3][5] = "GOLD HELMET";
-    attr_item_and_stage_names[3][6] = "HEADPIECE";
-    attr_item_and_stage_names[3][7] = "SHIELD";
-    attr_item_and_stage_names[3][8] = "TORCH";
-    attr_item_and_stage_names[3][9] = "ACCOUTREMENTS";
-    attr_item_and_stage_names[4][1] = "NECRONOMICON";
-    attr_item_and_stage_names[4][2] = "SCROLLS";
-    attr_item_and_stage_names[4][3] = "RING";
-    attr_item_and_stage_names[4][4] = "MYSTIC AMULET";
-    attr_item_and_stage_names[4][5] = "SASH";
-    attr_item_and_stage_names[4][6] = "CLOAK";
-    attr_item_and_stage_names[4][7] = "HEALING SALVE";
-    attr_item_and_stage_names[4][8] = "POTIONS";
-    attr_item_and_stage_names[4][9] = "EMPORIUM";
+    attr_names[1] = "STRENGTH";
+    attr_names[2] = "VITALITY";
+    attr_names[3] = "AGILITY";
+    attr_names[4] = "INTELLIGENCE";
+    attr_names[5] = "EXPERIENCE";
+    attr_names[6] = "LUCK";
+    attr_names[7] = "AURA";
+    attr_names[8] = "MORALITY";
+    stage_names[1] = "CHARACTER CREATION";
+    item_names[1][1] = "2 HAND SWORD";
+    item_names[1][2] = "BROADSWORD";
+    item_names[1][3] = "SHORTSWORD";
+    item_names[1][4] = "AXE";
+    item_names[1][5] = "MACE";
+    item_names[1][6] = "FLAIL";
+    item_names[1][7] = "DAGGER";
+    item_names[1][8] = "GAUNTLET";
+    stage_names[2] = "ARMOURY";
+    item_names[2][1] = "HEAVY ARMOUR";
+    item_names[2][2] = "CHAIN ARMOUR";
+    item_names[2][3] = "LEATHER ARMOUR";
+    item_names[2][4] = "HEAVY ROBE";
+    item_names[2][5] = "GOLD HELMET";
+    item_names[2][6] = "HEADPIECE";
+    item_names[2][7] = "SHIELD";
+    item_names[2][8] = "TORCH";
+    stage_names[3] = "ACCOUTREMENTS";
+    item_names[3][1] = "NECRONOMICON";
+    item_names[3][2] = "SCROLLS";
+    item_names[3][3] = "RING";
+    item_names[3][4] = "MYSTIC AMULET";
+    item_names[3][5] = "SASH";
+    item_names[3][6] = "CLOAK";
+    item_names[3][7] = "HEALING SALVE";
+    item_names[3][8] = "POTIONS";
+    stage_names[4] = "EMPORIUM";
 
     for (index = 1; index < 6; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
@@ -398,11 +399,12 @@ int main(int argc, char *argv[]) {
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     int item_batch_size[24];
-    const char * attr_item_and_stage_names[5][10];
+    const char * attr_names[9], * item_names[4][9], * stage_names[5];
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs, prices, &inventory, character_classes, &message,
-        item_batch_size, item_char_class_avail, attr_item_and_stage_names
+        item_batch_size, item_char_class_avail, attr_names, item_names,
+        stage_names
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -413,10 +415,10 @@ int main(int argc, char *argv[]) {
     point_label = "POINTS";
     draw_header(
         screen, stage, attr_points, &top_row, screen_cols, point_label,
-        message, attr_item_and_stage_names
+        message, stage_names
     );
     draw_main(
-        screen, &top_row, screen_cols, attrs, attr_item_and_stage_names[stage]
+        screen, &top_row, screen_cols, attrs, attr_names
     );
     selected_row = 1;
     selected_row_pos = top_row + 1;
@@ -442,16 +444,12 @@ int main(int argc, char *argv[]) {
         if (*pressed_key == ';' && attr_points > 0) {
             attrs[selected_row] += 1;
             attr_points -= 1;
-            update_main(
-                screen, top_row, attrs, attr_item_and_stage_names[stage]
-            );
+            update_main(screen, top_row, attrs, attr_names);
         }
         if (*pressed_key == '-' && attrs[selected_row] > 1) {
             attrs[selected_row] -=1;
             attr_points += 1;
-            update_main(
-                screen, top_row, attrs, attr_item_and_stage_names[stage]
-            );
+            update_main(screen, top_row, attrs, attr_names);
         }
         character_class = character_classes[1];
         if (attrs[4] > 6 && attrs[8] > 7) {
@@ -477,11 +475,11 @@ int main(int argc, char *argv[]) {
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
             screen, stage, gold_coins, &top_row, screen_cols, point_label,
-            message, attr_item_and_stage_names
+            message, stage_names
         );
         draw_main(
             screen, &top_row, screen_cols, prices[stage - 1],
-            attr_item_and_stage_names[stage]
+            item_names[stage - 1]
         );
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");

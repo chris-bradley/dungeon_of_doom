@@ -75,7 +75,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
     if (inventory[item_num - 1] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
-        price = prices[stage - 2][selected_row] - max_accepted_discount;
+        price = prices[stage - 1][selected_row] - max_accepted_discount;
         if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
@@ -173,7 +173,7 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
-    print_text(screen, stage_names[stage - 1]);
+    print_text(screen, stage_names[stage]);
     background_colour = 2;
     border_colour = 3;
     *top_row = 1;
@@ -411,7 +411,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     paper(screen->cursor, 0);
-    stage = 1;
+    stage = 0;
     point_label = "POINTS";
     draw_header(
         screen, stage, attr_points, &top_row, screen_cols, point_label,
@@ -467,7 +467,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     } while (*pressed_key != ' ');
     point_label = "GOLD COINS";
-    for (stage = 2; stage <= 4; stage += 1) {
+    for (stage = 1; stage < 4; stage += 1) {
         selected_row = 0;
         selected_row_pos = top_row + 1;
         strcpy(message, "CHOOSE WELL SIRE!");
@@ -476,8 +476,8 @@ int main(int argc, char *argv[]) {
             message, stage_names
         );
         draw_main(
-            screen, &top_row, screen_cols, prices[stage - 2],
-            item_names[stage - 2]
+            screen, &top_row, screen_cols, prices[stage - 1],
+            item_names[stage - 1]
         );
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");
@@ -487,7 +487,7 @@ int main(int argc, char *argv[]) {
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
-            item_num = 8 * (stage - 2) + selected_row + 1;
+            item_num = 8 * (stage - 1) + selected_row + 1;
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
                 character_class, item_num, message, item_char_class_avail
@@ -495,7 +495,7 @@ int main(int argc, char *argv[]) {
             max_accepted_discount = 0;
             offer = 0;
             if (*pressed_key == ';') {
-                offer = prices[stage - 2][selected_row];
+                offer = prices[stage - 1][selected_row];
                 buy_item(
                     max_accepted_discount, stage, &gold_coins, selected_row,
                     item_num, offer, item_for_class, prices, inventory,

@@ -75,7 +75,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
     if (inventory[item_num - 1] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
-        price = prices[stage - 2][selected_row - 1] - max_accepted_discount;
+        price = prices[stage - 2][selected_row] - max_accepted_discount;
         if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
@@ -130,13 +130,13 @@ void get_input_and_select_row(screen_t *screen, int interface_num_rows,
     ink(screen->cursor, 1);
     tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, " ");
-    if (*pressed_key == 'a' && *selected_row > 1) {
+    if (*pressed_key == 'a' && *selected_row > 0) {
         *selected_row -= 1;
     }
-    else if (*pressed_key == 'z' && *selected_row < interface_num_rows) {
+    else if (*pressed_key == 'z' && *selected_row < interface_num_rows - 1) {
         *selected_row += 1;
     }
-    *selected_row_pos = *selected_row * 2 + top_row - 1;
+    *selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
     tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, ">");
 }
@@ -418,7 +418,7 @@ int main(int argc, char *argv[]) {
         message, stage_names
     );
     draw_main(screen, &top_row, screen_cols, attrs, attr_names);
-    selected_row = 1;
+    selected_row = 0;
     selected_row_pos = top_row + 1;
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
@@ -433,19 +433,19 @@ int main(int argc, char *argv[]) {
             screen, interface_num_rows, &selected_row, &selected_row_pos,
             top_row, pressed_key
         );
-        while (selected_row == 5) {
+        while (selected_row == 4) {
             get_input_and_select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
         }
         if (*pressed_key == ';' && attr_points > 0) {
-            attrs[selected_row - 1] += 1;
+            attrs[selected_row] += 1;
             attr_points -= 1;
             update_main(screen, top_row, attrs, attr_names);
         }
-        if (*pressed_key == '-' && attrs[selected_row - 1] > 1) {
-            attrs[selected_row - 1] -=1;
+        if (*pressed_key == '-' && attrs[selected_row] > 1) {
+            attrs[selected_row] -=1;
             attr_points += 1;
             update_main(screen, top_row, attrs, attr_names);
         }
@@ -468,7 +468,7 @@ int main(int argc, char *argv[]) {
     } while (*pressed_key != ' ');
     point_label = "GOLD COINS";
     for (stage = 2; stage <= 4; stage += 1) {
-        selected_row = 1;
+        selected_row = 0;
         selected_row_pos = top_row + 1;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
@@ -487,7 +487,7 @@ int main(int argc, char *argv[]) {
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
-            item_num = 8 * (stage - 2) + selected_row;
+            item_num = 8 * (stage - 2) + selected_row + 1;
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
                 character_class, item_num, message, item_char_class_avail
@@ -495,7 +495,7 @@ int main(int argc, char *argv[]) {
             max_accepted_discount = 0;
             offer = 0;
             if (*pressed_key == ';') {
-                offer = prices[stage - 2][selected_row - 1];
+                offer = prices[stage - 2][selected_row];
                 buy_item(
                     max_accepted_discount, stage, &gold_coins, selected_row,
                     item_num, offer, item_for_class, prices, inventory,

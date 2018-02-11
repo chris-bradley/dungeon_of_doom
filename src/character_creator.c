@@ -56,7 +56,7 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
 int can_class_buy_item(character_class_t *character_class, int item_num,
                        char * message,
                        const char * item_char_class_avail[25]) {
-    if (item_char_class_avail[item_num][character_class->id] == '1') {
+    if (item_char_class_avail[item_num][character_class->id - 1] == '1') {
         return 1;
     }
     sprintf(

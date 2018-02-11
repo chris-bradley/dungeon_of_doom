@@ -209,9 +209,8 @@ void update_main(screen_t *screen, int top_row, int values[9],
     }
 }
 
-void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
-               int attrs_and_prices[5][9],
-               const char * attr_item_and_stage_names[5][10]) {
+void draw_main(screen_t *screen, int *top_row, int screen_cols, int values[9],
+               const char * labels[10]) {
     int background_colour, border_colour, rows;
     background_colour = 3;
     border_colour = 2;
@@ -220,10 +219,7 @@ void draw_main(screen_t *screen, int stage, int *top_row, int screen_cols,
     draw_box(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
-    update_main(
-        screen, *top_row, attrs_and_prices[stage],
-        attr_item_and_stage_names[stage]
-    );
+    update_main(screen, *top_row, values, labels);
 }
 
 void init_platform_vars(int *screen_cols) {
@@ -422,8 +418,8 @@ int main(int argc, char *argv[]) {
         message, attr_item_and_stage_names
     );
     draw_main(
-        screen, stage, &top_row, screen_cols, attrs_and_prices,
-        attr_item_and_stage_names
+        screen, &top_row, screen_cols, attrs_and_prices[stage],
+        attr_item_and_stage_names[stage]
     );
     selected_row = 1;
     selected_row_pos = top_row + 1;
@@ -496,8 +492,8 @@ int main(int argc, char *argv[]) {
             message, attr_item_and_stage_names
         );
         draw_main(
-            screen, stage, &top_row, screen_cols, attrs_and_prices,
-            attr_item_and_stage_names
+            screen, &top_row, screen_cols, attrs_and_prices[stage],
+            attr_item_and_stage_names[stage]
         );
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");

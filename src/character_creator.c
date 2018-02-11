@@ -360,19 +360,19 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[2][7] = "POTIONS";
     stage_names[4] = "EMPORIUM";
 
-    for (index = 1; index < 6; index += 1) {
+    for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
     }
-    character_classes[1]->id = 1;
-    character_classes[1]->name = "WANDERER";
-    character_classes[2]->id = 2;
-    character_classes[2]->name = "CLERIC";
-    character_classes[3]->id = 3;
-    character_classes[3]->name = "MAGE";
-    character_classes[4]->id = 4;
-    character_classes[4]->name = "WARRIOR";
-    character_classes[5]->id = 5;
-    character_classes[5]->name = "BARBARIAN";
+    character_classes[0]->id = 1;
+    character_classes[0]->name = "WANDERER";
+    character_classes[1]->id = 2;
+    character_classes[1]->name = "CLERIC";
+    character_classes[2]->id = 3;
+    character_classes[2]->name = "MAGE";
+    character_classes[3]->id = 4;
+    character_classes[3]->name = "WARRIOR";
+    character_classes[4]->id = 5;
+    character_classes[4]->name = "BARBARIAN";
     *attr_points = 3 + (rand() % 5);
     *gold_coins = 120 + (rand() % 60);
     *message = (char *) malloc(sizeof(char) * 40);
@@ -449,18 +449,18 @@ int main(int argc, char *argv[]) {
             attr_points += 1;
             update_main(screen, top_row, attrs, attr_names);
         }
-        character_class = character_classes[1];
+        character_class = character_classes[0];
         if (attrs[3] > 6 && attrs[7] > 7) {
-            character_class = character_classes[2];
+            character_class = character_classes[1];
         }
         if (attrs[3] > 8 && attrs[6] > 7) {
-            character_class = character_classes[3];
+            character_class = character_classes[2];
         }
         if (attrs[0] > 7 && attrs[7] > 5 && attrs[0] + attrs[1] > 10) {
-            character_class = character_classes[4];
+            character_class = character_classes[3];
         }
         if (attrs[0] > 8 && attrs[1] + attrs[2] > 12 && attrs[7] < 6) {
-            character_class = character_classes[5];
+            character_class = character_classes[4];
         }
         strcpy(message, character_class->name);
         update_header(screen, attr_points, point_label, message);

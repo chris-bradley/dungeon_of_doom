@@ -56,7 +56,7 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
 int can_class_buy_item(character_class_t *character_class, int item_num,
                        char * message,
                        const char * item_char_class_avail[24]) {
-    if (item_char_class_avail[item_num][character_class->id - 1] == '1') {
+    if (item_char_class_avail[item_num][character_class->id] == '1') {
         return 1;
     }
     sprintf(
@@ -363,15 +363,15 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
     }
-    character_classes[0]->id = 1;
+    character_classes[0]->id = 0;
     character_classes[0]->name = "WANDERER";
-    character_classes[1]->id = 2;
+    character_classes[1]->id = 1;
     character_classes[1]->name = "CLERIC";
-    character_classes[2]->id = 3;
+    character_classes[2]->id = 2;
     character_classes[2]->name = "MAGE";
-    character_classes[3]->id = 4;
+    character_classes[3]->id = 3;
     character_classes[3]->name = "WARRIOR";
-    character_classes[4]->id = 5;
+    character_classes[4]->id = 4;
     character_classes[4]->name = "BARBARIAN";
     *attr_points = 3 + (rand() % 5);
     *gold_coins = 120 + (rand() % 60);

@@ -184,13 +184,13 @@ void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
     update_header(screen, num_points, point_label, message);
 }
 
-void update_main(screen_t *screen, int top_row, int values[9],
-                 const char * labels[10]) {
+void update_main(screen_t *screen, int top_row, int values[8],
+                 const char * labels[8]) {
     int index, row;
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
-    for (index = 1; index <= 8; index += 1) {
-        row = top_row + (index - 1) * 2 + 1;
+    for (index = 0; index < 8; index += 1) {
+        row = top_row + index * 2 + 1;
         tab(screen->cursor, 15, row);
         print_left$_b$(screen, 5);
 
@@ -209,7 +209,7 @@ void update_main(screen_t *screen, int top_row, int values[9],
 }
 
 void draw_main(screen_t *screen, int *top_row, int screen_cols, int values[9],
-               const char * labels[10]) {
+               const char * labels[9]) {
     int background_colour, border_colour, rows;
     background_colour = 3;
     border_colour = 2;
@@ -218,7 +218,7 @@ void draw_main(screen_t *screen, int *top_row, int screen_cols, int values[9],
     draw_box(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
-    update_main(screen, *top_row, values, labels);
+    update_main(screen, *top_row, values + 1, labels + 1);
 }
 
 void init_platform_vars(int *screen_cols) {
@@ -444,12 +444,12 @@ int main(int argc, char *argv[]) {
         if (*pressed_key == ';' && attr_points > 0) {
             attrs[selected_row] += 1;
             attr_points -= 1;
-            update_main(screen, top_row, attrs, attr_names);
+            update_main(screen, top_row, attrs + 1, attr_names + 1);
         }
         if (*pressed_key == '-' && attrs[selected_row] > 1) {
             attrs[selected_row] -=1;
             attr_points += 1;
-            update_main(screen, top_row, attrs, attr_names);
+            update_main(screen, top_row, attrs + 1, attr_names + 1);
         }
         character_class = character_classes[1];
         if (attrs[4] > 6 && attrs[8] > 7) {

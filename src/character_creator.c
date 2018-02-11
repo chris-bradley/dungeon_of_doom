@@ -70,7 +70,7 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
 void buy_item(int max_accepted_discount, int stage, int *gold_coins,
               int selected_row, int item_num, int offer, int item_for_class,
               int prices[3][8], int * inventory, char * message,
-              int item_batch_size[24]) {
+              int item_batch_size[23]) {
     int price;
     if (inventory[item_num - 1] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
@@ -80,7 +80,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
             if (offer >= price && item_for_class == 1) {
-                inventory[item_num - 1] += item_batch_size[item_num];
+                inventory[item_num - 1] += item_batch_size[item_num - 1];
                 *gold_coins -= price;
                 strcpy(message, "TIS YOURS!");
             }
@@ -99,7 +99,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          int *gold_coins, int selected_row, int item_num,
                          int prices[3][8], int * inventory,
                          const char * point_label, char * message,
-                         int item_batch_size[24],
+                         int item_batch_size[23],
                          const char * item_char_class_avail[25]) {
     int item_for_class, offer, col, row;
     char * typed_string = NULL;
@@ -229,7 +229,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs[8],
                int prices[3][8], int ** inventory,
                character_class_t * character_classes[5], char ** message,
-               int item_batch_size[24], const char * item_char_class_avail[25],
+               int item_batch_size[23], const char * item_char_class_avail[25],
                const char * attr_names[8], const char * item_names[3][8],
                const char * stage_names[5]) {
     int index;
@@ -298,30 +298,30 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     prices[2][5] = 8;
     prices[2][6] = 6;
     prices[2][7] = 6;
-    item_batch_size[1] = 5;
-    item_batch_size[2] = 4;
+    item_batch_size[0] = 5;
+    item_batch_size[1] = 4;
+    item_batch_size[2] = 3;
     item_batch_size[3] = 3;
-    item_batch_size[4] = 3;
+    item_batch_size[4] = 2;
     item_batch_size[5] = 2;
-    item_batch_size[6] = 2;
+    item_batch_size[6] = 1;
     item_batch_size[7] = 1;
-    item_batch_size[8] = 1;
-    item_batch_size[9] = 5;
-    item_batch_size[10] = 4;
-    item_batch_size[11] = 3;
-    item_batch_size[12] = 1;
-    item_batch_size[13] = 2;
-    item_batch_size[14] = 1;
-    item_batch_size[15] = 3;
-    item_batch_size[16] = 1;
-    item_batch_size[17] = 4;
-    item_batch_size[18] = 3;
+    item_batch_size[8] = 5;
+    item_batch_size[9] = 4;
+    item_batch_size[10] = 3;
+    item_batch_size[11] = 1;
+    item_batch_size[12] = 2;
+    item_batch_size[13] = 1;
+    item_batch_size[14] = 3;
+    item_batch_size[15] = 1;
+    item_batch_size[16] = 4;
+    item_batch_size[17] = 3;
+    item_batch_size[18] = 2;
     item_batch_size[19] = 2;
-    item_batch_size[20] = 2;
-    item_batch_size[21] = 3;
+    item_batch_size[20] = 3;
+    item_batch_size[21] = 1;
     item_batch_size[22] = 1;
     item_batch_size[23] = 1;
-    item_batch_size[24] = 1;
 
     attr_names[0] = "STRENGTH";
     attr_names[1] = "VITALITY";
@@ -398,7 +398,7 @@ int main(int argc, char *argv[]) {
                * item_char_class_avail[25];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
-    int item_batch_size[24];
+    int item_batch_size[23];
     const char * attr_names[8], * item_names[3][8], * stage_names[5];
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,

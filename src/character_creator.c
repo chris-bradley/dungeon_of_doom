@@ -69,13 +69,13 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
 
 void buy_item(int max_accepted_discount, int stage, int *gold_coins,
               int selected_row, int item_num, int offer, int item_for_class,
-              int prices[4][9], int * inventory, char * message,
+              int prices[3][8], int * inventory, char * message,
               int item_batch_size[24]) {
     int price;
     if (inventory[item_num] > 0 && item_num < 23) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
-        price = prices[stage - 1][selected_row] - max_accepted_discount;
+        price = prices[stage - 2][selected_row - 1] - max_accepted_discount;
         if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
@@ -97,7 +97,7 @@ void buy_item(int max_accepted_discount, int stage, int *gold_coins,
 void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          character_class_t *character_class, int stage,
                          int *gold_coins, int selected_row, int item_num,
-                         int prices[4][9], int * inventory,
+                         int prices[3][8], int * inventory,
                          const char * point_label, char * message,
                          int item_batch_size[24],
                          const char * item_char_class_avail[25]) {
@@ -227,7 +227,7 @@ void init_platform_vars(int *screen_cols) {
 
 void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs[8],
-               int prices[4][9], int ** inventory,
+               int prices[3][8], int ** inventory,
                character_class_t * character_classes[5], char ** message,
                int item_batch_size[24], const char * item_char_class_avail[25],
                const char * attr_names[8], const char * item_names[4][9],
@@ -274,30 +274,30 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
         attrs[index] = (rand() % 5) + 2;
     }
     attrs[4] = 1;
-    prices[1][1] = 20;
-    prices[1][2] = 16;
-    prices[1][3] = 12;
-    prices[1][4] = 15;
+    prices[0][0] = 20;
+    prices[0][1] = 16;
+    prices[0][2] = 12;
+    prices[0][3] = 15;
+    prices[0][4] = 8;
+    prices[0][5] = 10;
+    prices[0][6] = 8;
+    prices[0][7] = 6;
+    prices[1][0] = 18;
+    prices[1][1] = 15;
+    prices[1][2] = 9;
+    prices[1][3] = 9;
+    prices[1][4] = 14;
     prices[1][5] = 8;
-    prices[1][6] = 10;
-    prices[1][7] = 8;
-    prices[1][8] = 6;
-    prices[2][1] = 18;
-    prices[2][2] = 15;
-    prices[2][3] = 9;
-    prices[2][4] = 9;
-    prices[2][5] = 14;
-    prices[2][6] = 8;
+    prices[1][6] = 6;
+    prices[1][7] = 6;
+    prices[2][0] = 20;
+    prices[2][1] = 15;
+    prices[2][2] = 14;
+    prices[2][3] = 12;
+    prices[2][4] = 10;
+    prices[2][5] = 8;
+    prices[2][6] = 6;
     prices[2][7] = 6;
-    prices[2][8] = 6;
-    prices[3][1] = 20;
-    prices[3][2] = 15;
-    prices[3][3] = 14;
-    prices[3][4] = 12;
-    prices[3][5] = 10;
-    prices[3][6] = 8;
-    prices[3][7] = 6;
-    prices[3][8] = 6;
     item_batch_size[1] = 5;
     item_batch_size[2] = 4;
     item_batch_size[3] = 3;
@@ -389,7 +389,7 @@ int main(int argc, char *argv[]) {
         index, stage, selected_row, attr_points, item_num, num_item_types,
         offer, selected_row_pos, top_row, screen_cols, col, row,
         item_for_class;
-    int attrs[8], prices[4][9];
+    int attrs[8], prices[3][8];
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
@@ -476,7 +476,7 @@ int main(int argc, char *argv[]) {
             message, stage_names
         );
         draw_main(
-            screen, &top_row, screen_cols, prices[stage - 1] + 1,
+            screen, &top_row, screen_cols, prices[stage - 2],
             item_names[stage - 1] + 1
         );
         tab(screen->cursor, 1, selected_row_pos);
@@ -495,7 +495,7 @@ int main(int argc, char *argv[]) {
             max_accepted_discount = 0;
             offer = 0;
             if (*pressed_key == ';') {
-                offer = prices[stage - 1][selected_row];
+                offer = prices[stage - 2][selected_row - 1];
                 buy_item(
                     max_accepted_discount, stage, &gold_coins, selected_row,
                     item_num, offer, item_for_class, prices, inventory,

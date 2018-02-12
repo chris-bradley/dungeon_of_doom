@@ -164,16 +164,16 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
     print_left$_b$(screen, screen_cols);
 }
 
-void draw_header(screen_t *screen, int stage, int num_points, int *top_row,
+void draw_header(screen_t *screen, int num_points, int *top_row,
                  int screen_cols, const char * point_label, char * message,
-                 const char * stage_names[4]) {
+                 const char * stage_name) {
     int background_colour, border_colour, rows;
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
-    print_text(screen, stage_names[stage]);
+    print_text(screen, stage_name);
     background_colour = 2;
     border_colour = 3;
     *top_row = 1;
@@ -414,8 +414,8 @@ int main(int argc, char *argv[]) {
     stage = 0;
     point_label = "POINTS";
     draw_header(
-        screen, stage, attr_points, &top_row, screen_cols, point_label,
-        message, stage_names
+        screen, attr_points, &top_row, screen_cols, point_label, message,
+        stage_names[stage]
     );
     draw_main(screen, &top_row, screen_cols, attrs, attr_names);
     selected_row = 0;
@@ -472,8 +472,8 @@ int main(int argc, char *argv[]) {
         selected_row_pos = top_row + 1;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
-            screen, stage, gold_coins, &top_row, screen_cols, point_label,
-            message, stage_names
+            screen, gold_coins, &top_row, screen_cols, point_label, message,
+            stage_names[stage]
         );
         draw_main(
             screen, &top_row, screen_cols, prices[stage - 1],

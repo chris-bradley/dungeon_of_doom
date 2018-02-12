@@ -98,16 +98,14 @@ void buy_item(item_t *item, int max_accepted_discount, int *gold_coins,
     }
 }
 
-void make_offer_for_item(screen_t *screen, int max_accepted_discount,
-                         character_class_t *character_class, int stage,
-                         int *gold_coins, int selected_row, int item_num,
-                         int prices[3][8], int * inventory,
-                         const char * point_label, char * message,
-                         int item_batch_size[23],
+void make_offer_for_item(screen_t *screen, item_t *item,
+                         int max_accepted_discount,
+                         character_class_t *character_class, int *gold_coins,
+                         int * inventory, const char * point_label,
+                         char * message,
                          const char * item_char_class_avail[24]) {
     int item_for_class, offer, col, row;
     char * typed_string = NULL;
-    item_t * item = (item_t *) malloc(sizeof(item_t));
     strcpy(message, "");
     update_header(screen, *gold_coins, point_label, message);
     tab(screen->cursor, 2, 2);
@@ -119,16 +117,12 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     offer = atoi(typed_string);
     free(typed_string);
     item_for_class = can_class_buy_item(
-        character_class, item_num, message, item_char_class_avail
+        character_class, item->id, message, item_char_class_avail
     );
-    item->id = item_num;
-    item->price = prices[stage - 1][selected_row];
-    item->batch_size = item_batch_size[item_num];
     buy_item(
         item, max_accepted_discount, gold_coins, offer, item_for_class,
         inventory, message
     );
-    free(item);
 }
 
 void get_input_and_select_row(screen_t *screen, int interface_num_rows,
@@ -518,12 +512,16 @@ int main(int argc, char *argv[]) {
             }
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
+                item = (item_t *) malloc(sizeof(item_t));
+                item->id = item_num;
+                item->price = prices[stage - 1][selected_row];
+                item->batch_size = item_batch_size[item_num];
                 make_offer_for_item(
-                    screen, max_accepted_discount, character_class, stage,
-                    &gold_coins, selected_row, item_num, prices, inventory,
-                    point_label, message, item_batch_size,
+                    screen, item, max_accepted_discount, character_class,
+                    &gold_coins, inventory, point_label, message,
                     item_char_class_avail
                 );
+                free(item);
             }
             update_header(screen, gold_coins, point_label, message);
         } while (*pressed_key != ' ');

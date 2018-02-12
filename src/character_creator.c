@@ -6,6 +6,12 @@ typedef struct {
     const char * name;
 } character_class_t;
 
+typedef struct {
+    int id;
+    int price;
+    int batch_size;
+} item_t;
+
 char * get_player_string(screen_t *screen, int col, int row) {
     int ind = 0;
     char pressed_key, * typed_string;
@@ -67,20 +73,18 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
     return 0;
 }
 
-void buy_item(int max_accepted_discount, int stage, int *gold_coins,
-              int selected_row, int item_num, int offer, int item_for_class,
-              int prices[3][8], int * inventory, char * message,
-              int item_batch_size[23]) {
+void buy_item(item_t *item, int max_accepted_discount, int *gold_coins,
+              int offer, int item_for_class, int * inventory, char * message) {
     int price;
-    if (inventory[item_num] > 0 && item_num < 22) {
+    if (inventory[item->id] > 0 && item->id < 22) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
-        price = prices[stage - 1][selected_row] - max_accepted_discount;
+        price = item->price - max_accepted_discount;
         if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else {
             if (offer >= price && item_for_class == 1) {
-                inventory[item_num] += item_batch_size[item_num];
+                inventory[item->id] += item->batch_size;
                 *gold_coins -= price;
                 strcpy(message, "TIS YOURS!");
             }
@@ -103,6 +107,7 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
                          const char * item_char_class_avail[24]) {
     int item_for_class, offer, col, row;
     char * typed_string = NULL;
+    item_t * item = (item_t *) malloc(sizeof(item_t));
     strcpy(message, "");
     update_header(screen, *gold_coins, point_label, message);
     tab(screen->cursor, 2, 2);
@@ -116,10 +121,14 @@ void make_offer_for_item(screen_t *screen, int max_accepted_discount,
     item_for_class = can_class_buy_item(
         character_class, item_num, message, item_char_class_avail
     );
+    item->id = item_num;
+    item->price = prices[stage - 1][selected_row];
+    item->batch_size = item_batch_size[item_num];
     buy_item(
-        max_accepted_discount, stage, gold_coins, selected_row, item_num,
-        offer, item_for_class, prices, inventory, message, item_batch_size
+        item, max_accepted_discount, gold_coins, offer, item_for_class,
+        inventory, message
     );
+    free(item);
 }
 
 void get_input_and_select_row(screen_t *screen, int interface_num_rows,
@@ -400,6 +409,7 @@ int main(int argc, char *argv[]) {
          * character_name;
     int item_batch_size[23];
     const char * attr_names[8], * item_names[3][8], * stage_names[4];
+    item_t * item;
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs, prices, &inventory, character_classes, &message,
@@ -496,11 +506,15 @@ int main(int argc, char *argv[]) {
             offer = 0;
             if (*pressed_key == ';') {
                 offer = prices[stage - 1][selected_row];
+                item = (item_t *) malloc(sizeof(item_t));
+                item->id = item_num;
+                item->price = prices[stage - 1][selected_row];
+                item->batch_size = item_batch_size[item_num];
                 buy_item(
-                    max_accepted_discount, stage, &gold_coins, selected_row,
-                    item_num, offer, item_for_class, prices, inventory,
-                    message, item_batch_size
+                    item, max_accepted_discount, &gold_coins, offer,
+                    item_for_class, inventory, message
                 );
+                free(item);
             }
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;

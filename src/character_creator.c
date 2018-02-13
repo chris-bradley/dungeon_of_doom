@@ -12,6 +12,10 @@ typedef struct {
     int batch_size;
 } item_t;
 
+typedef struct {
+    const char * name;
+} store_t;
+
 char * get_player_string(screen_t *screen, int col, int row) {
     int ind = 0;
     char pressed_key, * typed_string;
@@ -234,7 +238,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                character_class_t * character_classes[5], char ** message,
                int item_batch_size[23], const char * item_char_class_avail[24],
                const char * attr_names[8], const char * item_names[3][8],
-               const char * stage_names[4]) {
+               const char * stage_names[1], store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
     *interface_num_rows = 8;
@@ -343,7 +347,6 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[0][5] = "FLAIL";
     item_names[0][6] = "DAGGER";
     item_names[0][7] = "GAUNTLET";
-    stage_names[1] = "ARMOURY";
     item_names[1][0] = "HEAVY ARMOUR";
     item_names[1][1] = "CHAIN ARMOUR";
     item_names[1][2] = "LEATHER ARMOUR";
@@ -352,7 +355,6 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[1][5] = "HEADPIECE";
     item_names[1][6] = "SHIELD";
     item_names[1][7] = "TORCH";
-    stage_names[2] = "ACCOUTREMENTS";
     item_names[2][0] = "NECRONOMICON";
     item_names[2][1] = "SCROLLS";
     item_names[2][2] = "RING";
@@ -361,7 +363,9 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[2][5] = "CLOAK";
     item_names[2][6] = "HEALING SALVE";
     item_names[2][7] = "POTIONS";
-    stage_names[3] = "EMPORIUM";
+    stores[0] = (store_t) {.name="ARMOURY"};
+    stores[1] = (store_t) {.name="ACCOUTREMENTS"};
+    stores[2] = (store_t) {.name="EMPORIUM"};
 
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
@@ -406,19 +410,20 @@ int main(int argc, char *argv[]) {
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
+    store_t stores[3];
 
     const char * point_label,
                * item_char_class_avail[24];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     int item_batch_size[23];
-    const char * attr_names[8], * item_names[3][8], * stage_names[4];
+    const char * attr_names[8], * item_names[3][8], * stage_names[1];
     item_t * item;
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs, prices, &inventory, character_classes, &message,
         item_batch_size, item_char_class_avail, attr_names, item_names,
-        stage_names
+        stage_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -487,7 +492,7 @@ int main(int argc, char *argv[]) {
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
             screen, gold_coins, &top_row, screen_cols, point_label, message,
-            stage_names[stage]
+            stores[stage - 1].name
         );
         draw_main(
             screen, &top_row, screen_cols, prices[stage - 1],

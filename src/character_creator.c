@@ -14,6 +14,7 @@ typedef struct {
 
 typedef struct {
     const char * name;
+    item_t items[8];
 } store_t;
 
 char * get_player_string(screen_t *screen, int col, int row) {
@@ -234,9 +235,8 @@ void init_platform_vars(int *screen_cols) {
 
 void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs[8],
-               int prices[3][8], int ** inventory,
-               character_class_t * character_classes[5], char ** message,
-               int item_batch_size[23], const char * item_char_class_avail[24],
+               int ** inventory, character_class_t * character_classes[5],
+               char ** message, const char * item_char_class_avail[24],
                const char * attr_names[8], const char * item_names[3][8],
                store_t stores[3]) {
     int index;
@@ -281,54 +281,6 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
         attrs[index] = (rand() % 5) + 2;
     }
     attrs[4] = 1;
-    prices[0][0] = 20;
-    prices[0][1] = 16;
-    prices[0][2] = 12;
-    prices[0][3] = 15;
-    prices[0][4] = 8;
-    prices[0][5] = 10;
-    prices[0][6] = 8;
-    prices[0][7] = 6;
-    prices[1][0] = 18;
-    prices[1][1] = 15;
-    prices[1][2] = 9;
-    prices[1][3] = 9;
-    prices[1][4] = 14;
-    prices[1][5] = 8;
-    prices[1][6] = 6;
-    prices[1][7] = 6;
-    prices[2][0] = 20;
-    prices[2][1] = 15;
-    prices[2][2] = 14;
-    prices[2][3] = 12;
-    prices[2][4] = 10;
-    prices[2][5] = 8;
-    prices[2][6] = 6;
-    prices[2][7] = 6;
-    item_batch_size[0] = 5;
-    item_batch_size[1] = 4;
-    item_batch_size[2] = 3;
-    item_batch_size[3] = 3;
-    item_batch_size[4] = 2;
-    item_batch_size[5] = 2;
-    item_batch_size[6] = 1;
-    item_batch_size[7] = 1;
-    item_batch_size[8] = 5;
-    item_batch_size[9] = 4;
-    item_batch_size[10] = 3;
-    item_batch_size[11] = 1;
-    item_batch_size[12] = 2;
-    item_batch_size[13] = 1;
-    item_batch_size[14] = 3;
-    item_batch_size[15] = 1;
-    item_batch_size[16] = 4;
-    item_batch_size[17] = 3;
-    item_batch_size[18] = 2;
-    item_batch_size[19] = 2;
-    item_batch_size[20] = 3;
-    item_batch_size[21] = 1;
-    item_batch_size[22] = 1;
-    item_batch_size[23] = 1;
 
     attr_names[0] = "STRENGTH";
     attr_names[1] = "VITALITY";
@@ -362,9 +314,141 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     item_names[2][5] = "CLOAK";
     item_names[2][6] = "HEALING SALVE";
     item_names[2][7] = "POTIONS";
-    stores[0] = (store_t) {.name="ARMOURY"};
-    stores[1] = (store_t) {.name="ACCOUTREMENTS"};
-    stores[2] = (store_t) {.name="EMPORIUM"};
+    stores[0] = (store_t) {
+        .name="ARMOURY",
+        .items={
+            (item_t) {
+                .id=0,
+                .price=20,
+                .batch_size=5
+            },
+            (item_t) {
+                .id=1,
+                .price=16,
+                .batch_size=4
+            },
+            (item_t) {
+                .id=2,
+                .price=12,
+                .batch_size=3
+            },
+            (item_t) {
+                .id=3,
+                .price=15,
+                .batch_size=3
+            },
+            (item_t) {
+                .id=4,
+                .price=8,
+                .batch_size=2
+            },
+            (item_t) {
+                .id=5,
+                .price=10,
+                .batch_size=2
+            },
+            (item_t) {
+                .id=6,
+                .price=8,
+                .batch_size=1
+            },
+            (item_t) {
+                .id=7,
+                .price=6,
+                .batch_size=1
+            }
+        }
+    };
+    stores[1] = (store_t) {
+        .name="ACCOUTREMENTS",
+        .items={
+            (item_t) {
+                .id=8,
+                .price=18,
+                .batch_size=5
+            },
+            (item_t) {
+                .id=9,
+                .price=15,
+                .batch_size=4
+            },
+            (item_t) {
+                .id=10,
+                .price=9,
+                .batch_size=3
+            },
+            (item_t) {
+                .id=11,
+                .price=9,
+                .batch_size=1
+            },
+            (item_t) {
+                .id=12,
+                .price=14,
+                .batch_size=2
+            },
+            (item_t) {
+                .id=13,
+                .price=8,
+                .batch_size=1
+            },
+            (item_t) {
+                .id=14,
+                .price=6,
+                .batch_size=3
+            },
+            (item_t) {
+                .id=15,
+                .price=6,
+                .batch_size=1
+            }
+        }
+    };
+    stores[2] = (store_t) {
+        .name="EMPORIUM",
+        .items={
+            (item_t) {
+                .id=16,
+                .price=20,
+                .batch_size=4
+            },
+            (item_t) {
+                .id=17,
+                .price=15,
+                .batch_size=3
+            },
+            (item_t) {
+                .id=18,
+                .price=14,
+                .batch_size=2
+            },
+            (item_t) {
+                .id=19,
+                .price=12,
+                .batch_size=2
+            },
+            (item_t) {
+                .id=20,
+                .price=10,
+                .batch_size=3
+            },
+            (item_t) {
+                .id=21,
+                .price=8,
+                .batch_size=1
+            },
+            (item_t) {
+                .id=22,
+                .price=6,
+                .batch_size=1
+            },
+            (item_t) {
+                .id=23,
+                .price=6,
+                .batch_size=1
+            }
+        }
+    };
 
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
@@ -402,26 +486,25 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, interface_num_rows, gold_coins,
-        index, store_ind, selected_row, attr_points, item_num, num_item_types,
-        offer, selected_row_pos, top_row, screen_cols, col, row,
-        item_for_class;
-    int attrs[8], prices[3][8];
+        index, store_ind, selected_row, attr_points, num_item_types, offer,
+        selected_row_pos, top_row, screen_cols, col, row, item_for_class;
+    int attrs[8];
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
     store_t stores[3];
+    int store_prices[8];
 
     const char * point_label,
                * item_char_class_avail[24];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
-    int item_batch_size[23];
     const char * attr_names[8], * item_names[3][8];
     item_t * item;
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
-        &screen_cols, attrs, prices, &inventory, character_classes, &message,
-        item_batch_size, item_char_class_avail, attr_names, item_names, stores
+        &screen_cols, attrs, &inventory, character_classes, &message,
+        item_char_class_avail, attr_names, item_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -491,9 +574,11 @@ int main(int argc, char *argv[]) {
             screen, gold_coins, &top_row, screen_cols, point_label, message,
             stores[store_ind].name
         );
+        for (index = 0; index < 8; index += 1) {
+            store_prices[index] = stores[store_ind].items[index].price;
+        }
         draw_main(
-            screen, &top_row, screen_cols, prices[store_ind],
-            item_names[store_ind]
+            screen, &top_row, screen_cols, store_prices, item_names[store_ind]
         );
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");
@@ -503,41 +588,27 @@ int main(int argc, char *argv[]) {
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
-            item_num = 8 * store_ind + selected_row;
+            item = &stores[store_ind].items[selected_row];
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
-                character_class, item_num, message, item_char_class_avail
+                character_class, item->id, message, item_char_class_avail
             );
             max_accepted_discount = 0;
             offer = 0;
             if (*pressed_key == ';') {
-                offer = prices[store_ind][selected_row];
-                item = (item_t *) malloc(sizeof(item_t));
-                *item = (item_t) {
-                    .id = item_num,
-                    .price = prices[store_ind][selected_row],
-                    .batch_size = item_batch_size[item_num]
-                };
+                offer = item->price;
                 buy_item(
                     item, max_accepted_discount, &gold_coins, offer,
                     item_for_class, inventory, message
                 );
-                free(item);
             }
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
-                item = (item_t *) malloc(sizeof(item_t));
-                *item = (item_t) {
-                    .id = item_num,
-                    .price = prices[store_ind][selected_row],
-                    .batch_size = item_batch_size[item_num]
-                };
                 make_offer_for_item(
                     screen, item, max_accepted_discount, character_class,
                     &gold_coins, inventory, point_label, message,
                     item_char_class_avail
                 );
-                free(item);
             }
             update_header(screen, gold_coins, point_label, message);
         } while (*pressed_key != ' ');

@@ -366,16 +366,26 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
     }
-    character_classes[0]->id = 0;
-    character_classes[0]->name = "WANDERER";
-    character_classes[1]->id = 1;
-    character_classes[1]->name = "CLERIC";
-    character_classes[2]->id = 2;
-    character_classes[2]->name = "MAGE";
-    character_classes[3]->id = 3;
-    character_classes[3]->name = "WARRIOR";
-    character_classes[4]->id = 4;
-    character_classes[4]->name = "BARBARIAN";
+    *(character_classes[0]) = (character_class_t) {
+        .id = 0,
+        .name = "WANDERER"
+    };
+    *(character_classes[1]) = (character_class_t) {
+        .id = 1,
+        .name = "CLERIC"
+    };
+    *(character_classes[2]) = (character_class_t) {
+        .id = 2,
+        .name = "MAGE"
+    };
+    *(character_classes[3]) = (character_class_t) {
+        .id = 3,
+        .name = "WARRIOR"
+    };
+    *(character_classes[4]) = (character_class_t) {
+        .id = 4,
+        .name = "BARBARIAN"
+    };
     *attr_points = 3 + (rand() % 5);
     *gold_coins = 120 + (rand() % 60);
     *message = (char *) malloc(sizeof(char) * 40);
@@ -501,9 +511,11 @@ int main(int argc, char *argv[]) {
             if (*pressed_key == ';') {
                 offer = prices[stage - 1][selected_row];
                 item = (item_t *) malloc(sizeof(item_t));
-                item->id = item_num;
-                item->price = prices[stage - 1][selected_row];
-                item->batch_size = item_batch_size[item_num];
+                *item = (item_t) {
+                    .id = item_num,
+                    .price = prices[stage - 1][selected_row],
+                    .batch_size = item_batch_size[item_num]
+                };
                 buy_item(
                     item, max_accepted_discount, &gold_coins, offer,
                     item_for_class, inventory, message
@@ -513,9 +525,11 @@ int main(int argc, char *argv[]) {
             if (*pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 item = (item_t *) malloc(sizeof(item_t));
-                item->id = item_num;
-                item->price = prices[stage - 1][selected_row];
-                item->batch_size = item_batch_size[item_num];
+                *item = (item_t) {
+                    .id = item_num,
+                    .price = prices[stage - 1][selected_row],
+                    .batch_size = item_batch_size[item_num]
+                };
                 make_offer_for_item(
                     screen, item, max_accepted_discount, character_class,
                     &gold_coins, inventory, point_label, message,

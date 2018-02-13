@@ -8,6 +8,7 @@ typedef struct {
 
 typedef struct {
     int id;
+    const char * name;
     int price;
     int batch_size;
 } item_t;
@@ -237,8 +238,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs[8],
                int ** inventory, character_class_t * character_classes[5],
                char ** message, const char * item_char_class_avail[24],
-               const char * attr_names[8], const char * item_names[3][8],
-               store_t stores[3]) {
+               const char * attr_names[8], store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
     *interface_num_rows = 8;
@@ -290,70 +290,54 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     attr_names[5] = "LUCK";
     attr_names[6] = "AURA";
     attr_names[7] = "MORALITY";
-    item_names[0][0] = "2 HAND SWORD";
-    item_names[0][1] = "BROADSWORD";
-    item_names[0][2] = "SHORTSWORD";
-    item_names[0][3] = "AXE";
-    item_names[0][4] = "MACE";
-    item_names[0][5] = "FLAIL";
-    item_names[0][6] = "DAGGER";
-    item_names[0][7] = "GAUNTLET";
-    item_names[1][0] = "HEAVY ARMOUR";
-    item_names[1][1] = "CHAIN ARMOUR";
-    item_names[1][2] = "LEATHER ARMOUR";
-    item_names[1][3] = "HEAVY ROBE";
-    item_names[1][4] = "GOLD HELMET";
-    item_names[1][5] = "HEADPIECE";
-    item_names[1][6] = "SHIELD";
-    item_names[1][7] = "TORCH";
-    item_names[2][0] = "NECRONOMICON";
-    item_names[2][1] = "SCROLLS";
-    item_names[2][2] = "RING";
-    item_names[2][3] = "MYSTIC AMULET";
-    item_names[2][4] = "SASH";
-    item_names[2][5] = "CLOAK";
-    item_names[2][6] = "HEALING SALVE";
-    item_names[2][7] = "POTIONS";
     stores[0] = (store_t) {
         .name="ARMOURY",
         .items={
             (item_t) {
                 .id=0,
+                .name="2 HAND SWORD",
                 .price=20,
                 .batch_size=5
             },
             (item_t) {
                 .id=1,
+                .name="BROADSWORD",
                 .price=16,
                 .batch_size=4
             },
             (item_t) {
                 .id=2,
+                .name="SHORTSWORD",
                 .price=12,
                 .batch_size=3
             },
             (item_t) {
                 .id=3,
+                .name="AXE",
                 .price=15,
                 .batch_size=3
             },
             (item_t) {
                 .id=4,
+                .name="MACE",
                 .price=8,
                 .batch_size=2
             },
             (item_t) {
                 .id=5,
+                .name="FLAIL",
                 .price=10,
                 .batch_size=2
             },
             (item_t) {
                 .id=6,
+                .name="DAGGER",
                 .price=8,
                 .batch_size=1
             },
             (item_t) {
                 .id=7,
+                .name="GAUNTLET",
                 .price=6,
                 .batch_size=1
             }
@@ -364,41 +348,49 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
         .items={
             (item_t) {
                 .id=8,
+                .name="HEAVY ARMOUR",
                 .price=18,
                 .batch_size=5
             },
             (item_t) {
                 .id=9,
+                .name="CHAIN ARMOUR",
                 .price=15,
                 .batch_size=4
             },
             (item_t) {
                 .id=10,
+                .name="LEATHER ARMOUR",
                 .price=9,
                 .batch_size=3
             },
             (item_t) {
                 .id=11,
+                .name="HEAVY ROBE",
                 .price=9,
                 .batch_size=1
             },
             (item_t) {
                 .id=12,
+                .name="GOLD HELMET",
                 .price=14,
                 .batch_size=2
             },
             (item_t) {
                 .id=13,
+                .name="HEADPIECE",
                 .price=8,
                 .batch_size=1
             },
             (item_t) {
                 .id=14,
+                .name="SHIELD",
                 .price=6,
                 .batch_size=3
             },
             (item_t) {
                 .id=15,
+                .name="TORCH",
                 .price=6,
                 .batch_size=1
             }
@@ -409,41 +401,49 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
         .items={
             (item_t) {
                 .id=16,
+                .name="NECRONOMICON",
                 .price=20,
                 .batch_size=4
             },
             (item_t) {
                 .id=17,
+                .name="SCROLLS",
                 .price=15,
                 .batch_size=3
             },
             (item_t) {
                 .id=18,
+                .name="RING",
                 .price=14,
                 .batch_size=2
             },
             (item_t) {
                 .id=19,
+                .name="MYSTIC AMULET",
                 .price=12,
                 .batch_size=2
             },
             (item_t) {
                 .id=20,
+                .name="SASH",
                 .price=10,
                 .batch_size=3
             },
             (item_t) {
                 .id=21,
+                .name="CLOAK",
                 .price=8,
                 .batch_size=1
             },
             (item_t) {
                 .id=22,
+                .name="HEALING SALVE",
                 .price=6,
                 .batch_size=1
             },
             (item_t) {
                 .id=23,
+                .name="POTIONS",
                 .price=6,
                 .batch_size=1
             }
@@ -499,12 +499,13 @@ int main(int argc, char *argv[]) {
                * item_char_class_avail[24];
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
-    const char * attr_names[8], * item_names[3][8];
+    const char * attr_names[8];
+    const char * store_item_names[8];
     item_t * item;
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs, &inventory, character_classes, &message,
-        item_char_class_avail, attr_names, item_names, stores
+        item_char_class_avail, attr_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -575,10 +576,12 @@ int main(int argc, char *argv[]) {
             stores[store_ind].name
         );
         for (index = 0; index < 8; index += 1) {
-            store_prices[index] = stores[store_ind].items[index].price;
+            item = &stores[store_ind].items[index];
+            store_prices[index] = item->price;
+            store_item_names[index] = item->name;
         }
         draw_main(
-            screen, &top_row, screen_cols, store_prices, item_names[store_ind]
+            screen, &top_row, screen_cols, store_prices, store_item_names
         );
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");

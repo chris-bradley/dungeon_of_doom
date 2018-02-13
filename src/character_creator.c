@@ -402,7 +402,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, interface_num_rows, gold_coins,
-        index, stage, selected_row, attr_points, item_num, num_item_types,
+        index, store_ind, selected_row, attr_points, item_num, num_item_types,
         offer, selected_row_pos, top_row, screen_cols, col, row,
         item_for_class;
     int attrs[8], prices[3][8];
@@ -428,7 +428,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     paper(screen->cursor, 0);
-    stage = 0;
     point_label = "POINTS";
     draw_header(
         screen, attr_points, &top_row, screen_cols, point_label, message,
@@ -484,17 +483,17 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
     } while (*pressed_key != ' ');
     point_label = "GOLD COINS";
-    for (stage = 1; stage < 4; stage += 1) {
+    for (store_ind = 0; store_ind < 3; store_ind += 1) {
         selected_row = 0;
         selected_row_pos = top_row + 1;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
             screen, gold_coins, &top_row, screen_cols, point_label, message,
-            stores[stage - 1].name
+            stores[store_ind].name
         );
         draw_main(
-            screen, &top_row, screen_cols, prices[stage - 1],
-            item_names[stage - 1]
+            screen, &top_row, screen_cols, prices[store_ind],
+            item_names[store_ind]
         );
         tab(screen->cursor, 1, selected_row_pos);
         print_text(screen, ">");
@@ -504,7 +503,7 @@ int main(int argc, char *argv[]) {
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
-            item_num = 8 * (stage - 1) + selected_row;
+            item_num = 8 * store_ind + selected_row;
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
                 character_class, item_num, message, item_char_class_avail
@@ -512,11 +511,11 @@ int main(int argc, char *argv[]) {
             max_accepted_discount = 0;
             offer = 0;
             if (*pressed_key == ';') {
-                offer = prices[stage - 1][selected_row];
+                offer = prices[store_ind][selected_row];
                 item = (item_t *) malloc(sizeof(item_t));
                 *item = (item_t) {
                     .id = item_num,
-                    .price = prices[stage - 1][selected_row],
+                    .price = prices[store_ind][selected_row],
                     .batch_size = item_batch_size[item_num]
                 };
                 buy_item(
@@ -530,7 +529,7 @@ int main(int argc, char *argv[]) {
                 item = (item_t *) malloc(sizeof(item_t));
                 *item = (item_t) {
                     .id = item_num,
-                    .price = prices[stage - 1][selected_row],
+                    .price = prices[store_ind][selected_row],
                     .batch_size = item_batch_size[item_num]
                 };
                 make_offer_for_item(

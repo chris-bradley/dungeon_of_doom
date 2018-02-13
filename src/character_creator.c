@@ -238,7 +238,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
                character_class_t * character_classes[5], char ** message,
                int item_batch_size[23], const char * item_char_class_avail[24],
                const char * attr_names[8], const char * item_names[3][8],
-               const char * stage_names[1], store_t stores[3]) {
+               store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
     *interface_num_rows = 8;
@@ -338,7 +338,6 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
     attr_names[5] = "LUCK";
     attr_names[6] = "AURA";
     attr_names[7] = "MORALITY";
-    stage_names[0] = "CHARACTER CREATION";
     item_names[0][0] = "2 HAND SWORD";
     item_names[0][1] = "BROADSWORD";
     item_names[0][2] = "SHORTSWORD";
@@ -417,13 +416,12 @@ int main(int argc, char *argv[]) {
     char * pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     int item_batch_size[23];
-    const char * attr_names[8], * item_names[3][8], * stage_names[1];
+    const char * attr_names[8], * item_names[3][8];
     item_t * item;
     init_vars(
         &char_base, &interface_num_rows, &gold_coins, &attr_points,
         &screen_cols, attrs, prices, &inventory, character_classes, &message,
-        item_batch_size, item_char_class_avail, attr_names, item_names,
-        stage_names, stores
+        item_batch_size, item_char_class_avail, attr_names, item_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -434,7 +432,7 @@ int main(int argc, char *argv[]) {
     point_label = "POINTS";
     draw_header(
         screen, attr_points, &top_row, screen_cols, point_label, message,
-        stage_names[stage]
+        "CHARACTER CREATION"
     );
     draw_main(screen, &top_row, screen_cols, attrs, attr_names);
     selected_row = 0;

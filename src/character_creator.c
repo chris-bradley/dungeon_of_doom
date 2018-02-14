@@ -106,16 +106,14 @@ void make_offer_for_item(screen_t *screen, item_t *item,
                          int * inventory, const char * point_label,
                          char * message,
                          const char * item_char_class_avail[24]) {
-    int item_for_class, offer, col, row;
+    int item_for_class, offer;
     char * typed_string = NULL;
     strcpy(message, "");
     update_header(screen, *gold_coins, point_label, message);
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
     SDL_RenderPresent(screen->ren);
-    col = 14;
-    row = 2;
-    typed_string = get_player_string(screen, col, row);
+    typed_string = get_player_string(screen, 14, 2);
     offer = atoi(typed_string);
     free(typed_string);
     item_for_class = can_class_buy_item(

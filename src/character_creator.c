@@ -126,7 +126,9 @@ void make_offer_for_item(screen_t *screen, item_t *item,
 }
 
 void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
-                int *selected_row_pos, int top_row, char pressed_key) {
+                int top_row, char pressed_key) {
+    int *selected_row_pos = (int *) malloc(sizeof(char));
+    *selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     tab(screen->cursor, 1, *selected_row_pos);
@@ -140,6 +142,7 @@ void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
     *selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
     tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, ">");
+    free(selected_row_pos);
 }
 
 void draw_box(screen_t *screen, int screen_cols, int background_colour,
@@ -479,7 +482,7 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, interface_num_rows, gold_coins,
         index, store_ind, selected_row, attr_points, num_item_types, offer,
-        selected_row_pos, top_row, screen_cols, col, row, item_for_class;
+        top_row, screen_cols, col, row, item_for_class;
     int attrs[8];
     int * inventory;
     character_class_t *character_class;
@@ -511,21 +514,18 @@ int main(int argc, char *argv[]) {
     );
     draw_main(screen, &top_row, screen_cols, attrs, attr_names);
     selected_row = 0;
-    selected_row_pos = top_row + 1;
-    tab(screen->cursor, 1, selected_row_pos);
+    tab(screen->cursor, 1, top_row + 1);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
     do {
         pressed_key = inkey$();
         select_row(
-            screen, interface_num_rows, &selected_row, &selected_row_pos,
-            top_row, pressed_key
+            screen, interface_num_rows, &selected_row, top_row, pressed_key
         );
         while (selected_row == 4) {
             pressed_key = inkey$();
             select_row(
-                screen, interface_num_rows, &selected_row, &selected_row_pos,
-                top_row, pressed_key
+                screen, interface_num_rows, &selected_row, top_row, pressed_key
             );
         }
         if (pressed_key == ';' && attr_points > 0) {
@@ -558,7 +558,6 @@ int main(int argc, char *argv[]) {
     point_label = "GOLD COINS";
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
         selected_row = 0;
-        selected_row_pos = top_row + 1;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
             screen, gold_coins, &top_row, screen_cols, point_label, message,
@@ -572,14 +571,13 @@ int main(int argc, char *argv[]) {
         draw_main(
             screen, &top_row, screen_cols, store_prices, store_item_names
         );
-        tab(screen->cursor, 1, selected_row_pos);
+        tab(screen->cursor, 1, top_row + 1);
         print_text(screen, ">");
         do {
             SDL_RenderPresent(screen->ren);
             pressed_key = inkey$();
             select_row(
-                screen, interface_num_rows, &selected_row, &selected_row_pos,
-                top_row, pressed_key
+                screen, interface_num_rows, &selected_row, top_row, pressed_key
             );
             item = &stores[store_ind].items[selected_row];
             strcpy(message, "MAKE YOUR CHOICE");

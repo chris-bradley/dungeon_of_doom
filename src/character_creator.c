@@ -126,15 +126,15 @@ void make_offer_for_item(screen_t *screen, item_t *item,
 }
 
 void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
-                int *selected_row_pos, int top_row, char * pressed_key) {
+                int *selected_row_pos, int top_row, char pressed_key) {
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     tab(screen->cursor, 1, *selected_row_pos);
     print_text(screen, " ");
-    if (*pressed_key == 'a' && *selected_row > 0) {
+    if (pressed_key == 'a' && *selected_row > 0) {
         *selected_row -= 1;
     }
-    else if (*pressed_key == 'z' && *selected_row < interface_num_rows - 1) {
+    else if (pressed_key == 'z' && *selected_row < interface_num_rows - 1) {
         *selected_row += 1;
     }
     *selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
@@ -489,7 +489,7 @@ int main(int argc, char *argv[]) {
 
     const char * point_label,
                * item_char_class_avail[24];
-    char * pressed_key, * typed_string = NULL, * message = NULL,
+    char pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     const char * attr_names[8];
     const char * store_item_names[8];
@@ -515,30 +515,25 @@ int main(int argc, char *argv[]) {
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
-    pressed_key = (char *) malloc(sizeof(char));
-    if (pressed_key == NULL) {
-        fprintf(stderr, "pressed_key is NULL!\n");
-        exit(1);
-    }
     do {
-        *pressed_key = inkey$();
+        pressed_key = inkey$();
         select_row(
             screen, interface_num_rows, &selected_row, &selected_row_pos,
             top_row, pressed_key
         );
         while (selected_row == 4) {
-            *pressed_key = inkey$();
+            pressed_key = inkey$();
             select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
         }
-        if (*pressed_key == ';' && attr_points > 0) {
+        if (pressed_key == ';' && attr_points > 0) {
             attrs[selected_row] += 1;
             attr_points -= 1;
             update_main(screen, top_row, attrs, attr_names);
         }
-        if (*pressed_key == '-' && attrs[selected_row] > 1) {
+        if (pressed_key == '-' && attrs[selected_row] > 1) {
             attrs[selected_row] -=1;
             attr_points += 1;
             update_main(screen, top_row, attrs, attr_names);
@@ -559,7 +554,7 @@ int main(int argc, char *argv[]) {
         strcpy(message, character_class->name);
         update_header(screen, attr_points, point_label, message);
         SDL_RenderPresent(screen->ren);
-    } while (*pressed_key != ' ');
+    } while (pressed_key != ' ');
     point_label = "GOLD COINS";
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
         selected_row = 0;
@@ -581,7 +576,7 @@ int main(int argc, char *argv[]) {
         print_text(screen, ">");
         do {
             SDL_RenderPresent(screen->ren);
-            *pressed_key = inkey$();
+            pressed_key = inkey$();
             select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
@@ -593,14 +588,14 @@ int main(int argc, char *argv[]) {
             );
             max_accepted_discount = 0;
             offer = 0;
-            if (*pressed_key == ';') {
+            if (pressed_key == ';') {
                 offer = item->price;
                 buy_item(
                     item, max_accepted_discount, &gold_coins, offer,
                     item_for_class, inventory, message
                 );
             }
-            if (*pressed_key == '-') {
+            if (pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
                     screen, item, max_accepted_discount, character_class,
@@ -609,7 +604,7 @@ int main(int argc, char *argv[]) {
                 );
             }
             update_header(screen, gold_coins, point_label, message);
-        } while (*pressed_key != ' ');
+        } while (pressed_key != ' ');
     }
     character_name = (char *) malloc(sizeof(char) * 40);
     if (character_name == NULL) {
@@ -685,7 +680,6 @@ int main(int argc, char *argv[]) {
     }
     free(save_file_contents);
 
-    free(pressed_key);
     free(message);
     free(character_name);
     free(inventory);

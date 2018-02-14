@@ -88,13 +88,12 @@ void buy_item(item_t *item, int max_accepted_discount, int *gold_coins,
         price = item->price - max_accepted_discount;
         if (*gold_coins < price) {
             strcpy(message, "YOU CANNOT AFFORD");
-        } else {
-            if (offer >= price && item_for_class == 1) {
+        } else if (item_for_class == 1) {
+            if (offer >= price)  {
                 inventory[item->id] += item->batch_size;
                 *gold_coins -= offer;
                 strcpy(message, "TIS YOURS!");
-            }
-            if (offer < price && item_for_class == 1) {
+            } else {
                 strcpy(message, "OFFER REJECTED");
             }
         }

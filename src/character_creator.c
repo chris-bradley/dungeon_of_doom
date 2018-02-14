@@ -91,7 +91,7 @@ void buy_item(item_t *item, int max_accepted_discount, int *gold_coins,
         } else {
             if (offer >= price && item_for_class == 1) {
                 inventory[item->id] += item->batch_size;
-                *gold_coins -= price;
+                *gold_coins -= offer;
                 strcpy(message, "TIS YOURS!");
             }
             if (offer < price && item_for_class == 1) {

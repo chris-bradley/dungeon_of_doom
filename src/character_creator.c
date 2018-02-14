@@ -97,9 +97,6 @@ void buy_item(item_t *item, int max_accepted_discount, int *gold_coins,
             if (offer < price && item_for_class == 1) {
                 strcpy(message, "OFFER REJECTED");
             }
-            if (*gold_coins < 0) {
-                *gold_coins = 0;
-            }
         }
     }
 }

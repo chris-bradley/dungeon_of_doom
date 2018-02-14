@@ -127,11 +127,10 @@ void make_offer_for_item(screen_t *screen, item_t *item,
 
 void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
                 int top_row, char pressed_key) {
-    int *selected_row_pos = (int *) malloc(sizeof(char));
-    *selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
+    int selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
-    tab(screen->cursor, 1, *selected_row_pos);
+    tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, " ");
     if (pressed_key == 'a' && *selected_row > 0) {
         *selected_row -= 1;
@@ -139,10 +138,9 @@ void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
     else if (pressed_key == 'z' && *selected_row < interface_num_rows - 1) {
         *selected_row += 1;
     }
-    *selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
-    tab(screen->cursor, 1, *selected_row_pos);
+    selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
+    tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
-    free(selected_row_pos);
 }
 
 void draw_box(screen_t *screen, int screen_cols, int background_colour,

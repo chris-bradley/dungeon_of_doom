@@ -125,10 +125,8 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     );
 }
 
-void get_input_and_select_row(screen_t *screen, int interface_num_rows,
-                              int *selected_row, int *selected_row_pos,
-                              int top_row, char * pressed_key) {
-    *pressed_key = inkey$();
+void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
+                int *selected_row_pos, int top_row, char * pressed_key) {
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     tab(screen->cursor, 1, *selected_row_pos);
@@ -523,12 +521,14 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     do {
-        get_input_and_select_row(
+        *pressed_key = inkey$();
+        select_row(
             screen, interface_num_rows, &selected_row, &selected_row_pos,
             top_row, pressed_key
         );
         while (selected_row == 4) {
-            get_input_and_select_row(
+            *pressed_key = inkey$();
+            select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );
@@ -581,7 +581,8 @@ int main(int argc, char *argv[]) {
         print_text(screen, ">");
         do {
             SDL_RenderPresent(screen->ren);
-            get_input_and_select_row(
+            *pressed_key = inkey$();
+            select_row(
                 screen, interface_num_rows, &selected_row, &selected_row_pos,
                 top_row, pressed_key
             );

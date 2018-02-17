@@ -2,6 +2,7 @@
 #include "dungeon_lib.h"
 
 typedef struct {
+    int selected_row;
     int num_rows;
 } main_menu_t;
 
@@ -129,20 +130,23 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     );
 }
 
-void select_row(screen_t *screen, main_menu_t *main_menu, int *selected_row,
-                int top_row, char pressed_key) {
-    int selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
+void select_row(screen_t *screen, main_menu_t *main_menu, int top_row,
+                char pressed_key) {
+    int selected_row_pos = (main_menu->selected_row + 1) * 2 + top_row - 1;
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, " ");
-    if (pressed_key == 'a' && *selected_row > 0) {
-        *selected_row -= 1;
+    if (pressed_key == 'a' && main_menu->selected_row > 0) {
+        main_menu->selected_row -= 1;
     }
-    else if (pressed_key == 'z' && *selected_row < main_menu->num_rows - 1) {
-        *selected_row += 1;
+    else if (
+            pressed_key == 'z' &&
+            main_menu->selected_row < main_menu->num_rows - 1
+    ) {
+        main_menu->selected_row += 1;
     }
-    selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
+    selected_row_pos = (main_menu->selected_row + 1) * 2 + top_row - 1;
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
 }
@@ -484,8 +488,8 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, gold_coins, index, store_ind,
-        selected_row, attr_points, num_item_types, offer, top_row, screen_cols,
-        col, row, item_for_class;
+        attr_points, num_item_types, offer, top_row, screen_cols, col, row,
+        item_for_class;
     int attrs[8];
     int * inventory;
     character_class_t *character_class;
@@ -517,24 +521,24 @@ int main(int argc, char *argv[]) {
         "CHARACTER CREATION"
     );
     draw_main(screen, &top_row, screen_cols, attrs, attr_names);
-    selected_row = 0;
+    main_menu->selected_row = 0;
     tab(screen->cursor, 1, top_row + 1);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
     do {
         pressed_key = inkey$();
-        select_row(screen, main_menu, &selected_row, top_row, pressed_key);
-        while (selected_row == 4) {
+        select_row(screen, main_menu, top_row, pressed_key);
+        while (main_menu->selected_row == 4) {
             pressed_key = inkey$();
-            select_row(screen, main_menu, &selected_row, top_row, pressed_key);
+            select_row(screen, main_menu, top_row, pressed_key);
         }
         if (pressed_key == ';' && attr_points > 0) {
-            attrs[selected_row] += 1;
+            attrs[main_menu->selected_row] += 1;
             attr_points -= 1;
             update_main(screen, top_row, attrs, attr_names);
         }
-        if (pressed_key == '-' && attrs[selected_row] > 1) {
-            attrs[selected_row] -=1;
+        if (pressed_key == '-' && attrs[main_menu->selected_row] > 1) {
+            attrs[main_menu->selected_row] -=1;
             attr_points += 1;
             update_main(screen, top_row, attrs, attr_names);
         }
@@ -557,7 +561,7 @@ int main(int argc, char *argv[]) {
     } while (pressed_key != ' ');
     point_label = "GOLD COINS";
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
-        selected_row = 0;
+        main_menu->selected_row = 0;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
             screen, gold_coins, &top_row, screen_cols, point_label, message,
@@ -576,8 +580,8 @@ int main(int argc, char *argv[]) {
         do {
             SDL_RenderPresent(screen->ren);
             pressed_key = inkey$();
-            select_row(screen, main_menu, &selected_row, top_row, pressed_key);
-            item = &stores[store_ind].items[selected_row];
+            select_row(screen, main_menu, top_row, pressed_key);
+            item = &stores[store_ind].items[main_menu->selected_row];
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
                 character_class, item->id, message, item_char_class_avail

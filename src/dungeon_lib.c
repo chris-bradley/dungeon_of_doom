@@ -85,14 +85,14 @@ void print_text(screen_t *screen, const char *message) {
     TTF_CloseFont(c64_font);
 }
 
-void ink(cursor_t *cursor, int c_num) {
+void ink(cursor_t *cursor, enum ColourNum c_num) {
     cursor->foreground_colour[0] = colours[c_num][0];
     cursor->foreground_colour[1] = colours[c_num][1];
     cursor->foreground_colour[2] = colours[c_num][2];
     cursor->foreground_colour[3] = colours[c_num][3];
 }
 
-void paper(cursor_t *cursor, int c_num) {
+void paper(cursor_t *cursor, enum ColourNum c_num) {
     cursor->background_colour[0] = colours[c_num][0];
     cursor->background_colour[1] = colours[c_num][1];
     cursor->background_colour[2] = colours[c_num][2];

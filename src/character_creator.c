@@ -50,8 +50,8 @@ char * get_player_string(screen_t *screen, int col, int row) {
 
 void update_header(screen_t *screen, int num_points, const char * point_label,
                    char * message) {
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     tab(screen->cursor, 2, 2);
     print_left$_b$(screen, 17);
     tab(screen->cursor, 2, 2);
@@ -134,8 +134,8 @@ void make_offer_for_item(screen_t *screen, item_t *item,
 void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     int selected_row_pos =
         main_menu->selected_row * 2 + main_menu->top_row + 1;
-    paper(screen->cursor, 3);
-    ink(screen->cursor, 1);
+    paper(screen->cursor, WHITE);
+    ink(screen->cursor, RED);
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, " ");
     if (pressed_key == 'a' && main_menu->selected_row > 0) {
@@ -153,8 +153,9 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     print_text(screen, ">");
 }
 
-void draw_box(screen_t *screen, int screen_cols, int background_colour,
-              int border_colour, int top_row, int rows) {
+void draw_box(screen_t *screen, int screen_cols,
+              enum ColourNum background_colour,
+              enum ColourNum border_colour, int top_row, int rows) {
     int index;
     tab(screen->cursor, 0, top_row);
     paper(screen->cursor, border_colour);
@@ -179,15 +180,16 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
 void draw_header(screen_t *screen, int num_points, int screen_cols,
                  const char * point_label, char * message,
                  const char * stage_name) {
-    int background_colour, border_colour, rows, top_row;
-    paper(screen->cursor, 0);
-    ink(screen->cursor, 2);
+    enum ColourNum background_colour, border_colour;
+    int rows, top_row;
+    paper(screen->cursor, BLACK);
+    ink(screen->cursor, YELLOW);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
     print_text(screen, stage_name);
-    background_colour = 2;
-    border_colour = 3;
+    background_colour = YELLOW;
+    border_colour = WHITE;
     top_row = 1;
     rows = 2;
     draw_box(
@@ -199,8 +201,8 @@ void draw_header(screen_t *screen, int num_points, int screen_cols,
 void update_main(screen_t *screen, main_menu_t *main_menu, int values[8],
                  const char * labels[8]) {
     int index, row;
-    paper(screen->cursor, 3);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, WHITE);
+    ink(screen->cursor, BLACK);
     for (index = 0; index < 8; index += 1) {
         row = main_menu->top_row + index * 2 + 1;
         tab(screen->cursor, 15, row);
@@ -222,9 +224,10 @@ void update_main(screen_t *screen, main_menu_t *main_menu, int values[8],
 
 void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols,
                int values[8], const char * labels[8]) {
-    int background_colour, border_colour, rows;
-    background_colour = 3;
-    border_colour = 2;
+    enum ColourNum background_colour, border_colour;
+    int rows;
+    background_colour = WHITE;
+    border_colour = YELLOW;
     main_menu->top_row = 5;
     rows = 15;
     draw_box(
@@ -517,7 +520,7 @@ int main(int argc, char *argv[]) {
     if (init_screen(&screen) < 0) {
         return 1;
     }
-    paper(screen->cursor, 0);
+    paper(screen->cursor, BLACK);
     point_label = "POINTS";
     draw_header(
         screen, attr_points, screen_cols, point_label, message,

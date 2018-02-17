@@ -3,7 +3,8 @@
 
 void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
                   int CO);
-void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW);
+void lines280_350(screen_t *screen, enum ColourNum BG, enum ColourNum FG,
+                  int T, int L, int LW);
 void lines360_420(screen_t *screen, int W, const char * H$[10]);
 void lines430_440();
 void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
@@ -32,10 +33,10 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280
-    lines280_350(screen, 2, 1, 0, 3, W - 3);
+    lines280_350(screen, YELLOW, RED, 0, 3, W - 3);
     // 40 paper 2:ink 0
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     // 50 PRINT tab(1,1);"LEVEL GENERATOR"
     tab(screen->cursor, 1, 1);
     print_text(screen, "LEVEL GENERATOR");
@@ -54,7 +55,7 @@ int main(int argc, char *argv[]) {
     print_text(screen, "PRESS H FOR HELP");
 
     // 80 LET BG=3:LET FG=2:LET T=5:LET L=15:LET LW=15:GOSUB 280
-    lines280_350(screen, 3, 2, 5, 15, 15);
+    lines280_350(screen, WHITE, YELLOW, 5, 15, 15);
     SDL_RenderPresent(screen->ren);
 
     // 90 LET X=1:LET Y=1
@@ -87,8 +88,8 @@ int main(int argc, char *argv[]) {
             lines230_270(X, Y, R, I$, IX, IY, CO);
         }
         // 170 paper 3:ink 0
-        paper(screen->cursor, 3);
-        ink(screen->cursor, 0);
+        paper(screen->cursor, WHITE);
+        ink(screen->cursor, BLACK);
         // 180 PRINT tab(X,Y+5);CHR$(OS);
         tab(screen->cursor, X, Y + 5);
         char os_input[2];
@@ -134,7 +135,8 @@ void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
 }
 
 
-void lines280_350(screen_t *screen, int BG, int FG, int T, int L, int LW) {
+void lines280_350(screen_t *screen, enum ColourNum BG, enum ColourNum FG,
+                  int T, int L, int LW) {
     // 280 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
     // 290 paper FG:PRINT LEFT$(B$,LW+2)
@@ -169,8 +171,8 @@ void lines360_420(screen_t *screen, int W, const char * H$[10]) {
 
     int H;
     // 360 paper 1:ink 3
-    paper(screen->cursor, 1);
-    ink(screen->cursor, 3);
+    paper(screen->cursor, RED);
+    ink(screen->cursor, WHITE);
     // 370 FOR H = 1 TO 10
     for (H = 0; H < 10; H += 1) {
     // 380 PRINT tab(1,4);H$(H);:GOSUB 430
@@ -185,7 +187,7 @@ void lines360_420(screen_t *screen, int W, const char * H$[10]) {
     // 400 NEXT H
     }
     // 410 ink 3
-    ink(screen->cursor, 3);
+    ink(screen->cursor, WHITE);
     // 420 RETURN
 }
 

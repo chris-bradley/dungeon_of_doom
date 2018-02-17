@@ -14,11 +14,18 @@ typedef struct {
     int zoom;
 } screen_t;
 
+enum ColourNum {
+    BLACK = 0,
+    RED = 1,
+    YELLOW = 2,
+    WHITE = 3
+};
+
 void print_text(screen_t *screen, const char *message);
 
-void ink(cursor_t *cursor, int c_num);
+void ink(cursor_t *cursor, enum ColourNum c_num);
 
-void paper(cursor_t *cursor, int c_num);
+void paper(cursor_t *cursor, enum ColourNum c_num);
 
 void print_left$_b$(screen_t *screen, int width);
 

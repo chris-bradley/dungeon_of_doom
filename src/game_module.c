@@ -109,8 +109,8 @@ int main(int argc, char *argv[]) {
     if (init_screen(&screen) < 0) {
         return 1;
     }
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     clear_screen(screen);
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
@@ -334,8 +334,8 @@ void lines360_365(int J) {
 
 void lines370_420(screen_t *screen, char *I$, char *M$, int W) {
     // 370 paper 2:ink 0
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     // 380 PRINT tab(0,5):M$;
     tab(screen->cursor, 0, 5);
     print_text(screen, M$);
@@ -354,8 +354,8 @@ void lines440_470(screen_t *screen, char *M$, int W);
 
 void lines430_430(screen_t *screen, char *M$, int W) {
     // 430 paper 2:ink 0
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     lines440_470(screen, M$, W);
 }
 
@@ -377,8 +377,8 @@ void lines440_470(screen_t *screen, char *M$, int W) {
 void lines480_560(screen_t *screen, double *F, char *F$, int NF, int NX,
                   int NY) {
     // 480 paper 1:ink 3
-    paper(screen->cursor, 1);
-    ink(screen->cursor, 3);
+    paper(screen->cursor, RED);
+    ink(screen->cursor, WHITE);
     // 490 PRINT tab(NX,NY+5);MID$(F$,NF,1);
     tab(screen->cursor, NX, NY + 5);
     char * outstring = (char *) malloc(sizeof(char) * 40);
@@ -390,8 +390,8 @@ void lines480_560(screen_t *screen, double *F, char *F$, int NF, int NX,
     outstring[1] = 0;
     print_text(screen, outstring);
     // 500 paper 2:ink 0
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     // 510 PRINT tab(16,8);INT(F(1));" ";
     tab(screen->cursor, 16, 8);
     sprintf(outstring, "%i ", (int) F[1]);
@@ -423,8 +423,8 @@ void lines570_610(screen_t *screen, int C2, int C7, int *DX, int *LX, int *LY,
                   int *M_, int *MS, int *MT, int *MV, int **R, int X, int Y) {
     int RM;
     // 570 paper 1:ink 2
-    paper(screen->cursor, 1);
-    ink(screen->cursor, 2);
+    paper(screen->cursor, RED);
+    ink(screen->cursor, YELLOW);
     // 580 LET RM=R(X,Y):PRINT tab(X,Y+5);CHR$(RM);
     RM = R[X][Y];
     tab(screen->cursor, X, Y + 5);
@@ -716,8 +716,8 @@ void lines990_1130(screen_t *screen, int C0, int C2, int C7, int *DX,
     char I$, * M$;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(screen, F, F$, NF, *NX, *NY);
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     // 1000 PRINT tab(0,10);"YOU MAY USE MAGICKS";
     tab(screen->cursor, 0, 1);
     print_text(screen, "YOU MAY USE MAGICKS");
@@ -986,8 +986,8 @@ void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int GC,
                     int *MS, int *NF, int NX, int NY, int *T, int TR) {
     int I, J, N;
     // 1550 paper 2:ink 1
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 1);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, RED);
     // 1560 PRINT tab(0,1);" THY QUEST IS OVER! "
     tab(screen->cursor, 0, 1);
     print_text(screen, " THY QUEST IS OVER! ");
@@ -1591,34 +1591,34 @@ void lines2500_2780(int *AS, int *C0, int *C1, int *C2, int *C3, int *C4,
 void lines2790_2920(screen_t *screen, char *C$, int W) {
     int I;
     // 2790 paper 1:CLS
-    paper(screen->cursor, 1);
+    paper(screen->cursor, RED);
     clear_screen(screen);
     tab(screen->cursor, 1, 1);
     // 2800 paper 3:ink 0
-    paper(screen->cursor, 3);
-    ink(screen->cursor, 0);
+    paper(screen->cursor, WHITE);
+    ink(screen->cursor, BLACK);
     // 2810 PRINT C$;LEFT$(B$(W-LEN(C$));
     print_text(screen, C$);
     print_left$_b$(screen, W - strlen(C$));
     // 2820 paper 2:ink 3
-    paper(screen->cursor, 2);
-    ink(screen->cursor, 3);
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, WHITE);
     // 2830 FOR I=1 TO 5:PRINT LEFT$(B$,W);:NEXT I
     for (I = 1; I <= 5; I += 1) {
         print_left$_b$(screen, W);
         newline(screen->cursor);
     }
     // 2840 paper 0:ink 1
-    paper(screen->cursor, 0);
-    ink(screen->cursor, 1);
+    paper(screen->cursor, BLACK);
+    ink(screen->cursor, RED);
     // 2850 FOR I=1 TO 15:PRINT tab(1,5+I);LEFT$(B$,15);:NEXT I
     for (I = 1; I <= 15; I += 1) {
         tab(screen->cursor, 1, 5 + I);
         print_left$_b$(screen, 15);
     }
     // 2860 paper 1:ink 3
-    paper(screen->cursor, 1);
-    ink(screen->cursor, 3);
+    paper(screen->cursor, RED);
+    ink(screen->cursor, WHITE);
     // 2870 PRINT tab(16,7);"STR";
     tab(screen->cursor, 16, 7);
     print_text(screen, "STR");

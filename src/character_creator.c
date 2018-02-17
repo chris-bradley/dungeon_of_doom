@@ -2,6 +2,10 @@
 #include "dungeon_lib.h"
 
 typedef struct {
+    int num_rows;
+} main_menu_t;
+
+typedef struct {
     int id;
     const char * name;
 } character_class_t;
@@ -125,7 +129,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     );
 }
 
-void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
+void select_row(screen_t *screen, main_menu_t *main_menu, int *selected_row,
                 int top_row, char pressed_key) {
     int selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
     paper(screen->cursor, 3);
@@ -135,7 +139,7 @@ void select_row(screen_t *screen, int interface_num_rows, int *selected_row,
     if (pressed_key == 'a' && *selected_row > 0) {
         *selected_row -= 1;
     }
-    else if (pressed_key == 'z' && *selected_row < interface_num_rows - 1) {
+    else if (pressed_key == 'z' && *selected_row < main_menu->num_rows - 1) {
         *selected_row += 1;
     }
     selected_row_pos = (*selected_row + 1) * 2 + top_row - 1;
@@ -227,22 +231,23 @@ void init_platform_vars(int *screen_cols) {
     *screen_cols = 40;
 }
 
-void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
+void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
                int *attr_points, int *screen_cols, int attrs[8],
                int ** inventory, character_class_t * character_classes[5],
                char ** message, const char * item_char_class_avail[24],
                const char * attr_names[8], store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
-    *interface_num_rows = 8;
-    *inventory = (int *) malloc(sizeof(int) * (*interface_num_rows) * 3);
+    *main_menu = (main_menu_t *) malloc(sizeof(main_menu));
+    (*main_menu)->num_rows = 8;
+    *inventory = (int *) malloc(sizeof(int) * ((*main_menu)->num_rows) * 3);
     if (*inventory == NULL) {
         fprintf(stderr, "*inventory is NULL!\n");
         exit(1);
     }
 
     int i;
-    for (i = 0; i < *interface_num_rows * 3; i += 1) {
+    for (i = 0; i < (*main_menu)->num_rows * 3; i += 1) {
         (*inventory)[i] = 0;
     }
 
@@ -478,14 +483,15 @@ void init_vars(int *char_base, int *interface_num_rows, int *gold_coins,
 }
 
 int main(int argc, char *argv[]) {
-    int char_base, max_accepted_discount, interface_num_rows, gold_coins,
-        index, store_ind, selected_row, attr_points, num_item_types, offer,
-        top_row, screen_cols, col, row, item_for_class;
+    int char_base, max_accepted_discount, gold_coins, index, store_ind,
+        selected_row, attr_points, num_item_types, offer, top_row, screen_cols,
+        col, row, item_for_class;
     int attrs[8];
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
     store_t stores[3];
+    main_menu_t *main_menu;
     int store_prices[8];
 
     const char * point_label,
@@ -496,9 +502,9 @@ int main(int argc, char *argv[]) {
     const char * store_item_names[8];
     item_t * item;
     init_vars(
-        &char_base, &interface_num_rows, &gold_coins, &attr_points,
-        &screen_cols, attrs, &inventory, character_classes, &message,
-        item_char_class_avail, attr_names, stores
+        &char_base, &main_menu, &gold_coins, &attr_points, &screen_cols,
+        attrs, &inventory, character_classes, &message, item_char_class_avail,
+        attr_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -517,14 +523,10 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(screen->ren);
     do {
         pressed_key = inkey$();
-        select_row(
-            screen, interface_num_rows, &selected_row, top_row, pressed_key
-        );
+        select_row(screen, main_menu, &selected_row, top_row, pressed_key);
         while (selected_row == 4) {
             pressed_key = inkey$();
-            select_row(
-                screen, interface_num_rows, &selected_row, top_row, pressed_key
-            );
+            select_row(screen, main_menu, &selected_row, top_row, pressed_key);
         }
         if (pressed_key == ';' && attr_points > 0) {
             attrs[selected_row] += 1;
@@ -574,9 +576,7 @@ int main(int argc, char *argv[]) {
         do {
             SDL_RenderPresent(screen->ren);
             pressed_key = inkey$();
-            select_row(
-                screen, interface_num_rows, &selected_row, top_row, pressed_key
-            );
+            select_row(screen, main_menu, &selected_row, top_row, pressed_key);
             item = &stores[store_ind].items[selected_row];
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
@@ -625,7 +625,7 @@ int main(int argc, char *argv[]) {
     print_text(screen, "ONE MOMENT PLEASE");
     SDL_RenderPresent(screen->ren);
     tab(screen->cursor, 1, 3);
-    num_item_types = interface_num_rows * 3;
+    num_item_types = main_menu->num_rows * 3;
 
     char * save_file_contents = (char *) malloc(
         sizeof(char) * (
@@ -679,6 +679,7 @@ int main(int argc, char *argv[]) {
     free(message);
     free(character_name);
     free(inventory);
+    free(main_menu);
 
     for (index = 1; index < 6; index += 1) {
         free(character_classes[index]);

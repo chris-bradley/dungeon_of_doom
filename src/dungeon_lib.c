@@ -3,7 +3,7 @@
 
 #include "dungeon_lib.h"
 
-uint8_t BG$ [4][4] = {
+uint8_t colours [4][4] = {
     {0x00, 0x00, 0x00, 0},
     {0x88, 0x20, 0x00, 0},
     {0xf0, 0xe8, 0x58, 0},
@@ -86,17 +86,17 @@ void print_text(screen_t *screen, const char *message) {
 }
 
 void ink(cursor_t *cursor, int c_num) {
-    cursor->foreground_colour[0] = BG$[c_num][0];
-    cursor->foreground_colour[1] = BG$[c_num][1];
-    cursor->foreground_colour[2] = BG$[c_num][2];
-    cursor->foreground_colour[3] = BG$[c_num][3];
+    cursor->foreground_colour[0] = colours[c_num][0];
+    cursor->foreground_colour[1] = colours[c_num][1];
+    cursor->foreground_colour[2] = colours[c_num][2];
+    cursor->foreground_colour[3] = colours[c_num][3];
 }
 
 void paper(cursor_t *cursor, int c_num) {
-    cursor->background_colour[0] = BG$[c_num][0];
-    cursor->background_colour[1] = BG$[c_num][1];
-    cursor->background_colour[2] = BG$[c_num][2];
-    cursor->background_colour[3] = BG$[c_num][3];
+    cursor->background_colour[0] = colours[c_num][0];
+    cursor->background_colour[1] = colours[c_num][1];
+    cursor->background_colour[2] = colours[c_num][2];
+    cursor->background_colour[3] = colours[c_num][3];
 }
 
 void print_left$_b$(screen_t *screen, int width) {

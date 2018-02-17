@@ -176,10 +176,10 @@ void draw_box(screen_t *screen, int screen_cols, int background_colour,
     print_left$_b$(screen, screen_cols);
 }
 
-void draw_header(screen_t *screen, int num_points, int *top_row,
-                 int screen_cols, const char * point_label, char * message,
+void draw_header(screen_t *screen, int num_points, int screen_cols,
+                 const char * point_label, char * message,
                  const char * stage_name) {
-    int background_colour, border_colour, rows;
+    int background_colour, border_colour, rows, top_row;
     paper(screen->cursor, 0);
     ink(screen->cursor, 2);
     tab(screen->cursor, 0, 0);
@@ -188,10 +188,10 @@ void draw_header(screen_t *screen, int num_points, int *top_row,
     print_text(screen, stage_name);
     background_colour = 2;
     border_colour = 3;
-    *top_row = 1;
+    top_row = 1;
     rows = 2;
     draw_box(
-        screen, screen_cols, background_colour, border_colour, *top_row, rows
+        screen, screen_cols, background_colour, border_colour, top_row, rows
     );
     update_header(screen, num_points, point_label, message);
 }
@@ -220,16 +220,16 @@ void update_main(screen_t *screen, main_menu_t *main_menu, int values[8],
     }
 }
 
-void draw_main(screen_t *screen, main_menu_t *main_menu, int *top_row,
-               int screen_cols, int values[8], const char * labels[8]) {
+void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols,
+               int values[8], const char * labels[8]) {
     int background_colour, border_colour, rows;
     background_colour = 3;
     border_colour = 2;
     main_menu->top_row = 5;
-    *top_row = 5;
     rows = 15;
     draw_box(
-        screen, screen_cols, background_colour, border_colour, *top_row, rows
+        screen, screen_cols, background_colour, border_colour,
+        main_menu->top_row, rows
     );
     update_main(screen, main_menu, values, labels);
 }
@@ -491,7 +491,7 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
 
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, gold_coins, index, store_ind,
-        attr_points, num_item_types, offer, top_row, screen_cols, col, row,
+        attr_points, num_item_types, offer, screen_cols, col, row,
         item_for_class;
     int attrs[8];
     int * inventory;
@@ -520,11 +520,11 @@ int main(int argc, char *argv[]) {
     paper(screen->cursor, 0);
     point_label = "POINTS";
     draw_header(
-        screen, attr_points, &top_row, screen_cols, point_label, message,
+        screen, attr_points, screen_cols, point_label, message,
         "CHARACTER CREATION"
     );
     main_menu->selected_row = 0;
-    draw_main(screen, main_menu, &top_row, screen_cols, attrs, attr_names);
+    draw_main(screen, main_menu, screen_cols, attrs, attr_names);
     tab(screen->cursor, 1, main_menu->top_row + 1);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
@@ -567,7 +567,7 @@ int main(int argc, char *argv[]) {
         main_menu->selected_row = 0;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
-            screen, gold_coins, &top_row, screen_cols, point_label, message,
+            screen, gold_coins, screen_cols, point_label, message,
             stores[store_ind].name
         );
         for (index = 0; index < 8; index += 1) {
@@ -576,8 +576,7 @@ int main(int argc, char *argv[]) {
             store_item_names[index] = item->name;
         }
         draw_main(
-            screen, main_menu, &top_row, screen_cols, store_prices,
-            store_item_names
+            screen, main_menu, screen_cols, store_prices, store_item_names
         );
         tab(screen->cursor, 1, main_menu->top_row + 1);
         print_text(screen, ">");

@@ -4,6 +4,7 @@
 typedef struct {
     int selected_row;
     int num_rows;
+    int top_row;
 } main_menu_t;
 
 typedef struct {
@@ -130,9 +131,9 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     );
 }
 
-void select_row(screen_t *screen, main_menu_t *main_menu, int top_row,
-                char pressed_key) {
-    int selected_row_pos = (main_menu->selected_row + 1) * 2 + top_row - 1;
+void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
+    int selected_row_pos =
+        (main_menu->selected_row + 1) * 2 + main_menu->top_row - 1;
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     tab(screen->cursor, 1, selected_row_pos);
@@ -146,7 +147,8 @@ void select_row(screen_t *screen, main_menu_t *main_menu, int top_row,
     ) {
         main_menu->selected_row += 1;
     }
-    selected_row_pos = (main_menu->selected_row + 1) * 2 + top_row - 1;
+    selected_row_pos =
+        (main_menu->selected_row + 1) * 2 + main_menu->top_row - 1;
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
 }
@@ -194,13 +196,13 @@ void draw_header(screen_t *screen, int num_points, int *top_row,
     update_header(screen, num_points, point_label, message);
 }
 
-void update_main(screen_t *screen, int top_row, int values[8],
+void update_main(screen_t *screen, main_menu_t *main_menu, int values[8],
                  const char * labels[8]) {
     int index, row;
     paper(screen->cursor, 3);
     ink(screen->cursor, 0);
     for (index = 0; index < 8; index += 1) {
-        row = top_row + index * 2 + 1;
+        row = main_menu->top_row + index * 2 + 1;
         tab(screen->cursor, 15, row);
         print_left$_b$(screen, 5);
 
@@ -218,17 +220,18 @@ void update_main(screen_t *screen, int top_row, int values[8],
     }
 }
 
-void draw_main(screen_t *screen, int *top_row, int screen_cols, int values[8],
-               const char * labels[8]) {
+void draw_main(screen_t *screen, main_menu_t *main_menu, int *top_row,
+               int screen_cols, int values[8], const char * labels[8]) {
     int background_colour, border_colour, rows;
     background_colour = 3;
     border_colour = 2;
+    main_menu->top_row = 5;
     *top_row = 5;
     rows = 15;
     draw_box(
         screen, screen_cols, background_colour, border_colour, *top_row, rows
     );
-    update_main(screen, *top_row, values, labels);
+    update_main(screen, main_menu, values, labels);
 }
 
 void init_platform_vars(int *screen_cols) {
@@ -520,27 +523,27 @@ int main(int argc, char *argv[]) {
         screen, attr_points, &top_row, screen_cols, point_label, message,
         "CHARACTER CREATION"
     );
-    draw_main(screen, &top_row, screen_cols, attrs, attr_names);
     main_menu->selected_row = 0;
-    tab(screen->cursor, 1, top_row + 1);
+    draw_main(screen, main_menu, &top_row, screen_cols, attrs, attr_names);
+    tab(screen->cursor, 1, main_menu->top_row + 1);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
     do {
         pressed_key = inkey$();
-        select_row(screen, main_menu, top_row, pressed_key);
+        select_row(screen, main_menu, pressed_key);
         while (main_menu->selected_row == 4) {
             pressed_key = inkey$();
-            select_row(screen, main_menu, top_row, pressed_key);
+            select_row(screen, main_menu, pressed_key);
         }
         if (pressed_key == ';' && attr_points > 0) {
             attrs[main_menu->selected_row] += 1;
             attr_points -= 1;
-            update_main(screen, top_row, attrs, attr_names);
+            update_main(screen, main_menu, attrs, attr_names);
         }
         if (pressed_key == '-' && attrs[main_menu->selected_row] > 1) {
             attrs[main_menu->selected_row] -=1;
             attr_points += 1;
-            update_main(screen, top_row, attrs, attr_names);
+            update_main(screen, main_menu, attrs, attr_names);
         }
         character_class = character_classes[0];
         if (attrs[3] > 6 && attrs[7] > 7) {
@@ -573,14 +576,15 @@ int main(int argc, char *argv[]) {
             store_item_names[index] = item->name;
         }
         draw_main(
-            screen, &top_row, screen_cols, store_prices, store_item_names
+            screen, main_menu, &top_row, screen_cols, store_prices,
+            store_item_names
         );
-        tab(screen->cursor, 1, top_row + 1);
+        tab(screen->cursor, 1, main_menu->top_row + 1);
         print_text(screen, ">");
         do {
             SDL_RenderPresent(screen->ren);
             pressed_key = inkey$();
-            select_row(screen, main_menu, top_row, pressed_key);
+            select_row(screen, main_menu, pressed_key);
             item = &stores[store_ind].items[main_menu->selected_row];
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(

@@ -133,7 +133,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
 
 void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     int selected_row_pos =
-        (main_menu->selected_row + 1) * 2 + main_menu->top_row - 1;
+        main_menu->selected_row * 2 + main_menu->top_row + 1;
     paper(screen->cursor, 3);
     ink(screen->cursor, 1);
     tab(screen->cursor, 1, selected_row_pos);
@@ -148,7 +148,7 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
         main_menu->selected_row += 1;
     }
     selected_row_pos =
-        (main_menu->selected_row + 1) * 2 + main_menu->top_row - 1;
+        main_menu->selected_row * 2 + main_menu->top_row + 1;
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
 }

@@ -32,6 +32,7 @@ typedef struct {
 
 typedef struct {
     int attrs[8];
+    int gold;
 } character_t;
 
 char * get_player_string(screen_t *screen, int col, int row) {
@@ -95,19 +96,19 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
     return 0;
 }
 
-void buy_item(item_t *item, int max_accepted_discount, int *gold_coins,
+void buy_item(item_t *item, character_t *character, int max_accepted_discount,
               int offer, int item_for_class, int * inventory, char * message) {
     int price;
     if (inventory[item->id] > 0 && item->id < 22) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
         price = item->price - max_accepted_discount;
-        if (*gold_coins < price) {
+        if (character->gold < price) {
             strcpy(message, "YOU CANNOT AFFORD");
         } else if (item_for_class == 1) {
             if (offer >= price)  {
                 inventory[item->id] += item->batch_size;
-                *gold_coins -= offer;
+                character->gold -= offer;
                 strcpy(message, "TIS YOURS!");
             } else {
                 strcpy(message, "OFFER REJECTED");
@@ -118,14 +119,14 @@ void buy_item(item_t *item, int max_accepted_discount, int *gold_coins,
 
 void make_offer_for_item(screen_t *screen, item_t *item,
                          int max_accepted_discount,
-                         character_class_t *character_class, int *gold_coins,
-                         int * inventory, const char * point_label,
-                         char * message,
+                         character_class_t *character_class,
+                         character_t *character, int * inventory,
+                         const char * point_label, char * message,
                          const char * item_char_class_avail[24]) {
     int item_for_class, offer;
     char * typed_string = NULL;
     strcpy(message, "");
-    update_header(screen, *gold_coins, point_label, message);
+    update_header(screen, character->gold, point_label, message);
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
     SDL_RenderPresent(screen->ren);
@@ -136,7 +137,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
         character_class, item->id, message, item_char_class_avail
     );
     buy_item(
-        item, max_accepted_discount, gold_coins, offer, item_for_class,
+        item, character, max_accepted_discount, offer, item_for_class,
         inventory, message
     );
 }
@@ -211,10 +212,10 @@ void init_platform_vars(int *screen_cols) {
     *screen_cols = 40;
 }
 
-void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
-               int *attr_points, int *screen_cols, character_t **character,
-               int ** inventory, character_class_t * character_classes[5],
-               char ** message, const char * item_char_class_avail[24],
+void init_vars(int *char_base, main_menu_t **main_menu, int *attr_points,
+               int *screen_cols, character_t **character, int ** inventory,
+               character_class_t * character_classes[5], char ** message,
+               const char * item_char_class_avail[24],
                const char * attr_names[8], store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
@@ -453,7 +454,7 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
         .name = "BARBARIAN"
     };
     *attr_points = 3 + (rand() % 5);
-    *gold_coins = 120 + (rand() % 60);
+    (*character)->gold = 120 + (rand() % 60);
     *message = (char *) malloc(sizeof(char) * 40);
     if (*message == NULL) {
         fprintf(stderr, "message is NULL!\n");
@@ -464,9 +465,8 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
 }
 
 int main(int argc, char *argv[]) {
-    int char_base, max_accepted_discount, gold_coins, index, store_ind,
-        attr_points, num_item_types, offer, screen_cols, col, row,
-        item_for_class;
+    int char_base, max_accepted_discount, index, store_ind, attr_points,
+        num_item_types, offer, screen_cols, col, row, item_for_class;
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
@@ -480,9 +480,9 @@ int main(int argc, char *argv[]) {
     const char * attr_names[8];
     item_t * item;
     init_vars(
-        &char_base, &main_menu, &gold_coins, &attr_points, &screen_cols,
-        &character, &inventory, character_classes, &message,
-        item_char_class_avail, attr_names, stores
+        &char_base, &main_menu, &attr_points, &screen_cols, &character,
+        &inventory, character_classes, &message, item_char_class_avail,
+        attr_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -557,7 +557,7 @@ int main(int argc, char *argv[]) {
         main_menu->selected_row = 0;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_header(
-            screen, gold_coins, screen_cols, point_label, message,
+            screen, character->gold, screen_cols, point_label, message,
             stores[store_ind].name
         );
         for (index = 0; index < 8; index += 1) {
@@ -582,7 +582,7 @@ int main(int argc, char *argv[]) {
             if (pressed_key == ';') {
                 offer = item->price;
                 buy_item(
-                    item, max_accepted_discount, &gold_coins, offer,
+                    item, character, max_accepted_discount, offer,
                     item_for_class, inventory, message
                 );
             }
@@ -590,11 +590,11 @@ int main(int argc, char *argv[]) {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
                     screen, item, max_accepted_discount, character_class,
-                    &gold_coins, inventory, point_label, message,
+                    character, inventory, point_label, message,
                     item_char_class_avail
                 );
             }
-            update_header(screen, gold_coins, point_label, message);
+            update_header(screen, character->gold, point_label, message);
         } while (pressed_key != ' ');
     }
     character_name = (char *) malloc(sizeof(char) * 40);
@@ -643,7 +643,9 @@ int main(int argc, char *argv[]) {
     for (index = 0; index < num_item_types; index += 1) {
         save_file_contents[8 + index] = (char) (inventory[index] + char_base);
     }
-    save_file_contents[9 + num_item_types] = (char) (gold_coins + char_base);
+    save_file_contents[9 + num_item_types] = (char) (
+        character->gold + char_base
+    );
     save_file_contents[10 + num_item_types] = (char) char_base;
     strcpy(save_file_contents + 11 + num_item_types, character_name);
     strcpy(

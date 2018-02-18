@@ -153,30 +153,6 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     print_text(screen, ">");
 }
 
-void draw_box(screen_t *screen, int screen_cols,
-              enum ColourNum background_colour,
-              enum ColourNum border_colour, int top_row, int rows) {
-    int index;
-    tab(screen->cursor, 0, top_row);
-    paper(screen->cursor, border_colour);
-    print_left$_b$(screen, screen_cols);
-    newline(screen->cursor);
-    paper(screen->cursor, background_colour);
-    ink(screen->cursor, border_colour);
-    for (index = 1; index <= rows; index += 1) {
-        paper(screen->cursor, border_colour);
-        print_text(screen, " ");
-        paper(screen->cursor, background_colour);
-        print_left$_b$(screen, screen_cols - 2);
-        paper(screen->cursor, border_colour);
-        print_text(screen, " ");
-        // print_text() doesn't support wrapping yet, so we do our own newline:
-        newline(screen->cursor);
-    }
-    paper(screen->cursor, border_colour);
-    print_left$_b$(screen, screen_cols);
-}
-
 void draw_header(screen_t *screen, int num_points, int screen_cols,
                  const char * point_label, char * message,
                  const char * stage_name) {
@@ -192,8 +168,9 @@ void draw_header(screen_t *screen, int num_points, int screen_cols,
     border_colour = WHITE;
     top_row = 1;
     rows = 2;
-    draw_box(
-        screen, screen_cols, background_colour, border_colour, top_row, rows
+    draw_bordered_box(
+        screen, top_row, 0, rows, screen_cols - 2, background_colour,
+        border_colour
     );
     update_header(screen, num_points, point_label, message);
 }
@@ -230,9 +207,9 @@ void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols,
     border_colour = YELLOW;
     main_menu->top_row = 5;
     rows = 15;
-    draw_box(
-        screen, screen_cols, background_colour, border_colour,
-        main_menu->top_row, rows
+    draw_bordered_box(
+        screen, main_menu->top_row, 0, rows, screen_cols - 2,
+        background_colour, border_colour
     );
     update_main(screen, main_menu, values, labels);
 }

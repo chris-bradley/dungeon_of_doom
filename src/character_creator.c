@@ -33,6 +33,7 @@ typedef struct {
 typedef struct {
     int attrs[8];
     int gold;
+    int *inventory;
 } character_t;
 
 char * get_player_string(screen_t *screen, int col, int row) {
@@ -97,9 +98,9 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
 }
 
 void buy_item(item_t *item, character_t *character, int max_accepted_discount,
-              int offer, int item_for_class, int * inventory, char * message) {
+              int offer, int item_for_class, char * message) {
     int price;
-    if (inventory[item->id] > 0 && item->id < 22) {
+    if (character->inventory[item->id] > 0 && item->id < 22) {
         strcpy(message, "YOU HAVE IT SIRE");
     } else {
         price = item->price - max_accepted_discount;
@@ -107,7 +108,7 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
             strcpy(message, "YOU CANNOT AFFORD");
         } else if (item_for_class == 1) {
             if (offer >= price)  {
-                inventory[item->id] += item->batch_size;
+                character->inventory[item->id] += item->batch_size;
                 character->gold -= offer;
                 strcpy(message, "TIS YOURS!");
             } else {
@@ -120,8 +121,8 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
 void make_offer_for_item(screen_t *screen, item_t *item,
                          int max_accepted_discount,
                          character_class_t *character_class,
-                         character_t *character, int * inventory,
-                         const char * point_label, char * message,
+                         character_t *character, const char * point_label,
+                         char * message,
                          const char * item_char_class_avail[24]) {
     int item_for_class, offer;
     char * typed_string = NULL;
@@ -137,8 +138,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
         character_class, item->id, message, item_char_class_avail
     );
     buy_item(
-        item, character, max_accepted_discount, offer, item_for_class,
-        inventory, message
+        item, character, max_accepted_discount, offer, item_for_class, message
     );
 }
 
@@ -213,7 +213,7 @@ void init_platform_vars(int *screen_cols) {
 }
 
 void init_vars(int *char_base, main_menu_t **main_menu, int *attr_points,
-               int *screen_cols, character_t **character, int ** inventory,
+               int *screen_cols, character_t **character,
                character_class_t * character_classes[5], char ** message,
                const char * item_char_class_avail[24],
                const char * attr_names[8], store_t stores[3]) {
@@ -221,15 +221,17 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *attr_points,
     init_platform_vars(screen_cols);
     *main_menu = (main_menu_t *) malloc(sizeof(main_menu));
     (*main_menu)->num_rows = 8;
-    *inventory = (int *) malloc(sizeof(int) * ((*main_menu)->num_rows) * 3);
-    if (*inventory == NULL) {
+    (*character)->inventory = (int *) malloc(
+        sizeof(int) * ((*main_menu)->num_rows) * 3
+    );
+    if ((*character)->inventory == NULL) {
         fprintf(stderr, "*inventory is NULL!\n");
         exit(1);
     }
 
     int i;
     for (i = 0; i < (*main_menu)->num_rows * 3; i += 1) {
-        (*inventory)[i] = 0;
+        (*character)->inventory[i] = 0;
     }
 
     item_char_class_avail[0] = "00001";
@@ -467,7 +469,6 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *attr_points,
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, index, store_ind, attr_points,
         num_item_types, offer, screen_cols, col, row, item_for_class;
-    int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
     character_t *character;
@@ -481,8 +482,7 @@ int main(int argc, char *argv[]) {
     item_t * item;
     init_vars(
         &char_base, &main_menu, &attr_points, &screen_cols, &character,
-        &inventory, character_classes, &message, item_char_class_avail,
-        attr_names, stores
+        character_classes, &message, item_char_class_avail, attr_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -583,15 +583,14 @@ int main(int argc, char *argv[]) {
                 offer = item->price;
                 buy_item(
                     item, character, max_accepted_discount, offer,
-                    item_for_class, inventory, message
+                    item_for_class, message
                 );
             }
             if (pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
                     screen, item, max_accepted_discount, character_class,
-                    character, inventory, point_label, message,
-                    item_char_class_avail
+                    character, point_label, message, item_char_class_avail
                 );
             }
             update_header(screen, character->gold, point_label, message);
@@ -641,7 +640,9 @@ int main(int argc, char *argv[]) {
         );
     }
     for (index = 0; index < num_item_types; index += 1) {
-        save_file_contents[8 + index] = (char) (inventory[index] + char_base);
+        save_file_contents[8 + index] = (char) (
+            character->inventory[index] + char_base
+        );
     }
     save_file_contents[9 + num_item_types] = (char) (
         character->gold + char_base
@@ -675,7 +676,6 @@ int main(int argc, char *argv[]) {
 
     free(message);
     free(character_name);
-    free(inventory);
     for (index = 0; index < 8; index += 1) {
         free(main_menu->items[index]);
     }

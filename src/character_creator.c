@@ -218,25 +218,34 @@ main_menu_t * init_main_menu() {
     return main_menu;
 }
 
-void init_vars(int *char_base, int inventory_size, int *attr_points,
-               int *screen_cols, character_t **character,
+
+character_t * init_character(int inventory_size) {
+    int index;
+    character_t *character = (character_t *) malloc(sizeof(character_t));
+    character->inventory = (int *) malloc(sizeof(int) * inventory_size);
+    if (character->inventory == NULL) {
+        fprintf(stderr, "*inventory is NULL!\n");
+        exit(1);
+    }
+
+    for (index = 0; index < inventory_size; index += 1) {
+        character->inventory[index] = 0;
+    }
+    for (index = 0; index < 8; index += 1) {
+        character->attrs[index] = (rand() % 5) + 2;
+    }
+    character->attrs[4] = 1;
+    character->gold = 120 + (rand() % 60);
+
+    return character;
+}
+
+void init_vars(int *char_base, int *attr_points, int *screen_cols,
                character_class_t * character_classes[5], char ** message,
                const char * item_char_class_avail[24],
                const char * attr_names[8], store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
-    *character = (character_t *) malloc(sizeof(character_t));
-    (*character)->inventory = (int *) malloc(sizeof(int) * inventory_size);
-    if ((*character)->inventory == NULL) {
-        fprintf(stderr, "*inventory is NULL!\n");
-        exit(1);
-    }
-
-    int i;
-    for (i = 0; i < inventory_size; i += 1) {
-        (*character)->inventory[i] = 0;
-    }
-
     item_char_class_avail[0] = "00001";
     item_char_class_avail[1] = "00011";
     item_char_class_avail[2] = "10011";
@@ -261,10 +270,6 @@ void init_vars(int *char_base, int inventory_size, int *attr_points,
     item_char_class_avail[21] = "11100";
     item_char_class_avail[22] = "11111";
     item_char_class_avail[23] = "11111";
-    for (index = 0; index < 8; index += 1) {
-        (*character)->attrs[index] = (rand() % 5) + 2;
-    }
-    (*character)->attrs[4] = 1;
 
     attr_names[0] = "STRENGTH";
     attr_names[1] = "VITALITY";
@@ -458,7 +463,6 @@ void init_vars(int *char_base, int inventory_size, int *attr_points,
         .name = "BARBARIAN"
     };
     *attr_points = 3 + (rand() % 5);
-    (*character)->gold = 120 + (rand() % 60);
     *message = (char *) malloc(sizeof(char) * 40);
     if (*message == NULL) {
         fprintf(stderr, "message is NULL!\n");
@@ -483,10 +487,10 @@ int main(int argc, char *argv[]) {
     const char * attr_names[8];
     item_t * item;
     main_menu = init_main_menu();
+    character = init_character(main_menu->num_rows * 3);
     init_vars(
-        &char_base, main_menu->num_rows * 3, &attr_points, &screen_cols,
-        &character, character_classes, &message, item_char_class_avail,
-        attr_names, stores
+        &char_base,  &attr_points, &screen_cols, character_classes, &message,
+        item_char_class_avail, attr_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {

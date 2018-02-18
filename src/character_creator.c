@@ -2,6 +2,11 @@
 #include "dungeon_lib.h"
 
 typedef struct {
+    const char * label;
+    int value;
+} menu_item_t;
+
+typedef struct {
     int selected_row;
     int num_rows;
     int top_row;
@@ -166,8 +171,8 @@ void draw_header(screen_t *screen, int num_points, int screen_cols,
     update_header(screen, num_points, point_label, message);
 }
 
-void update_main(screen_t *screen, main_menu_t *main_menu, int values[8],
-                 const char * labels[8]) {
+void update_main(screen_t *screen, main_menu_t *main_menu,
+                 menu_item_t *items[8]) {
     int index, row;
     paper(screen->cursor, WHITE);
     ink(screen->cursor, BLACK);
@@ -177,26 +182,26 @@ void update_main(screen_t *screen, main_menu_t *main_menu, int values[8],
         print_left$_b$(screen, 5);
 
         tab(screen->cursor, 2, row);
-        print_text(screen, labels[index]);
+        print_text(screen, items[index]->label);
         tab(screen->cursor, 16, row);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
-        sprintf(outstring, "%i ", values[index]);
+        sprintf(outstring, "%i ", items[index]->value);
         print_text(screen, outstring);
         free(outstring);
     }
 }
 
 void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols,
-               int values[8], const char * labels[8]) {
+               menu_item_t *items[8]) {
     main_menu->top_row = 5;
     draw_bordered_box(
         screen, main_menu->top_row, 0, 15, screen_cols - 2, WHITE, YELLOW
     );
-    update_main(screen, main_menu, values, labels);
+    update_main(screen, main_menu, items);
 }
 
 void init_platform_vars(int *screen_cols) {
@@ -464,14 +469,12 @@ int main(int argc, char *argv[]) {
     character_class_t *character_classes[5];
     store_t stores[3];
     main_menu_t *main_menu;
-    int store_prices[8];
-
+    menu_item_t *menu_items[8];
     const char * point_label,
                * item_char_class_avail[24];
     char pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     const char * attr_names[8];
-    const char * store_item_names[8];
     item_t * item;
     init_vars(
         &char_base, &main_menu, &gold_coins, &attr_points, &screen_cols,
@@ -489,7 +492,14 @@ int main(int argc, char *argv[]) {
         "CHARACTER CREATION"
     );
     main_menu->selected_row = 0;
-    draw_main(screen, main_menu, screen_cols, attrs, attr_names);
+    for (index = 0; index < 8; index += 1) {
+        menu_items[index] = malloc(sizeof(main_menu_t));
+        *menu_items[index] = (menu_item_t) {
+            .label = attr_names[index],
+            .value = attrs[index]
+        };
+    }
+    draw_main(screen, main_menu, screen_cols, menu_items);
     tab(screen->cursor, 1, main_menu->top_row + 1);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
@@ -503,12 +513,14 @@ int main(int argc, char *argv[]) {
         if (pressed_key == ';' && attr_points > 0) {
             attrs[main_menu->selected_row] += 1;
             attr_points -= 1;
-            update_main(screen, main_menu, attrs, attr_names);
+            menu_items[main_menu->selected_row]->value += 1;
+            update_main(screen, main_menu, menu_items);
         }
         if (pressed_key == '-' && attrs[main_menu->selected_row] > 1) {
             attrs[main_menu->selected_row] -=1;
             attr_points += 1;
-            update_main(screen, main_menu, attrs, attr_names);
+            menu_items[main_menu->selected_row]->value -= 1;
+            update_main(screen, main_menu, menu_items);
         }
         character_class = character_classes[0];
         if (attrs[3] > 6 && attrs[7] > 7) {
@@ -537,12 +549,10 @@ int main(int argc, char *argv[]) {
         );
         for (index = 0; index < 8; index += 1) {
             item = &stores[store_ind].items[index];
-            store_prices[index] = item->price;
-            store_item_names[index] = item->name;
+            menu_items[index]->label = item->name;
+            menu_items[index]->value = item->price;
         }
-        draw_main(
-            screen, main_menu, screen_cols, store_prices, store_item_names
-        );
+        draw_main(screen, main_menu, screen_cols, menu_items);
         tab(screen->cursor, 1, main_menu->top_row + 1);
         print_text(screen, ">");
         do {
@@ -651,6 +661,9 @@ int main(int argc, char *argv[]) {
     free(message);
     free(character_name);
     free(inventory);
+    for (index = 0; index < 8; index += 1) {
+        free(menu_items[index]);
+    }
     free(main_menu);
 
     for (index = 1; index < 6; index += 1) {

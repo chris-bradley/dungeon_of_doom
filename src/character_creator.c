@@ -212,17 +212,21 @@ void init_platform_vars(int *screen_cols) {
     *screen_cols = 40;
 }
 
-void init_vars(int *char_base, main_menu_t **main_menu, int *attr_points,
+main_menu_t * init_main_menu() {
+    main_menu_t *main_menu = (main_menu_t *) malloc(sizeof(main_menu));
+    main_menu->num_rows = 8;
+    return main_menu;
+}
+
+void init_vars(int *char_base, main_menu_t *main_menu, int *attr_points,
                int *screen_cols, character_t **character,
                character_class_t * character_classes[5], char ** message,
                const char * item_char_class_avail[24],
                const char * attr_names[8], store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
-    *main_menu = (main_menu_t *) malloc(sizeof(main_menu));
-    (*main_menu)->num_rows = 8;
     (*character)->inventory = (int *) malloc(
-        sizeof(int) * ((*main_menu)->num_rows) * 3
+        sizeof(int) * main_menu->num_rows * 3
     );
     if ((*character)->inventory == NULL) {
         fprintf(stderr, "*inventory is NULL!\n");
@@ -230,7 +234,7 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *attr_points,
     }
 
     int i;
-    for (i = 0; i < (*main_menu)->num_rows * 3; i += 1) {
+    for (i = 0; i < main_menu->num_rows * 3; i += 1) {
         (*character)->inventory[i] = 0;
     }
 
@@ -480,8 +484,9 @@ int main(int argc, char *argv[]) {
          * character_name;
     const char * attr_names[8];
     item_t * item;
+    main_menu = init_main_menu();
     init_vars(
-        &char_base, &main_menu, &attr_points, &screen_cols, &character,
+        &char_base, main_menu, &attr_points, &screen_cols, &character,
         character_classes, &message, item_char_class_avail, attr_names, stores
     );
     screen_t *screen = NULL;

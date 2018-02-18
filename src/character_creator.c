@@ -225,6 +225,7 @@ void init_vars(int *char_base, int inventory_size, int *attr_points,
                const char * attr_names[8], store_t stores[3]) {
     int index;
     init_platform_vars(screen_cols);
+    *character = (character_t *) malloc(sizeof(character_t));
     (*character)->inventory = (int *) malloc(sizeof(int) * inventory_size);
     if ((*character)->inventory == NULL) {
         fprintf(stderr, "*inventory is NULL!\n");
@@ -260,7 +261,6 @@ void init_vars(int *char_base, int inventory_size, int *attr_points,
     item_char_class_avail[21] = "11100";
     item_char_class_avail[22] = "11111";
     item_char_class_avail[23] = "11111";
-    *character = (character_t *) malloc(sizeof(character_t));
     for (index = 0; index < 8; index += 1) {
         (*character)->attrs[index] = (rand() % 5) + 2;
     }

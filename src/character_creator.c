@@ -208,8 +208,8 @@ void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols) {
     update_main(screen, main_menu);
 }
 
-void init_platform_vars(int *screen_cols) {
-    *screen_cols = 40;
+int init_screen_cols() {
+    return 40;
 }
 
 main_menu_t * init_main_menu() {
@@ -240,12 +240,11 @@ character_t * init_character(int inventory_size) {
     return character;
 }
 
-void init_vars(int *char_base, int *attr_points, int *screen_cols,
+void init_vars(int *char_base, int *attr_points,
                character_class_t * character_classes[5], char ** message,
                const char * item_char_class_avail[24],
                const char * attr_names[8], store_t stores[3]) {
     int index;
-    init_platform_vars(screen_cols);
     item_char_class_avail[0] = "00001";
     item_char_class_avail[1] = "00011";
     item_char_class_avail[2] = "10011";
@@ -489,13 +488,14 @@ int main(int argc, char *argv[]) {
     main_menu = init_main_menu();
     character = init_character(main_menu->num_rows * 3);
     init_vars(
-        &char_base,  &attr_points, &screen_cols, character_classes, &message,
+        &char_base,  &attr_points, character_classes, &message,
         item_char_class_avail, attr_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
         return 1;
     }
+    screen_cols = init_screen_cols();
     paper(screen->cursor, BLACK);
     point_label = "POINTS";
     draw_header(

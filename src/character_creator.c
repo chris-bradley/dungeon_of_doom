@@ -156,22 +156,13 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
 void draw_header(screen_t *screen, int num_points, int screen_cols,
                  const char * point_label, char * message,
                  const char * stage_name) {
-    enum ColourNum background_colour, border_colour;
-    int rows, top_row;
     paper(screen->cursor, BLACK);
     ink(screen->cursor, YELLOW);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
     print_text(screen, stage_name);
-    background_colour = YELLOW;
-    border_colour = WHITE;
-    top_row = 1;
-    rows = 2;
-    draw_bordered_box(
-        screen, top_row, 0, rows, screen_cols - 2, background_colour,
-        border_colour
-    );
+    draw_bordered_box(screen, 1, 0, 2, screen_cols - 2, YELLOW, WHITE);
     update_header(screen, num_points, point_label, message);
 }
 
@@ -201,15 +192,9 @@ void update_main(screen_t *screen, main_menu_t *main_menu, int values[8],
 
 void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols,
                int values[8], const char * labels[8]) {
-    enum ColourNum background_colour, border_colour;
-    int rows;
-    background_colour = WHITE;
-    border_colour = YELLOW;
     main_menu->top_row = 5;
-    rows = 15;
     draw_bordered_box(
-        screen, main_menu->top_row, 0, rows, screen_cols - 2,
-        background_colour, border_colour
+        screen, main_menu->top_row, 0, 15, screen_cols - 2, WHITE, YELLOW
     );
     update_main(screen, main_menu, values, labels);
 }

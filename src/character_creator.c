@@ -30,6 +30,10 @@ typedef struct {
     item_t items[8];
 } store_t;
 
+typedef struct {
+    int attrs[8];
+} character_t;
+
 char * get_player_string(screen_t *screen, int col, int row) {
     int ind = 0;
     char pressed_key, * typed_string;
@@ -208,7 +212,7 @@ void init_platform_vars(int *screen_cols) {
 }
 
 void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
-               int *attr_points, int *screen_cols, int attrs[8],
+               int *attr_points, int *screen_cols, character_t **character,
                int ** inventory, character_class_t * character_classes[5],
                char ** message, const char * item_char_class_avail[24],
                const char * attr_names[8], store_t stores[3]) {
@@ -251,10 +255,11 @@ void init_vars(int *char_base, main_menu_t **main_menu, int *gold_coins,
     item_char_class_avail[21] = "11100";
     item_char_class_avail[22] = "11111";
     item_char_class_avail[23] = "11111";
+    *character = (character_t *) malloc(sizeof(character_t));
     for (index = 0; index < 8; index += 1) {
-        attrs[index] = (rand() % 5) + 2;
+        (*character)->attrs[index] = (rand() % 5) + 2;
     }
-    attrs[4] = 1;
+    (*character)->attrs[4] = 1;
 
     attr_names[0] = "STRENGTH";
     attr_names[1] = "VITALITY";
@@ -462,10 +467,10 @@ int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, gold_coins, index, store_ind,
         attr_points, num_item_types, offer, screen_cols, col, row,
         item_for_class;
-    int attrs[8];
     int * inventory;
     character_class_t *character_class;
     character_class_t *character_classes[5];
+    character_t *character;
     store_t stores[3];
     main_menu_t *main_menu;
     const char * point_label,
@@ -476,8 +481,8 @@ int main(int argc, char *argv[]) {
     item_t * item;
     init_vars(
         &char_base, &main_menu, &gold_coins, &attr_points, &screen_cols,
-        attrs, &inventory, character_classes, &message, item_char_class_avail,
-        attr_names, stores
+        &character, &inventory, character_classes, &message,
+        item_char_class_avail, attr_names, stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -494,7 +499,7 @@ int main(int argc, char *argv[]) {
         main_menu->items[index] = malloc(sizeof(main_menu_t));
         *main_menu->items[index] = (menu_item_t) {
             .label = attr_names[index],
-            .value = attrs[index]
+            .value = character->attrs[index]
         };
     }
     draw_main(screen, main_menu, screen_cols);
@@ -509,28 +514,38 @@ int main(int argc, char *argv[]) {
             select_row(screen, main_menu, pressed_key);
         }
         if (pressed_key == ';' && attr_points > 0) {
-            attrs[main_menu->selected_row] += 1;
+            character->attrs[main_menu->selected_row] += 1;
             attr_points -= 1;
             main_menu->items[main_menu->selected_row]->value += 1;
             update_main(screen, main_menu);
         }
-        if (pressed_key == '-' && attrs[main_menu->selected_row] > 1) {
-            attrs[main_menu->selected_row] -=1;
+        if (
+                pressed_key == '-' &&
+                character->attrs[main_menu->selected_row] > 1
+        ) {
+            character->attrs[main_menu->selected_row] -=1;
             attr_points += 1;
             main_menu->items[main_menu->selected_row]->value -= 1;
             update_main(screen, main_menu);
         }
         character_class = character_classes[0];
-        if (attrs[3] > 6 && attrs[7] > 7) {
+        if (character->attrs[3] > 6 && character->attrs[7] > 7) {
             character_class = character_classes[1];
         }
-        if (attrs[3] > 8 && attrs[6] > 7) {
+        if (character->attrs[3] > 8 && character->attrs[6] > 7) {
             character_class = character_classes[2];
         }
-        if (attrs[0] > 7 && attrs[7] > 5 && attrs[0] + attrs[1] > 10) {
+        if (
+                character->attrs[0] > 7 && character->attrs[7] > 5 &&
+                character->attrs[0] + character->attrs[1] > 10
+        ) {
             character_class = character_classes[3];
         }
-        if (attrs[0] > 8 && attrs[1] + attrs[2] > 12 && attrs[7] < 6) {
+        if (
+                character->attrs[0] > 8 &&
+                character->attrs[1] + character->attrs[2] > 12 &&
+                character->attrs[7] < 6
+        ) {
             character_class = character_classes[4];
         }
         strcpy(message, character_class->name);
@@ -622,7 +637,7 @@ int main(int argc, char *argv[]) {
     save_file_contents[0] = (char) (num_item_types + char_base);
     for (index = 0; index < 8; index +=1 ) {
         save_file_contents[index + 1] = (char) (
-            attrs[index] + char_base
+            character->attrs[index] + char_base
         );
     }
     for (index = 0; index < num_item_types; index += 1) {
@@ -668,6 +683,7 @@ int main(int argc, char *argv[]) {
         free(character_classes[index]);
     }
 
+    free(character);
     destroy_screen(screen);
 
     return 0;

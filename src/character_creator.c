@@ -218,7 +218,6 @@ main_menu_t * init_main_menu() {
     return main_menu;
 }
 
-
 character_t * init_character(int inventory_size) {
     int index;
     character_t *character = (character_t *) malloc(sizeof(character_t));
@@ -650,7 +649,7 @@ int main(int argc, char *argv[]) {
     }
 
     save_file_contents[0] = (char) (num_item_types + char_base);
-    for (index = 0; index < 8; index +=1 ) {
+    for (index = 0; index < 8; index += 1) {
         save_file_contents[index + 1] = (char) (
             character->attrs[index] + char_base
         );

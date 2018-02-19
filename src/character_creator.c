@@ -32,6 +32,7 @@ typedef struct {
 
 typedef struct {
     int attrs[8];
+    character_class_t * class;
     int gold;
     int *inventory;
 } character_t;
@@ -119,7 +120,6 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
 
 void make_offer_for_item(screen_t *screen, item_t *item,
                          int max_accepted_discount,
-                         character_class_t *character_class,
                          character_t *character, const char * point_label,
                          char * message, int ** item_to_char_class) {
     int item_for_class, offer;
@@ -133,7 +133,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     offer = atoi(typed_string);
     free(typed_string);
     item_for_class = can_class_buy_item(
-            character_class, item->id, message, item_to_char_class
+        character->class, item->id, message, item_to_char_class
     );
     buy_item(
         item, character, max_accepted_discount, offer, item_for_class, message
@@ -491,15 +491,14 @@ void init_vars(int *attr_points, char ** message, const char * attr_names[8]) {
     strcpy(*message, "");
 }
 
-void save_character(character_t * character,
-                    character_class_t * character_class, char * character_name,
+void save_character(character_t * character, char * character_name,
                     int num_item_types) {
     int char_base = 65,
         index;
     char * save_file_contents = (char *) malloc(
         sizeof(char) * (
             14 + num_item_types + strlen(character_name) + strlen(
-                character_class->name
+                character->class->name
             )
         )
     );
@@ -530,11 +529,11 @@ void save_character(character_t * character,
     );
     strcpy(
         save_file_contents + 13 + num_item_types + strlen(character_name),
-        character_class->name
+        character->class->name
     );
     save_file_contents[
         13 + num_item_types + strlen(character_name) + strlen(
-            character_class->name
+            character->class->name
         )
     ] = 0;
     FILE *save_file_handle = fopen("HERO", "w");
@@ -553,7 +552,6 @@ void save_character(character_t * character,
 int main(int argc, char *argv[]) {
     int max_accepted_discount, index, store_ind, attr_points, num_item_types,
         offer, screen_cols, col, row, item_for_class;
-    character_class_t *character_class;
     character_class_t ** character_classes;
     character_t *character;
     store_t * stores;
@@ -615,27 +613,27 @@ int main(int argc, char *argv[]) {
             main_menu->items[main_menu->selected_row]->value -= 1;
             update_main(screen, main_menu);
         }
-        character_class = character_classes[0];
+        character->class = character_classes[0];
         if (character->attrs[3] > 6 && character->attrs[7] > 7) {
-            character_class = character_classes[1];
+            character->class = character_classes[1];
         }
         if (character->attrs[3] > 8 && character->attrs[6] > 7) {
-            character_class = character_classes[2];
+            character->class = character_classes[2];
         }
         if (
                 character->attrs[0] > 7 && character->attrs[7] > 5 &&
                 character->attrs[0] + character->attrs[1] > 10
         ) {
-            character_class = character_classes[3];
+            character->class = character_classes[3];
         }
         if (
                 character->attrs[0] > 8 &&
                 character->attrs[1] + character->attrs[2] > 12 &&
                 character->attrs[7] < 6
         ) {
-            character_class = character_classes[4];
+            character->class = character_classes[4];
         }
-        strcpy(message, character_class->name);
+        strcpy(message, character->class->name);
         update_header(screen, attr_points, point_label, message);
         SDL_RenderPresent(screen->ren);
     } while (pressed_key != ' ');
@@ -662,7 +660,7 @@ int main(int argc, char *argv[]) {
             item = &stores[store_ind].items[main_menu->selected_row];
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
-                character_class, item->id, message, item_to_char_class
+                character->class, item->id, message, item_to_char_class
             );
             max_accepted_discount = 0;
             offer = 0;
@@ -676,8 +674,8 @@ int main(int argc, char *argv[]) {
             if (pressed_key == '-') {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
-                    screen, item, max_accepted_discount, character_class,
-                    character, point_label, message, item_to_char_class
+                    screen, item, max_accepted_discount, character,
+                    point_label, message, item_to_char_class
                 );
             }
             update_header(screen, character->gold, point_label, message);
@@ -707,7 +705,7 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(screen->ren);
     tab(screen->cursor, 1, 3);
     num_item_types = main_menu->num_rows * 3;
-    save_character(character, character_class, character_name, num_item_types);
+    save_character(character, character_name, num_item_types);
     free(stores);
     free(message);
     free(character_name);

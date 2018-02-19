@@ -84,8 +84,8 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
 }
 
 int can_class_buy_item(character_class_t *character_class, int item_num,
-                       char * message, const char * item_to_char_class[24]) {
-    if (item_to_char_class[item_num][character_class->id] == '1') {
+                       char * message, int ** item_to_char_class) {
+    if (item_to_char_class[item_num][character_class->id] == 1) {
         return 1;
     }
     sprintf(
@@ -121,7 +121,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
                          int max_accepted_discount,
                          character_class_t *character_class,
                          character_t *character, const char * point_label,
-                         char * message, const char * item_to_char_class[24]) {
+                         char * message, int ** item_to_char_class) {
     int item_for_class, offer;
     char * typed_string = NULL;
     strcpy(message, "");
@@ -269,46 +269,47 @@ character_class_t ** init_character_classes() {
     return character_classes;
 }
 
-const char ** init_item_to_char_class() {
-    const char ** item_to_char_class = malloc(sizeof(const char *) * 24);
-    item_to_char_class[0] = "00001";
-    item_to_char_class[1] = "00011";
-    item_to_char_class[2] = "10011";
-    item_to_char_class[3] = "10011";
-    item_to_char_class[4] = "10011";
-    item_to_char_class[5] = "00011";
-    item_to_char_class[6] = "11111";
-    item_to_char_class[7] = "10011";
-    item_to_char_class[8] = "00011";
-    item_to_char_class[9] = "00011";
-    item_to_char_class[10] = "10011";
-    item_to_char_class[11] = "11111";
-    item_to_char_class[12] = "00011";
-    item_to_char_class[13] = "11011";
-    item_to_char_class[14] = "11011";
-    item_to_char_class[15] = "11111";
-    item_to_char_class[16] = "11100";
-    item_to_char_class[17] = "00100";
-    item_to_char_class[18] = "11100";
-    item_to_char_class[19] = "10100";
-    item_to_char_class[20] = "11100";
-    item_to_char_class[21] = "11100";
-    item_to_char_class[22] = "11111";
-    item_to_char_class[23] = "11111";
+int ** init_item_to_char_class() {
+    int ** item_to_char_class = malloc(sizeof(int *) * 24);
+    int index_a, index_b,
+        values[24][5] = {
+            {0, 0, 0, 0, 1},
+            {0, 0, 0, 1, 1},
+            {1, 0, 0, 1, 1},
+            {1, 0, 0, 1, 1},
+            {1, 0, 0, 1, 1},
+            {0, 0, 0, 1, 1},
+            {1, 1, 1, 1, 1},
+            {1, 0, 0, 1, 1},
+            {0, 0, 0, 1, 1},
+            {0, 0, 0, 1, 1},
+            {1, 0, 0, 1, 1},
+            {1, 1, 1, 1, 1},
+            {0, 0, 0, 1, 1},
+            {1, 1, 0, 1, 1},
+            {1, 1, 0, 1, 1},
+            {1, 1, 1, 1, 1},
+            {1, 1, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {1, 1, 1, 0, 0},
+            {1, 0, 1, 0, 0},
+            {1, 1, 1, 0, 0},
+            {1, 1, 1, 0, 0},
+            {1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1}
+        };
+    for (index_a = 0; index_a < 24; index_a += 1) {
+        item_to_char_class[index_a] = malloc(sizeof(int) * 5);
+        for (index_b = 0; index_b < 5; index_b += 1) {
+            item_to_char_class[index_a][index_b] = values[index_a][index_b];
+        }
+    }
 
     return item_to_char_class;
 }
 
-void init_vars(int *char_base, int *attr_points, char ** message,
-               const char * attr_names[8], store_t stores[3]) {
-    attr_names[0] = "STRENGTH";
-    attr_names[1] = "VITALITY";
-    attr_names[2] = "AGILITY";
-    attr_names[3] = "INTELLIGENCE";
-    attr_names[4] = "EXPERIENCE";
-    attr_names[5] = "LUCK";
-    attr_names[6] = "AURA";
-    attr_names[7] = "MORALITY";
+store_t * init_stores() {
+    store_t * stores = malloc(sizeof(store_t) * 3);
     stores[0] = (store_t) {
         .name="ARMOURY",
         .items={
@@ -469,6 +470,19 @@ void init_vars(int *char_base, int *attr_points, char ** message,
         }
     };
 
+    return stores;
+}
+
+void init_vars(int *char_base, int *attr_points, char ** message,
+               const char * attr_names[8]) {
+    attr_names[0] = "STRENGTH";
+    attr_names[1] = "VITALITY";
+    attr_names[2] = "AGILITY";
+    attr_names[3] = "INTELLIGENCE";
+    attr_names[4] = "EXPERIENCE";
+    attr_names[5] = "LUCK";
+    attr_names[6] = "AURA";
+    attr_names[7] = "MORALITY";
     *attr_points = 3 + (rand() % 5);
     *message = (char *) malloc(sizeof(char) * 40);
     if (*message == NULL) {
@@ -485,9 +499,10 @@ int main(int argc, char *argv[]) {
     character_class_t *character_class;
     character_class_t ** character_classes;
     character_t *character;
-    store_t stores[3];
+    store_t * stores;
     main_menu_t *main_menu;
-    const char * point_label, ** item_to_char_class;
+    const char * point_label;
+    int ** item_to_char_class;
     char pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     const char * attr_names[8];
@@ -496,7 +511,8 @@ int main(int argc, char *argv[]) {
     main_menu = init_main_menu();
     character = init_character(main_menu->num_rows * 3);
     item_to_char_class = init_item_to_char_class();
-    init_vars(&char_base, &attr_points, &message, attr_names, stores);
+    stores = init_stores();
+    init_vars(&char_base, &attr_points, &message, attr_names);
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
         return 1;
@@ -688,6 +704,7 @@ int main(int argc, char *argv[]) {
     }
     free(save_file_contents);
 
+    free(stores);
     free(message);
     free(character_name);
     for (index = 0; index < 8; index += 1) {
@@ -699,6 +716,9 @@ int main(int argc, char *argv[]) {
         free(character_classes[index]);
     }
     free(character_classes);
+    for (index = 0; index < 24; index += 1) {
+        free(item_to_char_class[index]);
+    }
     free(item_to_char_class);
 
     free(character);

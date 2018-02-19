@@ -493,60 +493,56 @@ void init_vars(int *attr_points, char ** message, const char * attr_names[8]) {
 }
 
 void save_character(character_t * character, int num_item_types) {
-    int char_base = 65,
-        index;
-    char * save_file_contents = (char *) malloc(
-        sizeof(char) * (
-            14 + num_item_types + strlen(character->name) + strlen(
-                character->class->name
-            )
-        )
-    );
-    if (save_file_contents == NULL) {
-        fprintf(stderr, "save_file_contents is NULL!\n");
-        exit(1);
+    int char_base = 65, error, index;
+    FILE *save_file_handle = fopen("HERO", "w");
+
+    error = fputc((char) (num_item_types + char_base), save_file_handle);
+    if (error) {
+        fprintf(stderr, "Error %i writing number of items!", error);
     }
 
-    save_file_contents[0] = (char) (num_item_types + char_base);
     for (index = 0; index < 8; index += 1) {
-        save_file_contents[index + 1] = (char) (
-            character->attrs[index] + char_base
+        error = fputc(
+            (char) (character->attrs[index] + char_base),
+            save_file_handle
         );
+        if (error) {
+            fprintf(stderr, "Error %i writing attr %i!", error, index);
+        }
     }
     for (index = 0; index < num_item_types; index += 1) {
-        save_file_contents[8 + index] = (char) (
-            character->inventory[index] + char_base
+        error = fputc(
+            (char) (character->inventory[index] + char_base),
+            save_file_handle
         );
+        if (error) {
+            fprintf(stderr, "Error %i writing inventory %i!", error, index);
+        }
     }
-    save_file_contents[9 + num_item_types] = (char) (
-        character->gold + char_base
-    );
-    save_file_contents[10 + num_item_types] = (char) char_base;
-    strcpy(save_file_contents + 11 + num_item_types, character->name);
-    strcpy(
-        save_file_contents + 11 + num_item_types + strlen(character->name),
-        " -"
-    );
-    strcpy(
-        save_file_contents + 13 + num_item_types + strlen(character->name),
-        character->class->name
-    );
-    save_file_contents[
-        13 + num_item_types + strlen(character->name) + strlen(
-            character->class->name
-        )
-    ] = 0;
-    FILE *save_file_handle = fopen("HERO", "w");
-    int error = fputs(save_file_contents, save_file_handle);
+    error = fputc((char) (character->gold + char_base), save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing the character!", error);
+        fprintf(stderr, "Error %i writing gold!", error);
     }
-
+    error = fputc((char) char_base, save_file_handle);
+    if (error) {
+        fprintf(stderr, "Error %i writing char_base!", error);
+    }
+    error = fputs(character->name, save_file_handle);
+    if (error) {
+        fprintf(stderr, "Error %i writing character name!", error);
+    }
+    error = fputs(" -", save_file_handle);
+    if (error) {
+        fprintf(stderr, "Error %i writing name delimiter!", error);
+    }
+    error = fputs(character->class->name, save_file_handle);
+    if (error) {
+        fprintf(stderr, "Error %i writing character class name!", error);
+    }
     error = fclose(save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i saving the character!", error);
     }
-    free(save_file_contents);
 }
 
 int main(int argc, char *argv[]) {

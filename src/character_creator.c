@@ -33,6 +33,7 @@ typedef struct {
 typedef struct {
     int attrs[8];
     character_class_t * class;
+    char * name;
     int gold;
     int *inventory;
 } character_t;
@@ -491,13 +492,12 @@ void init_vars(int *attr_points, char ** message, const char * attr_names[8]) {
     strcpy(*message, "");
 }
 
-void save_character(character_t * character, char * character_name,
-                    int num_item_types) {
+void save_character(character_t * character, int num_item_types) {
     int char_base = 65,
         index;
     char * save_file_contents = (char *) malloc(
         sizeof(char) * (
-            14 + num_item_types + strlen(character_name) + strlen(
+            14 + num_item_types + strlen(character->name) + strlen(
                 character->class->name
             )
         )
@@ -522,17 +522,17 @@ void save_character(character_t * character, char * character_name,
         character->gold + char_base
     );
     save_file_contents[10 + num_item_types] = (char) char_base;
-    strcpy(save_file_contents + 11 + num_item_types, character_name);
+    strcpy(save_file_contents + 11 + num_item_types, character->name);
     strcpy(
-        save_file_contents + 11 + num_item_types + strlen(character_name),
+        save_file_contents + 11 + num_item_types + strlen(character->name),
         " -"
     );
     strcpy(
-        save_file_contents + 13 + num_item_types + strlen(character_name),
+        save_file_contents + 13 + num_item_types + strlen(character->name),
         character->class->name
     );
     save_file_contents[
-        13 + num_item_types + strlen(character_name) + strlen(
+        13 + num_item_types + strlen(character->name) + strlen(
             character->class->name
         )
     ] = 0;
@@ -558,8 +558,7 @@ int main(int argc, char *argv[]) {
     main_menu_t *main_menu;
     const char * point_label;
     int ** item_to_char_class;
-    char pressed_key, * typed_string = NULL, * message = NULL,
-         * character_name;
+    char pressed_key, * typed_string = NULL, * message = NULL;
     const char * attr_names[8];
     item_t * item;
     character_classes = init_character_classes();
@@ -681,9 +680,9 @@ int main(int argc, char *argv[]) {
             update_header(screen, character->gold, point_label, message);
         } while (pressed_key != ' ');
     }
-    character_name = (char *) malloc(sizeof(char) * 40);
-    if (character_name == NULL) {
-        fprintf(stderr, "character_name is NULL!\n");
+    character->name = (char *) malloc(sizeof(char) * 40);
+    if (character->name == NULL) {
+        fprintf(stderr, "character->name is NULL!\n");
         exit(1);
     }
     do {
@@ -697,18 +696,18 @@ int main(int argc, char *argv[]) {
         col = 1;
         row = 3;
         typed_string = get_player_string(screen, col, row);
-        strcpy(character_name, typed_string);
+        strcpy(character->name, typed_string);
         free(typed_string);
-    } while (strlen(character_name) > 10);
+    } while (strlen(character->name) > 10);
     tab(screen->cursor, 1, 3);
     print_text(screen, "ONE MOMENT PLEASE");
     SDL_RenderPresent(screen->ren);
     tab(screen->cursor, 1, 3);
     num_item_types = main_menu->num_rows * 3;
-    save_character(character, character_name, num_item_types);
+    save_character(character, num_item_types);
     free(stores);
     free(message);
-    free(character_name);
+    free(character->name);
     for (index = 0; index < 8; index += 1) {
         free(main_menu->items[index]);
     }

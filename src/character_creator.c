@@ -247,23 +247,23 @@ character_class_t ** init_character_classes() {
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
     }
-    *(character_classes[0]) = (character_class_t) {
+    *character_classes[0] = (character_class_t) {
         .id = 0,
         .name = "WANDERER"
     };
-    *(character_classes[1]) = (character_class_t) {
+    *character_classes[1] = (character_class_t) {
         .id = 1,
         .name = "CLERIC"
     };
-    *(character_classes[2]) = (character_class_t) {
+    *character_classes[2] = (character_class_t) {
         .id = 2,
         .name = "MAGE"
     };
-    *(character_classes[3]) = (character_class_t) {
+    *character_classes[3] = (character_class_t) {
         .id = 3,
         .name = "WARRIOR"
     };
-    *(character_classes[4]) = (character_class_t) {
+    *character_classes[4] = (character_class_t) {
         .id = 4,
         .name = "BARBARIAN"
     };

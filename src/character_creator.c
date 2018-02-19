@@ -493,6 +493,64 @@ void init_vars(int *char_base, int *attr_points, char ** message,
     *char_base = 65;
 }
 
+void save_character(character_t * character,
+                    character_class_t * character_class, char * character_name,
+                    int num_item_types, int char_base) {
+    int index;
+    char * save_file_contents = (char *) malloc(
+        sizeof(char) * (
+            14 + num_item_types + strlen(character_name) + strlen(
+                character_class->name
+            )
+        )
+    );
+    if (save_file_contents == NULL) {
+        fprintf(stderr, "save_file_contents is NULL!\n");
+        exit(1);
+    }
+
+    save_file_contents[0] = (char) (num_item_types + char_base);
+    for (index = 0; index < 8; index += 1) {
+        save_file_contents[index + 1] = (char) (
+            character->attrs[index] + char_base
+        );
+    }
+    for (index = 0; index < num_item_types; index += 1) {
+        save_file_contents[8 + index] = (char) (
+            character->inventory[index] + char_base
+        );
+    }
+    save_file_contents[9 + num_item_types] = (char) (
+        character->gold + char_base
+    );
+    save_file_contents[10 + num_item_types] = (char) char_base;
+    strcpy(save_file_contents + 11 + num_item_types, character_name);
+    strcpy(
+        save_file_contents + 11 + num_item_types + strlen(character_name),
+        " -"
+    );
+    strcpy(
+        save_file_contents + 13 + num_item_types + strlen(character_name),
+        character_class->name
+    );
+    save_file_contents[
+        13 + num_item_types + strlen(character_name) + strlen(
+            character_class->name
+        )
+    ] = 0;
+    FILE *save_file_handle = fopen("HERO", "w");
+    int error = fputs(save_file_contents, save_file_handle);
+    if (error) {
+        fprintf(stderr, "Error %i writing the character!", error);
+    }
+
+    error = fclose(save_file_handle);
+    if (error) {
+        fprintf(stderr, "Error %i saving the character!", error);
+    }
+    free(save_file_contents);
+}
+
 int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, index, store_ind, attr_points,
         num_item_types, offer, screen_cols, col, row, item_for_class;
@@ -650,60 +708,9 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(screen->ren);
     tab(screen->cursor, 1, 3);
     num_item_types = main_menu->num_rows * 3;
-
-    char * save_file_contents = (char *) malloc(
-        sizeof(char) * (
-            14 + num_item_types + strlen(character_name) + strlen(
-                character_class->name
-            )
-        )
+    save_character(
+        character, character_class, character_name, num_item_types, char_base
     );
-    if (save_file_contents == NULL) {
-        fprintf(stderr, "save_file_contents is NULL!\n");
-        exit(1);
-    }
-
-    save_file_contents[0] = (char) (num_item_types + char_base);
-    for (index = 0; index < 8; index += 1) {
-        save_file_contents[index + 1] = (char) (
-            character->attrs[index] + char_base
-        );
-    }
-    for (index = 0; index < num_item_types; index += 1) {
-        save_file_contents[8 + index] = (char) (
-            character->inventory[index] + char_base
-        );
-    }
-    save_file_contents[9 + num_item_types] = (char) (
-        character->gold + char_base
-    );
-    save_file_contents[10 + num_item_types] = (char) char_base;
-    strcpy(save_file_contents + 11 + num_item_types, character_name);
-    strcpy(
-        save_file_contents + 11 + num_item_types + strlen(character_name),
-        " -"
-    );
-    strcpy(
-        save_file_contents + 13 + num_item_types + strlen(character_name),
-        character_class->name
-    );
-    save_file_contents[
-        13 + num_item_types + strlen(character_name) + strlen(
-            character_class->name
-        )
-    ] = 0;
-    FILE *save_file_handle = fopen("HERO", "w");
-    int error = fputs(save_file_contents, save_file_handle);
-    if (error) {
-        fprintf(stderr, "Error %i writing the character!", error);
-    }
-
-    error = fclose(save_file_handle);
-    if (error) {
-        fprintf(stderr, "Error %i saving the character!", error);
-    }
-    free(save_file_contents);
-
     free(stores);
     free(message);
     free(character_name);

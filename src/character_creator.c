@@ -213,7 +213,7 @@ int init_screen_cols() {
 }
 
 main_menu_t * init_main_menu() {
-    main_menu_t *main_menu = (main_menu_t *) malloc(sizeof(main_menu));
+    main_menu_t *main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
     main_menu->num_rows = 8;
     return main_menu;
 }

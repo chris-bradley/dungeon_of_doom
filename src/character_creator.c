@@ -240,11 +240,41 @@ character_t * init_character(int inventory_size) {
     return character;
 }
 
-void init_vars(int *char_base, int *attr_points,
-               character_class_t * character_classes[5], char ** message,
-               const char * item_char_class_avail[24],
-               const char * attr_names[8], store_t stores[3]) {
+character_class_t ** init_character_classes() {
     int index;
+    character_class_t ** character_classes = malloc(
+        sizeof(character_class_t *) * 5
+    );
+    for (index = 0; index < 5; index += 1) {
+        character_classes[index] = malloc(sizeof(character_class_t));
+    }
+    *(character_classes[0]) = (character_class_t) {
+        .id = 0,
+        .name = "WANDERER"
+    };
+    *(character_classes[1]) = (character_class_t) {
+        .id = 1,
+        .name = "CLERIC"
+    };
+    *(character_classes[2]) = (character_class_t) {
+        .id = 2,
+        .name = "MAGE"
+    };
+    *(character_classes[3]) = (character_class_t) {
+        .id = 3,
+        .name = "WARRIOR"
+    };
+    *(character_classes[4]) = (character_class_t) {
+        .id = 4,
+        .name = "BARBARIAN"
+    };
+
+    return character_classes;
+}
+
+void init_vars(int *char_base, int *attr_points,
+               char ** message, const char * item_char_class_avail[24],
+               const char * attr_names[8], store_t stores[3]) {
     item_char_class_avail[0] = "00001";
     item_char_class_avail[1] = "00011";
     item_char_class_avail[2] = "10011";
@@ -438,29 +468,6 @@ void init_vars(int *char_base, int *attr_points,
         }
     };
 
-    for (index = 0; index < 5; index += 1) {
-        character_classes[index] = malloc(sizeof(character_class_t));
-    }
-    *(character_classes[0]) = (character_class_t) {
-        .id = 0,
-        .name = "WANDERER"
-    };
-    *(character_classes[1]) = (character_class_t) {
-        .id = 1,
-        .name = "CLERIC"
-    };
-    *(character_classes[2]) = (character_class_t) {
-        .id = 2,
-        .name = "MAGE"
-    };
-    *(character_classes[3]) = (character_class_t) {
-        .id = 3,
-        .name = "WARRIOR"
-    };
-    *(character_classes[4]) = (character_class_t) {
-        .id = 4,
-        .name = "BARBARIAN"
-    };
     *attr_points = 3 + (rand() % 5);
     *message = (char *) malloc(sizeof(char) * 40);
     if (*message == NULL) {
@@ -475,7 +482,7 @@ int main(int argc, char *argv[]) {
     int char_base, max_accepted_discount, index, store_ind, attr_points,
         num_item_types, offer, screen_cols, col, row, item_for_class;
     character_class_t *character_class;
-    character_class_t *character_classes[5];
+    character_class_t ** character_classes;
     character_t *character;
     store_t stores[3];
     main_menu_t *main_menu;
@@ -485,11 +492,12 @@ int main(int argc, char *argv[]) {
          * character_name;
     const char * attr_names[8];
     item_t * item;
+    character_classes = init_character_classes();
     main_menu = init_main_menu();
     character = init_character(main_menu->num_rows * 3);
     init_vars(
-        &char_base,  &attr_points, character_classes, &message,
-        item_char_class_avail, attr_names, stores
+        &char_base, &attr_points, &message, item_char_class_avail, attr_names,
+        stores
     );
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
@@ -692,6 +700,7 @@ int main(int argc, char *argv[]) {
     for (index = 1; index < 6; index += 1) {
         free(character_classes[index]);
     }
+    free(character_classes);
 
     free(character);
     destroy_screen(screen);

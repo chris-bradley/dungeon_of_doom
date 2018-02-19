@@ -473,8 +473,7 @@ store_t * init_stores() {
     return stores;
 }
 
-void init_vars(int *char_base, int *attr_points, char ** message,
-               const char * attr_names[8]) {
+void init_vars(int *attr_points, char ** message, const char * attr_names[8]) {
     attr_names[0] = "STRENGTH";
     attr_names[1] = "VITALITY";
     attr_names[2] = "AGILITY";
@@ -490,13 +489,13 @@ void init_vars(int *char_base, int *attr_points, char ** message,
         exit(1);
     }
     strcpy(*message, "");
-    *char_base = 65;
 }
 
 void save_character(character_t * character,
                     character_class_t * character_class, char * character_name,
-                    int num_item_types, int char_base) {
-    int index;
+                    int num_item_types) {
+    int char_base = 65,
+        index;
     char * save_file_contents = (char *) malloc(
         sizeof(char) * (
             14 + num_item_types + strlen(character_name) + strlen(
@@ -552,8 +551,8 @@ void save_character(character_t * character,
 }
 
 int main(int argc, char *argv[]) {
-    int char_base, max_accepted_discount, index, store_ind, attr_points,
-        num_item_types, offer, screen_cols, col, row, item_for_class;
+    int max_accepted_discount, index, store_ind, attr_points, num_item_types,
+        offer, screen_cols, col, row, item_for_class;
     character_class_t *character_class;
     character_class_t ** character_classes;
     character_t *character;
@@ -570,7 +569,7 @@ int main(int argc, char *argv[]) {
     character = init_character(main_menu->num_rows * 3);
     item_to_char_class = init_item_to_char_class();
     stores = init_stores();
-    init_vars(&char_base, &attr_points, &message, attr_names);
+    init_vars(&attr_points, &message, attr_names);
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
         return 1;
@@ -708,9 +707,7 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(screen->ren);
     tab(screen->cursor, 1, 3);
     num_item_types = main_menu->num_rows * 3;
-    save_character(
-        character, character_class, character_name, num_item_types, char_base
-    );
+    save_character(character, character_class, character_name, num_item_types);
     free(stores);
     free(message);
     free(character_name);

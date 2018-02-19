@@ -84,9 +84,8 @@ void update_header(screen_t *screen, int num_points, const char * point_label,
 }
 
 int can_class_buy_item(character_class_t *character_class, int item_num,
-                       char * message,
-                       const char * item_char_class_avail[24]) {
-    if (item_char_class_avail[item_num][character_class->id] == '1') {
+                       char * message, const char * item_to_char_class[24]) {
+    if (item_to_char_class[item_num][character_class->id] == '1') {
         return 1;
     }
     sprintf(
@@ -122,8 +121,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
                          int max_accepted_discount,
                          character_class_t *character_class,
                          character_t *character, const char * point_label,
-                         char * message,
-                         const char * item_char_class_avail[24]) {
+                         char * message, const char * item_to_char_class[24]) {
     int item_for_class, offer;
     char * typed_string = NULL;
     strcpy(message, "");
@@ -135,7 +133,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     offer = atoi(typed_string);
     free(typed_string);
     item_for_class = can_class_buy_item(
-        character_class, item->id, message, item_char_class_avail
+            character_class, item->id, message, item_to_char_class
     );
     buy_item(
         item, character, max_accepted_discount, offer, item_for_class, message
@@ -271,34 +269,38 @@ character_class_t ** init_character_classes() {
     return character_classes;
 }
 
-void init_vars(int *char_base, int *attr_points,
-               char ** message, const char * item_char_class_avail[24],
-               const char * attr_names[8], store_t stores[3]) {
-    item_char_class_avail[0] = "00001";
-    item_char_class_avail[1] = "00011";
-    item_char_class_avail[2] = "10011";
-    item_char_class_avail[3] = "10011";
-    item_char_class_avail[4] = "10011";
-    item_char_class_avail[5] = "00011";
-    item_char_class_avail[6] = "11111";
-    item_char_class_avail[7] = "10011";
-    item_char_class_avail[8] = "00011";
-    item_char_class_avail[9] = "00011";
-    item_char_class_avail[10] = "10011";
-    item_char_class_avail[11] = "11111";
-    item_char_class_avail[12] = "00011";
-    item_char_class_avail[13] = "11011";
-    item_char_class_avail[14] = "11011";
-    item_char_class_avail[15] = "11111";
-    item_char_class_avail[16] = "11100";
-    item_char_class_avail[17] = "00100";
-    item_char_class_avail[18] = "11100";
-    item_char_class_avail[19] = "10100";
-    item_char_class_avail[20] = "11100";
-    item_char_class_avail[21] = "11100";
-    item_char_class_avail[22] = "11111";
-    item_char_class_avail[23] = "11111";
+const char ** init_item_to_char_class() {
+    const char ** item_to_char_class = malloc(sizeof(const char *) * 24);
+    item_to_char_class[0] = "00001";
+    item_to_char_class[1] = "00011";
+    item_to_char_class[2] = "10011";
+    item_to_char_class[3] = "10011";
+    item_to_char_class[4] = "10011";
+    item_to_char_class[5] = "00011";
+    item_to_char_class[6] = "11111";
+    item_to_char_class[7] = "10011";
+    item_to_char_class[8] = "00011";
+    item_to_char_class[9] = "00011";
+    item_to_char_class[10] = "10011";
+    item_to_char_class[11] = "11111";
+    item_to_char_class[12] = "00011";
+    item_to_char_class[13] = "11011";
+    item_to_char_class[14] = "11011";
+    item_to_char_class[15] = "11111";
+    item_to_char_class[16] = "11100";
+    item_to_char_class[17] = "00100";
+    item_to_char_class[18] = "11100";
+    item_to_char_class[19] = "10100";
+    item_to_char_class[20] = "11100";
+    item_to_char_class[21] = "11100";
+    item_to_char_class[22] = "11111";
+    item_to_char_class[23] = "11111";
 
+    return item_to_char_class;
+}
+
+void init_vars(int *char_base, int *attr_points, char ** message,
+               const char * attr_names[8], store_t stores[3]) {
     attr_names[0] = "STRENGTH";
     attr_names[1] = "VITALITY";
     attr_names[2] = "AGILITY";
@@ -485,8 +487,7 @@ int main(int argc, char *argv[]) {
     character_t *character;
     store_t stores[3];
     main_menu_t *main_menu;
-    const char * point_label,
-               * item_char_class_avail[24];
+    const char * point_label, ** item_to_char_class;
     char pressed_key, * typed_string = NULL, * message = NULL,
          * character_name;
     const char * attr_names[8];
@@ -494,10 +495,8 @@ int main(int argc, char *argv[]) {
     character_classes = init_character_classes();
     main_menu = init_main_menu();
     character = init_character(main_menu->num_rows * 3);
-    init_vars(
-        &char_base, &attr_points, &message, item_char_class_avail, attr_names,
-        stores
-    );
+    item_to_char_class = init_item_to_char_class();
+    init_vars(&char_base, &attr_points, &message, attr_names, stores);
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
         return 1;
@@ -590,7 +589,7 @@ int main(int argc, char *argv[]) {
             item = &stores[store_ind].items[main_menu->selected_row];
             strcpy(message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
-                character_class, item->id, message, item_char_class_avail
+                character_class, item->id, message, item_to_char_class
             );
             max_accepted_discount = 0;
             offer = 0;
@@ -605,7 +604,7 @@ int main(int argc, char *argv[]) {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
                     screen, item, max_accepted_discount, character_class,
-                    character, point_label, message, item_char_class_avail
+                    character, point_label, message, item_to_char_class
                 );
             }
             update_header(screen, character->gold, point_label, message);
@@ -700,6 +699,7 @@ int main(int argc, char *argv[]) {
         free(character_classes[index]);
     }
     free(character_classes);
+    free(item_to_char_class);
 
     free(character);
     destroy_screen(screen);

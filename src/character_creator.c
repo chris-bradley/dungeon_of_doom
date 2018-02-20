@@ -13,9 +13,12 @@ typedef struct {
     int top_row;
 } main_menu_t;
 
+struct character_s_t;
+
 typedef struct {
     int id;
     const char * name;
+    int (*elig_func)(struct character_s_t *);
 } character_class_t;
 
 typedef struct {
@@ -30,7 +33,7 @@ typedef struct {
     item_t items[8];
 } store_t;
 
-typedef struct {
+typedef struct character_s_t {
     int attrs[8];
     character_class_t * class;
     char * name;
@@ -238,6 +241,45 @@ character_t * init_character(int inventory_size) {
     return character;
 }
 
+int can_be_wanderer(character_t * character) {
+    return 1;
+}
+
+int can_be_cleric(character_t * character) {
+    if (character->attrs[3] > 6 && character->attrs[7] > 7) {
+        return 1;
+    }
+    return 0;
+}
+
+int can_be_mage(character_t * character) {
+    if (character->attrs[3] > 8 && character->attrs[6] > 7) {
+        return 1;
+    }
+    return 0;
+}
+
+int can_be_warrior(character_t * character) {
+    if (
+            character->attrs[0] > 7 && character->attrs[7] > 5 &&
+            character->attrs[0] + character->attrs[1] > 10
+    ) {
+        return 1;
+    }
+    return 0;
+}
+
+int can_be_barbarian(character_t * character) {
+    if (
+            character->attrs[0] > 8 &&
+            character->attrs[1] + character->attrs[2] > 12 &&
+            character->attrs[7] < 6
+    ) {
+        return 1;
+    }
+    return 0;
+}
+
 character_class_t ** init_character_classes() {
     int index;
     character_class_t ** character_classes = malloc(
@@ -248,23 +290,28 @@ character_class_t ** init_character_classes() {
     }
     *character_classes[0] = (character_class_t) {
         .id = 0,
-        .name = "WANDERER"
+        .name = "WANDERER",
+        .elig_func = &can_be_wanderer
     };
     *character_classes[1] = (character_class_t) {
         .id = 1,
-        .name = "CLERIC"
+        .name = "CLERIC",
+        .elig_func = &can_be_cleric
     };
     *character_classes[2] = (character_class_t) {
         .id = 2,
-        .name = "MAGE"
+        .name = "MAGE",
+        .elig_func = &can_be_mage
     };
     *character_classes[3] = (character_class_t) {
         .id = 3,
-        .name = "WARRIOR"
+        .name = "WARRIOR",
+        .elig_func = &can_be_warrior
     };
     *character_classes[4] = (character_class_t) {
         .id = 4,
-        .name = "BARBARIAN"
+        .name = "BARBARIAN",
+        .elig_func = &can_be_barbarian
     };
 
     return character_classes;
@@ -608,25 +655,10 @@ int main(int argc, char *argv[]) {
             main_menu->items[main_menu->selected_row]->value -= 1;
             update_main(screen, main_menu);
         }
-        character->class = character_classes[0];
-        if (character->attrs[3] > 6 && character->attrs[7] > 7) {
-            character->class = character_classes[1];
-        }
-        if (character->attrs[3] > 8 && character->attrs[6] > 7) {
-            character->class = character_classes[2];
-        }
-        if (
-                character->attrs[0] > 7 && character->attrs[7] > 5 &&
-                character->attrs[0] + character->attrs[1] > 10
-        ) {
-            character->class = character_classes[3];
-        }
-        if (
-                character->attrs[0] > 8 &&
-                character->attrs[1] + character->attrs[2] > 12 &&
-                character->attrs[7] < 6
-        ) {
-            character->class = character_classes[4];
+        for (index = 0; index < 5; index += 1) {
+            if (character_classes[index]->elig_func(character)) {
+                character->class = character_classes[index];
+            }
         }
         strcpy(message, character->class->name);
         update_header(screen, attr_points, point_label, message);

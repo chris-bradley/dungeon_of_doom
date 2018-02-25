@@ -17,8 +17,7 @@ void print_text(screen_t *screen, const char *message) {
     );
     if (!c64_font) {
         fprintf(stderr, "TTF_OpenFont: %s\n", TTF_GetError());
-        // Do some proper error handling.
-        return;
+        exit(1);
     }
     int message_length = (int) strlen(message);
     SDL_Rect text_pos = {

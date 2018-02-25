@@ -67,7 +67,6 @@ void print_text(screen_t *screen, const char *message) {
         text_surface
     );
 
-    text_pos.y += 1;
     text_pos.h += 1;
 
     error = SDL_RenderCopy(

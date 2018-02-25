@@ -20,7 +20,9 @@ void print_text(screen_t *screen, const char *message) {
         exit(1);
     }
     int message_length = (int) strlen(message);
-    SDL_Rect text_pos = {
+    SDL_Rect *text_pos;
+    text_pos = malloc(sizeof(SDL_Rect));
+    *text_pos = (SDL_Rect) {
         .x = screen->cursor->curs_x * 8 * screen->zoom,
         .y = screen->cursor->curs_y * 8 * screen->zoom,
         .w = message_length * 8 * screen->zoom,
@@ -40,7 +42,7 @@ void print_text(screen_t *screen, const char *message) {
     if (error) {
         fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
     }
-    error = SDL_RenderFillRect(screen->ren, &text_pos);
+    error = SDL_RenderFillRect(screen->ren, text_pos);
     if (error) {
         fprintf(stderr, "SDL_RenderFillRect error: %s\n", SDL_GetError());
     }
@@ -66,13 +68,13 @@ void print_text(screen_t *screen, const char *message) {
         text_surface
     );
 
-    text_pos.h += 1;
+    text_pos->h += 1;
 
     error = SDL_RenderCopy(
         screen->ren,
         text_texture,
         NULL,
-        &text_pos
+        text_pos
     );
     if (error) {
         fprintf(stderr, "SDL_RenderCopy error: %s\n", SDL_GetError());
@@ -81,6 +83,8 @@ void print_text(screen_t *screen, const char *message) {
     SDL_DestroyTexture(text_texture);
     SDL_FreeSurface(text_surface);
     TTF_CloseFont(c64_font);
+
+    free(text_pos);
 }
 
 void ink(cursor_t *cursor, enum ColourNum c_num) {

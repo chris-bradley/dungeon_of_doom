@@ -166,15 +166,18 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     print_text(screen, ">");
 }
 
-void draw_header(screen_t *screen, int num_points, int screen_cols,
-                 const char * point_label, char * message,
-                 const char * stage_name) {
+void draw_title_row(screen_t *screen, const char * stage_name, int screen_cols
+                    )  {
     paper(screen->cursor, BLACK);
     ink(screen->cursor, YELLOW);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
     print_text(screen, stage_name);
+};
+
+void draw_header(screen_t *screen, int num_points, int screen_cols,
+                 const char * point_label, char * message) {
     draw_bordered_box(screen, 1, 0, 2, screen_cols - 2, YELLOW, WHITE);
     update_header(screen, num_points, point_label, message);
 }
@@ -634,10 +637,8 @@ int main(int argc, char *argv[]) {
     screen_cols = init_screen_cols();
     paper(screen->cursor, BLACK);
     point_label = "POINTS";
-    draw_header(
-        screen, attr_points, screen_cols, point_label, message,
-        "CHARACTER CREATION"
-    );
+    draw_title_row(screen, "CHARACTER_CREATION", screen_cols);
+    draw_header(screen, attr_points, screen_cols, point_label, message);
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {
         main_menu->items[index] = malloc(sizeof(main_menu_t));
@@ -685,9 +686,13 @@ int main(int argc, char *argv[]) {
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
         main_menu->selected_row = 0;
         strcpy(message, "CHOOSE WELL SIRE!");
+        draw_title_row(screen, stores[store_ind].name, screen_cols);
         draw_header(
-            screen, character->gold, screen_cols, point_label, message,
-            stores[store_ind].name
+            screen,
+            character->gold,
+            screen_cols,
+            point_label,
+            message
         );
         for (index = 0; index < 8; index += 1) {
             item = &stores[store_ind].items[index];

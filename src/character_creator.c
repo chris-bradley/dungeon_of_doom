@@ -545,7 +545,7 @@ void save_character(character_t * character, int num_item_types) {
 
     error = fputc((char) (num_item_types + char_base), save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing number of items!", error);
+        fprintf(stderr, "Error %i writing number of items!\n", error);
     }
 
     for (index = 0; index < 8; index += 1) {
@@ -554,7 +554,7 @@ void save_character(character_t * character, int num_item_types) {
             save_file_handle
         );
         if (error) {
-            fprintf(stderr, "Error %i writing attr %i!", error, index);
+            fprintf(stderr, "Error %i writing attr %i!\n", error, index);
         }
     }
     for (index = 0; index < num_item_types; index += 1) {
@@ -563,32 +563,32 @@ void save_character(character_t * character, int num_item_types) {
             save_file_handle
         );
         if (error) {
-            fprintf(stderr, "Error %i writing inventory %i!", error, index);
+            fprintf(stderr, "Error %i writing inventory %i!\n", error, index);
         }
     }
     error = fputc((char) (character->gold + char_base), save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing gold!", error);
+        fprintf(stderr, "Error %i writing gold!\n", error);
     }
     error = fputc((char) char_base, save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing char_base!", error);
+        fprintf(stderr, "Error %i writing char_base!\n", error);
     }
     error = fputs(character->name, save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing character name!", error);
+        fprintf(stderr, "Error %i writing character name!\n", error);
     }
     error = fputs(" -", save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing name delimiter!", error);
+        fprintf(stderr, "Error %i writing name delimiter!\n", error);
     }
     error = fputs(character->class->name, save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing character class name!", error);
+        fprintf(stderr, "Error %i writing character class name!\n", error);
     }
     error = fclose(save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i saving the character!", error);
+        fprintf(stderr, "Error %i saving the character!\n", error);
     }
 }
 

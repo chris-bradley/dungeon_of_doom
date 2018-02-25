@@ -543,36 +543,53 @@ void save_character(character_t * character, int num_item_types) {
     int char_base = 65, error, index;
     FILE *save_file_handle = fopen("HERO", "w");
 
-    error = fputc((char) (num_item_types + char_base), save_file_handle);
-    if (error) {
-        fprintf(stderr, "Error %i writing number of items!\n", error);
+    if (!fputc((char) (num_item_types + char_base), save_file_handle)) {
+        fprintf(
+            stderr,
+            "Error %i writing number of items!\n",
+            ferror(save_file_handle)
+        );
     }
 
     for (index = 0; index < 8; index += 1) {
-        error = fputc(
-            (char) (character->attrs[index] + char_base),
-            save_file_handle
-        );
-        if (error) {
-            fprintf(stderr, "Error %i writing attr %i!\n", error, index);
+        if (
+                !fputc(
+                    (char) (character->attrs[index] + char_base),
+                    save_file_handle
+                )
+        ) {
+            fprintf(
+                stderr,
+                "Error %i writing attr %i!\n",
+                ferror(save_file_handle),
+                index
+            );
         }
     }
     for (index = 0; index < num_item_types; index += 1) {
-        error = fputc(
-            (char) (character->inventory[index] + char_base),
-            save_file_handle
-        );
-        if (error) {
-            fprintf(stderr, "Error %i writing inventory %i!\n", error, index);
+        if (
+                !fputc(
+                    (char) (character->inventory[index] + char_base),
+                    save_file_handle
+                )
+        ) {
+            fprintf(
+                stderr,
+                "Error %i writing inventory %i!\n",
+                ferror(save_file_handle),
+                index
+            );
         }
     }
-    error = fputc((char) (character->gold + char_base), save_file_handle);
-    if (error) {
-        fprintf(stderr, "Error %i writing gold!\n", error);
+    if (!fputc((char) (character->gold + char_base), save_file_handle)) {
+        fprintf(stderr, "Error %i writing gold!\n", ferror(save_file_handle));
     }
-    error = fputc((char) char_base, save_file_handle);
-    if (error) {
-        fprintf(stderr, "Error %i writing char_base!\n", error);
+    if (!fputc((char) char_base, save_file_handle)) {
+        fprintf(
+            stderr,
+            "Error %i writing char_base!\n",
+            ferror(save_file_handle)
+        );
     }
     error = fputs(character->name, save_file_handle);
     if (error) {

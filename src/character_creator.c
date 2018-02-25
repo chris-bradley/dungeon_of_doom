@@ -2,6 +2,13 @@
 #include "dungeon_lib.h"
 
 typedef struct {
+    int left_col;
+    int top_row;
+    int cols;
+    int rows;
+} header_t;
+
+typedef struct {
     const char * label;
     int value;
 } menu_item_t;
@@ -65,19 +72,19 @@ char * get_player_string(screen_t *screen, int col, int row) {
     }
 }
 
-void update_header(screen_t *screen, int num_points, const char * point_label,
-                   char * message) {
+void update_header(screen_t *screen, header_t *header, int num_points,
+                   const char * point_label, char * message) {
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
-    tab(screen->cursor, 2, 2);
+    tab(screen->cursor, header->left_col + 2, header->top_row + 1);
     print_left$_b$(screen, 17);
-    tab(screen->cursor, 2, 2);
+    tab(screen->cursor, header->left_col + 2, header->top_row + 1);
     print_text(screen, message);
-    tab(screen->cursor, 15, 3);
+    tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     print_left$_b$(screen, 4);
-    tab(screen->cursor, 2, 3);
+    tab(screen->cursor, header->left_col + 2, header->top_row + 2);
     print_text(screen, point_label);
-    tab(screen->cursor, 15, 3);
+    tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
         fprintf(stderr, "outstring is NULL!\n");
@@ -125,11 +132,12 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
 void make_offer_for_item(screen_t *screen, item_t *item,
                          int max_accepted_discount,
                          character_t *character, const char * point_label,
-                         char * message, int ** item_to_char_class) {
+                         char * message, int ** item_to_char_class,
+                         header_t *header) {
     int item_for_class, offer;
     char * typed_string = NULL;
     strcpy(message, "");
-    update_header(screen, character->gold, point_label, message);
+    update_header(screen, header, character->gold, point_label, message);
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
     SDL_RenderPresent(screen->ren);
@@ -176,10 +184,18 @@ void draw_title_row(screen_t *screen, const char * stage_name, int screen_cols
     print_text(screen, stage_name);
 };
 
-void draw_header(screen_t *screen, int num_points, int screen_cols,
+void draw_header(screen_t *screen, header_t *header, int num_points,
                  const char * point_label, char * message) {
-    draw_bordered_box(screen, 1, 0, 2, screen_cols - 2, YELLOW, WHITE);
-    update_header(screen, num_points, point_label, message);
+    draw_bordered_box(
+        screen,
+        header->top_row,
+        header->left_col,
+        header->rows,
+        header->cols,
+        YELLOW,
+        WHITE
+    );
+    update_header(screen, header, num_points, point_label, message);
 }
 
 void update_main(screen_t *screen, main_menu_t *main_menu) {
@@ -618,6 +634,7 @@ int main(int argc, char *argv[]) {
     character_class_t ** character_classes;
     character_t *character;
     store_t * stores;
+    header_t * header;
     main_menu_t *main_menu;
     const char * point_label;
     int ** item_to_char_class;
@@ -625,6 +642,7 @@ int main(int argc, char *argv[]) {
     const char * attr_names[8];
     item_t * item;
     character_classes = init_character_classes();
+    header = malloc(sizeof(header_t));
     main_menu = init_main_menu();
     character = init_character(main_menu->num_rows * 3);
     item_to_char_class = init_item_to_char_class();
@@ -635,10 +653,16 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     screen_cols = init_screen_cols();
+    *header = (header_t) {
+        .left_col = 0,
+        .top_row = 1,
+        .cols = screen_cols - 2,
+        .rows = 2
+    };
     paper(screen->cursor, BLACK);
     point_label = "POINTS";
     draw_title_row(screen, "CHARACTER_CREATION", screen_cols);
-    draw_header(screen, attr_points, screen_cols, point_label, message);
+    draw_header(screen, header, attr_points, point_label, message);
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {
         main_menu->items[index] = malloc(sizeof(main_menu_t));
@@ -679,7 +703,7 @@ int main(int argc, char *argv[]) {
             }
         }
         strcpy(message, character->class->name);
-        update_header(screen, attr_points, point_label, message);
+        update_header(screen, header, attr_points, point_label, message);
         SDL_RenderPresent(screen->ren);
     } while (pressed_key != ' ');
     point_label = "GOLD COINS";
@@ -687,13 +711,7 @@ int main(int argc, char *argv[]) {
         main_menu->selected_row = 0;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_title_row(screen, stores[store_ind].name, screen_cols);
-        draw_header(
-            screen,
-            character->gold,
-            screen_cols,
-            point_label,
-            message
-        );
+        draw_header(screen, header, character->gold, point_label, message);
         for (index = 0; index < 8; index += 1) {
             item = &stores[store_ind].items[index];
             main_menu->items[index]->label = item->name;
@@ -724,10 +742,16 @@ int main(int argc, char *argv[]) {
                 max_accepted_discount = rand() % 3;
                 make_offer_for_item(
                     screen, item, max_accepted_discount, character,
-                    point_label, message, item_to_char_class
+                    point_label, message, item_to_char_class, header
                 );
             }
-            update_header(screen, character->gold, point_label, message);
+            update_header(
+                screen,
+                header,
+                character->gold,
+                point_label,
+                message
+            );
         } while (pressed_key != ' ');
     }
     character->name = (char *) malloc(sizeof(char) * 40);

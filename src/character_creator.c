@@ -3,6 +3,7 @@
 
 typedef struct {
     const char *label;
+    int points;
     int left_col;
     int top_row;
     int cols;
@@ -73,8 +74,7 @@ char * get_player_string(screen_t *screen, int col, int row) {
     }
 }
 
-void update_header(screen_t *screen, header_t *header, int num_points,
-                   char * message) {
+void update_header(screen_t *screen, header_t *header, char * message) {
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
@@ -91,7 +91,7 @@ void update_header(screen_t *screen, header_t *header, int num_points,
         fprintf(stderr, "outstring is NULL!\n");
         exit(1);
     }
-    sprintf(outstring, "%i ", num_points);
+    sprintf(outstring, "%i ", header->points);
     print_text(screen, outstring);
     free(outstring);
 }
@@ -110,7 +110,8 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
 }
 
 void buy_item(item_t *item, character_t *character, int max_accepted_discount,
-              int offer, int item_for_class, char * message) {
+              int offer, int item_for_class, char * message,
+              header_t *header) {
     int price;
     if (character->inventory[item->id] > 0 && item->id < 22) {
         strcpy(message, "YOU HAVE IT SIRE");
@@ -123,6 +124,7 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
                 character->inventory[item->id] += item->batch_size;
                 character->gold -= offer;
                 strcpy(message, "TIS YOURS!");
+                header->points -= offer;
             } else {
                 strcpy(message, "OFFER REJECTED");
             }
@@ -137,7 +139,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     int item_for_class, offer;
     char * typed_string = NULL;
     strcpy(message, "");
-    update_header(screen, header, character->gold, message);
+    update_header(screen, header, message);
     tab(screen->cursor, 2, 2);
     print_text(screen, "YOUR OFFER");
     SDL_RenderPresent(screen->ren);
@@ -148,7 +150,8 @@ void make_offer_for_item(screen_t *screen, item_t *item,
         character->class, item->id, message, item_to_char_class
     );
     buy_item(
-        item, character, max_accepted_discount, offer, item_for_class, message
+        item, character, max_accepted_discount, offer, item_for_class, message,
+        header
     );
 }
 
@@ -184,8 +187,7 @@ void draw_title_row(screen_t *screen, const char * stage_name, int screen_cols
     print_text(screen, stage_name);
 };
 
-void draw_header(screen_t *screen, header_t *header, int num_points,
-                 char * message) {
+void draw_header(screen_t *screen, header_t *header, char * message) {
     draw_bordered_box(
         screen,
         header->top_row,
@@ -195,7 +197,7 @@ void draw_header(screen_t *screen, header_t *header, int num_points,
         YELLOW,
         WHITE
     );
-    update_header(screen, header, num_points, message);
+    update_header(screen, header, message);
 }
 
 void update_main(screen_t *screen, main_menu_t *main_menu) {
@@ -654,6 +656,7 @@ int main(int argc, char *argv[]) {
     screen_cols = init_screen_cols();
     *header = (header_t) {
         .label = "POINTS",
+        .points = attr_points,
         .left_col = 0,
         .top_row = 1,
         .cols = screen_cols - 2,
@@ -661,7 +664,7 @@ int main(int argc, char *argv[]) {
     };
     paper(screen->cursor, BLACK);
     draw_title_row(screen, "CHARACTER_CREATION", screen_cols);
-    draw_header(screen, header, attr_points, message);
+    draw_header(screen, header, message);
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {
         main_menu->items[index] = malloc(sizeof(main_menu_t));
@@ -685,6 +688,7 @@ int main(int argc, char *argv[]) {
             character->attrs[main_menu->selected_row] += 1;
             attr_points -= 1;
             main_menu->items[main_menu->selected_row]->value += 1;
+            header->points -= 1;
             update_main(screen, main_menu);
         }
         if (
@@ -694,6 +698,7 @@ int main(int argc, char *argv[]) {
             character->attrs[main_menu->selected_row] -=1;
             attr_points += 1;
             main_menu->items[main_menu->selected_row]->value -= 1;
+            header->points += 1;
             update_main(screen, main_menu);
         }
         for (index = 0; index < 5; index += 1) {
@@ -702,15 +707,16 @@ int main(int argc, char *argv[]) {
             }
         }
         strcpy(message, character->class->name);
-        update_header(screen, header, attr_points, message);
+        update_header(screen, header, message);
         SDL_RenderPresent(screen->ren);
     } while (pressed_key != ' ');
     header->label = "GOLD COINS";
+    header->points = character->gold;
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
         main_menu->selected_row = 0;
         strcpy(message, "CHOOSE WELL SIRE!");
         draw_title_row(screen, stores[store_ind].name, screen_cols);
-        draw_header(screen, header, character->gold, message);
+        draw_header(screen, header, message);
         for (index = 0; index < 8; index += 1) {
             item = &stores[store_ind].items[index];
             main_menu->items[index]->label = item->name;
@@ -734,7 +740,7 @@ int main(int argc, char *argv[]) {
                 offer = item->price;
                 buy_item(
                     item, character, max_accepted_discount, offer,
-                    item_for_class, message
+                    item_for_class, message, header
                 );
             }
             if (pressed_key == '-') {
@@ -744,7 +750,7 @@ int main(int argc, char *argv[]) {
                     message, item_to_char_class, header
                 );
             }
-            update_header(screen, header, character->gold, message);
+            update_header(screen, header, message);
         } while (pressed_key != ' ');
     }
     character->name = (char *) malloc(sizeof(char) * 40);

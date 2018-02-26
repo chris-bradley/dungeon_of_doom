@@ -9,6 +9,9 @@ typedef struct {
     int top_row;
     int cols;
     int rows;
+    enum ColourNum text_colour;
+    enum ColourNum background_colour;
+    enum ColourNum border_colour;
 } header_t;
 
 typedef struct {
@@ -76,8 +79,8 @@ char * get_player_string(screen_t *screen, int col, int row) {
 }
 
 void update_header(screen_t *screen, header_t *header) {
-    paper(screen->cursor, YELLOW);
-    ink(screen->cursor, BLACK);
+    paper(screen->cursor, header->background_colour);
+    ink(screen->cursor, header->text_colour);
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
     print_left$_b$(screen, 17);
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
@@ -193,8 +196,8 @@ void draw_header(screen_t *screen, header_t *header) {
         header->left_col,
         header->rows,
         header->cols,
-        YELLOW,
-        WHITE
+        header->background_colour,
+        header->border_colour
     );
     update_header(screen, header);
 }
@@ -653,7 +656,10 @@ int main(int argc, char *argv[]) {
         .left_col = 0,
         .top_row = 1,
         .cols = screen_cols - 2,
-        .rows = 2
+        .rows = 2,
+        .text_colour = BLACK,
+        .background_colour = YELLOW,
+        .border_colour = WHITE
     };
     header->message = (char *) malloc(sizeof(char) * 40);
     if (header->message == NULL) {

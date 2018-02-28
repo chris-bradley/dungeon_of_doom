@@ -681,6 +681,7 @@ int main(int argc, char *argv[]) {
     }
     draw_main(screen, main_menu, screen_cols);
     tab(screen->cursor, 1, main_menu->top_row + 1);
+    ink(screen->cursor, RED);
     print_text(screen, ">");
     SDL_RenderPresent(screen->ren);
     do {
@@ -730,6 +731,7 @@ int main(int argc, char *argv[]) {
         }
         draw_main(screen, main_menu, screen_cols);
         tab(screen->cursor, 1, main_menu->top_row + 1);
+        ink(screen->cursor, RED);
         print_text(screen, ">");
         do {
             SDL_RenderPresent(screen->ren);

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     ink(screen->cursor, BLACK);
     // 50 PRINT tab(1,1);"LEVEL GENERATOR"
     tab(screen->cursor, 1, 1);
-    print_text(screen, "LEVEL GENERATOR");
+    free(print_text(screen, "LEVEL GENERATOR"));
     // 60 PRINT tab(1,2);"THIS IS LEVEL:";LE;
     tab(screen->cursor, 1, 2);
     char* outstring = (char *) malloc(sizeof(char) * 40);
@@ -48,11 +48,11 @@ int main(int argc, char *argv[]) {
        exit(1);
     }
     snprintf(outstring, 40, "THIS IS LEVEL: %i", LE);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     free(outstring);
     // 70 PRINT tab(1,3);"PRESS H FOR HELP"
     tab(screen->cursor, 1, 3);
-    print_text(screen, "PRESS H FOR HELP");
+    free(print_text(screen, "PRESS H FOR HELP"));
 
     // 80 LET BG=3:LET FG=2:LET T=5:LET L=15:LET LW=15:GOSUB 280
     lines280_350(screen, WHITE, YELLOW, 5, 15, 15);
@@ -94,11 +94,11 @@ int main(int argc, char *argv[]) {
         tab(screen->cursor, X, Y + 5);
         char os_input[2];
         sprintf(os_input, "%s", (char *) &OS);
-        print_text(screen, os_input);
+        free(print_text(screen, os_input));
         tab(screen->cursor, X, Y + 5);
         // 190 PRINT tab(X,Y+5);CHR$(R(X,Y));
         sprintf(os_input, "%s", (char *) &R[X][Y]);
-        print_text(screen, os_input);
+        free(print_text(screen, os_input));
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*I$ == 's' && IX > 0) {
@@ -150,11 +150,11 @@ void lines280_350(screen_t *screen, enum ColourNum BG, enum ColourNum FG,
     for (int I = 1; I <= L; I +=1) {
     // 320 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,LW);BG$(FG);" "
         paper(screen->cursor, FG);
-        print_text(screen, " ");
+        free(print_text(screen, " "));
         paper(screen->cursor, BG);
         print_left$_b$(screen, LW);
         paper(screen->cursor, FG);
-        print_text(screen, " ");
+        free(print_text(screen, " "));
         newline(screen->cursor);
     // 330 NEXT I
     }
@@ -177,7 +177,7 @@ void lines360_420(screen_t *screen, int W, const char * H$[10]) {
     for (H = 0; H < 10; H += 1) {
     // 380 PRINT tab(1,4);H$(H);:GOSUB 430
         tab(screen->cursor, 1, 4);
-        print_text(screen, H$[H]);
+        free(print_text(screen, H$[H]));
         SDL_RenderPresent(screen->ren);
         lines430_440();
     // 390 PRINT tab(1,4);LEFT$(B$,W-2);
@@ -201,7 +201,7 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
                   int *IX, int *IY, int CO) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
-    print_text(screen, "ONE MOMENT PLEASE");
+    free(print_text(screen, "ONE MOMENT PLEASE"));
     // 460 LET S$=""
     char S$[239];
     // 470 FOR J=1 TO 15
@@ -224,7 +224,7 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
     S$[228] = 0;
     // 540 PRINT tab(1,4);"ANY KEY TO SAVE   ";GOSUB 430
     tab(screen->cursor, 1, 4);
-    print_text(screen, "ANY KEY TO SAVE   ");
+    free(print_text(screen, "ANY KEY TO SAVE   "));
     SDL_RenderPresent(screen->ren);
     lines430_440();
     // 550 LET S=OPENOUT "LEVEL"

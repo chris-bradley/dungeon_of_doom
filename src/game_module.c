@@ -338,7 +338,7 @@ void lines370_420(screen_t *screen, char *I$, char *M$, int W) {
     ink(screen->cursor, BLACK);
     // 380 PRINT tab(0,5):M$;
     tab(screen->cursor, 0, 5);
-    print_text(screen, M$);
+    free(print_text(screen, M$));
     // 390 LET I$=inkey$
     // 400 IF I$="" THEN GOTO390
     SDL_RenderPresent(screen->ren);
@@ -362,7 +362,7 @@ void lines430_430(screen_t *screen, char *M$, int W) {
 void lines440_470(screen_t *screen, char *M$, int W) {
     // 440 PRINT tab(0,5);M$;
     tab(screen->cursor, 0, 5);
-    print_text(screen, M$);
+    free(print_text(screen, M$));
     SDL_RenderPresent(screen->ren);
     // 450 FOR D=1 TO 600:NEXT D
     // C64: 450 FOR D=1 TO 200:NEXT D
@@ -388,32 +388,32 @@ void lines480_560(screen_t *screen, double *F, char *F$, int NF, int NX,
     }
     outstring[0] = F$[NF];
     outstring[1] = 0;
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     // 500 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     // 510 PRINT tab(16,8);INT(F(1));" ";
     tab(screen->cursor, 16, 8);
     sprintf(outstring, "%i ", (int) F[1]);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
 
     // 520 PRINT tab(16,11);INT(F(2));" ";
     tab(screen->cursor, 16, 11);
     sprintf(outstring, "%i ", (int) F[2]);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     // 530 PRINT tab(16,14);INT (F(7));" ";
     tab(screen->cursor, 16, 14);
     sprintf(outstring, "%i ", (int) F[7]);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     // 540 PRINT tab(16,17);MID$("NESW.",NF,1);
     tab(screen->cursor, 16, 17);
     outstring[0] = "NESW."[NF - 1];
     outstring[1] = 0;
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     // 550 PRINT tab(16,20);INT(F(5));
     tab(screen->cursor, 16, 20);
     sprintf(outstring, "%i ", (int) F[5]);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     // 560 RETURN
     free(outstring);
     SDL_RenderPresent(screen->ren);
@@ -434,7 +434,7 @@ void lines570_610(screen_t *screen, int C2, int C7, int *DX, int *LX, int *LY,
         exit(1);
     }
     sprintf(outstring, "%c", (char) RM);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     free(outstring);
     // 590 IF ABS(DX)<4 OR RM<=C7 THEN RETURN
     if (abs(*DX) < 4 || RM <= C7) {
@@ -597,7 +597,7 @@ void lines810_860(screen_t *screen, int C2, int C7, int *DX, double *F,
     free(M$);
     // 820 PRINT tab(1,5);"THOU HAST EXPIRED!"
     tab(screen->cursor, 1, 5);
-    print_text(screen, "THOU HAST EXPIRED!");
+    free(print_text(screen, "THOU HAST EXPIRED!"));
     // 830 FOR J=150 TO 1 STEP-4
     for (J = 150; J >= 1; J -= 4) {
     // 840 GOSUB350:GOSUB360:GOSUB570:GOSUB480
@@ -720,20 +720,20 @@ void lines990_1130(screen_t *screen, int C0, int C2, int C7, int *DX,
     ink(screen->cursor, BLACK);
     // 1000 PRINT tab(0,10);"YOU MAY USE MAGICKS";
     tab(screen->cursor, 0, 1);
-    print_text(screen, "YOU MAY USE MAGICKS");
+    free(print_text(screen, "YOU MAY USE MAGICKS"));
     // 1010 IF O(17)>0 THEN PRINT tab(0,2);"FROM NECRONOMICON";
     if (O[17] > 0) {
         tab(screen->cursor, 0, 2);
-        print_text(screen, "FROM NECRONOMICON");
+        free(print_text(screen, "FROM NECRONOMICON"));
     }
     // 1020 IF O(18)>0 THEN PRINT tab(0,3);"FROM THE SCROLLS";
     if (O[18] > 0) {
         tab(screen->cursor, 0, 3);
-        print_text(screen, "FROM THE SCROLLS");
+        free(print_text(screen, "FROM THE SCROLLS"));
     }
     // 1030 PRINT tab(0,4);"CONSULT THE LORE"
     tab(screen->cursor, 0, 4);
-    print_text(screen, "CONSULT THE LORE");
+    free(print_text(screen, "CONSULT THE LORE"));
     // 1040 LET M$="USE SPELL NUMBER?":GOSUB370
     do {
         M$ = (char *) malloc(sizeof(char) * 18);
@@ -990,7 +990,7 @@ void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int GC,
     ink(screen->cursor, RED);
     // 1560 PRINT tab(0,1);" THY QUEST IS OVER! "
     tab(screen->cursor, 0, 1);
-    print_text(screen, " THY QUEST IS OVER! ");
+    free(print_text(screen, " THY QUEST IS OVER! "));
     // 1570 FOR I = 1 TO 18
     for (I = 1; I <= 18; I += 1) {
     // 1580 LET J=T(I):GOSUB350
@@ -1020,7 +1020,7 @@ void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int GC,
         "THY SCORE=%i",
         (int) ((TR * 10) + (GC * F[5]) + F[1] + F[2] + F[3])
     );
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     free(outstring);
     // 1640 LET FI=1
     *FI = 1;
@@ -1110,7 +1110,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770, char *C$,
     // 1770 CLS:PRINT tab(0,3);"PREPARE DUNGEON TAPE"
         clear_screen(screen);
         tab(screen->cursor, 0, 3);
-        print_text(screen, "PREPARE DUNGEON TAPE");
+        free(print_text(screen, "PREPARE DUNGEON TAPE"));
     // 1780 LET M$=T$(10):GOSUB370
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
         if (M$ == NULL) {
@@ -1194,13 +1194,13 @@ void lines1770_1950(screen_t *screen, char *C$, int *DX, double *F, int *LE,
 void lines1960_2000(screen_t *screen, double *F) {
     // 1960 PRINT:PRINT"LEVEL TOO DEEP"
     newline(screen->cursor);
-    print_text(screen, "LEVEL TOO DEEP");
+    free(print_text(screen, "LEVEL TOO DEEP"));
     newline(screen->cursor);
     // 1970 PRINT"REWIND TAPE"
-    print_text(screen, "REWIND TAPE");
+    free(print_text(screen, "REWIND TAPE"));
     newline(screen->cursor);
     // 1980 PRINT"TO POSITION"
-    print_text(screen, "TO POSITION");
+    free(print_text(screen, "TO POSITION"));
     newline(screen->cursor);
     // 1990 PRINT"FOR LEVEL";F(5)
     char * outstring = (char *) malloc(sizeof(char) * 40);
@@ -1209,7 +1209,7 @@ void lines1960_2000(screen_t *screen, double *F) {
         exit(1);
     }
     sprintf(outstring, "FOR LEVEL %d", (int) F[5]);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     free(outstring);
     // 2000 RETURN
 }
@@ -1222,7 +1222,7 @@ void lines2010_2250(screen_t *screen, int AS, char **C$, double *F, int *GC,
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
-    print_text(screen, "PREPARE HERO TAPE");
+    free(print_text(screen, "PREPARE HERO TAPE"));
     // 2020 LET M$=T$(10):GOSUB370
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
     if (M$ == NULL) {
@@ -1598,7 +1598,7 @@ void lines2790_2920(screen_t *screen, char *C$, int W) {
     paper(screen->cursor, WHITE);
     ink(screen->cursor, BLACK);
     // 2810 PRINT C$;LEFT$(B$(W-LEN(C$));
-    print_text(screen, C$);
+    free(print_text(screen, C$));
     print_left$_b$(screen, W - strlen(C$));
     // 2820 paper 2:ink 3
     paper(screen->cursor, YELLOW);
@@ -1621,19 +1621,19 @@ void lines2790_2920(screen_t *screen, char *C$, int W) {
     ink(screen->cursor, WHITE);
     // 2870 PRINT tab(16,7);"STR";
     tab(screen->cursor, 16, 7);
-    print_text(screen, "STR");
+    free(print_text(screen, "STR"));
     // 2880 PRINT tab(16,10);"VIT";
     tab(screen->cursor, 16, 10);
-    print_text(screen, "VIT");
+    free(print_text(screen, "VIT"));
     // 2890 PRINT tab(16,13);"AUR";
     tab(screen->cursor, 16, 13);
-    print_text(screen, "AUR");
+    free(print_text(screen, "AUR"));
     // 2900 PRINT tab(16,16);"FACE";
     tab(screen->cursor, 16, 16);
-    print_text(screen, "FACE");
+    free(print_text(screen, "FACE"));
     // 2910 PRINT tab(16,19);"EXP";
     tab(screen->cursor, 16, 19);
-    print_text(screen, "EXP");
+    free(print_text(screen, "EXP"));
     // 2920 RETURN
 }
 

@@ -21,7 +21,7 @@ enum ColourNum {
     WHITE = 3
 };
 
-void print_text(screen_t *screen, const char *message);
+SDL_Rect * print_text(screen_t *screen, const char *message);
 
 void ink(cursor_t *cursor, enum ColourNum c_num);
 

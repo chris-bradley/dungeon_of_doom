@@ -10,7 +10,7 @@ uint8_t colours [4][4] = {
     {0xff, 0xff, 0xff, 0}
 };
 
-void print_text(screen_t *screen, const char *message) {
+SDL_Rect * print_text(screen_t *screen, const char *message) {
     TTF_Font *c64_font = TTF_OpenFont(
         "fonts/dungeon_of_doom.ttf",
         8 * screen->zoom
@@ -84,7 +84,8 @@ void print_text(screen_t *screen, const char *message) {
     SDL_FreeSurface(text_surface);
     TTF_CloseFont(c64_font);
 
-    free(text_pos);
+    text_pos->h -= 1;
+    return text_pos;
 }
 
 void ink(cursor_t *cursor, enum ColourNum c_num) {

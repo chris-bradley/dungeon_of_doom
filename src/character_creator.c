@@ -76,7 +76,7 @@ char * get_player_string(screen_t *screen, int col, int row) {
             ind += 1;
             typed_string[ind] = 0;
             tab(screen->cursor, col, row);
-            print_text(screen, typed_string);
+            free(print_text(screen, typed_string));
             SDL_RenderPresent(screen->ren);
         }
     }
@@ -88,11 +88,11 @@ void update_header(screen_t *screen, header_t *header) {
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
     print_left$_b$(screen, 17);
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
-    print_text(screen, header->message);
+    free(print_text(screen, header->message));
     tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     print_left$_b$(screen, 4);
     tab(screen->cursor, header->left_col + 2, header->top_row + 2);
-    print_text(screen, header->label);
+    free(print_text(screen, header->label));
     tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
@@ -100,7 +100,7 @@ void update_header(screen_t *screen, header_t *header) {
         exit(1);
     }
     sprintf(outstring, "%i ", header->points);
-    print_text(screen, outstring);
+    free(print_text(screen, outstring));
     free(outstring);
 }
 
@@ -148,7 +148,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     strcpy(header->message, "");
     update_header(screen, header);
     tab(screen->cursor, 2, 2);
-    print_text(screen, "YOUR OFFER");
+    free(print_text(screen, "YOUR OFFER"));
     SDL_RenderPresent(screen->ren);
     typed_string = get_player_string(screen, 14, 2);
     offer = atoi(typed_string);
@@ -170,7 +170,7 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     paper(screen->cursor, WHITE);
     ink(screen->cursor, RED);
     tab(screen->cursor, 1, selected_row_pos);
-    print_text(screen, " ");
+    free(print_text(screen, " "));
     if (pressed_key == 'a' && main_menu->selected_row > 0) {
         main_menu->selected_row -= 1;
     }
@@ -182,7 +182,7 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     }
     selected_row_pos = calc_row_pos(main_menu, main_menu->selected_row);
     tab(screen->cursor, 1, selected_row_pos);
-    print_text(screen, ">");
+    free(print_text(screen, ">"));
 }
 
 void draw_title_row(screen_t *screen, const char * stage_name, int screen_cols
@@ -192,7 +192,7 @@ void draw_title_row(screen_t *screen, const char * stage_name, int screen_cols
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
-    print_text(screen, stage_name);
+    free(print_text(screen, stage_name));
 };
 
 void draw_header(screen_t *screen, header_t *header) {
@@ -218,7 +218,7 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
         print_left$_b$(screen, 5);
 
         tab(screen->cursor, 2, row);
-        print_text(screen, main_menu->items[index]->label);
+        free(print_text(screen, main_menu->items[index]->label));
         tab(screen->cursor, 16, row);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
@@ -226,7 +226,7 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
             exit(1);
         }
         sprintf(outstring, "%i ", main_menu->items[index]->value);
-        print_text(screen, outstring);
+        free(print_text(screen, outstring));
         free(outstring);
     }
 }
@@ -774,7 +774,7 @@ int main(int argc, char *argv[]) {
     }
     do {
         tab(screen->cursor, 1, 2);
-        print_text(screen, "NAME THY CHARACTER");
+        free(print_text(screen, "NAME THY CHARACTER"));
         tab(screen->cursor, 1, 3);
         print_left$_b$(screen, screen_cols - 2);
         SDL_RenderPresent(screen->ren);
@@ -787,7 +787,7 @@ int main(int argc, char *argv[]) {
         free(typed_string);
     } while (strlen(character->name) > 10);
     tab(screen->cursor, 1, 3);
-    print_text(screen, "ONE MOMENT PLEASE");
+    free(print_text(screen, "ONE MOMENT PLEASE"));
     SDL_RenderPresent(screen->ren);
     tab(screen->cursor, 1, 3);
     num_item_types = main_menu->num_rows * 3;

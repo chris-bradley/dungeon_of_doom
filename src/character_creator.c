@@ -680,9 +680,7 @@ int main(int argc, char *argv[]) {
         };
     }
     draw_main(screen, main_menu, screen_cols);
-    tab(screen->cursor, 1, main_menu->top_row + 1);
-    ink(screen->cursor, RED);
-    print_text(screen, ">");
+    select_row(screen, main_menu, ' ');
     SDL_RenderPresent(screen->ren);
     do {
         pressed_key = inkey$();
@@ -730,9 +728,7 @@ int main(int argc, char *argv[]) {
             main_menu->items[index]->value = item->price;
         }
         draw_main(screen, main_menu, screen_cols);
-        tab(screen->cursor, 1, main_menu->top_row + 1);
-        ink(screen->cursor, RED);
-        print_text(screen, ">");
+        select_row(screen, main_menu, ' ');
         do {
             SDL_RenderPresent(screen->ren);
             pressed_key = inkey$();

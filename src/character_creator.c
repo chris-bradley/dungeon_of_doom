@@ -669,7 +669,7 @@ int main(int argc, char *argv[]) {
     }
     strcpy(header->message, "");
     paper(screen->cursor, BLACK);
-    draw_title_row(screen, "CHARACTER_CREATION", screen_cols);
+    draw_title_row(screen, "CHARACTER CREATION", screen_cols);
     draw_header(screen, header);
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {

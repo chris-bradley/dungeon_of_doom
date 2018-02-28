@@ -24,6 +24,10 @@ typedef struct {
     int num_rows;
     menu_item_t *items[8];
     int top_row;
+    enum ColourNum text_colour;
+    enum ColourNum selector_colour;
+    enum ColourNum background_colour;
+    enum ColourNum border_colour;
 } main_menu_t;
 
 struct character_s_t;
@@ -204,8 +208,8 @@ void draw_header(screen_t *screen, header_t *header) {
 
 void update_main(screen_t *screen, main_menu_t *main_menu) {
     int index, row;
-    paper(screen->cursor, WHITE);
-    ink(screen->cursor, BLACK);
+    paper(screen->cursor, main_menu->background_colour);
+    ink(screen->cursor, main_menu->text_colour);
     for (index = 0; index < main_menu->num_rows; index += 1) {
         row = main_menu->top_row + index * 2 + 1;
         tab(screen->cursor, 15, row);
@@ -229,7 +233,7 @@ void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols) {
     main_menu->top_row = 5;
     draw_bordered_box(
         screen, main_menu->top_row, 0, main_menu->num_rows * 2 - 1,
-        screen_cols - 2, WHITE, YELLOW
+        screen_cols - 2, main_menu->background_colour, main_menu->border_colour
     );
     update_main(screen, main_menu);
 }
@@ -241,6 +245,10 @@ int init_screen_cols() {
 main_menu_t * init_main_menu() {
     main_menu_t *main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
     main_menu->num_rows = 8;
+    main_menu->text_colour = BLACK;
+    main_menu->selector_colour = RED;
+    main_menu->background_colour = WHITE;
+    main_menu->border_colour = YELLOW;
     return main_menu;
 }
 

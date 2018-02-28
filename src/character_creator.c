@@ -206,7 +206,7 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
     int index, row;
     paper(screen->cursor, WHITE);
     ink(screen->cursor, BLACK);
-    for (index = 0; index < 8; index += 1) {
+    for (index = 0; index < main_menu->num_rows; index += 1) {
         row = main_menu->top_row + index * 2 + 1;
         tab(screen->cursor, 15, row);
         print_left$_b$(screen, 5);
@@ -228,7 +228,8 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
 void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols) {
     main_menu->top_row = 5;
     draw_bordered_box(
-        screen, main_menu->top_row, 0, 15, screen_cols - 2, WHITE, YELLOW
+        screen, main_menu->top_row, 0, main_menu->num_rows * 2 - 1,
+        screen_cols - 2, WHITE, YELLOW
     );
     update_main(screen, main_menu);
 }

@@ -161,9 +161,12 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     );
 }
 
+int calc_row_pos(main_menu_t *main_menu, int row_num) {
+    return row_num * 2 + main_menu->top_row + 1;
+}
+
 void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
-    int selected_row_pos =
-        main_menu->selected_row * 2 + main_menu->top_row + 1;
+    int selected_row_pos = calc_row_pos(main_menu, main_menu->selected_row);
     paper(screen->cursor, WHITE);
     ink(screen->cursor, RED);
     tab(screen->cursor, 1, selected_row_pos);
@@ -177,8 +180,7 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     ) {
         main_menu->selected_row += 1;
     }
-    selected_row_pos =
-        main_menu->selected_row * 2 + main_menu->top_row + 1;
+    selected_row_pos = calc_row_pos(main_menu, main_menu->selected_row);
     tab(screen->cursor, 1, selected_row_pos);
     print_text(screen, ">");
 }
@@ -211,7 +213,7 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
     paper(screen->cursor, main_menu->background_colour);
     ink(screen->cursor, main_menu->text_colour);
     for (index = 0; index < main_menu->num_rows; index += 1) {
-        row = main_menu->top_row + index * 2 + 1;
+        row = calc_row_pos(main_menu, index);
         tab(screen->cursor, 15, row);
         print_left$_b$(screen, 5);
 

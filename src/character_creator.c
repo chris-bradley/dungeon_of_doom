@@ -758,7 +758,6 @@ int main(int argc, char *argv[]) {
                 character->class, item->id, item_to_char_class, header
             );
             max_accepted_discount = 0;
-            offer = 0;
             if (pressed_key == ';') {
                 offer = item->price;
                 buy_item(

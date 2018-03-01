@@ -28,6 +28,7 @@ typedef struct {
     enum ColourNum selector_colour;
     enum ColourNum background_colour;
     enum ColourNum border_colour;
+    SDL_Rect * selector_rect;
 } main_menu_t;
 
 struct character_s_t;
@@ -166,11 +167,18 @@ int calc_row_pos(main_menu_t *main_menu, int row_num) {
 }
 
 void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
-    int selected_row_pos = calc_row_pos(main_menu, main_menu->selected_row);
+    int selected_row_pos;
     paper(screen->cursor, WHITE);
     ink(screen->cursor, RED);
-    tab(screen->cursor, 1, selected_row_pos);
-    free(print_text(screen, " "));
+    if (main_menu->selector_rect != NULL) {
+        clear_box(
+            screen,
+            main_menu->selector_rect,
+            main_menu->background_colour
+        );
+        free(main_menu->selector_rect);
+        main_menu->selector_rect = NULL;
+    }
     if (pressed_key == 'a' && main_menu->selected_row > 0) {
         main_menu->selected_row -= 1;
     }
@@ -182,7 +190,7 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     }
     selected_row_pos = calc_row_pos(main_menu, main_menu->selected_row);
     tab(screen->cursor, 1, selected_row_pos);
-    free(print_text(screen, ">"));
+    main_menu->selector_rect = print_text(screen, ">");
 }
 
 void draw_title_row(screen_t *screen, const char * stage_name, int screen_cols
@@ -251,6 +259,7 @@ main_menu_t * init_main_menu() {
     main_menu->selector_colour = RED;
     main_menu->background_colour = WHITE;
     main_menu->border_colour = YELLOW;
+    main_menu->selector_rect = NULL;
     return main_menu;
 }
 
@@ -798,6 +807,7 @@ int main(int argc, char *argv[]) {
     for (index = 0; index < 8; index += 1) {
         free(main_menu->items[index]);
     }
+    free(main_menu->selector_rect);
     free(main_menu);
 
     for (index = 1; index < 6; index += 1) {

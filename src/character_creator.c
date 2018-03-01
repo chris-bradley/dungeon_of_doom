@@ -667,7 +667,7 @@ int main(int argc, char *argv[]) {
     init_vars(&attr_points, attr_names);
     screen_t *screen = NULL;
     if (init_screen(&screen) < 0) {
-        return 1;
+        exit(1);
     }
     screen_cols = init_screen_cols();
     *header = (header_t) {

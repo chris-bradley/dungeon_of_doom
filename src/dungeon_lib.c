@@ -278,3 +278,20 @@ void draw_bordered_box(screen_t *screen, int top_row, int left_col, int rows,
         fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
     }
 }
+
+void clear_box(screen_t *screen, SDL_Rect * rect, enum ColourNum colour) {
+    int error = SDL_SetRenderDrawColor(
+        screen->ren,
+        colours[colour][0],
+        colours[colour][1],
+        colours[colour][2],
+        colours[colour][3]
+    );
+    if (error) {
+        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
+    }
+    error = SDL_RenderFillRect(screen->ren, rect);
+    if (error) {
+        fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
+    }
+}

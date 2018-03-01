@@ -692,7 +692,7 @@ int main(int argc, char *argv[]) {
     draw_header(screen, header);
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {
-        main_menu->items[index] = malloc(sizeof(main_menu_t));
+        main_menu->items[index] = malloc(sizeof(menu_item_t));
         *main_menu->items[index] = (menu_item_t) {
             .label = attr_names[index],
             .value = character->attrs[index]

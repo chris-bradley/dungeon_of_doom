@@ -119,7 +119,7 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
 }
 
 void buy_item(item_t *item, character_t *character, int max_accepted_discount,
-              int offer, int item_for_class, header_t *header) {
+              int offer, header_t *header) {
     int price;
     if (character->inventory[item->id] > 0 && item->id < 22) {
         strcpy(header->message, "YOU HAVE IT SIRE");
@@ -127,7 +127,7 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
         price = item->price - max_accepted_discount;
         if (character->gold < price) {
             strcpy(header->message, "YOU CANNOT AFFORD");
-        } else if (item_for_class == 1) {
+        } else {
             if (offer >= price)  {
                 character->inventory[item->id] += item->batch_size;
                 character->gold -= offer;
@@ -142,9 +142,8 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
 
 void make_offer_for_item(screen_t *screen, item_t *item,
                          int max_accepted_discount,
-                         character_t *character, int ** item_to_char_class,
-                         header_t *header) {
-    int item_for_class, offer;
+                         character_t *character, header_t *header) {
+    int offer;
     char * typed_string = NULL;
     strcpy(header->message, "");
     update_header(screen, header);
@@ -154,12 +153,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     typed_string = get_player_string(screen, 14, 2);
     offer = atoi(typed_string);
     free(typed_string);
-    item_for_class = can_class_buy_item(
-        character->class, item->id, item_to_char_class, header
-    );
-    buy_item(
-        item, character, max_accepted_discount, offer, item_for_class, header
-    );
+    buy_item(item, character, max_accepted_discount, offer, header);
 }
 
 int calc_row_pos(main_menu_t *main_menu, int row_num) {
@@ -757,20 +751,20 @@ int main(int argc, char *argv[]) {
             item_for_class = can_class_buy_item(
                 character->class, item->id, item_to_char_class, header
             );
-            max_accepted_discount = 0;
-            if (pressed_key == ';') {
-                offer = item->price;
-                buy_item(
-                    item, character, max_accepted_discount, offer,
-                    item_for_class, header
-                );
-            }
-            if (pressed_key == '-') {
-                max_accepted_discount = rand() % 3;
-                make_offer_for_item(
-                    screen, item, max_accepted_discount, character,
-                    item_to_char_class, header
-                );
+            if (item_for_class) {
+                max_accepted_discount = 0;
+                if (pressed_key == ';') {
+                    offer = item->price;
+                    buy_item(
+                        item, character, max_accepted_discount, offer, header
+                    );
+                }
+                if (pressed_key == '-') {
+                    max_accepted_discount = rand() % 3;
+                    make_offer_for_item(
+                        screen, item, max_accepted_discount, character, header
+                    );
+                }
             }
             update_header(screen, header);
         } while (pressed_key != ' ');

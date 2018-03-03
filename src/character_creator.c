@@ -146,10 +146,8 @@ void make_offer_for_item(screen_t *screen, item_t *item,
                          character_t *character, header_t *header) {
     int offer;
     char * typed_string = NULL;
-    strcpy(header->message, "");
+    strcpy(header->message, "YOUR OFFER");
     update_header(screen, header);
-    tab(screen->cursor, 2, 2);
-    free(print_text(screen, "YOUR OFFER"));
     SDL_RenderPresent(screen->ren);
     typed_string = get_player_string(screen, 14, 2);
     offer = atoi(typed_string);

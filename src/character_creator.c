@@ -60,9 +60,11 @@ typedef struct character_s_t {
     int *inventory;
 } character_t;
 
-char * get_player_string(screen_t *screen, int col, int row) {
+char * get_player_string(screen_t *screen, int col, int row,
+                         enum ColourNum background_colour) {
     int ind = 0;
     char pressed_key, * typed_string;
+    SDL_Rect * typed_rect = NULL;
     typed_string = (char *) malloc(sizeof(char) * 40);
     if (typed_string == NULL) {
         fprintf(stderr, "typed_string is NULL!\n");
@@ -72,13 +74,16 @@ char * get_player_string(screen_t *screen, int col, int row) {
     while (1) {
         pressed_key = inkey$();
         if (pressed_key == '\n') {
+            clear_box(screen, typed_rect, background_colour);
+            free(typed_rect);
             return typed_string;
         } else if (pressed_key > '/' && pressed_key < ']' && ind < 39) {
             typed_string[ind] = pressed_key;
             ind += 1;
             typed_string[ind] = 0;
             tab(screen->cursor, col, row);
-            free(print_text(screen, typed_string));
+            free(typed_rect);
+            typed_rect = print_text(screen, typed_string);
             SDL_RenderPresent(screen->ren);
         }
     }
@@ -149,7 +154,7 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     strcpy(header->message, "YOUR OFFER");
     update_header(screen, header);
     SDL_RenderPresent(screen->ren);
-    typed_string = get_player_string(screen, 14, 2);
+    typed_string = get_player_string(screen, 14, 2, header->background_colour);
     offer = atoi(typed_string);
     free(typed_string);
     buy_item(item, character, max_accepted_discount, offer, header);
@@ -792,7 +797,12 @@ int main(int argc, char *argv[]) {
 
         col = 1;
         row = 3;
-        typed_string = get_player_string(screen, col, row);
+        typed_string = get_player_string(
+            screen,
+            col,
+            row,
+            header->background_colour
+        );
         strcpy(character->name, typed_string);
         free(typed_string);
     } while (strlen(character->name) > 10);

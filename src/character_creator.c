@@ -17,6 +17,7 @@ typedef struct {
 typedef struct {
     const char * label;
     int value;
+    SDL_Rect * value_rect;
 } menu_item_t;
 
 typedef struct {
@@ -216,6 +217,15 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
     ink(screen->cursor, main_menu->text_colour);
     for (index = 0; index < main_menu->num_rows; index += 1) {
         row = calc_row_pos(main_menu, index);
+        if (main_menu->items[index]->value_rect != NULL) {
+            clear_box(
+                screen,
+                main_menu->items[index]->value_rect,
+                main_menu->background_colour
+            );
+            free(main_menu->items[index]->value_rect);
+            main_menu->items[index]->value_rect = NULL;
+        }
         tab(screen->cursor, 15, row);
         print_left$_b$(screen, 5);
 
@@ -228,7 +238,7 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
             exit(1);
         }
         sprintf(outstring, "%i ", main_menu->items[index]->value);
-        free(print_text(screen, outstring));
+        main_menu->items[index]->value_rect = print_text(screen, outstring);
         free(outstring);
     }
 }
@@ -798,6 +808,7 @@ int main(int argc, char *argv[]) {
     free(header->message);
     free(character->name);
     for (index = 0; index < 8; index += 1) {
+        free(main_menu->items[index]->value_rect);
         free(main_menu->items[index]);
     }
     free(main_menu->selector_rect);

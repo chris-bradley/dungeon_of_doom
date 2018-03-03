@@ -5,3 +5,4 @@ src/game_module
 *.o
 *~
 .*.swp
+*.plist

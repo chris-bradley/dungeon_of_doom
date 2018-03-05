@@ -2,6 +2,10 @@
 #include "dungeon_lib.h"
 
 typedef struct {
+    const char * title;
+} title_row_t;
+
+typedef struct {
     const char *label;
     int points;
     char * message;
@@ -206,14 +210,14 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     main_menu->selector_rect = print_text(screen, ">");
 }
 
-void draw_title_row(screen_t *screen, const char * stage_name, int screen_cols
+void draw_title_row(screen_t *screen, title_row_t * title_row, int screen_cols
                     )  {
     paper(screen->cursor, BLACK);
     ink(screen->cursor, YELLOW);
     tab(screen->cursor, 0, 0);
     print_left$_b$(screen, screen_cols);
     tab(screen->cursor, 0, 0);
-    free(print_text(screen, stage_name));
+    free(print_text(screen, title_row->title));
 };
 
 void draw_header(screen_t *screen, header_t *header) {
@@ -698,6 +702,7 @@ int main(int argc, char *argv[]) {
     stores = init_stores();
     init_vars(&attr_points, attr_names);
     screen_t *screen = NULL;
+    title_row_t * title_row;
     if (init_screen(&screen) < 0) {
         exit(1);
     }
@@ -719,8 +724,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     strcpy(header->message, "");
+
     paper(screen->cursor, BLACK);
-    draw_title_row(screen, "CHARACTER CREATION", screen_cols);
+    title_row = (title_row_t *) malloc(sizeof(title_row_t));
+    *title_row = (title_row_t) {
+        .title = "CHARACTER CREATION"
+    };
+    draw_title_row(screen, title_row, screen_cols);
     draw_header(screen, header);
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {
@@ -771,7 +781,8 @@ int main(int argc, char *argv[]) {
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
         main_menu->selected_row = 0;
         strcpy(header->message, "CHOOSE WELL SIRE!");
-        draw_title_row(screen, stores[store_ind].name, screen_cols);
+        title_row->title = stores[store_ind].name;
+        draw_title_row(screen, title_row, screen_cols);
         draw_header(screen, header);
         for (index = 0; index < 8; index += 1) {
             item = &stores[store_ind].items[index];
@@ -815,8 +826,16 @@ int main(int argc, char *argv[]) {
     do {
         tab(screen->cursor, 1, 2);
         free(print_text(screen, "NAME THY CHARACTER"));
-        tab(screen->cursor, 1, 3);
-        print_left$_b$(screen, screen_cols - 2);
+        if (header->label_rect != NULL) {
+            clear_box(screen, header->label_rect, header->background_colour);
+            free(header->label_rect);
+            header->label_rect = NULL;
+        }
+        if (header->points_rect != NULL) {
+            clear_box(screen, header->points_rect, header->background_colour);
+            free(header->points_rect);
+            header->points_rect = NULL;
+        }
         SDL_RenderPresent(screen->ren);
         tab(screen->cursor, 1, 3);
 
@@ -837,6 +856,7 @@ int main(int argc, char *argv[]) {
     tab(screen->cursor, 1, 3);
     num_item_types = main_menu->num_rows * 3;
     save_character(character, num_item_types);
+    free(title_row);
     free(stores);
     free(header->message);
     free(header->message_rect);

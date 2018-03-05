@@ -230,30 +230,32 @@ void draw_header(screen_t *screen, header_t *header) {
 
 void update_main(screen_t *screen, main_menu_t *main_menu) {
     int index, row;
+    menu_item_t * menu_item;
     paper(screen->cursor, main_menu->background_colour);
     ink(screen->cursor, main_menu->text_colour);
     for (index = 0; index < main_menu->num_rows; index += 1) {
         row = calc_row_pos(main_menu, index);
-        if (main_menu->items[index]->value_rect != NULL) {
+        menu_item = main_menu->items[index];
+        if (menu_item->value_rect != NULL) {
             clear_box(
                 screen,
-                main_menu->items[index]->value_rect,
+                menu_item->value_rect,
                 main_menu->background_colour
             );
-            free(main_menu->items[index]->value_rect);
-            main_menu->items[index]->value_rect = NULL;
+            free(menu_item->value_rect);
+            menu_item->value_rect = NULL;
         }
 
         tab(screen->cursor, 2, row);
-        free(print_text(screen, main_menu->items[index]->label));
+        free(print_text(screen, menu_item->label));
         tab(screen->cursor, 16, row);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
             exit(1);
         }
-        sprintf(outstring, "%i ", main_menu->items[index]->value);
-        main_menu->items[index]->value_rect = print_text(screen, outstring);
+        sprintf(outstring, "%i ", menu_item->value);
+        menu_item->value_rect = print_text(screen, outstring);
         free(outstring);
     }
 }

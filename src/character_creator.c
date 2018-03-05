@@ -132,15 +132,10 @@ void update_header(screen_t *screen, header_t *header) {
 }
 
 int can_class_buy_item(character_class_t *character_class, int item_num,
-                       int ** item_to_char_class, header_t *header) {
+                       int ** item_to_char_class) {
     if (item_to_char_class[item_num][character_class->id] == 1) {
         return 1;
     }
-    sprintf(
-        header->message,
-        "NOT FOR %s",
-        character_class->name
-    );
     return 0;
 }
 
@@ -800,7 +795,7 @@ int main(int argc, char *argv[]) {
             item = &stores[store_ind].items[main_menu->selected_row];
             strcpy(header->message, "MAKE YOUR CHOICE");
             item_for_class = can_class_buy_item(
-                character->class, item->id, item_to_char_class, header
+                character->class, item->id, item_to_char_class
             );
             if (item_for_class) {
                 max_accepted_discount = 0;
@@ -816,6 +811,8 @@ int main(int argc, char *argv[]) {
                         screen, item, max_accepted_discount, character, header
                     );
                 }
+            } else {
+                sprintf(header->message, "NOT FOR %s", character->class->name);
             }
             update_header(screen, header);
         } while (pressed_key != ' ');

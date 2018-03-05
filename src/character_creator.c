@@ -13,6 +13,7 @@ typedef struct {
     enum ColourNum background_colour;
     enum ColourNum border_colour;
     SDL_Rect * message_rect;
+    SDL_Rect * label_rect;
     SDL_Rect * points_rect;
 } header_t;
 
@@ -102,12 +103,17 @@ void update_header(screen_t *screen, header_t *header) {
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
     header->message_rect = print_text(screen, header->message);
 
+    if (header->label_rect != NULL) {
+        clear_box(screen, header->label_rect, header->background_colour);
+        free(header->label_rect);
+    }
     if (header->points_rect != NULL) {
         clear_box(screen, header->points_rect, header->background_colour);
         free(header->points_rect);
     }
+
     tab(screen->cursor, header->left_col + 2, header->top_row + 2);
-    free(print_text(screen, header->label));
+    header->label_rect = print_text(screen, header->label);
     tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
@@ -821,6 +827,7 @@ int main(int argc, char *argv[]) {
     free(stores);
     free(header->message);
     free(header->message_rect);
+    free(header->label_rect);
     free(header->points_rect);
     free(character->name);
     for (index = 0; index < 8; index += 1) {

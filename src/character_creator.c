@@ -180,7 +180,6 @@ int calc_row_pos(main_menu_t *main_menu, int row_num) {
 }
 
 void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
-    int selected_row_pos;
     paper(screen->cursor, WHITE);
     ink(screen->cursor, RED);
     if (main_menu->selector_rect != NULL) {
@@ -201,8 +200,7 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     ) {
         main_menu->selected_row += 1;
     }
-    selected_row_pos = calc_row_pos(main_menu, main_menu->selected_row);
-    tab(screen->cursor, 1, selected_row_pos);
+    tab(screen->cursor, 1, calc_row_pos(main_menu, main_menu->selected_row));
     main_menu->selector_rect = print_text(screen, ">");
 }
 

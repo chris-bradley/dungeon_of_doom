@@ -3,6 +3,7 @@
 
 typedef struct {
     const char * title;
+    SDL_Rect * title_rect;
 } title_row_t;
 
 typedef struct {
@@ -210,14 +211,15 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     main_menu->selector_rect = print_text(screen, ">");
 }
 
-void draw_title_row(screen_t *screen, title_row_t * title_row, int screen_cols
-                    )  {
+void draw_title_row(screen_t *screen, title_row_t * title_row)  {
     paper(screen->cursor, BLACK);
     ink(screen->cursor, YELLOW);
+    if (title_row->title_rect != NULL) {
+        clear_box(screen, title_row->title_rect, BLACK);
+        free(title_row->title_rect);
+    }
     tab(screen->cursor, 0, 0);
-    print_left$_b$(screen, screen_cols);
-    tab(screen->cursor, 0, 0);
-    free(print_text(screen, title_row->title));
+    title_row->title_rect = print_text(screen, title_row->title);
 };
 
 void draw_header(screen_t *screen, header_t *header) {
@@ -730,7 +732,7 @@ int main(int argc, char *argv[]) {
     *title_row = (title_row_t) {
         .title = "CHARACTER CREATION"
     };
-    draw_title_row(screen, title_row, screen_cols);
+    draw_title_row(screen, title_row);
     draw_header(screen, header);
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {
@@ -782,7 +784,7 @@ int main(int argc, char *argv[]) {
         main_menu->selected_row = 0;
         strcpy(header->message, "CHOOSE WELL SIRE!");
         title_row->title = stores[store_ind].name;
-        draw_title_row(screen, title_row, screen_cols);
+        draw_title_row(screen, title_row);
         draw_header(screen, header);
         for (index = 0; index < 8; index += 1) {
             item = &stores[store_ind].items[index];
@@ -856,6 +858,7 @@ int main(int argc, char *argv[]) {
     tab(screen->cursor, 1, 3);
     num_item_types = main_menu->num_rows * 3;
     save_character(character, num_item_types);
+    free(title_row->title_rect);
     free(title_row);
     free(stores);
     free(header->message);

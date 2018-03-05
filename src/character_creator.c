@@ -237,8 +237,6 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
             free(main_menu->items[index]->value_rect);
             main_menu->items[index]->value_rect = NULL;
         }
-        tab(screen->cursor, 15, row);
-        print_left$_b$(screen, 5);
 
         tab(screen->cursor, 2, row);
         free(print_text(screen, main_menu->items[index]->label));

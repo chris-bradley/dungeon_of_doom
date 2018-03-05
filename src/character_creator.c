@@ -12,6 +12,7 @@ typedef struct {
     enum ColourNum text_colour;
     enum ColourNum background_colour;
     enum ColourNum border_colour;
+    SDL_Rect * message_rect;
 } header_t;
 
 typedef struct {
@@ -92,10 +93,14 @@ char * get_player_string(screen_t *screen, int col, int row,
 void update_header(screen_t *screen, header_t *header) {
     paper(screen->cursor, header->background_colour);
     ink(screen->cursor, header->text_colour);
+
+    if (header->message_rect != NULL) {
+        clear_box(screen, header->message_rect, header->background_colour);
+        free(header->message_rect);
+    }
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
-    print_left$_b$(screen, 17);
-    tab(screen->cursor, header->left_col + 2, header->top_row + 1);
-    free(print_text(screen, header->message));
+    header->message_rect = print_text(screen, header->message);
+
     tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     print_left$_b$(screen, 4);
     tab(screen->cursor, header->left_col + 2, header->top_row + 2);
@@ -814,6 +819,7 @@ int main(int argc, char *argv[]) {
     save_character(character, num_item_types);
     free(stores);
     free(header->message);
+    free(header->message_rect);
     free(character->name);
     for (index = 0; index < 8; index += 1) {
         free(main_menu->items[index]->value_rect);

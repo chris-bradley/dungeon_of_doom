@@ -20,6 +20,7 @@ typedef struct {
 typedef struct {
     const char * label;
     int value;
+    SDL_Rect * label_rect;
     SDL_Rect * value_rect;
 } menu_item_t;
 
@@ -236,6 +237,16 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
     for (index = 0; index < main_menu->num_rows; index += 1) {
         row = calc_row_pos(main_menu, index);
         menu_item = main_menu->items[index];
+
+        if (menu_item->label_rect != NULL) {
+            clear_box(
+                screen,
+                menu_item->label_rect,
+                main_menu->background_colour
+            );
+            free(menu_item->label_rect);
+            menu_item->label_rect = NULL;
+        }
         if (menu_item->value_rect != NULL) {
             clear_box(
                 screen,
@@ -247,7 +258,7 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
         }
 
         tab(screen->cursor, 2, row);
-        free(print_text(screen, menu_item->label));
+        menu_item->label_rect = print_text(screen, menu_item->label);
         tab(screen->cursor, 16, row);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
@@ -833,6 +844,7 @@ int main(int argc, char *argv[]) {
     free(header->points_rect);
     free(character->name);
     for (index = 0; index < 8; index += 1) {
+        free(main_menu->items[index]->label_rect);
         free(main_menu->items[index]->value_rect);
         free(main_menu->items[index]);
     }

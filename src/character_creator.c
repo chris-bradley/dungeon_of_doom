@@ -696,29 +696,24 @@ void save_character(character_t * character, int num_item_types) {
 
 int main(int argc, char *argv[]) {
     int max_accepted_discount, index, store_ind, attr_points, num_item_types,
-        offer, screen_cols, col, row, item_for_class;
-    character_class_t ** character_classes;
-    character_t *character;
-    store_t * stores;
-    header_t * header;
-    main_menu_t *main_menu;
-    int ** item_to_char_class;
+        offer,
+        screen_cols = init_screen_cols(),
+        col, row, item_for_class;
+    character_class_t ** character_classes = init_character_classes();
+    store_t * stores = init_stores();
+    header_t * header = malloc(sizeof(header_t));
+    main_menu_t *main_menu = init_main_menu();
+    character_t *character = init_character(main_menu->num_rows * 3);
+    int ** item_to_char_class = init_item_to_char_class();
     char pressed_key, * typed_string = NULL;
     const char * attr_names[8];
     item_t * item;
-    character_classes = init_character_classes();
-    header = malloc(sizeof(header_t));
-    main_menu = init_main_menu();
-    character = init_character(main_menu->num_rows * 3);
-    item_to_char_class = init_item_to_char_class();
-    stores = init_stores();
     init_vars(&attr_points, attr_names);
     screen_t *screen = NULL;
-    title_row_t * title_row;
+    title_row_t * title_row = (title_row_t *) malloc(sizeof(title_row_t));
     if (init_screen(&screen) < 0) {
         exit(1);
     }
-    screen_cols = init_screen_cols();
     *header = (header_t) {
         .label = "POINTS",
         .points = attr_points,
@@ -738,7 +733,6 @@ int main(int argc, char *argv[]) {
     strcpy(header->message, "");
 
     paper(screen->cursor, BLACK);
-    title_row = (title_row_t *) malloc(sizeof(title_row_t));
     *title_row = (title_row_t) {
         .title = "CHARACTER CREATION"
     };

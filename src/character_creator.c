@@ -80,6 +80,28 @@ typedef struct character_s_t {
     int *inventory;
 } character_t;
 
+header_t * init_header(int attr_points, int screen_cols) {
+    header_t * header = malloc(sizeof(header_t));
+    *header = (header_t) {
+        .label = "POINTS",
+        .points = attr_points,
+        .left_col = 0,
+        .top_row = 1,
+        .cols = screen_cols - 2,
+        .rows = 2,
+        .text_colour = BLACK,
+        .background_colour = YELLOW,
+        .border_colour = WHITE
+    };
+    header->message = (char *) malloc(sizeof(char) * 40);
+    if (header->message == NULL) {
+        fprintf(stderr, "header->message is NULL!\n");
+        exit(1);
+    }
+    strcpy(header->message, "");
+    return header;
+}
+
 char * get_player_string(screen_t *screen, int col, int row,
                          enum ColourNum background_colour) {
     int ind = 0;
@@ -710,7 +732,7 @@ int main(int argc, char *argv[]) {
         col, row, item_for_class;
     character_class_t ** character_classes = init_character_classes();
     store_t * stores = init_stores();
-    header_t * header = malloc(sizeof(header_t));
+    header_t * header = init_header(attr_points, screen_cols);
     main_menu_t *main_menu = init_main_menu();
     character_t *character = init_character(main_menu->num_rows * 3);
     int ** item_to_char_class = init_item_to_char_class();
@@ -723,23 +745,6 @@ int main(int argc, char *argv[]) {
     if (init_screen(&screen) < 0) {
         exit(1);
     }
-    *header = (header_t) {
-        .label = "POINTS",
-        .points = attr_points,
-        .left_col = 0,
-        .top_row = 1,
-        .cols = screen_cols - 2,
-        .rows = 2,
-        .text_colour = BLACK,
-        .background_colour = YELLOW,
-        .border_colour = WHITE
-    };
-    header->message = (char *) malloc(sizeof(char) * 40);
-    if (header->message == NULL) {
-        fprintf(stderr, "header->message is NULL!\n");
-        exit(1);
-    }
-    strcpy(header->message, "");
 
     paper(screen->cursor, BLACK);
     draw_title_row(screen, title_row);

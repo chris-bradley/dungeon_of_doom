@@ -285,12 +285,14 @@ int init_screen_cols() {
 
 main_menu_t * init_main_menu() {
     main_menu_t *main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
-    main_menu->num_rows = 8;
-    main_menu->text_colour = BLACK;
-    main_menu->selector_colour = RED;
-    main_menu->background_colour = WHITE;
-    main_menu->border_colour = YELLOW;
-    main_menu->selector_rect = NULL;
+    *main_menu = (main_menu_t) {
+        .num_rows = 8,
+        .text_colour = BLACK,
+        .selector_colour = RED,
+        .background_colour = WHITE,
+        .border_colour = YELLOW,
+        .selector_rect = NULL
+    };
     return main_menu;
 }
 

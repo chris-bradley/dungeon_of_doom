@@ -642,7 +642,10 @@ store_t * init_stores() {
     return stores;
 }
 
-void init_vars(const char * attr_names[8]) {
+const char ** init_attr_names() {
+    const char ** attr_names = (const char **) malloc(
+        sizeof(const char *) * 8
+    );
     attr_names[STRENGTH] = "STRENGTH";
     attr_names[VITALITY] = "VITALITY";
     attr_names[AGILITY] = "AGILITY";
@@ -651,6 +654,7 @@ void init_vars(const char * attr_names[8]) {
     attr_names[LUCK] = "LUCK";
     attr_names[AURA] = "AURA";
     attr_names[MORALITY] = "MORALITY";
+    return attr_names;
 }
 
 void save_character(character_t * character, int num_item_types) {
@@ -737,9 +741,8 @@ int main(int argc, char *argv[]) {
     character_t *character = init_character(main_menu->num_rows * 3);
     int ** item_to_char_class = init_item_to_char_class();
     char pressed_key, * typed_string = NULL;
-    const char * attr_names[8];
+    const char ** attr_names = init_attr_names();
     item_t * item;
-    init_vars(attr_names);
     screen_t *screen = NULL;
     title_row_t * title_row = init_title_row();
     if (init_screen(&screen) < 0) {
@@ -901,6 +904,7 @@ int main(int argc, char *argv[]) {
     free(item_to_char_class);
 
     free(character);
+    free(attr_names);
     destroy_screen(screen);
 
     return 0;

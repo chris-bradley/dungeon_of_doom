@@ -322,23 +322,26 @@ int can_be_wanderer(character_t * character) {
 }
 
 int can_be_cleric(character_t * character) {
-    if (character->attrs[3] > 6 && character->attrs[7] > 7) {
+    int * attrs = character->attrs;
+    if (attrs[3] > 6 && attrs[7] > 7) {
         return 1;
     }
     return 0;
 }
 
 int can_be_mage(character_t * character) {
-    if (character->attrs[3] > 8 && character->attrs[6] > 7) {
+    int * attrs = character->attrs;
+    if (attrs[3] > 8 && attrs[6] > 7) {
         return 1;
     }
     return 0;
 }
 
 int can_be_warrior(character_t * character) {
+    int * attrs = character->attrs;
     if (
-            character->attrs[0] > 7 && character->attrs[7] > 5 &&
-            character->attrs[0] + character->attrs[1] > 10
+            attrs[0] > 7 && attrs[7] > 5 &&
+            attrs[0] + attrs[1] > 10
     ) {
         return 1;
     }
@@ -346,10 +349,11 @@ int can_be_warrior(character_t * character) {
 }
 
 int can_be_barbarian(character_t * character) {
+    int * attrs = character->attrs;
     if (
-            character->attrs[0] > 8 &&
-            character->attrs[1] + character->attrs[2] > 12 &&
-            character->attrs[7] < 6
+            attrs[0] > 8 &&
+            attrs[1] + attrs[2] > 12 &&
+            attrs[7] < 6
     ) {
         return 1;
     }

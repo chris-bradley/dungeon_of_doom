@@ -763,7 +763,7 @@ int main(int argc, char *argv[]) {
     do {
         pressed_key = inkey$();
         select_row(screen, main_menu, pressed_key);
-        while (main_menu->selected_row == 4) {
+        while (main_menu->selected_row == EXPERIENCE) {
             pressed_key = inkey$();
             select_row(screen, main_menu, pressed_key);
         }

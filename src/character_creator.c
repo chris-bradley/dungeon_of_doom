@@ -226,6 +226,14 @@ void draw_title_row(screen_t *screen, title_row_t * title_row)  {
     title_row->title_rect = print_text(screen, title_row->title);
 };
 
+title_row_t * init_title_row() {
+    title_row_t * title_row = (title_row_t *) malloc(sizeof(title_row_t));
+    *title_row = (title_row_t) {
+        .title = "CHARACTER CREATION"
+    };
+    return title_row;
+}
+
 void draw_header(screen_t *screen, header_t *header) {
     draw_bordered_box(
         screen,
@@ -710,7 +718,7 @@ int main(int argc, char *argv[]) {
     item_t * item;
     init_vars(&attr_points, attr_names);
     screen_t *screen = NULL;
-    title_row_t * title_row = (title_row_t *) malloc(sizeof(title_row_t));
+    title_row_t * title_row = init_title_row();
     if (init_screen(&screen) < 0) {
         exit(1);
     }
@@ -733,9 +741,6 @@ int main(int argc, char *argv[]) {
     strcpy(header->message, "");
 
     paper(screen->cursor, BLACK);
-    *title_row = (title_row_t) {
-        .title = "CHARACTER CREATION"
-    };
     draw_title_row(screen, title_row);
     draw_header(screen, header);
     main_menu->selected_row = 0;

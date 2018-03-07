@@ -620,7 +620,7 @@ store_t * init_stores() {
     return stores;
 }
 
-void init_vars(int *attr_points, const char * attr_names[8]) {
+void init_vars(const char * attr_names[8]) {
     attr_names[STRENGTH] = "STRENGTH";
     attr_names[VITALITY] = "VITALITY";
     attr_names[AGILITY] = "AGILITY";
@@ -629,7 +629,6 @@ void init_vars(int *attr_points, const char * attr_names[8]) {
     attr_names[LUCK] = "LUCK";
     attr_names[AURA] = "AURA";
     attr_names[MORALITY] = "MORALITY";
-    *attr_points = 3 + (rand() % 5);
 }
 
 void save_character(character_t * character, int num_item_types) {
@@ -703,7 +702,9 @@ void save_character(character_t * character, int num_item_types) {
 }
 
 int main(int argc, char *argv[]) {
-    int max_accepted_discount, index, store_ind, attr_points, num_item_types,
+    int max_accepted_discount, index, store_ind,
+        attr_points = 3 + (rand() % 5),
+        num_item_types,
         offer,
         screen_cols = init_screen_cols(),
         col, row, item_for_class;
@@ -716,7 +717,7 @@ int main(int argc, char *argv[]) {
     char pressed_key, * typed_string = NULL;
     const char * attr_names[8];
     item_t * item;
-    init_vars(&attr_points, attr_names);
+    init_vars(attr_names);
     screen_t *screen = NULL;
     title_row_t * title_row = init_title_row();
     if (init_screen(&screen) < 0) {

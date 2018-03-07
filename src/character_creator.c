@@ -1,6 +1,17 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
+enum AttrNum {
+    STRENGTH = 0,
+    VITALITY = 1,
+    AGILITY = 2,
+    INTELLIGENCE = 3,
+    EXPERIENCE = 4,
+    LUCK = 5,
+    AURA = 6,
+    MORALITY = 7
+};
+
 typedef struct {
     const char * title;
     SDL_Rect * title_rect;
@@ -311,7 +322,7 @@ character_t * init_character(int inventory_size) {
     for (index = 0; index < 8; index += 1) {
         character->attrs[index] = (rand() % 5) + 2;
     }
-    character->attrs[4] = 1;
+    character->attrs[EXPERIENCE] = 1;
     character->gold = 120 + (rand() % 60);
 
     return character;
@@ -323,7 +334,7 @@ int can_be_wanderer(character_t * character) {
 
 int can_be_cleric(character_t * character) {
     int * attrs = character->attrs;
-    if (attrs[3] > 6 && attrs[7] > 7) {
+    if (attrs[INTELLIGENCE] > 6 && attrs[MORALITY] > 7) {
         return 1;
     }
     return 0;
@@ -331,7 +342,7 @@ int can_be_cleric(character_t * character) {
 
 int can_be_mage(character_t * character) {
     int * attrs = character->attrs;
-    if (attrs[3] > 8 && attrs[6] > 7) {
+    if (attrs[INTELLIGENCE] > 8 && attrs[AURA] > 7) {
         return 1;
     }
     return 0;
@@ -340,8 +351,8 @@ int can_be_mage(character_t * character) {
 int can_be_warrior(character_t * character) {
     int * attrs = character->attrs;
     if (
-            attrs[0] > 7 && attrs[7] > 5 &&
-            attrs[0] + attrs[1] > 10
+            attrs[STRENGTH] > 7 && attrs[MORALITY] > 5 &&
+            attrs[STRENGTH] + attrs[VITALITY] > 10
     ) {
         return 1;
     }
@@ -351,9 +362,9 @@ int can_be_warrior(character_t * character) {
 int can_be_barbarian(character_t * character) {
     int * attrs = character->attrs;
     if (
-            attrs[0] > 8 &&
-            attrs[1] + attrs[2] > 12 &&
-            attrs[7] < 6
+            attrs[STRENGTH] > 8 &&
+            attrs[VITALITY] + attrs[AGILITY] > 12 &&
+            attrs[MORALITY] < 6
     ) {
         return 1;
     }
@@ -602,14 +613,14 @@ store_t * init_stores() {
 }
 
 void init_vars(int *attr_points, const char * attr_names[8]) {
-    attr_names[0] = "STRENGTH";
-    attr_names[1] = "VITALITY";
-    attr_names[2] = "AGILITY";
-    attr_names[3] = "INTELLIGENCE";
-    attr_names[4] = "EXPERIENCE";
-    attr_names[5] = "LUCK";
-    attr_names[6] = "AURA";
-    attr_names[7] = "MORALITY";
+    attr_names[STRENGTH] = "STRENGTH";
+    attr_names[VITALITY] = "VITALITY";
+    attr_names[AGILITY] = "AGILITY";
+    attr_names[INTELLIGENCE] = "INTELLIGENCE";
+    attr_names[EXPERIENCE] = "EXPERIENCE";
+    attr_names[LUCK] = "LUCK";
+    attr_names[AURA] = "AURA";
+    attr_names[MORALITY] = "MORALITY";
     *attr_points = 3 + (rand() % 5);
 }
 

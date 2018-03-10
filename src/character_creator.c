@@ -43,6 +43,7 @@ typedef struct {
 typedef struct {
     int selected_row;
     int num_rows;
+    int cols;
     menu_item_t *items[8];
     int top_row;
     enum ColourNum text_colour;
@@ -312,11 +313,11 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
     }
 }
 
-void draw_main(screen_t *screen, main_menu_t *main_menu, int screen_cols) {
+void draw_main(screen_t *screen, main_menu_t *main_menu) {
     main_menu->top_row = 5;
     draw_bordered_box(
         screen, main_menu->top_row, 0, main_menu->num_rows * 2 - 1,
-        screen_cols - 2, main_menu->background_colour, main_menu->border_colour
+        main_menu->cols, main_menu->background_colour, main_menu->border_colour
     );
     update_main(screen, main_menu);
 }
@@ -325,10 +326,11 @@ int init_screen_cols() {
     return 40;
 }
 
-main_menu_t * init_main_menu() {
+main_menu_t * init_main_menu(int screen_cols) {
     main_menu_t *main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
     *main_menu = (main_menu_t) {
         .num_rows = 8,
+        .cols = screen_cols - 2,
         .text_colour = BLACK,
         .selector_colour = RED,
         .background_colour = WHITE,
@@ -730,7 +732,7 @@ void save_character(character_t * character, int num_item_types) {
 
 void set_attr_phase(screen_t * screen, character_t * character,
                     main_menu_t * main_menu, header_t * header,
-                    character_class_t ** character_classes, int screen_cols) {
+                    character_class_t ** character_classes) {
     int index,
         attr_points = 3 + (rand() % 5);
     char pressed_key;
@@ -744,7 +746,7 @@ void set_attr_phase(screen_t * screen, character_t * character,
             .value = character->attrs[index]
         };
     }
-    draw_main(screen, main_menu, screen_cols);
+    draw_main(screen, main_menu);
     select_row(screen, main_menu, ' ');
     header->points = attr_points;
     header->label = "POINTS";
@@ -794,7 +796,7 @@ int main(int argc, char *argv[]) {
     character_class_t ** character_classes = init_character_classes();
     store_t * stores = init_stores();
     header_t * header = init_header(screen_cols);
-    main_menu_t *main_menu = init_main_menu();
+    main_menu_t *main_menu = init_main_menu(screen_cols);
     character_t *character = init_character(main_menu->num_rows * 3);
     int ** item_to_char_class = init_item_to_char_class();
     char pressed_key, * typed_string = NULL;
@@ -808,9 +810,7 @@ int main(int argc, char *argv[]) {
     paper(screen->cursor, BLACK);
     draw_title_row(screen, title_row);
     draw_header(screen, header);
-    set_attr_phase(
-        screen, character, main_menu, header, character_classes, screen_cols
-    );
+    set_attr_phase(screen, character, main_menu, header, character_classes);
     header->label = "GOLD COINS";
     header->points = character->gold;
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
@@ -824,7 +824,7 @@ int main(int argc, char *argv[]) {
             main_menu->items[index]->label = item->name;
             main_menu->items[index]->value = item->price;
         }
-        draw_main(screen, main_menu, screen_cols);
+        draw_main(screen, main_menu);
         select_row(screen, main_menu, ' ');
         do {
             SDL_RenderPresent(screen->ren);

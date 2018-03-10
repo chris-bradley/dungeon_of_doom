@@ -145,14 +145,17 @@ void update_header(screen_t *screen, header_t *header) {
     if (header->label_rect != NULL) {
         clear_box(screen, header->label_rect, header->background_colour);
         free(header->label_rect);
+        header->label_rect = NULL;
     }
     if (header->points_rect != NULL) {
         clear_box(screen, header->points_rect, header->background_colour);
         free(header->points_rect);
     }
 
-    tab(screen->cursor, header->left_col + 2, header->top_row + 2);
-    header->label_rect = print_text(screen, header->label);
+    if (header->label != NULL) {
+        tab(screen->cursor, header->left_col + 2, header->top_row + 2);
+        header->label_rect = print_text(screen, header->label);
+    }
     tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {

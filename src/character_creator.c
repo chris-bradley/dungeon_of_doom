@@ -787,30 +787,13 @@ void set_attr_phase(screen_t * screen, character_t * character,
     free(attr_names);
 }
 
-int main(int argc, char *argv[]) {
-    int max_accepted_discount, index, store_ind,
-        num_item_types,
-        offer,
-        screen_cols = init_screen_cols(),
-        col, row, item_for_class;
-    character_class_t ** character_classes = init_character_classes();
-    store_t * stores = init_stores();
-    header_t * header = init_header(screen_cols);
-    main_menu_t *main_menu = init_main_menu(screen_cols);
-    character_t *character = init_character(main_menu->num_rows * 3);
+void purchasing_phase(screen_t * screen, character_t * character,
+                      store_t * stores, main_menu_t * main_menu,
+                      header_t * header, title_row_t * title_row) {
+    int max_accepted_discount, index, store_ind, offer, item_for_class;
     int ** item_to_char_class = init_item_to_char_class();
-    char pressed_key, * typed_string = NULL;
     item_t * item;
-    screen_t *screen = NULL;
-    title_row_t * title_row = init_title_row();
-    if (init_screen(&screen) < 0) {
-        exit(1);
-    }
-
-    paper(screen->cursor, BLACK);
-    draw_title_row(screen, title_row);
-    draw_header(screen, header);
-    set_attr_phase(screen, character, main_menu, header, character_classes);
+    char pressed_key;
     header->label = "GOLD COINS";
     header->points = character->gold;
     for (store_ind = 0; store_ind < 3; store_ind += 1) {
@@ -855,6 +838,33 @@ int main(int argc, char *argv[]) {
             update_header(screen, header);
         } while (pressed_key != ' ');
     }
+    for (index = 0; index < 24; index += 1) {
+        free(item_to_char_class[index]);
+    }
+    free(item_to_char_class);
+}
+
+int main(int argc, char *argv[]) {
+    int index, num_item_types,
+        screen_cols = init_screen_cols(),
+        col, row;
+    character_class_t ** character_classes = init_character_classes();
+    store_t * stores = init_stores();
+    header_t * header = init_header(screen_cols);
+    main_menu_t *main_menu = init_main_menu(screen_cols);
+    character_t *character = init_character(main_menu->num_rows * 3);
+    char * typed_string = NULL;
+    screen_t *screen = NULL;
+    title_row_t * title_row = init_title_row();
+    if (init_screen(&screen) < 0) {
+        exit(1);
+    }
+
+    paper(screen->cursor, BLACK);
+    draw_title_row(screen, title_row);
+    draw_header(screen, header);
+    set_attr_phase(screen, character, main_menu, header, character_classes);
+    purchasing_phase(screen, character, stores, main_menu, header, title_row);
     character->name = (char *) malloc(sizeof(char) * 40);
     if (character->name == NULL) {
         fprintf(stderr, "character->name is NULL!\n");
@@ -913,10 +923,6 @@ int main(int argc, char *argv[]) {
         free(character_classes[index]);
     }
     free(character_classes);
-    for (index = 0; index < 24; index += 1) {
-        free(item_to_char_class[index]);
-    }
-    free(item_to_char_class);
 
     free(character);
     destroy_screen(screen);

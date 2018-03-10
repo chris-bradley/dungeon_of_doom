@@ -80,11 +80,9 @@ typedef struct character_s_t {
     int *inventory;
 } character_t;
 
-header_t * init_header(int attr_points, int screen_cols) {
+header_t * init_header(int screen_cols) {
     header_t * header = malloc(sizeof(header_t));
     *header = (header_t) {
-        .label = "POINTS",
-        .points = attr_points,
         .left_col = 0,
         .top_row = 1,
         .cols = screen_cols - 2,
@@ -739,7 +737,7 @@ int main(int argc, char *argv[]) {
         col, row, item_for_class;
     character_class_t ** character_classes = init_character_classes();
     store_t * stores = init_stores();
-    header_t * header = init_header(attr_points, screen_cols);
+    header_t * header = init_header(screen_cols);
     main_menu_t *main_menu = init_main_menu();
     character_t *character = init_character(main_menu->num_rows * 3);
     int ** item_to_char_class = init_item_to_char_class();
@@ -765,6 +763,9 @@ int main(int argc, char *argv[]) {
     }
     draw_main(screen, main_menu, screen_cols);
     select_row(screen, main_menu, ' ');
+    header->points = attr_points;
+    header->label = "POINTS";
+    update_header(screen, header);
     SDL_RenderPresent(screen->ren);
     do {
         pressed_key = inkey$();

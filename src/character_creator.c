@@ -766,35 +766,33 @@ int main(int argc, char *argv[]) {
     do {
         pressed_key = inkey$();
         select_row(screen, main_menu, pressed_key);
-        while (main_menu->selected_row == EXPERIENCE) {
-            pressed_key = inkey$();
-            select_row(screen, main_menu, pressed_key);
-        }
-        if (pressed_key == ';' && attr_points > 0) {
-            character->attrs[main_menu->selected_row] += 1;
-            attr_points -= 1;
-            main_menu->items[main_menu->selected_row]->value += 1;
-            header->points -= 1;
-            update_main(screen, main_menu);
-        }
-        if (
-                pressed_key == '-' &&
-                character->attrs[main_menu->selected_row] > 1
-        ) {
-            character->attrs[main_menu->selected_row] -=1;
-            attr_points += 1;
-            main_menu->items[main_menu->selected_row]->value -= 1;
-            header->points += 1;
-            update_main(screen, main_menu);
-        }
-        for (index = 0; index < 5; index += 1) {
-            if (character_classes[index]->elig_func(character)) {
-                character->class = character_classes[index];
+        if (main_menu->selected_row != EXPERIENCE) {
+            if (pressed_key == ';' && attr_points > 0) {
+                character->attrs[main_menu->selected_row] += 1;
+                attr_points -= 1;
+                main_menu->items[main_menu->selected_row]->value += 1;
+                header->points -= 1;
+                update_main(screen, main_menu);
             }
+            if (
+                    pressed_key == '-' &&
+                    character->attrs[main_menu->selected_row] > 1
+            ) {
+                character->attrs[main_menu->selected_row] -=1;
+                attr_points += 1;
+                main_menu->items[main_menu->selected_row]->value -= 1;
+                header->points += 1;
+                update_main(screen, main_menu);
+            }
+            for (index = 0; index < 5; index += 1) {
+                if (character_classes[index]->elig_func(character)) {
+                    character->class = character_classes[index];
+                }
+            }
+            strcpy(header->message, character->class->name);
+            update_header(screen, header);
+            SDL_RenderPresent(screen->ren);
         }
-        strcpy(header->message, character->class->name);
-        update_header(screen, header);
-        SDL_RenderPresent(screen->ren);
     } while (pressed_key != ' ');
     header->label = "GOLD COINS";
     header->points = character->gold;

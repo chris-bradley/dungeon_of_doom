@@ -7,23 +7,25 @@ void lines230_270(int X, int Y, int contents[16][16], char *pressed_key,
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum border_colour, int top_row, int num_lines,
                   int num_cols);
-void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
+void lines360_420(screen_t *screen, int screen_cols,
+                  const char * help_lines[10]);
 void lines430_440();
-void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
-                  int contents[16][16], int *entrance_coord_x,
+void lines450_600(screen_t *screen, int screen_cols, int *level_num,
+                  int char_base, int contents[16][16], int *entrance_coord_x,
                   int *entrance_coord_y, int char_code_blank);
-void lines610_690(int *W, int *level_num, int *char_base, int contents[16][16],
-                  int *entrance_coord_x, int *entrance_coord_y,
-                  int *char_code_blank, const char * help_lines[10]);
+void lines610_690(int *screen_cols, int *level_num, int *char_base,
+                  int contents[16][16], int *entrance_coord_x,
+                  int *entrance_coord_y, int *char_code_blank,
+                  const char * help_lines[10]);
 void lines700_770(int contents[16][16], int *entrance_coord_x,
                   int *entrance_coord_y, int char_code_blank);
-void lines790_800(int *char_base, int *W, int *char_code_blank);
+void lines790_800(int *char_base, int *screen_cols, int *char_code_blank);
 void lines810_840();
 void lines5000_5080();
 
 int main(int argc, char *argv[]) {
     int char_code_blank, entrance_coord_x, entrance_coord_y, level_num,
-        char_base, W, X, Y;
+        char_base, screen_cols, X, Y;
     int contents[16][16];
     const char * help_lines[10];
     char *pressed_key;
@@ -32,7 +34,7 @@ int main(int argc, char *argv[]) {
     // GOSUB 610
 
     lines610_690(
-        &W, &level_num, &char_base, contents, &entrance_coord_x,
+        &screen_cols, &level_num, &char_base, contents, &entrance_coord_x,
         &entrance_coord_y, &char_code_blank, help_lines
     );
     // Clear screen; Black background.
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280
-    lines280_350(screen, YELLOW, RED, 0, 3, W - 3);
+    lines280_350(screen, YELLOW, RED, 0, 3, screen_cols - 3);
     // 40 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
@@ -84,7 +86,7 @@ int main(int argc, char *argv[]) {
         // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
 
         if (*pressed_key == 'h') {
-            lines360_420(screen, W, help_lines);
+            lines360_420(screen, screen_cols, help_lines);
         } else if (*pressed_key == 'a' && Y > 1) {
             Y -= 1;
         } else if (*pressed_key == 'z' && Y < 15) {
@@ -115,8 +117,8 @@ int main(int argc, char *argv[]) {
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*pressed_key == 's' && entrance_coord_x > 0) {
             lines450_600(
-                screen, W, &level_num, char_base, contents, &entrance_coord_x,
-                &entrance_coord_y, char_code_blank
+                screen, screen_cols, &level_num, char_base, contents,
+                &entrance_coord_x, &entrance_coord_y, char_code_blank
             );
         }
         // 210 IF I$<>"F" THEN GOTO 100
@@ -184,7 +186,8 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
 }
 
 
-void lines360_420(screen_t *screen, int W, const char * help_lines[10]) {
+void lines360_420(screen_t *screen, int screen_cols,
+                  const char * help_lines[10]) {
 
     int index;
     // 360 paper 1:ink 3
@@ -199,7 +202,7 @@ void lines360_420(screen_t *screen, int W, const char * help_lines[10]) {
         lines430_440();
     // 390 PRINT tab(1,4);LEFT$(B$,W-2);
         tab(screen->cursor, 1, 4);
-        print_left$_b$(screen, W - 2);
+        print_left$_b$(screen, screen_cols - 2);
         SDL_RenderPresent(screen->ren);
     // 400 NEXT H
     }
@@ -214,8 +217,8 @@ void lines430_440() {
     inkey$();
 }
 
-void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
-                  int contents[16][16], int *entrance_coord_x,
+void lines450_600(screen_t *screen, int screen_cols, int *level_num,
+                  int char_base, int contents[16][16], int *entrance_coord_x,
                   int *entrance_coord_y, int char_code_blank) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
@@ -260,7 +263,7 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     }
     // 580 PRINT tab(1,4);LEFT(B$,W)
     tab(screen->cursor, 1, 4);
-    print_left$_b$(screen, W);
+    print_left$_b$(screen, screen_cols);
     SDL_RenderPresent(screen->ren);
     // 590 LET LE=LE+1:GOSUB 700
     *level_num = *level_num + 1;
@@ -270,12 +273,13 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     // 600 RETURN
 }
 
-void lines610_690(int *W, int *level_num, int *char_base, int contents[16][16],
-                  int *entrance_coord_x, int *entrance_coord_y,
-                  int *char_code_blank, const char * help_lines[10]) {
+void lines610_690(int *screen_cols, int *level_num, int *char_base,
+                  int contents[16][16], int *entrance_coord_x,
+                  int *entrance_coord_y, int *char_code_blank,
+                  const char * help_lines[10]) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
-    lines790_800(char_base, W, char_code_blank);
+    lines790_800(char_base, screen_cols, char_code_blank);
     // 630 DATA "PRESS ANY KEY","TO MOVE A Z N M","1 WALL    2 VASE"
     // 640 DATA "3 CHEST 4 * idol *","5 WAY IN  6 EXIT","7 TRAP", "8 SAFE PLACE"
     // 650 DATA "9 GUARD","0 TO ERASE","S TO SAVE"
@@ -321,11 +325,11 @@ void lines700_770(int contents[16][16], int *entrance_coord_x,
     // 770 RETURN
 }
 
-void lines790_800(int *char_base, int *W, int *char_code_blank) {
+void lines790_800(int *char_base, int *screen_cols, int *char_code_blank) {
   // 790 OS=96:CO=OS+6:W=40:GOSUB 4000
   *char_base = 96;
   *char_code_blank = *char_base + 6;
-  *W = 40;
+  *screen_cols = 40;
   // 800 RETURN
 }
 

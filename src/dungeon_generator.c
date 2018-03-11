@@ -4,8 +4,7 @@
 void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
                 char *pressed_key, int *entrance_coord_x,
                 int *entrance_coord_y, int char_code_blank);
-void lines360_420(screen_t *screen, int screen_cols,
-                  const char * help_lines[10]);
+void draw_help(screen_t *screen, int screen_cols, const char * help_lines[10]);
 void lines430_440();
 void lines450_600(screen_t *screen, int screen_cols, int *level_num,
                   int char_base, int contents[16][16], int *entrance_coord_x,
@@ -83,7 +82,7 @@ int main(int argc, char *argv[]) {
         // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
 
         if (*pressed_key == 'h') {
-            lines360_420(screen, screen_cols, help_lines);
+            draw_help(screen, screen_cols, help_lines);
         } else if (*pressed_key == 'a' && cur_coord_y > 1) {
             cur_coord_y -= 1;
         } else if (*pressed_key == 'z' && cur_coord_y < 15) {
@@ -150,8 +149,8 @@ void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
 }
 
 
-void lines360_420(screen_t *screen, int screen_cols,
-                  const char * help_lines[10]) {
+void draw_help(screen_t *screen, int screen_cols,
+               const char * help_lines[10]) {
 
     int index;
     // 360 paper 1:ink 3

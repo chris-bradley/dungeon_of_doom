@@ -16,8 +16,6 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
 void init_level(int contents[16][16], int *entrance_coord_x,
                 int *entrance_coord_y, int char_code_blank);
 void init_platform_vars(int *char_base, int *screen_cols, int *char_code_blank);
-void lines810_840();
-void lines5000_5080();
 
 int main(int argc, char *argv[]) {
     int char_code_blank, entrance_coord_x, entrance_coord_y, level_num,
@@ -26,7 +24,6 @@ int main(int argc, char *argv[]) {
     const char * help_lines[10];
     char *pressed_key;
     // 5 GOSUB 5000
-    lines5000_5080();
     // GOSUB 610
 
     init_vars(
@@ -260,7 +257,6 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
     help_lines[9] = "S TO SAVE         ";
 
     // 690 NEXT I:GOSUB 810
-    lines810_840();
     init_level(contents, entrance_coord_x, entrance_coord_y, *char_code_blank);
 }
 
@@ -291,35 +287,4 @@ void init_platform_vars(int *char_base, int *screen_cols,
   *char_code_blank = *char_base + 6;
   *screen_cols = 40;
   // 800 RETURN
-}
-
-void lines810_840() {
-  // 810 REM SET UP THE CHARACTERS
-  // 820 FOR I=0 TO 7:READ A:POKE 36352+I, 255-A:NEXT I
-  // 830 FOR I=0 TO 95:READ A:POKE 36400+I, 255-A:NEXT I
-  // 840 RETURN
-}
-
-// Graphic Memory setup stuff
-
-void lines5000_5080() {
-    // Memory remapping; Not needed by us:
-    // 5000 POKE 52, 128:POKE 56,128
-    // Stop Timer A; Switch the character generator ROM ; Not needed by us?
-    // 5010 POKE 56334, PEEK(56334) and 254: POKE 1, PEEK(1) AND 251
-    // Copy first 2 KB of the character rom to upper basic area:
-    // 5020 FOR I=0 TO 2047:POKE 34816+I, PEEK(53248+I):NEXT I
-    // Stop Switch the character generator ROM
-    // 5030 POKE 1, PEEK(1) AND 251
-    // Start Timer A
-    // 5040 POKE 56334.PEEK(56334) OR 1
-    // Muck with Data Direction Register Port A?
-    // 5050 POKE 56578,PEEK(56578) OR 3
-    // Set VIC Chip System Memory Bank Select to 01
-    // 5060 POKE 56576,(PEEK (56576) AND 252) OR 1
-    // Set Video Matrix Base Address (Inside VIC) to 0000
-    // Set Character Dot-Data Base Address (inside VIC) to 001
-    // Set top of Screen Memory to 128 (ie. 0800)
-    // 5070 POKE 53272,2:POKE 648,128
-    // 5080 RETURN
 }

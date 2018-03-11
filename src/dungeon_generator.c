@@ -247,14 +247,14 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     SDL_RenderPresent(screen->ren);
     lines430_440();
     // 550 LET S=OPENOUT "LEVEL"
-    FILE *S = fopen("LEVEL", "w");
+    FILE *save_file_handle = fopen("LEVEL", "w");
     // 560 PRINT#S,S$
-    int error = fputs(S$, S);
+    int error = fputs(S$, save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the level!", error);
     }
     // 570 CLOSE#S
-    error = fclose(S);
+    error = fclose(save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i saving the level!", error);
     }

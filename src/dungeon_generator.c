@@ -9,10 +9,10 @@ void wait_for_user_key_press();
 void save_level(screen_t *screen, int screen_cols, int *level_num,
                 int char_base, int contents[16][16], int *entrance_coord_x,
                 int *entrance_coord_y, int char_code_blank);
-void lines610_690(int *screen_cols, int *level_num, int *char_base,
-                  int contents[16][16], int *entrance_coord_x,
-                  int *entrance_coord_y, int *char_code_blank,
-                  const char * help_lines[10]);
+void init_vars(int *screen_cols, int *level_num, int *char_base,
+               int contents[16][16], int *entrance_coord_x,
+               int *entrance_coord_y, int *char_code_blank,
+               const char * help_lines[10]);
 void lines700_770(int contents[16][16], int *entrance_coord_x,
                   int *entrance_coord_y, int char_code_blank);
 void lines790_800(int *char_base, int *screen_cols, int *char_code_blank);
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     lines5000_5080();
     // GOSUB 610
 
-    lines610_690(
+    init_vars(
         &screen_cols, &level_num, &char_base, contents, &entrance_coord_x,
         &entrance_coord_y, &char_code_blank, help_lines
     );
@@ -236,10 +236,10 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
     // 600 RETURN
 }
 
-void lines610_690(int *screen_cols, int *level_num, int *char_base,
-                  int contents[16][16], int *entrance_coord_x,
-                  int *entrance_coord_y, int *char_code_blank,
-                  const char * help_lines[10]) {
+void init_vars(int *screen_cols, int *level_num, int *char_base,
+               int contents[16][16], int *entrance_coord_x,
+               int *entrance_coord_y, int *char_code_blank,
+               const char * help_lines[10]) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
     lines790_800(char_base, screen_cols, char_code_blank);

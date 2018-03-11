@@ -5,7 +5,7 @@ void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
                 char *pressed_key, int *entrance_coord_x,
                 int *entrance_coord_y, int char_code_blank);
 void draw_help(screen_t *screen, int screen_cols, const char * help_lines[10]);
-void lines430_440();
+void wait_for_user_key_press();
 void lines450_600(screen_t *screen, int screen_cols, int *level_num,
                   int char_base, int contents[16][16], int *entrance_coord_x,
                   int *entrance_coord_y, int char_code_blank);
@@ -162,7 +162,7 @@ void draw_help(screen_t *screen, int screen_cols,
         tab(screen->cursor, 1, 4);
         free(print_text(screen, help_lines[index]));
         SDL_RenderPresent(screen->ren);
-        lines430_440();
+        wait_for_user_key_press();
     // 390 PRINT tab(1,4);LEFT$(B$,W-2);
         tab(screen->cursor, 1, 4);
         print_left$_b$(screen, screen_cols - 2);
@@ -174,7 +174,7 @@ void draw_help(screen_t *screen, int screen_cols,
     // 420 RETURN
 }
 
-void lines430_440() {
+void wait_for_user_key_press() {
     // 430 LET G$=inkey$:IF G$="" THEN GOTO 430
     // 440 RETURN
     inkey$();
@@ -211,7 +211,7 @@ void lines450_600(screen_t *screen, int screen_cols, int *level_num,
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ANY KEY TO SAVE   "));
     SDL_RenderPresent(screen->ren);
-    lines430_440();
+    wait_for_user_key_press();
     // 550 LET S=OPENOUT "LEVEL"
     FILE *save_file_handle = fopen("LEVEL", "w");
     // 560 PRINT#S,S$

@@ -13,8 +13,8 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
                int contents[16][16], int *entrance_coord_x,
                int *entrance_coord_y, int *char_code_blank,
                const char * help_lines[10]);
-void lines700_770(int contents[16][16], int *entrance_coord_x,
-                  int *entrance_coord_y, int char_code_blank);
+void init_level(int contents[16][16], int *entrance_coord_x,
+                int *entrance_coord_y, int char_code_blank);
 void lines790_800(int *char_base, int *screen_cols, int *char_code_blank);
 void lines810_840();
 void lines5000_5080();
@@ -230,9 +230,7 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
     SDL_RenderPresent(screen->ren);
     // 590 LET LE=LE+1:GOSUB 700
     *level_num = *level_num + 1;
-    lines700_770(
-        contents, entrance_coord_x, entrance_coord_y, char_code_blank
-    );
+    init_level(contents, entrance_coord_x, entrance_coord_y, char_code_blank);
     // 600 RETURN
 }
 
@@ -263,13 +261,11 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
 
     // 690 NEXT I:GOSUB 810
     lines810_840();
-    lines700_770(
-        contents, entrance_coord_x, entrance_coord_y, *char_code_blank
-    );
+    init_level(contents, entrance_coord_x, entrance_coord_y, *char_code_blank);
 }
 
-void lines700_770(int contents[16][16], int *entrance_coord_x,
-                  int *entrance_coord_y, int char_code_blank) {
+void init_level(int contents[16][16], int *entrance_coord_x,
+                int *entrance_coord_y, int char_code_blank) {
     // 700 FOR J=1 to 15
     // 710 FOR K=1 to 15
     // 720 LET R(J,K) = CO

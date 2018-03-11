@@ -169,15 +169,15 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
 
 void lines360_420(screen_t *screen, int W, const char * H$[10]) {
 
-    int H;
+    int index;
     // 360 paper 1:ink 3
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
     // 370 FOR H = 1 TO 10
-    for (H = 0; H < 10; H += 1) {
+    for (index = 0; index < 10; index += 1) {
     // 380 PRINT tab(1,4);H$(H);:GOSUB 430
         tab(screen->cursor, 1, 4);
-        free(print_text(screen, H$[H]));
+        free(print_text(screen, H$[index]));
         SDL_RenderPresent(screen->ren);
         lines430_440();
     // 390 PRINT tab(1,4);LEFT$(B$,W-2);

@@ -5,7 +5,7 @@ void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
                   int *entrance_coord_x, int *entrance_coord_y,
                   int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
-                  enum ColourNum border_colour, int T, int L, int LW);
+                  enum ColourNum border_colour, int T, int num_lines, int LW);
 void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
 void lines430_440();
 void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
@@ -150,7 +150,7 @@ void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
 
 
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
-                  enum ColourNum border_colour, int T, int L, int LW) {
+                  enum ColourNum border_colour, int T, int num_lines, int LW) {
     // 280 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
     // 290 paper FG:PRINT LEFT$(B$,LW+2)
@@ -161,7 +161,7 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
     paper(screen->cursor, background_colour);
     ink(screen->cursor, border_colour);
     // 310 FOR I=1 TO L
-    for (int index = 1; index <= L; index +=1) {
+    for (int index = 1; index <= num_lines; index +=1) {
     // 320 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,LW);BG$(FG);" "
         paper(screen->cursor, border_colour);
         free(print_text(screen, " "));

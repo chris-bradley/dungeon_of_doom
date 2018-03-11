@@ -1,9 +1,9 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines230_270(int X, int Y, int contents[16][16], char *pressed_key,
-                  int *entrance_coord_x, int *entrance_coord_y,
-                  int char_code_blank);
+void lines230_270(int cur_coord_x, int cur_coord_y, int contents[16][16],
+                  char *pressed_key, int *entrance_coord_x,
+                  int *entrance_coord_y, int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum border_colour, int top_row, int num_lines,
                   int num_cols);
@@ -25,7 +25,7 @@ void lines5000_5080();
 
 int main(int argc, char *argv[]) {
     int char_code_blank, entrance_coord_x, entrance_coord_y, level_num,
-        char_base, screen_cols, X, Y;
+        char_base, screen_cols, cur_coord_x, cur_coord_y;
     int contents[16][16];
     const char * help_lines[10];
     char *pressed_key;
@@ -70,8 +70,8 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(screen->ren);
 
     // 90 LET X=1:LET Y=1
-    X = 1;
-    Y = 1;
+    cur_coord_x = 1;
+    cur_coord_y = 1;
 
     // 100 LET I$=inkey$
     pressed_key = (char *) malloc(sizeof(char));
@@ -87,31 +87,31 @@ int main(int argc, char *argv[]) {
 
         if (*pressed_key == 'h') {
             lines360_420(screen, screen_cols, help_lines);
-        } else if (*pressed_key == 'a' && Y > 1) {
-            Y -= 1;
-        } else if (*pressed_key == 'z' && Y < 15) {
-            Y += 1;
-        } else if (*pressed_key == 'n' && X > 1) {
-            X -= 1;
-        } else if (*pressed_key == 'm' && X < 15) {
-            X += 1;
+        } else if (*pressed_key == 'a' && cur_coord_y > 1) {
+            cur_coord_y -= 1;
+        } else if (*pressed_key == 'z' && cur_coord_y < 15) {
+            cur_coord_y += 1;
+        } else if (*pressed_key == 'n' && cur_coord_x > 1) {
+            cur_coord_x -= 1;
+        } else if (*pressed_key == 'm' && cur_coord_x < 15) {
+            cur_coord_x += 1;
         } else if (*pressed_key > '/' && *pressed_key < ':') {
             lines230_270(
-                X, Y, contents, pressed_key, &entrance_coord_x,
-                &entrance_coord_y, char_code_blank
+                cur_coord_x, cur_coord_y, contents, pressed_key,
+                &entrance_coord_x, &entrance_coord_y, char_code_blank
             );
         }
         // 170 paper 3:ink 0
         paper(screen->cursor, WHITE);
         ink(screen->cursor, BLACK);
         // 180 PRINT tab(X,Y+5);CHR$(OS);
-        tab(screen->cursor, X, Y + 5);
+        tab(screen->cursor, cur_coord_x, cur_coord_y + 5);
         char os_input[2];
         sprintf(os_input, "%s", (char *) &char_base);
         free(print_text(screen, os_input));
-        tab(screen->cursor, X, Y + 5);
+        tab(screen->cursor, cur_coord_x, cur_coord_y + 5);
         // 190 PRINT tab(X,Y+5);CHR$(R(X,Y));
-        sprintf(os_input, "%s", (char *) &contents[X][Y]);
+        sprintf(os_input, "%s", (char *) &contents[cur_coord_x][cur_coord_y]);
         free(print_text(screen, os_input));
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
@@ -133,9 +133,9 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines230_270(int X, int Y, int contents[16][16], char *pressed_key,
-                  int *entrance_coord_x, int *entrance_coord_y,
-                  int char_code_blank) {
+void lines230_270(int cur_coord_x, int cur_coord_y, int contents[16][16],
+                  char *pressed_key, int *entrance_coord_x,
+                  int *entrance_coord_y, int char_code_blank) {
     // 230 LET I=VAL(I$)
     int pressed_key_num = atoi(pressed_key);
     // 240 IF I=9 THEN LET I=8+rnd(3)
@@ -144,11 +144,11 @@ void lines230_270(int X, int Y, int contents[16][16], char *pressed_key,
     }
     // 250 IF I=5 THEN LET IX=X:LET IY=Y
     else if (pressed_key_num == 5) {
-       *entrance_coord_x = X;
-       *entrance_coord_y = Y;
+       *entrance_coord_x = cur_coord_x;
+       *entrance_coord_y = cur_coord_y;
     }
     // 260 LET R(X,Y)=CO+I
-    contents[X][Y] = char_code_blank + pressed_key_num;
+    contents[cur_coord_x][cur_coord_y] = char_code_blank + pressed_key_num;
     // 270 RETURN
 }
 

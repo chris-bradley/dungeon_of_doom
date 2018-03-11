@@ -5,12 +5,12 @@ void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
                   int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum border_colour, int T, int L, int LW);
-void lines360_420(screen_t *screen, int W, const char * H$[10]);
+void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
 void lines430_440();
 void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
                   int *IX, int *IY, int char_code_blank);
 void lines610_690(int *W, int *LE, int *OS, int R[16][16], int *IX, int *IY,
-                  int *char_code_blank, const char * H$[10]);
+                  int *char_code_blank, const char * help_lines[10]);
 void lines700_770(int R[16][16], int *IX, int *IY, int char_code_blank);
 void lines790_800(int *OS, int *W, int *char_code_blank);
 void lines810_840();
@@ -19,13 +19,13 @@ void lines5000_5080();
 int main(int argc, char *argv[]) {
     int char_code_blank, IX, IY, LE, OS, W, X, Y;
     int R[16][16];
-    const char * H$[10];
+    const char * help_lines[10];
     char *I$;
     // 5 GOSUB 5000
     lines5000_5080();
     // GOSUB 610
 
-    lines610_690(&W, &LE, &OS, R, &IX, &IY, &char_code_blank, H$);
+    lines610_690(&W, &LE, &OS, R, &IX, &IY, &char_code_blank, help_lines);
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
         // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
 
         if (*I$ == 'h') {
-            lines360_420(screen, W, H$);
+            lines360_420(screen, W, help_lines);
         } else if (*I$ == 'a' && Y > 1) {
             Y -= 1;
         } else if (*I$ == 'z' && Y < 15) {
@@ -167,7 +167,7 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
 }
 
 
-void lines360_420(screen_t *screen, int W, const char * H$[10]) {
+void lines360_420(screen_t *screen, int W, const char * help_lines[10]) {
 
     int index;
     // 360 paper 1:ink 3
@@ -177,7 +177,7 @@ void lines360_420(screen_t *screen, int W, const char * H$[10]) {
     for (index = 0; index < 10; index += 1) {
     // 380 PRINT tab(1,4);H$(H);:GOSUB 430
         tab(screen->cursor, 1, 4);
-        free(print_text(screen, H$[index]));
+        free(print_text(screen, help_lines[index]));
         SDL_RenderPresent(screen->ren);
         lines430_440();
     // 390 PRINT tab(1,4);LEFT$(B$,W-2);
@@ -250,7 +250,7 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
 }
 
 void lines610_690(int *W, int *LE, int *OS, int R[16][16], int *IX, int *IY,
-                  int *char_code_blank, const char * H$[10]) {
+                  int *char_code_blank, const char * help_lines[10]) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
     lines790_800(OS, W, char_code_blank);
@@ -261,16 +261,16 @@ void lines610_690(int *W, int *LE, int *OS, int R[16][16], int *IX, int *IY,
     *LE = 1;
     // 670 FOR I=1 to 10
     // 680 READ H$(I)
-    H$[0] = "PRESS ANY KEY     ";
-    H$[1] = "TO MOVE A Z N M   ";
-    H$[2] = "1 WALL    2 VASE  ";
-    H$[3] = "3 CHEST 4 * IDOL *";
-    H$[4] = "5 WAY IN  6 EXIT  ";
-    H$[5] = "7 TRAP            ";
-    H$[6] = "8 SAFE PLACE      ";
-    H$[7] = "9 GUARD           ";
-    H$[8] = "0 TO ERASE        ";
-    H$[9] = "S TO SAVE         ";
+    help_lines[0] = "PRESS ANY KEY     ";
+    help_lines[1] = "TO MOVE A Z N M   ";
+    help_lines[2] = "1 WALL    2 VASE  ";
+    help_lines[3] = "3 CHEST 4 * IDOL *";
+    help_lines[4] = "5 WAY IN  6 EXIT  ";
+    help_lines[5] = "7 TRAP            ";
+    help_lines[6] = "8 SAFE PLACE      ";
+    help_lines[7] = "9 GUARD           ";
+    help_lines[8] = "0 TO ERASE        ";
+    help_lines[9] = "S TO SAVE         ";
 
     // 690 NEXT I:GOSUB 810
     lines810_840();

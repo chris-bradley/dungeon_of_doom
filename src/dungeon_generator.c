@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
+void lines230_270(int X, int Y, int contents[16][16], char *pressed_key,
                   int *entrance_coord_x, int *entrance_coord_y,
                   int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
@@ -10,13 +10,13 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
 void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
 void lines430_440();
 void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
-                  int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
-                  int char_code_blank);
-void lines610_690(int *W, int *level_num, int *char_base, int R[16][16],
+                  int contents[16][16], int *entrance_coord_x,
+                  int *entrance_coord_y, int char_code_blank);
+void lines610_690(int *W, int *level_num, int *char_base, int contents[16][16],
                   int *entrance_coord_x, int *entrance_coord_y,
                   int *char_code_blank, const char * help_lines[10]);
-void lines700_770(int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
-                  int char_code_blank);
+void lines700_770(int contents[16][16], int *entrance_coord_x,
+                  int *entrance_coord_y, int char_code_blank);
 void lines790_800(int *char_base, int *W, int *char_code_blank);
 void lines810_840();
 void lines5000_5080();
@@ -24,7 +24,7 @@ void lines5000_5080();
 int main(int argc, char *argv[]) {
     int char_code_blank, entrance_coord_x, entrance_coord_y, level_num,
         char_base, W, X, Y;
-    int R[16][16];
+    int contents[16][16];
     const char * help_lines[10];
     char *pressed_key;
     // 5 GOSUB 5000
@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
     // GOSUB 610
 
     lines610_690(
-        &W, &level_num, &char_base, R, &entrance_coord_x, &entrance_coord_y,
-        &char_code_blank, help_lines
+        &W, &level_num, &char_base, contents, &entrance_coord_x,
+        &entrance_coord_y, &char_code_blank, help_lines
     );
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
@@ -95,8 +95,8 @@ int main(int argc, char *argv[]) {
             X += 1;
         } else if (*pressed_key > '/' && *pressed_key < ':') {
             lines230_270(
-                X, Y, R, pressed_key, &entrance_coord_x, &entrance_coord_y,
-                char_code_blank
+                X, Y, contents, pressed_key, &entrance_coord_x,
+                &entrance_coord_y, char_code_blank
             );
         }
         // 170 paper 3:ink 0
@@ -109,13 +109,13 @@ int main(int argc, char *argv[]) {
         free(print_text(screen, os_input));
         tab(screen->cursor, X, Y + 5);
         // 190 PRINT tab(X,Y+5);CHR$(R(X,Y));
-        sprintf(os_input, "%s", (char *) &R[X][Y]);
+        sprintf(os_input, "%s", (char *) &contents[X][Y]);
         free(print_text(screen, os_input));
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*pressed_key == 's' && entrance_coord_x > 0) {
             lines450_600(
-                screen, W, &level_num, char_base, R, &entrance_coord_x,
+                screen, W, &level_num, char_base, contents, &entrance_coord_x,
                 &entrance_coord_y, char_code_blank
             );
         }
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
+void lines230_270(int X, int Y, int contents[16][16], char *pressed_key,
                   int *entrance_coord_x, int *entrance_coord_y,
                   int char_code_blank) {
     // 230 LET I=VAL(I$)
@@ -146,7 +146,7 @@ void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
        *entrance_coord_y = Y;
     }
     // 260 LET R(X,Y)=CO+I
-    R[X][Y] = char_code_blank + pressed_key_num;
+    contents[X][Y] = char_code_blank + pressed_key_num;
     // 270 RETURN
 }
 
@@ -215,8 +215,8 @@ void lines430_440() {
 }
 
 void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
-                  int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
-                  int char_code_blank) {
+                  int contents[16][16], int *entrance_coord_x,
+                  int *entrance_coord_y, int char_code_blank) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ONE MOMENT PLEASE"));
@@ -228,7 +228,8 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     // 480 FOR K=1 TO 15
         for (coord_y = 1; coord_y <= 15; coord_y += 1) {
     // 490 LET S$=S$+CHR$(R(K,J))
-            S$[(coord_x - 1) * 15 + coord_y - 1] = (char) R[coord_x][coord_y];
+            S$[(coord_x - 1) * 15 + coord_y - 1] =
+                (char) contents[coord_x][coord_y];
 
     // 500 NEXT K
         }
@@ -263,11 +264,13 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     SDL_RenderPresent(screen->ren);
     // 590 LET LE=LE+1:GOSUB 700
     *level_num = *level_num + 1;
-    lines700_770(R, entrance_coord_x, entrance_coord_y, char_code_blank);
+    lines700_770(
+        contents, entrance_coord_x, entrance_coord_y, char_code_blank
+    );
     // 600 RETURN
 }
 
-void lines610_690(int *W, int *level_num, int *char_base, int R[16][16],
+void lines610_690(int *W, int *level_num, int *char_base, int contents[16][16],
                   int *entrance_coord_x, int *entrance_coord_y,
                   int *char_code_blank, const char * help_lines[10]) {
     // 610 DIM R(15,15),H$(10)
@@ -293,11 +296,13 @@ void lines610_690(int *W, int *level_num, int *char_base, int R[16][16],
 
     // 690 NEXT I:GOSUB 810
     lines810_840();
-    lines700_770(R, entrance_coord_x, entrance_coord_y, *char_code_blank);
+    lines700_770(
+        contents, entrance_coord_x, entrance_coord_y, *char_code_blank
+    );
 }
 
-void lines700_770(int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
-                  int char_code_blank) {
+void lines700_770(int contents[16][16], int *entrance_coord_x,
+                  int *entrance_coord_y, int char_code_blank) {
     // 700 FOR J=1 to 15
     // 710 FOR K=1 to 15
     // 720 LET R(J,K) = CO
@@ -305,7 +310,7 @@ void lines700_770(int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
     // 740 NEXT J
     for (int coord_x=0; coord_x<16; coord_x++) {
         for (int coord_y=0; coord_y<16; coord_y++) {
-            R[coord_x][coord_y] = char_code_blank;
+            contents[coord_x][coord_y] = char_code_blank;
         }
     }
     // 750 LET IX=0:LET IY=0

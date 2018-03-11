@@ -6,9 +6,9 @@ void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
                 int *entrance_coord_y, int char_code_blank);
 void draw_help(screen_t *screen, int screen_cols, const char * help_lines[10]);
 void wait_for_user_key_press();
-void lines450_600(screen_t *screen, int screen_cols, int *level_num,
-                  int char_base, int contents[16][16], int *entrance_coord_x,
-                  int *entrance_coord_y, int char_code_blank);
+void save_level(screen_t *screen, int screen_cols, int *level_num,
+                int char_base, int contents[16][16], int *entrance_coord_x,
+                int *entrance_coord_y, int char_code_blank);
 void lines610_690(int *screen_cols, int *level_num, int *char_base,
                   int contents[16][16], int *entrance_coord_x,
                   int *entrance_coord_y, int *char_code_blank,
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*pressed_key == 's' && entrance_coord_x > 0) {
-            lines450_600(
+            save_level(
                 screen, screen_cols, &level_num, char_base, contents,
                 &entrance_coord_x, &entrance_coord_y, char_code_blank
             );
@@ -180,9 +180,9 @@ void wait_for_user_key_press() {
     inkey$();
 }
 
-void lines450_600(screen_t *screen, int screen_cols, int *level_num,
-                  int char_base, int contents[16][16], int *entrance_coord_x,
-                  int *entrance_coord_y, int char_code_blank) {
+void save_level(screen_t *screen, int screen_cols, int *level_num,
+                int char_base, int contents[16][16], int *entrance_coord_x,
+                int *entrance_coord_y, int char_code_blank) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ONE MOMENT PLEASE"));

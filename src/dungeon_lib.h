@@ -33,7 +33,7 @@ void tab(cursor_t *cursor, int x, int y);
 
 void newline(cursor_t *cursor);
 
-int init_screen(screen_t **screen);
+screen_t * init_screen();
 void destroy_screen(screen_t *screen);
 void clear_screen(screen_t *screen);
 

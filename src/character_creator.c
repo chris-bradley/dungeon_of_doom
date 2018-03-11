@@ -890,9 +890,8 @@ int main(int argc, char *argv[]) {
     header_t * header = init_header(screen_cols);
     main_menu_t *main_menu = init_main_menu(screen_cols);
     character_t *character = init_character(main_menu->num_rows * 3);
-    screen_t *screen = NULL;
+    screen_t *screen = init_screen();
     title_row_t * title_row = init_title_row();
-    init_screen(&screen);
 
     paper(screen->cursor, BLACK);
     draw_title_row(screen, title_row);

@@ -136,49 +136,50 @@ void newline(cursor_t *cursor) {
     cursor->curs_y += 1;
 }
 
-int init_screen(screen_t **screen) {
+screen_t * init_screen() {
+    screen_t * screen;
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init error:%s\n", SDL_GetError());
         SDL_Quit();
         exit(1);;
     }
     TTF_Init();
-    *screen = (screen_t *) malloc(sizeof(screen_t));
-    if (*screen == NULL) {
-       fprintf(stderr, "*screen is NULL!\n");
+    screen = (screen_t *) malloc(sizeof(screen_t));
+    if (screen == NULL) {
+       fprintf(stderr, "screen is NULL!\n");
        exit(1);
     }
-    (*screen)->zoom = 3;
-    (*screen)->win = SDL_CreateWindow(
+    screen->zoom = 3;
+    screen->win = SDL_CreateWindow(
         "Dungeon of Doom",
-        100 * (*screen)->zoom,
-        100 * (*screen)->zoom,
-        320 * (*screen)->zoom,
-        176 * (*screen)->zoom,
+        100 * screen->zoom,
+        100 * screen->zoom,
+        320 * screen->zoom,
+        176 * screen->zoom,
         SDL_WINDOW_SHOWN
     );
-    (*screen)->ren = SDL_CreateRenderer(
-        (*screen)->win,
+    screen->ren = SDL_CreateRenderer(
+        screen->win,
         -1,
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
-    if ((*screen)->ren == NULL) {
-        SDL_DestroyWindow((*screen)->win);
+    if (screen->ren == NULL) {
+        SDL_DestroyWindow(screen->win);
         fprintf(stdout, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_Quit();
         exit(1);;
     }
-    SDL_RenderClear((*screen)->ren);
-    SDL_RenderPresent((*screen)->ren);
+    SDL_RenderClear(screen->ren);
+    SDL_RenderPresent(screen->ren);
 
-    (*screen)->cursor = (cursor_t *) malloc(sizeof(cursor_t));
-    if ((*screen)->cursor == NULL) {
-       fprintf(stderr, "*(screen)->cursor is NULL!\n");
+    screen->cursor = (cursor_t *) malloc(sizeof(cursor_t));
+    if (screen->cursor == NULL) {
+       fprintf(stderr, "screen->cursor is NULL!\n");
        exit(1);
     }
-    (*screen)->cursor->curs_x = 0;
-    (*screen)->cursor->curs_y = 0;
-    return 0;
+    screen->cursor->curs_x = 0;
+    screen->cursor->curs_y = 0;
+    return screen;
 }
 
 void destroy_screen(screen_t *screen) {

@@ -104,9 +104,7 @@ int main(int argc, char *argv[]) {
          * M$;
     const char ** T$, **W$;
     // C64: 5 GOSUB 5000:POKE 53281,0
-    screen_t *screen = NULL;
-
-    init_screen(&screen);
+    screen_t *screen = init_screen();
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     clear_screen(screen);

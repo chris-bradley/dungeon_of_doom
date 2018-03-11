@@ -1,8 +1,8 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
-                  int char_code_blank);
+void lines230_270(int X, int Y, int R[16][16], char *pressed_key, int IX,
+                  int IY, int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum border_colour, int T, int L, int LW);
 void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     int char_code_blank, IX, IY, LE, OS, W, X, Y;
     int R[16][16];
     const char * help_lines[10];
-    char *I$;
+    char *pressed_key;
     // 5 GOSUB 5000
     lines5000_5080();
     // GOSUB 610
@@ -63,10 +63,10 @@ int main(int argc, char *argv[]) {
     Y = 1;
 
     // 100 LET I$=inkey$
-    I$ = (char *) malloc(sizeof(char));
+    pressed_key = (char *) malloc(sizeof(char));
     int done = 0;
     while (!done) {
-        *I$ = inkey$();
+        *pressed_key = inkey$();
         // 110 IF I$="H" THEN GOSUB 360
         // 120 IF I$="A" AND Y>1 THEN LET Y=Y-1
         // 130 IF I$="Z" AND Y<15 THEN LET Y=Y+1
@@ -74,18 +74,18 @@ int main(int argc, char *argv[]) {
         // 150 IF I$="M" AND X<15 THEN LET X=X+1
         // 160 IF I$>"/" AND I$<":" THEN GOSUB 230
 
-        if (*I$ == 'h') {
+        if (*pressed_key == 'h') {
             lines360_420(screen, W, help_lines);
-        } else if (*I$ == 'a' && Y > 1) {
+        } else if (*pressed_key == 'a' && Y > 1) {
             Y -= 1;
-        } else if (*I$ == 'z' && Y < 15) {
+        } else if (*pressed_key == 'z' && Y < 15) {
             Y += 1;
-        } else if (*I$ == 'n' && X > 1) {
+        } else if (*pressed_key == 'n' && X > 1) {
             X -= 1;
-        } else if (*I$ == 'm' && X < 15) {
+        } else if (*pressed_key == 'm' && X < 15) {
             X += 1;
-        } else if (*I$ > '/' && *I$ < ':') {
-            lines230_270(X, Y, R, I$, IX, IY, char_code_blank);
+        } else if (*pressed_key > '/' && *pressed_key < ':') {
+            lines230_270(X, Y, R, pressed_key, IX, IY, char_code_blank);
         }
         // 170 paper 3:ink 0
         paper(screen->cursor, WHITE);
@@ -101,25 +101,25 @@ int main(int argc, char *argv[]) {
         free(print_text(screen, os_input));
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
-        if (*I$ == 's' && IX > 0) {
+        if (*pressed_key == 's' && IX > 0) {
             lines450_600(screen, W, &LE, OS, R, &IX, &IY, char_code_blank);
         }
         // 210 IF I$<>"F" THEN GOTO 100
-        if (*I$ == 'f') {
+        if (*pressed_key == 'f') {
             done = SDL_TRUE;
         }
     }
     // 220 STOP
-    free(I$);
+    free(pressed_key);
     destroy_screen(screen);
 
     return 0;
 }
 
-void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
-                  int char_code_blank) {
+void lines230_270(int X, int Y, int R[16][16], char *pressed_key, int IX,
+                  int IY, int char_code_blank) {
     // 230 LET I=VAL(I$)
-    int I = atoi(I$);
+    int I = atoi(pressed_key);
     // 240 IF I=9 THEN LET I=8+rnd(3)
     if (I == 9) {
         I = 9 + (rand() % 3);

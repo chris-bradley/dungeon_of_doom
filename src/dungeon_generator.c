@@ -5,7 +5,8 @@ void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
                   int *entrance_coord_x, int *entrance_coord_y,
                   int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
-                  enum ColourNum border_colour, int T, int num_lines, int LW);
+                  enum ColourNum border_colour, int T, int num_lines,
+                  int num_cols);
 void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
 void lines430_440();
 void lines450_600(screen_t *screen, int W, int *level_num, int OS,
@@ -151,12 +152,13 @@ void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
 
 
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
-                  enum ColourNum border_colour, int T, int num_lines, int LW) {
+                  enum ColourNum border_colour, int T, int num_lines,
+                  int num_cols) {
     // 280 PRINT tab(0,T);
     tab(screen->cursor, 0, T);
     // 290 paper FG:PRINT LEFT$(B$,LW+2)
     paper(screen->cursor, border_colour);
-    print_left$_b$(screen, LW + 2);
+    print_left$_b$(screen, num_cols + 2);
     newline(screen->cursor);
     // 300 paper BG:ink FG
     paper(screen->cursor, background_colour);
@@ -167,7 +169,7 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
         paper(screen->cursor, border_colour);
         free(print_text(screen, " "));
         paper(screen->cursor, background_colour);
-        print_left$_b$(screen, LW);
+        print_left$_b$(screen, num_cols);
         paper(screen->cursor, border_colour);
         free(print_text(screen, " "));
         newline(screen->cursor);
@@ -175,7 +177,7 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
     }
     // 340 paper FG:PRINT LEFT$(B$,LW+2);
     paper(screen->cursor, border_colour);
-    print_left$_b$(screen, LW + 2);
+    print_left$_b$(screen, num_cols + 2);
     SDL_RenderPresent(screen->ren);
     // 350 RETURN
 

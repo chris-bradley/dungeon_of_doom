@@ -4,9 +4,6 @@
 void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
                 char *pressed_key, int *entrance_coord_x,
                 int *entrance_coord_y, int char_code_blank);
-void lines280_350(screen_t *screen, enum ColourNum background_colour,
-                  enum ColourNum border_colour, int top_row, int num_lines,
-                  int num_cols);
 void lines360_420(screen_t *screen, int screen_cols,
                   const char * help_lines[10]);
 void lines430_440();
@@ -44,7 +41,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     // 30 LET BG=2:LET FG=1:LET T=0:LET L=3:LET LW=W-3:GOSUB 280
-    lines280_350(screen, YELLOW, RED, 0, 3, screen_cols - 3);
+    draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
     // 40 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
@@ -66,7 +63,7 @@ int main(int argc, char *argv[]) {
     free(print_text(screen, "PRESS H FOR HELP"));
 
     // 80 LET BG=3:LET FG=2:LET T=5:LET L=15:LET LW=15:GOSUB 280
-    lines280_350(screen, WHITE, YELLOW, 5, 15, 15);
+    draw_bordered_box(screen, 5, 0, 15, 15, WHITE, YELLOW);
     SDL_RenderPresent(screen->ren);
 
     // 90 LET X=1:LET Y=1
@@ -150,39 +147,6 @@ void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
     // 260 LET R(X,Y)=CO+I
     contents[cur_coord_x][cur_coord_y] = char_code_blank + pressed_key_num;
     // 270 RETURN
-}
-
-
-void lines280_350(screen_t *screen, enum ColourNum background_colour,
-                  enum ColourNum border_colour, int top_row, int num_lines,
-                  int num_cols) {
-    // 280 PRINT tab(0,T);
-    tab(screen->cursor, 0, top_row);
-    // 290 paper FG:PRINT LEFT$(B$,LW+2)
-    paper(screen->cursor, border_colour);
-    print_left$_b$(screen, num_cols + 2);
-    newline(screen->cursor);
-    // 300 paper BG:ink FG
-    paper(screen->cursor, background_colour);
-    ink(screen->cursor, border_colour);
-    // 310 FOR I=1 TO L
-    for (int index = 1; index <= num_lines; index +=1) {
-    // 320 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,LW);BG$(FG);" "
-        paper(screen->cursor, border_colour);
-        free(print_text(screen, " "));
-        paper(screen->cursor, background_colour);
-        print_left$_b$(screen, num_cols);
-        paper(screen->cursor, border_colour);
-        free(print_text(screen, " "));
-        newline(screen->cursor);
-    // 330 NEXT I
-    }
-    // 340 paper FG:PRINT LEFT$(B$,LW+2);
-    paper(screen->cursor, border_colour);
-    print_left$_b$(screen, num_cols + 2);
-    SDL_RenderPresent(screen->ren);
-    // 350 RETURN
-
 }
 
 

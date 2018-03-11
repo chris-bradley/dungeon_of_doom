@@ -161,7 +161,7 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
     paper(screen->cursor, background_colour);
     ink(screen->cursor, border_colour);
     // 310 FOR I=1 TO L
-    for (int I = 1; I <= L; I +=1) {
+    for (int index = 1; index <= L; index +=1) {
     // 320 PRINT BG$(FG);" ";BG$(BG);LEFT$(B$,LW);BG$(FG);" "
         paper(screen->cursor, border_colour);
         free(print_text(screen, " "));

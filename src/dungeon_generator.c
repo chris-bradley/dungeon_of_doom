@@ -15,7 +15,7 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
                const char * help_lines[10]);
 void init_level(int contents[16][16], int *entrance_coord_x,
                 int *entrance_coord_y, int char_code_blank);
-void lines790_800(int *char_base, int *screen_cols, int *char_code_blank);
+void init_platform_vars(int *char_base, int *screen_cols, int *char_code_blank);
 void lines810_840();
 void lines5000_5080();
 
@@ -240,7 +240,7 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
                const char * help_lines[10]) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
-    lines790_800(char_base, screen_cols, char_code_blank);
+    init_platform_vars(char_base, screen_cols, char_code_blank);
     // 630 DATA "PRESS ANY KEY","TO MOVE A Z N M","1 WALL    2 VASE"
     // 640 DATA "3 CHEST 4 * idol *","5 WAY IN  6 EXIT","7 TRAP", "8 SAFE PLACE"
     // 650 DATA "9 GUARD","0 TO ERASE","S TO SAVE"
@@ -284,7 +284,8 @@ void init_level(int contents[16][16], int *entrance_coord_x,
     // 770 RETURN
 }
 
-void lines790_800(int *char_base, int *screen_cols, int *char_code_blank) {
+void init_platform_vars(int *char_base, int *screen_cols,
+                        int *char_code_blank) {
   // 790 OS=96:CO=OS+6:W=40:GOSUB 4000
   *char_base = 96;
   *char_code_blank = *char_base + 6;

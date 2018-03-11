@@ -844,27 +844,10 @@ void purchasing_phase(screen_t * screen, character_t * character,
     free(item_to_char_class);
 }
 
-int main(int argc, char *argv[]) {
-    int index, num_item_types,
-        screen_cols = init_screen_cols(),
-        col, row;
-    character_class_t ** character_classes = init_character_classes();
-    store_t * stores = init_stores();
-    header_t * header = init_header(screen_cols);
-    main_menu_t *main_menu = init_main_menu(screen_cols);
-    character_t *character = init_character(main_menu->num_rows * 3);
+void character_naming_phase(screen_t * screen, character_t * character,
+                            header_t * header) {
+    int col, row;
     char * typed_string = NULL;
-    screen_t *screen = NULL;
-    title_row_t * title_row = init_title_row();
-    if (init_screen(&screen) < 0) {
-        exit(1);
-    }
-
-    paper(screen->cursor, BLACK);
-    draw_title_row(screen, title_row);
-    draw_header(screen, header);
-    set_attr_phase(screen, character, main_menu, header, character_classes);
-    purchasing_phase(screen, character, stores, main_menu, header, title_row);
     character->name = (char *) malloc(sizeof(char) * 40);
     if (character->name == NULL) {
         fprintf(stderr, "character->name is NULL!\n");
@@ -897,6 +880,28 @@ int main(int argc, char *argv[]) {
         strcpy(character->name, typed_string);
         free(typed_string);
     } while (strlen(character->name) > 10);
+}
+
+int main(int argc, char *argv[]) {
+    int index, num_item_types,
+        screen_cols = init_screen_cols();
+    character_class_t ** character_classes = init_character_classes();
+    store_t * stores = init_stores();
+    header_t * header = init_header(screen_cols);
+    main_menu_t *main_menu = init_main_menu(screen_cols);
+    character_t *character = init_character(main_menu->num_rows * 3);
+    screen_t *screen = NULL;
+    title_row_t * title_row = init_title_row();
+    if (init_screen(&screen) < 0) {
+        exit(1);
+    }
+
+    paper(screen->cursor, BLACK);
+    draw_title_row(screen, title_row);
+    draw_header(screen, header);
+    set_attr_phase(screen, character, main_menu, header, character_classes);
+    purchasing_phase(screen, character, stores, main_menu, header, title_row);
+    character_naming_phase(screen, character, header);
     tab(screen->cursor, 1, 3);
     free(print_text(screen, "ONE MOMENT PLEASE"));
     SDL_RenderPresent(screen->ren);

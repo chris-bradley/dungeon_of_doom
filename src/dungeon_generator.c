@@ -1,9 +1,9 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines230_270(int cur_coord_x, int cur_coord_y, int contents[16][16],
-                  char *pressed_key, int *entrance_coord_x,
-                  int *entrance_coord_y, int char_code_blank);
+void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
+                char *pressed_key, int *entrance_coord_x,
+                int *entrance_coord_y, int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum border_colour, int top_row, int num_lines,
                   int num_cols);
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
         } else if (*pressed_key == 'm' && cur_coord_x < 15) {
             cur_coord_x += 1;
         } else if (*pressed_key > '/' && *pressed_key < ':') {
-            lines230_270(
+            place_item(
                 cur_coord_x, cur_coord_y, contents, pressed_key,
                 &entrance_coord_x, &entrance_coord_y, char_code_blank
             );
@@ -133,9 +133,9 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines230_270(int cur_coord_x, int cur_coord_y, int contents[16][16],
-                  char *pressed_key, int *entrance_coord_x,
-                  int *entrance_coord_y, int char_code_blank) {
+void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
+                char *pressed_key, int *entrance_coord_x,
+                int *entrance_coord_y, int char_code_blank) {
     // 230 LET I=VAL(I$)
     int pressed_key_num = atoi(pressed_key);
     // 240 IF I=9 THEN LET I=8+rnd(3)

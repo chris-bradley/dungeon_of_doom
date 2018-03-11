@@ -220,12 +220,12 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
     // 460 LET S$=""
     char S$[239];
     // 470 FOR J=1 TO 15
-    int J, K;
-    for (J = 1; J <= 15; J += 1) {
+    int coord_x, coord_y;
+    for (coord_x = 1; coord_x <= 15; coord_x += 1) {
     // 480 FOR K=1 TO 15
-        for (K = 1; K <= 15; K += 1) {
+        for (coord_y = 1; coord_y <= 15; coord_y += 1) {
     // 490 LET S$=S$+CHR$(R(K,J))
-            S$[(J - 1) * 15 + K - 1] = (char) R[J][K];
+            S$[(coord_x - 1) * 15 + coord_y - 1] = (char) R[coord_x][coord_y];
 
     // 500 NEXT K
         }
@@ -300,9 +300,9 @@ void lines700_770(int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
     // 720 LET R(J,K) = CO
     // 730 NEXT K
     // 740 NEXT J
-    for (int J=0; J<16; J++) {
-        for (int K=0; K<16; K++) {
-            R[J][K] = char_code_blank;
+    for (int coord_x=0; coord_x<16; coord_x++) {
+        for (int coord_y=0; coord_y<16; coord_y++) {
+            R[coord_x][coord_y] = char_code_blank;
         }
     }
     // 750 LET IX=0:LET IY=0

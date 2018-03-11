@@ -125,9 +125,7 @@ int main(int argc, char *argv[]) {
         &entrance_coord_y, &char_code_blank, help_lines
     );
     screen_t *screen = NULL;
-    if (init_screen(&screen) < 0) {
-        return 1;
-    }
+    init_screen(&screen);
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);

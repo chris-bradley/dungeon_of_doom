@@ -106,9 +106,7 @@ int main(int argc, char *argv[]) {
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = NULL;
 
-    if (init_screen(&screen) < 0) {
-        return 1;
-    }
+    init_screen(&screen);
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     clear_screen(screen);

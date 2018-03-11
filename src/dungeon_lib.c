@@ -140,7 +140,7 @@ int init_screen(screen_t **screen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init error:%s\n", SDL_GetError());
         SDL_Quit();
-        return -1;
+        exit(1);;
     }
     TTF_Init();
     *screen = (screen_t *) malloc(sizeof(screen_t));
@@ -166,7 +166,7 @@ int init_screen(screen_t **screen) {
         SDL_DestroyWindow((*screen)->win);
         fprintf(stdout, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_Quit();
-        return -1;
+        exit(1);;
     }
     SDL_RenderClear((*screen)->ren);
     SDL_RenderPresent((*screen)->ren);

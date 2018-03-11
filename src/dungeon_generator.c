@@ -1,8 +1,8 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
-void lines230_270(int X, int Y, int R[16][16], char *pressed_key, int IX,
-                  int IY, int char_code_blank);
+void lines230_270(int X, int Y, int R[16][16], char *pressed_key, int *IX,
+                  int *IY, int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum border_colour, int T, int L, int LW);
 void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         } else if (*pressed_key == 'm' && X < 15) {
             X += 1;
         } else if (*pressed_key > '/' && *pressed_key < ':') {
-            lines230_270(X, Y, R, pressed_key, IX, IY, char_code_blank);
+            lines230_270(X, Y, R, pressed_key, &IX, &IY, char_code_blank);
         }
         // 170 paper 3:ink 0
         paper(screen->cursor, WHITE);
@@ -116,8 +116,8 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines230_270(int X, int Y, int R[16][16], char *pressed_key, int IX,
-                  int IY, int char_code_blank) {
+void lines230_270(int X, int Y, int R[16][16], char *pressed_key, int *IX,
+                  int *IY, int char_code_blank) {
     // 230 LET I=VAL(I$)
     int I = atoi(pressed_key);
     // 240 IF I=9 THEN LET I=8+rnd(3)
@@ -126,8 +126,8 @@ void lines230_270(int X, int Y, int R[16][16], char *pressed_key, int IX,
     }
     // 250 IF I=5 THEN LET IX=X:LET IY=Y
     else if (I == 5) {
-       IX = X;
-       IY = Y;
+       *IX = X;
+       *IY = Y;
     }
     // 260 LET R(X,Y)=CO+I
     R[X][Y] = char_code_blank + I;

@@ -133,18 +133,18 @@ void lines230_270(int X, int Y, int R[16][16], char *pressed_key,
                   int *entrance_coord_x, int *entrance_coord_y,
                   int char_code_blank) {
     // 230 LET I=VAL(I$)
-    int I = atoi(pressed_key);
+    int pressed_key_num = atoi(pressed_key);
     // 240 IF I=9 THEN LET I=8+rnd(3)
-    if (I == 9) {
-        I = 9 + (rand() % 3);
+    if (pressed_key_num == 9) {
+        pressed_key_num = 9 + (rand() % 3);
     }
     // 250 IF I=5 THEN LET IX=X:LET IY=Y
-    else if (I == 5) {
+    else if (pressed_key_num == 5) {
        *entrance_coord_x = X;
        *entrance_coord_y = Y;
     }
     // 260 LET R(X,Y)=CO+I
-    R[X][Y] = char_code_blank + I;
+    R[X][Y] = char_code_blank + pressed_key_num;
     // 270 RETURN
 }
 

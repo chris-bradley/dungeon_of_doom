@@ -8,10 +8,10 @@ void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum border_colour, int T, int num_lines, int LW);
 void lines360_420(screen_t *screen, int W, const char * help_lines[10]);
 void lines430_440();
-void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
-                  int *entrance_coord_x, int *entrance_coord_y,
+void lines450_600(screen_t *screen, int W, int *level_num, int OS,
+                  int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
                   int char_code_blank);
-void lines610_690(int *W, int *LE, int *OS, int R[16][16],
+void lines610_690(int *W, int *level_num, int *OS, int R[16][16],
                   int *entrance_coord_x, int *entrance_coord_y,
                   int *char_code_blank, const char * help_lines[10]);
 void lines700_770(int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
@@ -21,7 +21,8 @@ void lines810_840();
 void lines5000_5080();
 
 int main(int argc, char *argv[]) {
-    int char_code_blank, entrance_coord_x, entrance_coord_y, LE, OS, W, X, Y;
+    int char_code_blank, entrance_coord_x, entrance_coord_y, level_num, OS, W,
+        X, Y;
     int R[16][16];
     const char * help_lines[10];
     char *pressed_key;
@@ -30,7 +31,7 @@ int main(int argc, char *argv[]) {
     // GOSUB 610
 
     lines610_690(
-        &W, &LE, &OS, R, &entrance_coord_x, &entrance_coord_y,
+        &W, &level_num, &OS, R, &entrance_coord_x, &entrance_coord_y,
         &char_code_blank, help_lines
     );
     // Clear screen; Black background.
@@ -54,7 +55,7 @@ int main(int argc, char *argv[]) {
        fprintf(stdout, "Allocating outstring failed!");
        exit(1);
     }
-    snprintf(outstring, 40, "THIS IS LEVEL: %i", LE);
+    snprintf(outstring, 40, "THIS IS LEVEL: %i", level_num);
     free(print_text(screen, outstring));
     free(outstring);
     // 70 PRINT tab(1,3);"PRESS H FOR HELP"
@@ -113,8 +114,8 @@ int main(int argc, char *argv[]) {
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*pressed_key == 's' && entrance_coord_x > 0) {
             lines450_600(
-                screen, W, &LE, OS, R, &entrance_coord_x, &entrance_coord_y,
-                char_code_blank
+                screen, W, &level_num, OS, R, &entrance_coord_x,
+                &entrance_coord_y, char_code_blank
             );
         }
         // 210 IF I$<>"F" THEN GOTO 100
@@ -211,8 +212,8 @@ void lines430_440() {
     inkey$();
 }
 
-void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
-                  int *entrance_coord_x, int *entrance_coord_y,
+void lines450_600(screen_t *screen, int W, int *level_num, int OS,
+                  int R[16][16], int *entrance_coord_x, int *entrance_coord_y,
                   int char_code_blank) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
@@ -235,7 +236,7 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
     S$[225] = (char) *entrance_coord_x + OS;
     S$[226] = (char) *entrance_coord_y + OS;
     // 530 LET S$=S$+CHR$(LE+OS)
-    S$[227] = (char) *LE + OS;
+    S$[227] = (char) *level_num + OS;
     S$[228] = 0;
     // 540 PRINT tab(1,4);"ANY KEY TO SAVE   ";GOSUB 430
     tab(screen->cursor, 1, 4);
@@ -259,12 +260,12 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
     print_left$_b$(screen, W);
     SDL_RenderPresent(screen->ren);
     // 590 LET LE=LE+1:GOSUB 700
-    *LE = *LE + 1;
+    *level_num = *level_num + 1;
     lines700_770(R, entrance_coord_x, entrance_coord_y, char_code_blank);
     // 600 RETURN
 }
 
-void lines610_690(int *W, int *LE, int *OS, int R[16][16],
+void lines610_690(int *W, int *level_num, int *OS, int R[16][16],
                   int *entrance_coord_x, int *entrance_coord_y,
                   int *char_code_blank, const char * help_lines[10]) {
     // 610 DIM R(15,15),H$(10)
@@ -274,7 +275,7 @@ void lines610_690(int *W, int *LE, int *OS, int R[16][16],
     // 640 DATA "3 CHEST 4 * idol *","5 WAY IN  6 EXIT","7 TRAP", "8 SAFE PLACE"
     // 650 DATA "9 GUARD","0 TO ERASE","S TO SAVE"
     // 660 LET LE = 1
-    *LE = 1;
+    *level_num = 1;
     // 670 FOR I=1 to 10
     // 680 READ H$(I)
     help_lines[0] = "PRESS ANY KEY     ";

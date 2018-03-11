@@ -2,22 +2,22 @@
 #include "dungeon_lib.h"
 
 void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
-                  int CO);
+                  int char_code_blank);
 void lines280_350(screen_t *screen, enum ColourNum background_colour,
                   enum ColourNum FG, int T, int L, int LW);
 void lines360_420(screen_t *screen, int W, const char * H$[10]);
 void lines430_440();
 void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
-                  int *IX, int *IY, int CO);
+                  int *IX, int *IY, int char_code_blank);
 void lines610_690(int *W, int *LE, int *OS, int R[16][16], int *IX, int *IY,
-                  int *CO, const char * H$[10]);
-void lines700_770(int R[16][16], int *IX, int *IY, int CO);
-void lines790_800(int *OS, int *W, int *CO);
+                  int *char_code_blank, const char * H$[10]);
+void lines700_770(int R[16][16], int *IX, int *IY, int char_code_blank);
+void lines790_800(int *OS, int *W, int *char_code_blank);
 void lines810_840();
 void lines5000_5080();
 
 int main(int argc, char *argv[]) {
-    int CO, IX, IY, LE, OS, W, X, Y;
+    int char_code_blank, IX, IY, LE, OS, W, X, Y;
     int R[16][16];
     const char * H$[10];
     char *I$;
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     lines5000_5080();
     // GOSUB 610
 
-    lines610_690(&W, &LE, &OS, R, &IX, &IY, &CO, H$);
+    lines610_690(&W, &LE, &OS, R, &IX, &IY, &char_code_blank, H$);
     // Clear screen; Black background.
     // 20 PRINT CHR$(147): POKE 53280,0:POKE 53281,0
     screen_t *screen = NULL;
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         } else if (*I$ == 'm' && X < 15) {
             X += 1;
         } else if (*I$ > '/' && *I$ < ':') {
-            lines230_270(X, Y, R, I$, IX, IY, CO);
+            lines230_270(X, Y, R, I$, IX, IY, char_code_blank);
         }
         // 170 paper 3:ink 0
         paper(screen->cursor, WHITE);
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
         // 200 IF I$="S" AND IX>0 THEN GOSUB 450:GOTO 20
         if (*I$ == 's' && IX > 0) {
-            lines450_600(screen, W, &LE, OS, R, &IX, &IY, CO);
+            lines450_600(screen, W, &LE, OS, R, &IX, &IY, char_code_blank);
         }
         // 210 IF I$<>"F" THEN GOTO 100
         if (*I$ == 'f') {
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 }
 
 void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
-                  int CO) {
+                  int char_code_blank) {
     // 230 LET I=VAL(I$)
     int I = atoi(I$);
     // 240 IF I=9 THEN LET I=8+rnd(3)
@@ -130,7 +130,7 @@ void lines230_270(int X, int Y, int R[16][16], char *I$, int IX, int IY,
        IY = Y;
     }
     // 260 LET R(X,Y)=CO+I
-    R[X][Y] = CO + I;
+    R[X][Y] = char_code_blank + I;
     // 270 RETURN
 }
 
@@ -198,7 +198,7 @@ void lines430_440() {
 }
 
 void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
-                  int *IX, int *IY, int CO) {
+                  int *IX, int *IY, int char_code_blank) {
     // 450 PRINT tab(1, 4);"ONE MOMENT PLEASE.";
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ONE MOMENT PLEASE"));
@@ -245,15 +245,15 @@ void lines450_600(screen_t *screen, int W, int *LE, int OS, int R[16][16],
     SDL_RenderPresent(screen->ren);
     // 590 LET LE=LE+1:GOSUB 700
     *LE = *LE + 1;
-    lines700_770(R, IX, IY, CO);
+    lines700_770(R, IX, IY, char_code_blank);
     // 600 RETURN
 }
 
 void lines610_690(int *W, int *LE, int *OS, int R[16][16], int *IX, int *IY,
-                  int *CO, const char * H$[10]) {
+                  int *char_code_blank, const char * H$[10]) {
     // 610 DIM R(15,15),H$(10)
     // 620 GOSUB 790
-    lines790_800(OS, W, CO);
+    lines790_800(OS, W, char_code_blank);
     // 630 DATA "PRESS ANY KEY","TO MOVE A Z N M","1 WALL    2 VASE"
     // 640 DATA "3 CHEST 4 * idol *","5 WAY IN  6 EXIT","7 TRAP", "8 SAFE PLACE"
     // 650 DATA "9 GUARD","0 TO ERASE","S TO SAVE"
@@ -274,10 +274,10 @@ void lines610_690(int *W, int *LE, int *OS, int R[16][16], int *IX, int *IY,
 
     // 690 NEXT I:GOSUB 810
     lines810_840();
-    lines700_770(R, IX, IY, *CO);
+    lines700_770(R, IX, IY, *char_code_blank);
 }
 
-void lines700_770(int R[16][16], int *IX, int *IY, int CO) {
+void lines700_770(int R[16][16], int *IX, int *IY, int char_code_blank) {
     // 700 FOR J=1 to 15
     // 710 FOR K=1 to 15
     // 720 LET R(J,K) = CO
@@ -285,7 +285,7 @@ void lines700_770(int R[16][16], int *IX, int *IY, int CO) {
     // 740 NEXT J
     for (int J=0; J<16; J++) {
         for (int K=0; K<16; K++) {
-            R[J][K] = CO;
+            R[J][K] = char_code_blank;
         }
     }
     // 750 LET IX=0:LET IY=0
@@ -296,10 +296,10 @@ void lines700_770(int R[16][16], int *IX, int *IY, int CO) {
     // 770 RETURN
 }
 
-void lines790_800(int *OS, int *W, int *CO) {
+void lines790_800(int *OS, int *W, int *char_code_blank) {
   // 790 OS=96:CO=OS+6:W=40:GOSUB 4000
   *OS = 96;
-  *CO = *OS + 6;
+  *char_code_blank = *OS + 6;
   *W = 40;
   // 800 RETURN
 }

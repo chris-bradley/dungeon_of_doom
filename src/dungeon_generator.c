@@ -221,14 +221,14 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ONE MOMENT PLEASE"));
     // 460 LET S$=""
-    char S$[239];
+    char save_file_contents[239];
     // 470 FOR J=1 TO 15
     int coord_x, coord_y;
     for (coord_x = 1; coord_x <= 15; coord_x += 1) {
     // 480 FOR K=1 TO 15
         for (coord_y = 1; coord_y <= 15; coord_y += 1) {
     // 490 LET S$=S$+CHR$(R(K,J))
-            S$[(coord_x - 1) * 15 + coord_y - 1] =
+            save_file_contents[(coord_x - 1) * 15 + coord_y - 1] =
                 (char) contents[coord_x][coord_y];
 
     // 500 NEXT K
@@ -236,11 +236,11 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     // 510 NEXT J
     }
     // 520 LET S$=S$+CHR$(IX+OS):LET S$=S$+CHR(IY+OS)
-    S$[225] = (char) *entrance_coord_x + char_base;
-    S$[226] = (char) *entrance_coord_y + char_base;
+    save_file_contents[225] = (char) *entrance_coord_x + char_base;
+    save_file_contents[226] = (char) *entrance_coord_y + char_base;
     // 530 LET S$=S$+CHR$(LE+OS)
-    S$[227] = (char) *level_num + char_base;
-    S$[228] = 0;
+    save_file_contents[227] = (char) *level_num + char_base;
+    save_file_contents[228] = 0;
     // 540 PRINT tab(1,4);"ANY KEY TO SAVE   ";GOSUB 430
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ANY KEY TO SAVE   "));
@@ -249,7 +249,7 @@ void lines450_600(screen_t *screen, int W, int *level_num, int char_base,
     // 550 LET S=OPENOUT "LEVEL"
     FILE *save_file_handle = fopen("LEVEL", "w");
     // 560 PRINT#S,S$
-    int error = fputs(S$, save_file_handle);
+    int error = fputs(save_file_contents, save_file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the level!", error);
     }

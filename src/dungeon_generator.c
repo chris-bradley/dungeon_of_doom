@@ -173,9 +173,6 @@ int main(int argc, char *argv[]) {
         ink(screen->cursor, BLACK);
         tab(screen->cursor, cur_coord_x, cur_coord_y + 5);
         char os_input[2];
-        sprintf(os_input, "%s", (char *) &char_base);
-        free(print_text(screen, os_input));
-        tab(screen->cursor, cur_coord_x, cur_coord_y + 5);
         sprintf(os_input, "%s", (char *) &contents[cur_coord_x][cur_coord_y]);
         free(print_text(screen, os_input));
         SDL_RenderPresent(screen->ren);

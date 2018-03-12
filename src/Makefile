@@ -9,7 +9,7 @@ all: dungeon_lib.c dungeon_generator.c dungeon_lib_win.o dungeon_lib_lin.o chara
 		game_module.exe \
 		game_module
 
-dungeon_lib_win.o : dungeon_lib.c
+dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 	i686-w64-mingw32-gcc \
 		-g \
 		-Wall \
@@ -38,7 +38,7 @@ dungeon_lib_win.o : dungeon_lib.c
 		-D main=SDL_main \
 		-o dungeon_lib_win.o
 
-dungeon_lib_lin.o : dungeon_lib.c
+dungeon_lib_lin.o : dungeon_lib.c dungeon_lib.h
 	gcc \
 		-g \
 		-c dungeon_lib.c \

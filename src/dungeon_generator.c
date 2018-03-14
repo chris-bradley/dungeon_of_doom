@@ -169,12 +169,12 @@ int main(int argc, char *argv[]) {
                 &entrance_coord_x, &entrance_coord_y, char_code_blank
             );
         }
-        paper(screen->cursor, WHITE);
-        ink(screen->cursor, BLACK);
-        tab(screen->cursor, cur_coord_x, cur_coord_y + 5);
-        char os_input[2];
-        sprintf(os_input, "%s", (char *) &contents[cur_coord_x][cur_coord_y]);
-        free(print_text(screen, os_input));
+        render_bitmap(
+            screen, cur_coord_x, cur_coord_y + 5,
+            contents[cur_coord_x][cur_coord_y] - char_code_blank + 6, BLACK,
+            WHITE
+        );
+
         SDL_RenderPresent(screen->ren);
         if (*pressed_key == 's' && entrance_coord_x > 0) {
             save_level(

@@ -40,8 +40,8 @@ void draw_help(screen_t *screen, int screen_cols,
         inkey$();
         clear_box(screen, help_line_rect, RED);
         free(help_line_rect);
-        SDL_RenderPresent(screen->ren);
     }
+    SDL_RenderPresent(screen->ren);
     ink(screen->cursor, WHITE);
 }
 

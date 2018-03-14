@@ -44,3 +44,7 @@ void draw_bordered_box(screen_t *screen, int top_row, int left_col, int rows,
                        enum ColourNum border_colour);
 
 void clear_box(screen_t *screen, SDL_Rect * rect, enum ColourNum colour);
+
+void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
+                   enum ColourNum foreground_colour,
+                   enum ColourNum background_colour);

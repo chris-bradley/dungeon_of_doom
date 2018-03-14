@@ -296,3 +296,94 @@ void clear_box(screen_t *screen, SDL_Rect * rect, enum ColourNum colour) {
         fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
     }
 }
+
+uint8_t bitmaps [18][8] = {
+    {255, 255, 255, 255, 255, 255, 255, 255},
+    {56, 56, 16, 56, 84, 16, 40, 68},
+    {28, 28, 8, 30, 40, 40, 20, 18},
+    {56, 56, 16, 84, 56, 40, 68, 40},
+    {56, 56, 16, 120, 148, 20, 40, 72},
+    {0, 0, 0, 0, 8, 209, 254, 221},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {85, 170, 85, 170, 85, 170, 85, 170},
+    {0, 60, 24, 60, 126, 126, 126, 60},
+    {0, 56, 100, 114, 95, 73, 41, 31},
+    {20, 42, 20, 20, 93, 93, 62, 99},
+    {60, 126, 255, 255, 255, 253, 255, 255},
+    {60, 102, 195, 129, 129, 129, 133, 129},
+    {129, 66, 36, 0, 0, 36, 66, 129},
+    {0, 60, 66, 66, 66, 66, 60, 0},
+    {76, 158, 170, 190, 84, 30, 37, 88},
+    {0, 56, 84, 124, 56, 44, 68, 102},
+    {0, 8, 28, 42, 127, 85, 65, 34}
+};
+
+void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
+                   enum ColourNum foreground_colour,
+                   enum ColourNum background_colour) {
+    SDL_Surface * surface = SDL_CreateRGBSurface(
+        0,
+        8 * screen->zoom,
+        8 * screen->zoom,
+        32,
+        0,
+        0,
+        0,
+        0
+    );
+    if (surface == NULL) {
+        fprintf(stderr, "SDL_CreateRGBSurface error: %s\n", SDL_GetError());
+    }
+    uint32_t foreground_pix_colour = SDL_MapRGBA(
+            surface->format,
+            colours[foreground_colour][0],
+            colours[foreground_colour][1],
+            colours[foreground_colour][2],
+            colours[foreground_colour][3]
+        ),
+        background_pix_colour = SDL_MapRGBA(
+            surface->format,
+            colours[background_colour][0],
+            colours[background_colour][1],
+            colours[background_colour][2],
+            colours[background_colour][3]
+        ),
+        cur_colour;
+    int source_row, bitmask, index, error,
+        pixel_index = 0;
+    SDL_Texture *texture;
+    SDL_Rect pos = {
+        .x = col * 8 * screen->zoom,
+        .y = row * 8 * screen->zoom,
+        .w = 8 * screen->zoom,
+        .h = 8 * screen->zoom
+    };
+    SDL_LockSurface(surface);
+    for (source_row = 0; source_row < 8; source_row += 1) {
+        for (index = 0; index < screen->zoom; index += 1) {
+            for (bitmask = 7; bitmask >= 0; bitmask -= 1) {
+                if ((1 << bitmask) & bitmaps[bitmap_num][source_row]) {
+                    cur_colour = foreground_pix_colour;
+                } else {
+                    cur_colour = background_pix_colour;
+                }
+                SDL_memset(
+                    surface->pixels + pixel_index * sizeof(uint32_t),
+                    cur_colour,
+                    screen->zoom * sizeof(uint32_t)
+                );
+                pixel_index += screen->zoom;
+            }
+        }
+    }
+    SDL_UnlockSurface(surface);
+    texture = SDL_CreateTextureFromSurface(screen->ren, surface);
+
+    error = SDL_RenderCopy(screen->ren, texture, NULL, &pos);
+    if (error) {
+        fprintf(stderr, "SDL_RenderCopy error: %s\n", SDL_GetError());
+        fflush(stderr);
+    }
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+}

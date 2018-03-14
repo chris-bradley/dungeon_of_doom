@@ -1,6 +1,11 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 
+typedef struct {
+    int x;
+    int y;
+} coord_t;
+
 void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
                 char *pressed_key, int *entrance_coord_x,
                 int *entrance_coord_y, int char_code_blank) {

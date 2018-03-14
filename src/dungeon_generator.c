@@ -60,31 +60,70 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
     ink(screen->cursor, WHITE);
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ONE MOMENT PLEASE"));
-    char save_file_contents[239];
-    int coord_x, coord_y;
-    for (coord_x = 1; coord_x <= 15; coord_x += 1) {
-        for (coord_y = 1; coord_y <= 15; coord_y += 1) {
-            save_file_contents[(coord_x - 1) * 15 + coord_y - 1] =
-                (char) dungeon->contents[coord_x][coord_y];
-
-        }
-    }
-    save_file_contents[225] = (char) dungeon->entrance_coord.x + char_base;
-    save_file_contents[226] = (char) dungeon->entrance_coord.y + char_base;
-    save_file_contents[227] = (char) *level_num + char_base;
-    save_file_contents[228] = 0;
+    int coord_x, coord_y, error;
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ANY KEY TO SAVE   "));
     SDL_RenderPresent(screen->ren);
     inkey$();
     FILE *save_file_handle = fopen("LEVEL", "w");
-    int error = fputs(save_file_contents, save_file_handle);
-    if (error) {
-        fprintf(stderr, "Error %i writing the level!", error);
+    for (coord_x = 1; coord_x <= 15; coord_x += 1) {
+        for (coord_y = 1; coord_y <= 15; coord_y += 1) {
+            if (
+                    !fputc(
+                        (char) dungeon->contents[coord_x][coord_y],
+                        save_file_handle
+                    )
+            ) {
+                fprintf(
+                    stderr,
+                    "Error %i writing dungeon contents at %i/%i!\n",
+                    ferror(save_file_handle),
+                    coord_x,
+                    coord_y
+                );
+            }
+        }
     }
+    if (
+            !fputc(
+                (char) dungeon->entrance_coord.x + char_base,
+                save_file_handle
+            )
+    ) {
+        fprintf(
+            stderr,
+            "Error %i writing dungeon entrance coord x!\n",
+            ferror(save_file_handle)
+        );
+    }
+    if (
+            !fputc(
+                (char) dungeon->entrance_coord.y + char_base,
+                save_file_handle
+            )
+    ) {
+        fprintf(
+            stderr,
+            "Error %i writing dungeon entrance coord y!\n",
+            ferror(save_file_handle)
+        );
+    }
+    if (
+            !fputc(
+                (char) *level_num + char_base,
+                save_file_handle
+            )
+    ) {
+        fprintf(
+            stderr,
+            "Error %i writing the level number!\n",
+            ferror(save_file_handle)
+        );
+    }
+
     error = fclose(save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i saving the level!", error);
+        fprintf(stderr, "Error %i saving the level!\n", error);
     }
     tab(screen->cursor, 1, 4);
     print_left$_b$(screen, screen_cols);

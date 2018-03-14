@@ -6,18 +6,18 @@ typedef struct {
     int y;
 } coord_t;
 
-void place_item(int cur_coord_x, int cur_coord_y, int contents[16][16],
-                char *pressed_key, int *entrance_coord_x,
-                int *entrance_coord_y, int char_code_blank) {
+void place_item(coord_t cur_coord, int contents[16][16], char *pressed_key,
+                int *entrance_coord_x, int *entrance_coord_y,
+                int char_code_blank) {
     int pressed_key_num = atoi(pressed_key);
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
     }
     else if (pressed_key_num == 5) {
-       *entrance_coord_x = cur_coord_x;
-       *entrance_coord_y = cur_coord_y;
+       *entrance_coord_x = cur_coord.x;
+       *entrance_coord_y = cur_coord.y;
     }
-    contents[cur_coord_x][cur_coord_y] = char_code_blank + pressed_key_num;
+    contents[cur_coord.x][cur_coord.y] = char_code_blank + pressed_key_num;
 }
 
 void wait_for_user_key_press() {
@@ -120,7 +120,8 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
 
 int main(int argc, char *argv[]) {
     int char_code_blank, entrance_coord_x, entrance_coord_y, level_num,
-        char_base, screen_cols, cur_coord_x, cur_coord_y;
+        char_base, screen_cols;
+    coord_t cur_coord;
     int contents[16][16];
     const char * help_lines[10];
     char *pressed_key;
@@ -150,8 +151,10 @@ int main(int argc, char *argv[]) {
     draw_bordered_box(screen, 5, 0, 15, 15, WHITE, YELLOW);
     SDL_RenderPresent(screen->ren);
 
-    cur_coord_x = 1;
-    cur_coord_y = 1;
+    cur_coord = (coord_t) {
+        .x = 1,
+        .y = 1
+    };
 
     pressed_key = (char *) malloc(sizeof(char));
     int done = 0;
@@ -160,23 +163,23 @@ int main(int argc, char *argv[]) {
 
         if (*pressed_key == 'h') {
             draw_help(screen, screen_cols, help_lines);
-        } else if (*pressed_key == 'a' && cur_coord_y > 1) {
-            cur_coord_y -= 1;
-        } else if (*pressed_key == 'z' && cur_coord_y < 15) {
-            cur_coord_y += 1;
-        } else if (*pressed_key == 'n' && cur_coord_x > 1) {
-            cur_coord_x -= 1;
-        } else if (*pressed_key == 'm' && cur_coord_x < 15) {
-            cur_coord_x += 1;
+        } else if (*pressed_key == 'a' && cur_coord.y > 1) {
+            cur_coord.y -= 1;
+        } else if (*pressed_key == 'z' && cur_coord.y < 15) {
+            cur_coord.y += 1;
+        } else if (*pressed_key == 'n' && cur_coord.x > 1) {
+            cur_coord.x -= 1;
+        } else if (*pressed_key == 'm' && cur_coord.x < 15) {
+            cur_coord.x += 1;
         } else if (*pressed_key > '/' && *pressed_key < ':') {
             place_item(
-                cur_coord_x, cur_coord_y, contents, pressed_key,
-                &entrance_coord_x, &entrance_coord_y, char_code_blank
+                cur_coord, contents, pressed_key, &entrance_coord_x,
+                &entrance_coord_y, char_code_blank
             );
         }
         render_bitmap(
-            screen, cur_coord_x, cur_coord_y + 5,
-            contents[cur_coord_x][cur_coord_y] - char_code_blank + 6, BLACK,
+            screen, cur_coord.x, cur_coord.y + 5,
+            contents[cur_coord.x][cur_coord.y] - char_code_blank + 6, BLACK,
             WHITE
         );
 

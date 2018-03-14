@@ -58,8 +58,6 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
                 int char_base, dungeon_t * dungeon, int char_code_blank) {
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
-    tab(screen->cursor, 1, 4);
-    free(print_text(screen, "ONE MOMENT PLEASE"));
     int coord_x, coord_y, error;
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ANY KEY TO SAVE   "));

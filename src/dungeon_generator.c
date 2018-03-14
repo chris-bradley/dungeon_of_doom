@@ -56,11 +56,12 @@ void init_level(dungeon_t * dungeon, int char_code_blank) {
 
 void save_level(screen_t *screen, int screen_cols, int *level_num,
                 int char_base, dungeon_t * dungeon, int char_code_blank) {
+    SDL_Rect * text_rect;
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
     int coord_x, coord_y, error;
     tab(screen->cursor, 1, 4);
-    free(print_text(screen, "ANY KEY TO SAVE   "));
+    text_rect = print_text(screen, "ANY KEY TO SAVE   ");
     SDL_RenderPresent(screen->ren);
     inkey$();
     FILE *save_file_handle = fopen("LEVEL", "w");
@@ -124,7 +125,8 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
         fprintf(stderr, "Error %i saving the level!\n", error);
     }
     tab(screen->cursor, 1, 4);
-    print_left$_b$(screen, screen_cols);
+    clear_box(screen, text_rect, RED);
+    free(text_rect);
     SDL_RenderPresent(screen->ren);
     *level_num = *level_num + 1;
     init_level(dungeon, char_code_blank);

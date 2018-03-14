@@ -30,15 +30,16 @@ void draw_help(screen_t *screen, int screen_cols,
                const char * help_lines[10]) {
 
     int index;
+    SDL_Rect * help_line_rect;
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
     for (index = 0; index < 10; index += 1) {
         tab(screen->cursor, 1, 4);
-        free(print_text(screen, help_lines[index]));
+        help_line_rect = print_text(screen, help_lines[index]);
         SDL_RenderPresent(screen->ren);
         inkey$();
-        tab(screen->cursor, 1, 4);
-        print_left$_b$(screen, screen_cols - 2);
+        clear_box(screen, help_line_rect, RED);
+        free(help_line_rect);
         SDL_RenderPresent(screen->ren);
     }
     ink(screen->cursor, WHITE);

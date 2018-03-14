@@ -26,10 +26,6 @@ void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key,
         char_code_blank + pressed_key_num;
 }
 
-void wait_for_user_key_press() {
-    inkey$();
-}
-
 void draw_help(screen_t *screen, int screen_cols,
                const char * help_lines[10]) {
 
@@ -40,7 +36,7 @@ void draw_help(screen_t *screen, int screen_cols,
         tab(screen->cursor, 1, 4);
         free(print_text(screen, help_lines[index]));
         SDL_RenderPresent(screen->ren);
-        wait_for_user_key_press();
+        inkey$();
         tab(screen->cursor, 1, 4);
         print_left$_b$(screen, screen_cols - 2);
         SDL_RenderPresent(screen->ren);
@@ -78,7 +74,7 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ANY KEY TO SAVE   "));
     SDL_RenderPresent(screen->ren);
-    wait_for_user_key_press();
+    inkey$();
     FILE *save_file_handle = fopen("LEVEL", "w");
     int error = fputs(save_file_contents, save_file_handle);
     if (error) {

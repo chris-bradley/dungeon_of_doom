@@ -42,7 +42,6 @@ void draw_help(screen_t *screen, int screen_cols,
         free(help_line_rect);
     }
     SDL_RenderPresent(screen->ren);
-    ink(screen->cursor, WHITE);
 }
 
 void init_level(dungeon_t * dungeon, int char_code_blank) {

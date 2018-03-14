@@ -7,15 +7,14 @@ typedef struct {
 } coord_t;
 
 void place_item(coord_t cur_coord, int contents[16][16], char *pressed_key,
-                int *entrance_coord_x, int *entrance_coord_y,
-                int char_code_blank) {
+                coord_t *entrance_coord, int char_code_blank) {
     int pressed_key_num = atoi(pressed_key);
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
     }
     else if (pressed_key_num == 5) {
-       *entrance_coord_x = cur_coord.x;
-       *entrance_coord_y = cur_coord.y;
+       entrance_coord->x = cur_coord.x;
+       entrance_coord->y = cur_coord.y;
     }
     contents[cur_coord.x][cur_coord.y] = char_code_blank + pressed_key_num;
 }
@@ -42,20 +41,20 @@ void draw_help(screen_t *screen, int screen_cols,
     ink(screen->cursor, WHITE);
 }
 
-void init_level(int contents[16][16], int *entrance_coord_x,
-                int *entrance_coord_y, int char_code_blank) {
+void init_level(int contents[16][16], coord_t *entrance_coord,
+                int char_code_blank) {
     for (int coord_x=0; coord_x<16; coord_x++) {
         for (int coord_y=0; coord_y<16; coord_y++) {
             contents[coord_x][coord_y] = char_code_blank;
         }
     }
-    *entrance_coord_x = 0;
-    *entrance_coord_y = 0;
+    entrance_coord->x = 0;
+    entrance_coord->y = 0;
 }
 
 void save_level(screen_t *screen, int screen_cols, int *level_num,
-                int char_base, int contents[16][16], int *entrance_coord_x,
-                int *entrance_coord_y, int char_code_blank) {
+                int char_base, int contents[16][16], coord_t *entrance_coord,
+                int char_code_blank) {
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ONE MOMENT PLEASE"));
     char save_file_contents[239];
@@ -67,8 +66,8 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
 
         }
     }
-    save_file_contents[225] = (char) *entrance_coord_x + char_base;
-    save_file_contents[226] = (char) *entrance_coord_y + char_base;
+    save_file_contents[225] = (char) entrance_coord->x + char_base;
+    save_file_contents[226] = (char) entrance_coord->y + char_base;
     save_file_contents[227] = (char) *level_num + char_base;
     save_file_contents[228] = 0;
     tab(screen->cursor, 1, 4);
@@ -88,7 +87,7 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
     print_left$_b$(screen, screen_cols);
     SDL_RenderPresent(screen->ren);
     *level_num = *level_num + 1;
-    init_level(contents, entrance_coord_x, entrance_coord_y, char_code_blank);
+    init_level(contents, entrance_coord, char_code_blank);
 }
 
 void init_platform_vars(int *char_base, int *screen_cols,
@@ -99,9 +98,8 @@ void init_platform_vars(int *char_base, int *screen_cols,
 }
 
 void init_vars(int *screen_cols, int *level_num, int *char_base,
-               int contents[16][16], int *entrance_coord_x,
-               int *entrance_coord_y, int *char_code_blank,
-               const char * help_lines[10]) {
+               int contents[16][16], coord_t *entrance_coord,
+               int *char_code_blank, const char * help_lines[10]) {
     init_platform_vars(char_base, screen_cols, char_code_blank);
     *level_num = 1;
     help_lines[0] = "PRESS ANY KEY     ";
@@ -115,20 +113,19 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
     help_lines[8] = "0 TO ERASE        ";
     help_lines[9] = "S TO SAVE         ";
 
-    init_level(contents, entrance_coord_x, entrance_coord_y, *char_code_blank);
+    init_level(contents, entrance_coord, *char_code_blank);
 }
 
 int main(int argc, char *argv[]) {
-    int char_code_blank, entrance_coord_x, entrance_coord_y, level_num,
-        char_base, screen_cols;
-    coord_t cur_coord;
+    int char_code_blank, level_num, char_base, screen_cols;
+    coord_t cur_coord, entrance_coord;
     int contents[16][16];
     const char * help_lines[10];
     char *pressed_key;
 
     init_vars(
-        &screen_cols, &level_num, &char_base, contents, &entrance_coord_x,
-        &entrance_coord_y, &char_code_blank, help_lines
+        &screen_cols, &level_num, &char_base, contents, &entrance_coord,
+        &char_code_blank, help_lines
     );
     screen_t *screen = init_screen();
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
@@ -173,8 +170,8 @@ int main(int argc, char *argv[]) {
             cur_coord.x += 1;
         } else if (*pressed_key > '/' && *pressed_key < ':') {
             place_item(
-                cur_coord, contents, pressed_key, &entrance_coord_x,
-                &entrance_coord_y, char_code_blank
+                cur_coord, contents, pressed_key, &entrance_coord,
+                char_code_blank
             );
         }
         render_bitmap(
@@ -184,10 +181,10 @@ int main(int argc, char *argv[]) {
         );
 
         SDL_RenderPresent(screen->ren);
-        if (*pressed_key == 's' && entrance_coord_x > 0) {
+        if (*pressed_key == 's' && entrance_coord.x > 0) {
             save_level(
                 screen, screen_cols, &level_num, char_base, contents,
-                &entrance_coord_x, &entrance_coord_y, char_code_blank
+                &entrance_coord, char_code_blank
             );
         }
         if (*pressed_key == 'f') {

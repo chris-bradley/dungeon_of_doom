@@ -12,9 +12,9 @@ typedef struct {
 } dungeon_t;
 
 
-void place_item(coord_t cur_coord, dungeon_t *dungeon, char *pressed_key,
+void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key,
                 int char_code_blank) {
-    int pressed_key_num = atoi(pressed_key);
+    int pressed_key_num = atoi(&pressed_key);
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
     }
@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
     coord_t cur_coord;
     dungeon_t dungeon;
     const char * help_lines[10];
-    char *pressed_key;
+    char pressed_key;
 
     init_vars(
         &screen_cols, &level_num, &char_base, &dungeon, &char_code_blank,
@@ -158,22 +158,21 @@ int main(int argc, char *argv[]) {
         .y = 1
     };
 
-    pressed_key = (char *) malloc(sizeof(char));
     int done = 0;
     while (!done) {
-        *pressed_key = inkey$();
+        pressed_key = inkey$();
 
-        if (*pressed_key == 'h') {
+        if (pressed_key == 'h') {
             draw_help(screen, screen_cols, help_lines);
-        } else if (*pressed_key == 'a' && cur_coord.y > 1) {
+        } else if (pressed_key == 'a' && cur_coord.y > 1) {
             cur_coord.y -= 1;
-        } else if (*pressed_key == 'z' && cur_coord.y < 15) {
+        } else if (pressed_key == 'z' && cur_coord.y < 15) {
             cur_coord.y += 1;
-        } else if (*pressed_key == 'n' && cur_coord.x > 1) {
+        } else if (pressed_key == 'n' && cur_coord.x > 1) {
             cur_coord.x -= 1;
-        } else if (*pressed_key == 'm' && cur_coord.x < 15) {
+        } else if (pressed_key == 'm' && cur_coord.x < 15) {
             cur_coord.x += 1;
-        } else if (*pressed_key > '/' && *pressed_key < ':') {
+        } else if (pressed_key > '/' && pressed_key < ':') {
             place_item(cur_coord, &dungeon, pressed_key, char_code_blank);
         }
         render_bitmap(
@@ -183,17 +182,16 @@ int main(int argc, char *argv[]) {
         );
 
         SDL_RenderPresent(screen->ren);
-        if (*pressed_key == 's' && dungeon.entrance_coord.x > 0) {
+        if (pressed_key == 's' && dungeon.entrance_coord.x > 0) {
             save_level(
                 screen, screen_cols, &level_num, char_base, &dungeon,
                 char_code_blank
             );
         }
-        if (*pressed_key == 'f') {
+        if (pressed_key == 'f') {
             done = SDL_TRUE;
         }
     }
-    free(pressed_key);
     destroy_screen(screen);
 
     return 0;

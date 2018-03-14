@@ -56,6 +56,8 @@ void init_level(dungeon_t * dungeon, int char_code_blank) {
 
 void save_level(screen_t *screen, int screen_cols, int *level_num,
                 int char_base, dungeon_t * dungeon, int char_code_blank) {
+    paper(screen->cursor, RED);
+    ink(screen->cursor, WHITE);
     tab(screen->cursor, 1, 4);
     free(print_text(screen, "ONE MOMENT PLEASE"));
     char save_file_contents[239];

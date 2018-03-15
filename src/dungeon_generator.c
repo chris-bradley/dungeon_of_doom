@@ -45,7 +45,7 @@ void draw_help(screen_t *screen, int screen_cols,
     SDL_RenderPresent(screen->ren);
 }
 
-void init_level(dungeon_t * dungeon, int char_code_blank) {
+void init_level(dungeon_t * dungeon, int level_num, int char_code_blank) {
     for (int coord_x=0; coord_x<16; coord_x++) {
         for (int coord_y=0; coord_y<16; coord_y++) {
             dungeon->contents[coord_x][coord_y] = char_code_blank;
@@ -53,6 +53,7 @@ void init_level(dungeon_t * dungeon, int char_code_blank) {
     }
     dungeon->entrance_coord.x = 0;
     dungeon->entrance_coord.y = 0;
+    dungeon->level_num = level_num;
 }
 
 void save_level(screen_t *screen, int screen_cols, int char_base,
@@ -129,8 +130,7 @@ void save_level(screen_t *screen, int screen_cols, int char_base,
     clear_box(screen, text_rect, RED);
     free(text_rect);
     SDL_RenderPresent(screen->ren);
-    dungeon->level_num += 1;
-    init_level(dungeon, char_code_blank);
+    init_level(dungeon, dungeon->level_num + 1, char_code_blank);
 }
 
 void init_platform_vars(int *char_base, int *screen_cols,
@@ -143,7 +143,6 @@ void init_platform_vars(int *char_base, int *screen_cols,
 void init_vars(int *screen_cols, int *char_base, dungeon_t * dungeon,
                int *char_code_blank, const char * help_lines[10]) {
     init_platform_vars(char_base, screen_cols, char_code_blank);
-    dungeon->level_num = 1;
     help_lines[0] = "PRESS ANY KEY     ";
     help_lines[1] = "TO MOVE A Z N M   ";
     help_lines[2] = "1 WALL    2 VASE  ";

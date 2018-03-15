@@ -9,6 +9,7 @@ typedef struct {
 typedef struct {
     int contents[16][16];
     coord_t entrance_coord;
+    int level_num;
 } dungeon_t;
 
 
@@ -54,8 +55,8 @@ void init_level(dungeon_t * dungeon, int char_code_blank) {
     dungeon->entrance_coord.y = 0;
 }
 
-void save_level(screen_t *screen, int screen_cols, int *level_num,
-                int char_base, dungeon_t * dungeon, int char_code_blank) {
+void save_level(screen_t *screen, int screen_cols, int char_base,
+                dungeon_t * dungeon, int char_code_blank) {
     SDL_Rect * text_rect;
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
@@ -109,7 +110,7 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
     }
     if (
             !fputc(
-                (char) *level_num + char_base,
+                (char) dungeon->level_num + char_base,
                 save_file_handle
             )
     ) {
@@ -128,7 +129,7 @@ void save_level(screen_t *screen, int screen_cols, int *level_num,
     clear_box(screen, text_rect, RED);
     free(text_rect);
     SDL_RenderPresent(screen->ren);
-    *level_num = *level_num + 1;
+    dungeon->level_num += 1;
     init_level(dungeon, char_code_blank);
 }
 
@@ -139,11 +140,10 @@ void init_platform_vars(int *char_base, int *screen_cols,
   *screen_cols = 40;
 }
 
-void init_vars(int *screen_cols, int *level_num, int *char_base,
-               dungeon_t * dungeon, int *char_code_blank,
-               const char * help_lines[10]) {
+void init_vars(int *screen_cols, int *char_base, dungeon_t * dungeon,
+               int *char_code_blank, const char * help_lines[10]) {
     init_platform_vars(char_base, screen_cols, char_code_blank);
-    *level_num = 1;
+    dungeon->level_num = 1;
     help_lines[0] = "PRESS ANY KEY     ";
     help_lines[1] = "TO MOVE A Z N M   ";
     help_lines[2] = "1 WALL    2 VASE  ";
@@ -159,16 +159,13 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
 }
 
 int main(int argc, char *argv[]) {
-    int char_code_blank, level_num, char_base, screen_cols;
+    int char_code_blank, char_base, screen_cols;
     coord_t cur_coord;
     dungeon_t * dungeon = malloc(sizeof(dungeon_t));
     const char * help_lines[10];
     char pressed_key;
 
-    init_vars(
-        &screen_cols, &level_num, &char_base, dungeon, &char_code_blank,
-        help_lines
-    );
+    init_vars(&screen_cols, &char_base, dungeon, &char_code_blank, help_lines);
     screen_t *screen = init_screen();
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
     paper(screen->cursor, YELLOW);
@@ -181,7 +178,7 @@ int main(int argc, char *argv[]) {
        fprintf(stdout, "Allocating outstring failed!");
        exit(1);
     }
-    snprintf(outstring, 40, "THIS IS LEVEL: %i", level_num);
+    snprintf(outstring, 40, "THIS IS LEVEL: %i", dungeon->level_num);
     free(print_text(screen, outstring));
     free(outstring);
     tab(screen->cursor, 1, 3);
@@ -221,8 +218,7 @@ int main(int argc, char *argv[]) {
         SDL_RenderPresent(screen->ren);
         if (pressed_key == 's' && dungeon->entrance_coord.x > 0) {
             save_level(
-                screen, screen_cols, &level_num, char_base, dungeon,
-                char_code_blank
+                screen, screen_cols, char_base, dungeon, char_code_blank
             );
         }
         if (pressed_key == 'f') {

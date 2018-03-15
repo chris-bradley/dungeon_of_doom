@@ -161,12 +161,12 @@ void init_vars(int *screen_cols, int *level_num, int *char_base,
 int main(int argc, char *argv[]) {
     int char_code_blank, level_num, char_base, screen_cols;
     coord_t cur_coord;
-    dungeon_t dungeon;
+    dungeon_t * dungeon = malloc(sizeof(dungeon_t));
     const char * help_lines[10];
     char pressed_key;
 
     init_vars(
-        &screen_cols, &level_num, &char_base, &dungeon, &char_code_blank,
+        &screen_cols, &level_num, &char_base, dungeon, &char_code_blank,
         help_lines
     );
     screen_t *screen = init_screen();
@@ -210,18 +210,18 @@ int main(int argc, char *argv[]) {
         } else if (pressed_key == 'm' && cur_coord.x < 15) {
             cur_coord.x += 1;
         } else if (pressed_key > '/' && pressed_key < ':') {
-            place_item(cur_coord, &dungeon, pressed_key, char_code_blank);
+            place_item(cur_coord, dungeon, pressed_key, char_code_blank);
         }
         render_bitmap(
             screen, cur_coord.x, cur_coord.y + 5,
-            dungeon.contents[cur_coord.x][cur_coord.y] - char_code_blank + 6,
+            dungeon->contents[cur_coord.x][cur_coord.y] - char_code_blank + 6,
             BLACK, WHITE
         );
 
         SDL_RenderPresent(screen->ren);
-        if (pressed_key == 's' && dungeon.entrance_coord.x > 0) {
+        if (pressed_key == 's' && dungeon->entrance_coord.x > 0) {
             save_level(
-                screen, screen_cols, &level_num, char_base, &dungeon,
+                screen, screen_cols, &level_num, char_base, dungeon,
                 char_code_blank
             );
         }
@@ -229,6 +229,7 @@ int main(int argc, char *argv[]) {
             done = SDL_TRUE;
         }
     }
+    free(dungeon);
     destroy_screen(screen);
 
     return 0;

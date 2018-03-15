@@ -140,8 +140,8 @@ void init_platform_vars(int *char_base, int *screen_cols,
   *screen_cols = 40;
 }
 
-void init_vars(int *screen_cols, int *char_base, dungeon_t * dungeon,
-               int *char_code_blank, const char * help_lines[10]) {
+void init_vars(int *screen_cols, int *char_base, int *char_code_blank,
+               const char * help_lines[10]) {
     init_platform_vars(char_base, screen_cols, char_code_blank);
     help_lines[0] = "PRESS ANY KEY     ";
     help_lines[1] = "TO MOVE A Z N M   ";
@@ -153,8 +153,6 @@ void init_vars(int *screen_cols, int *char_base, dungeon_t * dungeon,
     help_lines[7] = "9 GUARD           ";
     help_lines[8] = "0 TO ERASE        ";
     help_lines[9] = "S TO SAVE         ";
-
-    init_level(dungeon, *char_code_blank);
 }
 
 int main(int argc, char *argv[]) {
@@ -164,7 +162,8 @@ int main(int argc, char *argv[]) {
     const char * help_lines[10];
     char pressed_key;
 
-    init_vars(&screen_cols, &char_base, dungeon, &char_code_blank, help_lines);
+    init_vars(&screen_cols, &char_base, &char_code_blank, help_lines);
+    init_level(dungeon, 1, char_code_blank);
     screen_t *screen = init_screen();
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
     paper(screen->cursor, YELLOW);

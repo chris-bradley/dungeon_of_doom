@@ -135,7 +135,7 @@ dungeon_t * save_level(screen_t *screen, dungeon_t * dungeon) {
     return new_dungeon;
 }
 
-void init_platform_vars(int *screen_cols) {
+void init_screen_cols(int *screen_cols) {
   *screen_cols = 40;
 }
 
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
     char pressed_key;
 
     init_help_lines(help_lines);
-    init_platform_vars(&screen_cols);
+    init_screen_cols(&screen_cols);
     dungeon_t * dungeon = init_level(1);
     screen_t *screen = init_screen();
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);

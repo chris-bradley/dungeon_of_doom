@@ -25,8 +25,7 @@ void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key) {
     dungeon->contents[cur_coord.x][cur_coord.y] = pressed_key_num;
 }
 
-void draw_help(screen_t *screen, int screen_cols,
-               const char * help_lines[10]) {
+void draw_help(screen_t *screen, const char * help_lines[10]) {
 
     int index;
     SDL_Rect * help_line_rect;
@@ -56,8 +55,7 @@ dungeon_t * init_level(int level_num) {
     return dungeon;
 }
 
-dungeon_t * save_level(screen_t *screen, int screen_cols,
-                       dungeon_t * dungeon) {
+dungeon_t * save_level(screen_t *screen, dungeon_t * dungeon) {
     int char_base = 96,
         char_code_blank = char_base + 6;
     SDL_Rect * text_rect;
@@ -196,7 +194,7 @@ int main(int argc, char *argv[]) {
         pressed_key = inkey$();
 
         if (pressed_key == 'h') {
-            draw_help(screen, screen_cols, help_lines);
+            draw_help(screen, help_lines);
         } else if (pressed_key == 'a' && cur_coord.y > 0) {
             cur_coord.y -= 1;
         } else if (pressed_key == 'z' && cur_coord.y < 14) {
@@ -216,7 +214,7 @@ int main(int argc, char *argv[]) {
 
         SDL_RenderPresent(screen->ren);
         if (pressed_key == 's' && dungeon->entrance_coord.x > -1) {
-            dungeon = save_level(screen, screen_cols, dungeon);
+            dungeon = save_level(screen, dungeon);
         }
         if (pressed_key == 'f') {
             done = SDL_TRUE;

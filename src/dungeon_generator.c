@@ -7,7 +7,7 @@ typedef struct {
 } coord_t;
 
 typedef struct {
-    int contents[16][16];
+    int contents[15][15];
     coord_t entrance_coord;
     int level_num;
 } dungeon_t;
@@ -47,13 +47,13 @@ void draw_help(screen_t *screen, int screen_cols,
 
 dungeon_t * init_level(int level_num, int char_code_blank) {
     dungeon_t * dungeon = malloc(sizeof(dungeon_t));
-    for (int coord_x=0; coord_x<16; coord_x++) {
-        for (int coord_y=0; coord_y<16; coord_y++) {
+    for (int coord_x=0; coord_x<15; coord_x++) {
+        for (int coord_y=0; coord_y<15; coord_y++) {
             dungeon->contents[coord_x][coord_y] = char_code_blank;
         }
     }
-    dungeon->entrance_coord.x = 0;
-    dungeon->entrance_coord.y = 0;
+    dungeon->entrance_coord.x = -1;
+    dungeon->entrance_coord.y = -1;
     dungeon->level_num = level_num;
     return dungeon;
 }
@@ -70,8 +70,8 @@ dungeon_t * save_level(screen_t *screen, int screen_cols, int char_base,
     SDL_RenderPresent(screen->ren);
     inkey$();
     FILE *save_file_handle = fopen("LEVEL", "w");
-    for (coord_x = 1; coord_x <= 15; coord_x += 1) {
-        for (coord_y = 1; coord_y <= 15; coord_y += 1) {
+    for (coord_x = 0; coord_x < 15; coord_x += 1) {
+        for (coord_y = 0; coord_y < 15; coord_y += 1) {
             if (
                     !fputc(
                         (char) dungeon->contents[coord_x][coord_y],
@@ -189,8 +189,8 @@ int main(int argc, char *argv[]) {
     SDL_RenderPresent(screen->ren);
 
     cur_coord = (coord_t) {
-        .x = 1,
-        .y = 1
+        .x = 0,
+        .y = 0
     };
 
     int done = 0;
@@ -199,25 +199,25 @@ int main(int argc, char *argv[]) {
 
         if (pressed_key == 'h') {
             draw_help(screen, screen_cols, help_lines);
-        } else if (pressed_key == 'a' && cur_coord.y > 1) {
+        } else if (pressed_key == 'a' && cur_coord.y > 0) {
             cur_coord.y -= 1;
-        } else if (pressed_key == 'z' && cur_coord.y < 15) {
+        } else if (pressed_key == 'z' && cur_coord.y < 14) {
             cur_coord.y += 1;
-        } else if (pressed_key == 'n' && cur_coord.x > 1) {
+        } else if (pressed_key == 'n' && cur_coord.x > 0) {
             cur_coord.x -= 1;
-        } else if (pressed_key == 'm' && cur_coord.x < 15) {
+        } else if (pressed_key == 'm' && cur_coord.x < 14) {
             cur_coord.x += 1;
         } else if (pressed_key > '/' && pressed_key < ':') {
             place_item(cur_coord, dungeon, pressed_key, char_code_blank);
         }
         render_bitmap(
-            screen, cur_coord.x, cur_coord.y + 5,
+            screen, cur_coord.x + 1, cur_coord.y + 6,
             dungeon->contents[cur_coord.x][cur_coord.y] - char_code_blank + 6,
             BLACK, WHITE
         );
 
         SDL_RenderPresent(screen->ren);
-        if (pressed_key == 's' && dungeon->entrance_coord.x > 0) {
+        if (pressed_key == 's' && dungeon->entrance_coord.x > -1) {
             dungeon = save_level(
                 screen, screen_cols, char_base, dungeon, char_code_blank
             );

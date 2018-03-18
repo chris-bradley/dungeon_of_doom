@@ -17,8 +17,7 @@ void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key) {
     int pressed_key_num = atoi(&pressed_key);
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
-    }
-    else if (pressed_key_num == 5) {
+    } else if (pressed_key_num == 5) {
        dungeon->entrance_coord.x = cur_coord.x;
        dungeon->entrance_coord.y = cur_coord.y;
     }
@@ -26,7 +25,6 @@ void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key) {
 }
 
 void draw_help(screen_t *screen, const char * help_lines[10]) {
-
     int index;
     SDL_Rect * help_line_rect;
     paper(screen->cursor, RED);
@@ -44,8 +42,8 @@ void draw_help(screen_t *screen, const char * help_lines[10]) {
 
 dungeon_t * init_level(int level_num) {
     dungeon_t * dungeon = malloc(sizeof(dungeon_t));
-    for (int coord_x=0; coord_x<15; coord_x++) {
-        for (int coord_y=0; coord_y<15; coord_y++) {
+    for (int coord_x = 0; coord_x < 15; coord_x++) {
+        for (int coord_y = 0; coord_y < 15; coord_y++) {
             dungeon->contents[coord_x][coord_y] = 0;
         }
     }

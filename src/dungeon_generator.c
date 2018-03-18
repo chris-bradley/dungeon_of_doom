@@ -56,8 +56,10 @@ dungeon_t * init_level(int level_num) {
     return dungeon;
 }
 
-dungeon_t * save_level(screen_t *screen, int screen_cols, int char_base,
-                dungeon_t * dungeon, int char_code_blank) {
+dungeon_t * save_level(screen_t *screen, int screen_cols,
+                       dungeon_t * dungeon) {
+    int char_base = 96,
+        char_code_blank = char_base + 6;
     SDL_Rect * text_rect;
     dungeon_t * new_dungeon;
     paper(screen->cursor, RED);
@@ -137,10 +139,7 @@ dungeon_t * save_level(screen_t *screen, int screen_cols, int char_base,
     return new_dungeon;
 }
 
-void init_platform_vars(int *char_base, int *screen_cols,
-                        int *char_code_blank) {
-  *char_base = 96;
-  *char_code_blank = *char_base + 6;
+void init_platform_vars(int *screen_cols) {
   *screen_cols = 40;
 }
 
@@ -158,13 +157,13 @@ void init_help_lines(const char * help_lines[10]) {
 }
 
 int main(int argc, char *argv[]) {
-    int char_code_blank, char_base, screen_cols;
+    int screen_cols;
     coord_t cur_coord;
     const char * help_lines[10];
     char pressed_key;
 
     init_help_lines(help_lines);
-    init_platform_vars(&char_base, &screen_cols, &char_code_blank);
+    init_platform_vars(&screen_cols);
     dungeon_t * dungeon = init_level(1);
     screen_t *screen = init_screen();
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
@@ -217,9 +216,7 @@ int main(int argc, char *argv[]) {
 
         SDL_RenderPresent(screen->ren);
         if (pressed_key == 's' && dungeon->entrance_coord.x > -1) {
-            dungeon = save_level(
-                screen, screen_cols, char_base, dungeon, char_code_blank
-            );
+            dungeon = save_level(screen, screen_cols, dungeon);
         }
         if (pressed_key == 'f') {
             done = SDL_TRUE;

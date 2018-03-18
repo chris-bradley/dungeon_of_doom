@@ -5,37 +5,38 @@
 void lines430_430(screen_t *screen, char *M$, int W);
 void lines480_560(screen_t *screen, double *F, char *F$, int NF, int NX,
                   int NY);
-void lines570_610(screen_t *screen, int C2, int C7, int *DX, int *LX, int *LY,
-                  int *M_, int *MS, int *MT, int *MV, int **R, int X, int Y);
-void lines620_770(screen_t *screen, int char_code_blank, int C2, int C7,
-                  int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                  int *MT, int *MV, int *MX, int *MY, int NX, int NY,
+void lines570_610(screen_t *screen, int char_code_vase, int C7, int *DX,
+                  int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
+                  int **R, int X, int Y);
+void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
+                  int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                  int *MS, int *MT, int *MV, int *MX, int *MY, int NX, int NY,
                   int O[25], int **R, int RH, const char **T$, int W,
                   const char **W$);
-void lines810_860(screen_t *screen, int C2, int C7, int *DX, double *F,
-                  char *F$, int *LX, int *LY, int *M_, int *MS, int *MT,
-                  int *MV, int *NF, int NX, int NY, int **R, int W, int X,
-                  int Y);
-void lines870_930(screen_t *screen, int char_code_blank, int C2, int C7,
-                  int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                  int *MT, int *MV, int MX, int MY, int O[25], int **R,
-                  const char **T$, int W, int X, int Y);
-void lines990_1130(screen_t *screen, int char_code_blank, int C2, int C7,
-                   int *DX, double *F, char *F$, int *LX, int *LY, int *M,
-                   int *M_, int *MS, int *MT, int *MV, int MX, int MY, int NF,
-                   int *NX, int *NY, int O[25], int **R, int RH, double S1,
-                   double S2, const char **T$, int W);
+void lines810_860(screen_t *screen, int char_code_vase, int C7, int *DX,
+                  double *F, char *F$, int *LX, int *LY, int *M_, int *MS,
+                  int *MT, int *MV, int *NF, int NX, int NY, int **R, int W,
+                  int X, int Y);
+void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
+                  int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                  int *MS, int *MT, int *MV, int MX, int MY, int O[25],
+                  int **R, const char **T$, int W, int X, int Y);
+void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
+                   int C7, int *DX, double *F, char *F$, int *LX, int *LY,
+                   int *M, int *M_, int *MS, int *MT, int *MV, int MX, int MY,
+                   int NF, int *NX, int *NY, int O[25], int **R, int RH,
+                   double S1, double S2, const char **T$, int W);
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
-                    int C2, int C3, int C4, int C7, int **D, int *DX,
-                    double *F, char *F$, int *FI, int GC, int *LX, int *LY,
-                    int *M_, int *MS, int *MT, int *MV, int *NF, int NX,
-                    int NY, int O[25], int **R, int *T, int *TR);
+                    int char_code_vase, int C3, int C4, int C7, int **D,
+                    int *DX, double *F, char *F$, int *FI, int GC, int *LX,
+                    int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
+                    int NX, int NY, int O[25], int **R, int *T, int *TR);
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int GC,
                     int *MS, int *NF, int NX, int NY, int *T, int TR);
 void lines1660_1680(double *F, int O[25], double S1, double S2);
-void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LT,
-                    int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
-                    int NX, int NY, int **R, const char **T$, int W);
+void lines1690_1750(screen_t *screen, int char_code_vase, int C7, int *DX,
+                    int *LT, int *LX, int *LY, int *M_, int *MS, int *MT,
+                    int *MV, int NX, int NY, int **R, const char **T$, int W);
 void lines1760_1950(screen_t *screen, char *C$, int *DX, double *F, int *LE,
                     int *NX, int *NY, int OS, int *OX, int *OY, int **R,
                     double S3, const char **T$, int W);
@@ -50,10 +51,10 @@ void lines2260_2490(screen_t *screen, int character_char_base, char *C$,
                     double *F, int *FI, int GC, int LE, int NX, int NY,
                     int O[25], int OS, int OT, int **R, int TR, int W);
 void lines2500_2780(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *C2, int *C3, int *C4, int *C5,
-                    int *C6, int *C7, int ***D, int *DX, double **F, char **F$,
-                    int *FI, int *LT, int **M, int *MX, int *MY, int *NF,
-                    int *NX, int *NY, int *OS, int ***R, int **T,
+                    int *char_code_wall, int *char_code_vase, int *C3, int *C4,
+                    int *C5, int *C6, int *C7, int ***D, int *DX, double **F,
+                    char **F$, int *FI, int *LT, int **M, int *MX, int *MY,
+                    int *NF, int *NX, int *NY, int *OS, int ***R, int **T,
                     const char ***T$, int *TF, int *TX, int *TY, int *W,
                     const char ***W$);
 
@@ -61,7 +62,7 @@ int main(int argc, char *argv[]) {
     int character_char_base,
         char_code_blank,
         char_code_wall,  // Symbol for Wall
-        C2,
+        char_code_vase,
         C3,
         C4,
         C5,  // Symbol for Way In
@@ -114,9 +115,9 @@ int main(int argc, char *argv[]) {
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
     lines2500_2780(
-        &character_char_base, &char_code_blank, &char_code_wall, &C2, &C3, &C4,
-        &C5, &C6, &C7, &D, &DX, &F, &F$, &FI, &LT, &M, &MX, &MY, &NF, &NX, &NY,
-        &OS, &R, &T, &T$, &TF, &TX, &TY, &W, &W$
+        &character_char_base, &char_code_blank, &char_code_wall,
+        &char_code_vase, &C3, &C4, &C5, &C6, &C7, &D, &DX, &F, &F$, &FI, &LT,
+        &M, &MX, &MY, &NF, &NX, &NY, &OS, &R, &T, &T$, &TF, &TX, &TY, &W, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(
@@ -135,23 +136,24 @@ int main(int argc, char *argv[]) {
     // 50 IF I$="A" AND DX<255 THEN GOSUB870
         if (I$ == 'a' && DX < 255 ) {
             lines870_930(
-                screen, char_code_blank, C2, C7, &DX, F, &LX, &LY, &M_, &MS,
-                &MT, &MV, MX, MY, O, R, T$, W, X, Y
+                screen, char_code_blank, char_code_vase, C7, &DX, F, &LX, &LY,
+                &M_, &MS, &MT, &MV, MX, MY, O, R, T$, W, X, Y
             );
         }
     // 60 IF I$="C" AND F(7)>0 AND O(17)+O(18)>0 THEN GOSUB990
         if (I$ == 'c' && F[7] > 0 && O[17] + O[18] > 0) {
             lines990_1130(
-                screen, char_code_blank, C2, C7, &DX, F, F$, &LX, &LY, M, &M_,
-                &MS, &MT, &MV, MX, MY, NF, &NX, &NY, O, R, RH, S1, S2, T$, W
+                screen, char_code_blank, char_code_vase, C7, &DX, F, F$, &LX,
+                &LY, M, &M_, &MS, &MT, &MV, MX, MY, NF, &NX, &NY, O, R, RH, S1,
+                S2, T$, W
             );
         }
     // 70 IF I$="G" THEN GOSUB1410
         if (I$ == 'g') {
             lines1410_1520(
-                screen, char_code_blank, char_code_wall, C2, C3, C4, C7, D,
-                &DX, F, F$, &FI, GC, &LX, &LY, &M_, &MS, &MT, &MV, &NF, NX, NY,
-                O, R, T, &TR
+                screen, char_code_blank, char_code_wall, char_code_vase, C3,
+                C4, C7, D, &DX, F, F$, &FI, GC, &LX, &LY, &M_, &MS, &MT, &MV,
+                &NF, NX, NY, O, R, T, &TR
             );
         }
     // 80 IF I$="P" THEN GOSUB1660
@@ -161,8 +163,8 @@ int main(int argc, char *argv[]) {
     // 90 IF I$="R" THEN GOSUB1690
         if (I$ == 'r') {
             lines1690_1750(
-                screen, C2, C7, &DX, &LT, &LX, &LY, &M_, &MS, &MT, &MV, NX, NY,
-                R, T$, W
+                screen, char_code_vase, C7, &DX, &LT, &LX, &LY, &M_, &MS, &MT,
+                &MV, NX, NY, R, T$, W
             );
         }
     // 100 IF I$="S" THEN GOSUB2260
@@ -216,7 +218,8 @@ int main(int argc, char *argv[]) {
             X = NX;
             Y = NY;
             lines570_610(
-                screen, C2, C7, &DX, &LX, &LY, &M_, &MS, &MT, &MV, R, X, Y
+                screen, char_code_vase, C7, &DX, &LX, &LY, &M_, &MS, &MT, &MV,
+                R, X, Y
             );
             NX = OX;
             NY = OY;
@@ -252,7 +255,8 @@ int main(int argc, char *argv[]) {
             X = OX;
             Y = OY;
             lines570_610(
-                screen, C2, C7, &DX, &LX, &LY, &M_, &MS, &MT, &MV, R, X, Y
+                screen, char_code_vase, C7, &DX, &LX, &LY, &M_, &MS, &MT, &MV,
+                R, X, Y
             );
         }
     // 290 LET OX=NX:LET OY=NY
@@ -261,8 +265,8 @@ int main(int argc, char *argv[]) {
     // 300 IF DX<255 THEN GOSUB620
         if (DX < 255) {
             lines620_770(
-                screen, char_code_blank, C2, C7, &DX, F, &LX, &LY, &M_, &MS,
-                &MT, &MV, &MX, &MY, NX, NY, O, R, RH, T$, W, W$
+                screen, char_code_blank, char_code_vase, C7, &DX, F, &LX, &LY,
+                &M_, &MS, &MT, &MV, &MX, &MY, NX, NY, O, R, RH, T$, W, W$
             );
         }
     // 310 IF F(1)>0 AND FI<1 AND RH<>C5 THEN GOTO 40
@@ -291,8 +295,8 @@ int main(int argc, char *argv[]) {
     // 330 IF F(1)<1 THEN GOSUB810
     if (F[1] < 1) {
         lines810_860(
-            screen, C2, C7, &DX, F, F$, &LX, &LY, &M_, &MS, &MT, &MV, &NF, NX,
-            NY, R, W, X, Y
+            screen, char_code_vase, C7, &DX, F, F$, &LX, &LY, &M_, &MS, &MT,
+            &MV, &NF, NX, NY, R, W, X, Y
         );
     }
     // 340 PRINT tab(0,10);:STOP
@@ -421,8 +425,9 @@ void lines480_560(screen_t *screen, double *F, char *F$, int NF, int NX,
     SDL_RenderPresent(screen->ren);
 }
 
-void lines570_610(screen_t *screen, int C2, int C7, int *DX, int *LX, int *LY,
-                  int *M_, int *MS, int *MT, int *MV, int **R, int X, int Y) {
+void lines570_610(screen_t *screen, int char_code_vase, int C7, int *DX,
+                  int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
+                  int **R, int X, int Y) {
     int RM;
     // 570 paper 1:ink 2
     paper(screen->cursor, RED);
@@ -444,7 +449,7 @@ void lines570_610(screen_t *screen, int C2, int C7, int *DX, int *LX, int *LY,
     }
     // 600 LET MT=RM:LET M=MT-C2:LET MV=M/16:LET MS=M*6:LET DX=3:LET LX=X:LET LY=Y
     *MT = RM;
-    *M_ = *MT - C2;
+    *M_ = *MT - char_code_vase;
     *MV = *M_ / 16;
     *MS = *M_ * 6;
     *DX = 3;
@@ -466,9 +471,9 @@ int sign(int x) {
 void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
                   const char **T$, int W, const char **W$);
 
-void lines620_770(screen_t *screen, int char_code_blank, int C2, int C7,
-                  int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                  int *MT, int *MV, int *MX, int *MY, int NX, int NY,
+void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
+                  int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                  int *MS, int *MT, int *MV, int *MX, int *MY, int NX, int NY,
                   int O[25], int **R, int RH, const char **T$, int W,
                   const char **W$) {
     int DY, H, I, J, MB, RM, SX, SY, X, Y;
@@ -491,12 +496,16 @@ void lines620_770(screen_t *screen, int char_code_blank, int C2, int C7,
     R[*LX][*LY] = char_code_blank;
     X = *LX;
     Y = *LY;
-    lines570_610(screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y);
+    lines570_610(
+        screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+    );
     // 660 LET R(MX,MY)=MT:LET X=MX:LET Y=MY:GOSUB 570
     R[*MX][*MY] = *MT;
     X = *MX;
     Y = *MY;
-    lines570_610(screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y);
+    lines570_610(
+        screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+    );
     // 670 LET LX=MX:LET LY=MY:LET H=0
     *LX = *MX;
     *LY = *MY;
@@ -577,10 +586,10 @@ void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
     // 800 RETURN
 }
 
-void lines810_860(screen_t *screen, int C2, int C7, int *DX, double *F,
-                  char *F$, int *LX, int *LY, int *M_, int *MS, int *MT,
-                  int *MV, int *NF, int NX, int NY, int **R, int W, int X,
-                  int Y) {
+void lines810_860(screen_t *screen, int char_code_vase, int C7, int *DX,
+                  double *F, char *F$, int *LX, int *LY, int *M_, int *MS,
+                  int *MT, int *MV, int *NF, int NX, int NY, int **R, int W,
+                  int X, int Y) {
     char * M$;
     int J;
     // 810 LET NF=5;LET F(1)=0:GOSUB 440
@@ -606,22 +615,24 @@ void lines810_860(screen_t *screen, int C2, int C7, int *DX, double *F,
     // 840 GOSUB350:GOSUB360:GOSUB570:GOSUB480
         lines350_355(J);
         lines360_365(J);
-        lines570_610(screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y);
+        lines570_610(
+            screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+        );
         lines480_560(screen, F, F$, *NF, NX, NY);
     // 850 NEXT J
     }
     // 860 RETURN
 }
 
-void lines940_980(screen_t *screen, int char_code_blank, int C2, int C7,
-                  int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                  int *MT, int *MV, int MX, int MY, int **R, const char **T$,
-                  int W, int X, int Y);
+void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
+                  int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                  int *MS, int *MT, int *MV, int MX, int MY, int **R,
+                  const char **T$, int W, int X, int Y);
 
-void lines870_930(screen_t *screen, int char_code_blank, int C2, int C7,
-                  int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                  int *MT, int *MV, int MX,  int MY, int O[25], int **R,
-                  const char **T$, int W, int X, int Y) {
+void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
+                  int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                  int *MS, int *MT, int *MV, int MX,  int MY, int O[25],
+                  int **R, const char **T$, int W, int X, int Y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
     int H, t$_ind = rand() % 3 + 1;
     char * M$;
@@ -663,17 +674,17 @@ void lines870_930(screen_t *screen, int char_code_blank, int C2, int C7,
     // 920 IF MS<1 THEN GOSUB940
     if (*MS < 1) {
         lines940_980(
-            screen, char_code_blank, C2, C7, DX, F, LX, LY, M_, MS, MT, MV, MX,
-            MY, R, T$, W, X, Y
+            screen, char_code_blank, char_code_vase, C7, DX, F, LX, LY, M_, MS,
+            MT, MV, MX, MY, R, T$, W, X, Y
         );
     }
     // 930 RETURN
 }
 
-void lines940_980(screen_t *screen, int char_code_blank, int C2, int C7,
-                  int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                  int *MT, int *MV, int MX, int MY, int **R, const char **T$,
-                  int W, int X, int Y) {
+void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
+                  int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                  int *MS, int *MT, int *MV, int MX, int MY, int **R,
+                  const char **T$, int W, int X, int Y) {
     char * M$;
     int J;
     // 940 LET DX=255:LET MS=0:LET R(MX,MY)=C0
@@ -697,28 +708,31 @@ void lines940_980(screen_t *screen, int char_code_blank, int C2, int C7,
         lines360_365(J);
     }
     // 980 GOSUB570:RETURN
-    lines570_610(screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y);
+    lines570_610(
+        screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+    );
 }
 
-void lines1140_1180(screen_t *screen, int char_code_blank, int C2, int C7,
-                    int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                    int *MT, int *MV, int MX, int MY, int **R, const char **T$,
-                    int W);
+void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
+                    int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                    int *MS, int *MT, int *MV, int MX, int MY, int **R,
+                    const char **T$, int W);
 void lines1190_1210(int char_code_blank, int C7, int NX, int NY, int **R,
                     int RH);
 void lines1220_1270(screen_t *screen, double *F, char *F$, int NF, int *NX,
                     int *NY);
 void lines1280_1290(double *F, int *M, int SL);
-void lines1300_1380(screen_t *screen, int char_code_blank, int C2, int C7,
-                    int *DX, int *LX, int *LY, int *M_, int *MS, int *MT,
-                    int *MV, int NX, int NY, int **R, int RH, int X, int Y);
+void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
+                    int C7, int *DX, int *LX, int *LY, int *M_, int *MS,
+                    int *MT, int *MV, int NX, int NY, int **R, int RH, int X,
+                    int Y);
 void lines1390_1400(double *F, double S1, double S2);
 
-void lines990_1130(screen_t *screen, int char_code_blank, int C2, int C7,
-                   int *DX, double *F, char *F$, int *LX, int *LY, int *M,
-                   int *M_, int *MS, int *MT, int *MV, int MX, int MY, int NF,
-                   int *NX, int *NY, int O[25], int **R, int RH, double S1,
-                   double S2, const char **T$, int W) {
+void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
+                   int C7, int *DX, double *F, char *F$, int *LX, int *LY,
+                   int *M, int *M_, int *MS, int *MT, int *MV, int MX, int MY,
+                   int NF, int *NX, int *NY, int O[25], int **R, int RH,
+                   double S1, double S2, const char **T$, int W) {
     int J, SL, X, Y;
     char I$, * M$;
     // 990 GOSUB480:paper 2: ink 0
@@ -795,13 +809,15 @@ void lines990_1130(screen_t *screen, int char_code_blank, int C2, int C7,
         print_left$_b$(screen, W);
         newline(screen->cursor);
     }
-    lines570_610(screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y);
+    lines570_610(
+        screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+    );
     // 1100 ON SL GOSUB1140,1190,1220,1280,1300,1390,1130
     switch (SL) {
         case 1:
             lines1140_1180(
-                screen, char_code_blank, C2, C7, DX, F, LX, LY, M_, MS, MT, MV,
-                MX, MY, R, T$, W
+                screen, char_code_blank, char_code_vase, C7, DX, F, LX, LY, M_,
+                MS, MT, MV, MX, MY, R, T$, W
             );
             break;
         case 2:
@@ -815,8 +831,8 @@ void lines990_1130(screen_t *screen, int char_code_blank, int C2, int C7,
             break;
         case 5:
             lines1300_1380(
-                screen, char_code_blank, C2, C7, DX, LX, LY, M_, MS, MT, MV,
-                *NX, *NY, R, RH, X, Y
+                screen, char_code_blank, char_code_vase, C7, DX, LX, LY, M_,
+                MS, MT, MV, *NX, *NY, R, RH, X, Y
             );
             break;
         case 6:
@@ -834,10 +850,10 @@ void lines990_1130(screen_t *screen, int char_code_blank, int C2, int C7,
     // 1130 RETURN
 }
 
-void lines1140_1180(screen_t *screen, int char_code_blank, int C2, int C7,
-                    int *DX, double *F, int *LX, int *LY, int *M_, int *MS,
-                    int *MT, int *MV, int MX, int MY, int **R, const char **T$,
-                    int W) {
+void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
+                    int C7, int *DX, double *F, int *LX, int *LY, int *M_,
+                    int *MS, int *MT, int *MV, int MX, int MY, int **R,
+                    const char **T$, int W) {
     int J, X, Y;
     // 1140 FOR J=1 TO 12
     for (J = 1; J <= 12; J += 1) {
@@ -851,8 +867,8 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int C2, int C7,
         X = MX;
         Y = MY;
         lines940_980(
-            screen, char_code_blank, C2, C7, DX, F, LX, LY, M_, MS, MT, MV, MX,
-            MY, R, T$, W, X, Y
+            screen, char_code_blank, char_code_vase, C7, DX, F, LX, LY, M_, MS,
+            MT, MV, MX, MY, R, T$, W, X, Y
         );
     }
     // 1180 RETURN
@@ -899,9 +915,10 @@ void lines1280_1290(double *F, int *M, int SL) {
     // 1290 RETURN
 }
 
-void lines1300_1380(screen_t *screen, int char_code_blank, int C2, int C7,
-                    int *DX, int *LX, int *LY, int *M_, int *MS, int *MT,
-                    int *MV, int NX, int NY, int **R, int RH, int X, int Y) {
+void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
+                    int C7, int *DX, int *LX, int *LY, int *M_, int *MS,
+                    int *MT, int *MV, int NX, int NY, int **R, int RH, int X,
+                    int Y) {
     int J;
     // 1300 FOR J=1 TO 30
     for (J = 1; J <= 30; J += 1) {
@@ -909,7 +926,9 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int C2, int C7,
         R[NX][NY] = rand() % 8 + 1 + char_code_blank;
     // 1320 GOSUB350:GOSUB570
         lines350_355(J);
-        lines570_610(screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y);
+        lines570_610(
+            screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+        );
     // 1330 NEXT J
     }
     // 1340 IF RH<=C7 THEN LET DX=255:LET MS=0
@@ -935,10 +954,10 @@ void lines1390_1400(double *F, double S1, double S2) {
 }
 
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
-                    int C2, int C3, int C4, int C7, int **D, int *DX,
-                    double *F, char *F$, int *FI, int GC, int *LX, int *LY,
-                    int *M_, int *MS, int *MT, int *MV, int *NF, int NX,
-                    int NY, int O[25], int **R, int *T, int *TR) {
+                    int char_code_vase, int C3, int C4, int C7, int **D,
+                    int *DX, double *F, char *F$, int *FI, int GC, int *LX,
+                    int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
+                    int NX, int NY, int O[25], int **R, int *T, int *TR) {
     int J, GT, GX, GY, X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
     GX = NX + D[*NF][1];
@@ -965,7 +984,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
         R[GX][GY] = char_code_blank;
     }
     // 1470 IF GT=C2 THEN LET O(23)=O(23)+1:LET O(24)=O(24)+1
-    if (GT == C2) {
+    if (GT == char_code_vase) {
         O[23] += 1;
         O[24] += 1;
     }
@@ -980,7 +999,9 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
     // 1500 LET X=GX:LET Y=GY:GOSUB570
     X = GX;
     Y = GY;
-    lines570_610(screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y);
+    lines570_610(
+        screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+    );
     // 1510 IF GT>C1 AND GT<C4 THEN LET J=GT:GOSUB350:LET J=GT+5:GOSUB350
     if (GT > char_code_wall && GT < C4) {
         J = GT;
@@ -1050,9 +1071,9 @@ void lines1660_1680(double *F, int O[25], double S1, double S2) {
     // 1680 RETURN
 }
 
-void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LT,
-                    int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
-                    int NX, int NY, int **R, const char **T$, int W) {
+void lines1690_1750(screen_t *screen, int char_code_vase, int C7, int *DX,
+                    int *LT, int *LX, int *LY, int *M_, int *MS, int *MT,
+                    int *MV, int NX, int NY, int **R, const char **T$, int W) {
     int X, Y;
     char * M$;
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN
@@ -1074,7 +1095,8 @@ void lines1690_1750(screen_t *screen, int C2, int C7, int *DX, int *LT,
     // 1720 IF (X>0 AND X<16) AND (Y>0 AND Y<16)THEN GOSUB570
             if (X > 0 && X < 16 && Y > 0 && Y < 16) {
                 lines570_610(
-                    screen, C2, C7, DX, LX, LY, M_, MS, MT, MV, R, X, Y
+                    screen, char_code_vase, C7, DX, LX, LY, M_, MS, MT, MV, R,
+                    X, Y
                 );
             }
     // 1730 NEXT X:NEXT Y
@@ -1424,14 +1446,14 @@ void lines2260_2490(screen_t *screen, int character_char_base, char *C$,
 }
 
 void lines2930_3200(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *C2, int *C3, int *C4, int *C5,
-                    int *C6, int *C7, int OS);
+                    int *char_code_wall, int *char_code_vase, int *C3, int *C4,
+                    int *C5, int *C6, int *C7, int OS);
 
 void lines2500_2780(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *C2, int *C3, int *C4, int *C5,
-                    int *C6, int *C7, int ***D, int *DX, double **F, char **F$,
-                    int *FI, int *LT, int **M, int *MX, int *MY, int *NF,
-                    int *NX, int *NY, int *OS, int ***R, int **T,
+                    int *char_code_wall, int *char_code_vase, int *C3, int *C4,
+                    int *C5, int *C6, int *C7, int ***D, int *DX, double **F,
+                    char **F$, int *FI, int *LT, int **M, int *MX, int *MY,
+                    int *NF, int *NX, int *NY, int *OS, int ***R, int **T,
                     const char ***T$, int *TF, int *TX, int *TY, int *W,
                     const char ***W$) {
     int I;
@@ -1598,8 +1620,8 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     (*T)[17] = 101;
     (*T)[18] = 149;
     lines2930_3200(
-        character_char_base, char_code_blank, char_code_wall, C2, C3, C4, C5,
-        C6, C7, *OS
+        character_char_base, char_code_blank, char_code_wall, char_code_vase,
+        C3, C4, C5, C6, C7, *OS
     );
     // 2780 RETURN
 }
@@ -1654,8 +1676,8 @@ void lines2790_2920(screen_t *screen, char *C$, int W) {
 }
 
 void lines2930_3200(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *C2, int *C3, int *C4, int *C5,
-                    int *C6, int *C7, int OS) {
+                    int *char_code_wall, int *char_code_vase, int *C3, int *C4,
+                    int *C5, int *C6, int *C7, int OS) {
     // 2930 REM ** USER DEF'D CHARACTERS **
     // 2940 GOSUB 4000
     // Not needed due to dungeon_lib
@@ -1671,7 +1693,7 @@ void lines2930_3200(int *character_char_base, int *char_code_blank,
     *char_code_blank = OS + 6;
     // 3180 LET C1=C0+1:LET C2=C0+2:LET C3=C0+3:LET C4=C0+4
     *char_code_wall = *char_code_blank + 1;
-    *C2 = *char_code_blank + 2;
+    *char_code_vase = *char_code_blank + 2;
     *C3 = *char_code_blank + 3;
     *C4 = *char_code_blank + 4;
     // 3190 LET C5=C0+6:LET C6=C0+7:LET C7=C0+8:LET C8=C0+12

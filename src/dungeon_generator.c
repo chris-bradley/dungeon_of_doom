@@ -13,8 +13,7 @@ typedef struct {
 } dungeon_t;
 
 
-void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key,
-                int char_code_blank) {
+void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key) {
     int pressed_key_num = atoi(&pressed_key);
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
@@ -23,8 +22,7 @@ void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key,
        dungeon->entrance_coord.x = cur_coord.x;
        dungeon->entrance_coord.y = cur_coord.y;
     }
-    dungeon->contents[cur_coord.x][cur_coord.y] =
-        char_code_blank + pressed_key_num;
+    dungeon->contents[cur_coord.x][cur_coord.y] = pressed_key_num;
 }
 
 void draw_help(screen_t *screen, int screen_cols,
@@ -45,11 +43,11 @@ void draw_help(screen_t *screen, int screen_cols,
     SDL_RenderPresent(screen->ren);
 }
 
-dungeon_t * init_level(int level_num, int char_code_blank) {
+dungeon_t * init_level(int level_num) {
     dungeon_t * dungeon = malloc(sizeof(dungeon_t));
     for (int coord_x=0; coord_x<15; coord_x++) {
         for (int coord_y=0; coord_y<15; coord_y++) {
-            dungeon->contents[coord_x][coord_y] = char_code_blank;
+            dungeon->contents[coord_x][coord_y] = 0;
         }
     }
     dungeon->entrance_coord.x = -1;
@@ -74,7 +72,8 @@ dungeon_t * save_level(screen_t *screen, int screen_cols, int char_base,
         for (coord_y = 0; coord_y < 15; coord_y += 1) {
             if (
                     !fputc(
-                        (char) dungeon->contents[coord_x][coord_y],
+                        (char) dungeon->contents[coord_x][coord_y] +
+                            char_code_blank,
                         save_file_handle
                     )
             ) {
@@ -133,7 +132,7 @@ dungeon_t * save_level(screen_t *screen, int screen_cols, int char_base,
     clear_box(screen, text_rect, RED);
     free(text_rect);
     SDL_RenderPresent(screen->ren);
-    new_dungeon = init_level(dungeon->level_num + 1, char_code_blank);
+    new_dungeon = init_level(dungeon->level_num + 1);
     free(dungeon);
     return new_dungeon;
 }
@@ -166,7 +165,7 @@ int main(int argc, char *argv[]) {
 
     init_help_lines(help_lines);
     init_platform_vars(&char_base, &screen_cols, &char_code_blank);
-    dungeon_t * dungeon = init_level(1, char_code_blank);
+    dungeon_t * dungeon = init_level(1);
     screen_t *screen = init_screen();
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
     paper(screen->cursor, YELLOW);
@@ -208,11 +207,11 @@ int main(int argc, char *argv[]) {
         } else if (pressed_key == 'm' && cur_coord.x < 14) {
             cur_coord.x += 1;
         } else if (pressed_key > '/' && pressed_key < ':') {
-            place_item(cur_coord, dungeon, pressed_key, char_code_blank);
+            place_item(cur_coord, dungeon, pressed_key);
         }
         render_bitmap(
             screen, cur_coord.x + 1, cur_coord.y + 6,
-            dungeon->contents[cur_coord.x][cur_coord.y] - char_code_blank + 6,
+            dungeon->contents[cur_coord.x][cur_coord.y] + 6,
             BLACK, WHITE
         );
 

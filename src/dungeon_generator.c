@@ -62,7 +62,7 @@ dungeon_t * save_level(screen_t *screen, dungeon_t * dungeon) {
     ink(screen->cursor, WHITE);
     int coord_x, coord_y, error;
     tab(screen->cursor, 1, 4);
-    text_rect = print_text(screen, "ANY KEY TO SAVE   ");
+    text_rect = print_text(screen, "ANY KEY TO SAVE");
     SDL_RenderPresent(screen->ren);
     inkey$();
     FILE *save_file_handle = fopen("LEVEL", "w");
@@ -140,16 +140,16 @@ int init_screen_cols() {
 }
 
 void init_help_lines(const char * help_lines[10]) {
-    help_lines[0] = "PRESS ANY KEY     ";
-    help_lines[1] = "TO MOVE A Z N M   ";
-    help_lines[2] = "1 WALL    2 VASE  ";
+    help_lines[0] = "PRESS ANY KEY";
+    help_lines[1] = "TO MOVE A Z N M";
+    help_lines[2] = "1 WALL    2 VASE";
     help_lines[3] = "3 CHEST 4 * IDOL *";
-    help_lines[4] = "5 WAY IN  6 EXIT  ";
-    help_lines[5] = "7 TRAP            ";
-    help_lines[6] = "8 SAFE PLACE      ";
-    help_lines[7] = "9 GUARD           ";
-    help_lines[8] = "0 TO ERASE        ";
-    help_lines[9] = "S TO SAVE         ";
+    help_lines[4] = "5 WAY IN  6 EXIT";
+    help_lines[5] = "7 TRAP";
+    help_lines[6] = "8 SAFE PLACE";
+    help_lines[7] = "9 GUARD";
+    help_lines[8] = "0 TO ERASE";
+    help_lines[9] = "S TO SAVE";
 }
 
 int main(int argc, char *argv[]) {

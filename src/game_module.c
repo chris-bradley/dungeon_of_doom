@@ -29,10 +29,11 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    const char **T$, int W);
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
-                    int char_code_idol, int char_code_safe_place, int **D,
-                    int *DX, double *F, char *F$, int *FI, int GC, int *LX,
-                    int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
-                    int NX, int NY, int O[25], int **R, int *T, int *TR);
+                    int char_code_idol, int char_code_safe_place,
+                    int **vertices, int *DX, double *F, char *F$, int *FI,
+                    int GC, int *LX, int *LY, int *M_, int *MS, int *MT,
+                    int *MV, int *NF, int NX, int NY, int O[25], int **R,
+                    int *T, int *TR);
 void lines1550_1650(screen_t *screen, double *F, char *F$, int *FI, int GC,
                     int *MS, int *NF, int NX, int NY, int *T, int TR);
 void lines1660_1680(double *F, int O[25], double S1, double S2);
@@ -58,11 +59,11 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
                     int *char_code_way_in, int *char_code_exit,
-                    int *char_code_safe_place, int ***D, int *DX, double **F,
-                    char **F$, int *FI, int *LT, int **M, int *MX, int *MY,
-                    int *NF, int *NX, int *NY, int *OS, int ***R, int **T,
-                    const char ***T$, int *TF, int *TX, int *TY, int *W,
-                    const char ***W$);
+                    int *char_code_safe_place, int ***vertices, int *DX,
+                    double **F, char **F$, int *FI, int *LT, int **M, int *MX,
+                    int *MY, int *NF, int *NX, int *NY, int *OS, int ***R,
+                    int **T, const char ***T$, int *TF, int *TX, int *TY,
+                    int *W, const char ***W$);
 
 int main(int argc, char *argv[]) {
     int character_char_base,
@@ -74,7 +75,7 @@ int main(int argc, char *argv[]) {
         char_code_way_in,  // Symbol for Way In
         char_code_exit,  // Symbol for Exit
         char_code_safe_place,
-        ** D,
+        ** vertices,
         DX,
         FI,
         GC,
@@ -123,8 +124,9 @@ int main(int argc, char *argv[]) {
     lines2500_2780(
         &character_char_base, &char_code_blank, &char_code_wall,
         &char_code_vase, &char_code_chest, &char_code_idol, &char_code_way_in,
-        &char_code_exit, &char_code_safe_place, &D, &DX, &F, &F$, &FI, &LT, &M,
-        &MX, &MY, &NF, &NX, &NY, &OS, &R, &T, &T$, &TF, &TX, &TY, &W, &W$
+        &char_code_exit, &char_code_safe_place, &vertices, &DX, &F, &F$, &FI,
+        &LT, &M, &MX, &MY, &NF, &NX, &NY, &OS, &R, &T, &T$, &TF, &TX, &TY, &W,
+        &W$
     );
     // 20 GOSUB2010
     lines2010_2250(
@@ -160,9 +162,9 @@ int main(int argc, char *argv[]) {
         if (I$ == 'g') {
             lines1410_1520(
                 screen, char_code_blank, char_code_wall, char_code_vase,
-                char_code_chest, char_code_idol, char_code_safe_place, D, &DX,
-                F, F$, &FI, GC, &LX, &LY, &M_, &MS, &MT, &MV, &NF, NX, NY, O,
-                R, T, &TR
+                char_code_chest, char_code_idol, char_code_safe_place,
+                vertices, &DX, F, F$, &FI, GC, &LX, &LY, &M_, &MS, &MT, &MV,
+                &NF, NX, NY, O, R, T, &TR
             );
         }
     // 80 IF I$="P" THEN GOSUB1660
@@ -201,8 +203,8 @@ int main(int argc, char *argv[]) {
         }
     // 150 IF I$="M" THEN LET NX=NX+D(NF,1): LET NY=NY+D(NF,2)
         if (I$ == 'm') {
-            NX += D[NF][1];
-            NY += D[NF][2];
+            NX += vertices[NF][1];
+            NY += vertices[NF][2];
         }
     // 160 IF NY>15 THEN LET NY=15
         if (NY > 15) {
@@ -317,9 +319,9 @@ int main(int argc, char *argv[]) {
     int i;
     free(character_name);
     for (i = 0; i < 3; i += 1) {
-        free(D[i]);
+        free(vertices[i]);
     }
-    free(D);
+    free(vertices);
     free(F);
     free(F$);
     free(M);
@@ -975,14 +977,15 @@ void lines1390_1400(double *F, double S1, double S2) {
 
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
-                    int char_code_idol, int char_code_safe_place, int **D,
-                    int *DX, double *F, char *F$, int *FI, int GC, int *LX,
-                    int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
-                    int NX, int NY, int O[25], int **R, int *T, int *TR) {
+                    int char_code_idol, int char_code_safe_place,
+                    int **vertices, int *DX, double *F, char *F$, int *FI,
+                    int GC, int *LX, int *LY, int *M_, int *MS, int *MT,
+                    int *MV, int *NF, int NX, int NY, int O[25], int **R,
+                    int *T, int *TR) {
     int J, GT, GX, GY, X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
-    GX = NX + D[*NF][1];
-    GY = NY + D[*NF][2];
+    GX = NX + vertices[*NF][1];
+    GY = NY + vertices[*NF][2];
     // 1420 IF GX<0 THEN LET GX=0
     if (GX < 0) {
         GX = 0;
@@ -1480,11 +1483,11 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
                     int *char_code_way_in, int *char_code_exit,
-                    int *char_code_safe_place, int ***D, int *DX, double **F,
-                    char **F$, int *FI, int *LT, int **M, int *MX, int *MY,
-                    int *NF, int *NX, int *NY, int *OS, int ***R, int **T,
-                    const char ***T$, int *TF, int *TX, int *TY, int *W,
-                    const char ***W$) {
+                    int *char_code_safe_place, int ***vertices, int *DX,
+                    double **F, char **F$, int *FI, int *LT, int **M, int *MX,
+                    int *MY, int *NF, int *NX, int *NY, int *OS, int ***R,
+                    int **T, const char ***T$, int *TF, int *TX, int *TY,
+                    int *W, const char ***W$) {
     int I;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
@@ -1525,15 +1528,15 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
         fprintf(stderr, "*M is NULL!\n");
         exit(1);
     }
-    *D = (int **) malloc(sizeof(int *) * 5);
-    if (*D == NULL) {
-        fprintf(stderr, "*D is NULL!\n");
+    *vertices = (int **) malloc(sizeof(int *) * 5);
+    if (*vertices == NULL) {
+        fprintf(stderr, "*vertices is NULL!\n");
         exit(1);
     }
     for (i = 0; i < 5; i += 1) {
-        (*D)[i] = (int *) malloc(sizeof(int) * 3);
-        if ((*D)[i] == NULL) {
-            fprintf(stderr, "(*D)[%i] is NULL!\n", i);
+        (*vertices)[i] = (int *) malloc(sizeof(int) * 3);
+        if ((*vertices)[i] == NULL) {
+            fprintf(stderr, "(*vertices)[%i] is NULL!\n", i);
             exit(1);
         }
     }
@@ -1588,14 +1591,14 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
 
     // 2670 DATA0,-1,1,0,0,1,-1,0
     // 2680 FOR I=1 TO 4:READ D(I,1),D(I,2):NEXT I
-    (*D)[1][1] = 0;
-    (*D)[1][2] = -1;
-    (*D)[2][1] = 1;
-    (*D)[2][2] = 0;
-    (*D)[3][1] = 0;
-    (*D)[3][2] = 1;
-    (*D)[4][1] = -1;
-    (*D)[4][2] = 0;
+    (*vertices)[1][1] = 0;
+    (*vertices)[1][2] = -1;
+    (*vertices)[2][1] = 1;
+    (*vertices)[2][2] = 0;
+    (*vertices)[3][1] = 0;
+    (*vertices)[3][2] = 1;
+    (*vertices)[4][1] = -1;
+    (*vertices)[4][2] = 0;
 
     // 2690 LET FI=0:LET DX=255:LET NF=0
     *FI = 0;

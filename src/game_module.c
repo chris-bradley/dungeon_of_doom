@@ -54,11 +54,11 @@ void lines2260_2490(screen_t *screen, int character_char_base, char *C$,
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *C6, int *C7, int ***D, int *DX,
-                    double **F, char **F$, int *FI, int *LT, int **M, int *MX,
-                    int *MY, int *NF, int *NX, int *NY, int *OS, int ***R,
-                    int **T, const char ***T$, int *TF, int *TX, int *TY,
-                    int *W, const char ***W$);
+                    int *char_code_way_in, int *char_code_exit, int *C7,
+                    int ***D, int *DX, double **F, char **F$, int *FI, int *LT,
+                    int **M, int *MX, int *MY, int *NF, int *NX, int *NY,
+                    int *OS, int ***R, int **T, const char ***T$, int *TF,
+                    int *TX, int *TY, int *W, const char ***W$);
 
 int main(int argc, char *argv[]) {
     int character_char_base,
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
         char_code_chest,
         char_code_idol,
         char_code_way_in,  // Symbol for Way In
-        C6,  // Symbol for Exit
+        char_code_exit,  // Symbol for Exit
         C7,
         ** D,
         DX,
@@ -119,8 +119,8 @@ int main(int argc, char *argv[]) {
     lines2500_2780(
         &character_char_base, &char_code_blank, &char_code_wall,
         &char_code_vase, &char_code_chest, &char_code_idol, &char_code_way_in,
-        &C6, &C7, &D, &DX, &F, &F$, &FI, &LT, &M, &MX, &MY, &NF, &NX, &NY, &OS,
-        &R, &T, &T$, &TF, &TX, &TY, &W, &W$
+        &char_code_exit, &C7, &D, &DX, &F, &F$, &FI, &LT, &M, &MX, &MY, &NF,
+        &NX, &NY, &OS, &R, &T, &T$, &TF, &TX, &TY, &W, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
             F[1] -= 0.03;
         }
     // 220 IF RH=C6 THEN LET TX=NX:LET TY=NY:LET TF=1
-        if (RH == C6) {
+        if (RH == char_code_exit) {
             TX = NX;
             TY = NY;
             TF = 1;
@@ -1452,16 +1452,17 @@ void lines2260_2490(screen_t *screen, int character_char_base, char *C$,
 void lines2930_3200(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *C6, int *C7, int OS);
+                    int *char_code_way_in, int *char_code_exit, int *C7,
+                    int OS);
 
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *C6, int *C7, int ***D, int *DX,
-                    double **F, char **F$, int *FI, int *LT, int **M, int *MX,
-                    int *MY, int *NF, int *NX, int *NY, int *OS, int ***R,
-                    int **T, const char ***T$, int *TF, int *TX, int *TY,
-                    int *W, const char ***W$) {
+                    int *char_code_way_in, int *char_code_exit, int *C7,
+                    int ***D, int *DX, double **F, char **F$, int *FI, int *LT,
+                    int **M, int *MX, int *MY, int *NF, int *NX, int *NY,
+                    int *OS, int ***R, int **T, const char ***T$, int *TF,
+                    int *TX, int *TY, int *W, const char ***W$) {
     int I;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
@@ -1627,7 +1628,8 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     (*T)[18] = 149;
     lines2930_3200(
         character_char_base, char_code_blank, char_code_wall, char_code_vase,
-        char_code_chest, char_code_idol, char_code_way_in, C6, C7, *OS
+        char_code_chest, char_code_idol, char_code_way_in, char_code_exit, C7,
+        *OS
     );
     // 2780 RETURN
 }
@@ -1684,7 +1686,8 @@ void lines2790_2920(screen_t *screen, char *C$, int W) {
 void lines2930_3200(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *C6, int *C7, int OS) {
+                    int *char_code_way_in, int *char_code_exit, int *C7,
+                    int OS) {
     // 2930 REM ** USER DEF'D CHARACTERS **
     // 2940 GOSUB 4000
     // Not needed due to dungeon_lib
@@ -1705,7 +1708,7 @@ void lines2930_3200(int *character_char_base, int *char_code_blank,
     *char_code_idol = *char_code_blank + 4;
     // 3190 LET C5=C0+6:LET C6=C0+7:LET C7=C0+8:LET C8=C0+12
     *char_code_way_in = *char_code_blank + 6;
-    *C6 = *char_code_blank + 7;
+    *char_code_exit = *char_code_blank + 7;
     *C7 = *char_code_blank + 8;
     // C8 is never acyually used.
 

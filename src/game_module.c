@@ -1007,30 +1007,30 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     char *char_code_hero, int *finished, int gold, int *LX,
                     int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
                     int NX, int NY, int O[25], int **R, int *T, int *TR) {
-    int J, item_to_get, GX, GY, X, Y;
+    int J, item_to_get, item_to_get_coord_x, item_to_get_coord_y, X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
-    GX = NX + vertices[*NF][1];
-    GY = NY + vertices[*NF][2];
+    item_to_get_coord_x = NX + vertices[*NF][1];
+    item_to_get_coord_y = NY + vertices[*NF][2];
     // 1420 IF GX<0 THEN LET GX=0
-    if (GX < 0) {
-        GX = 0;
+    if (item_to_get_coord_x < 0) {
+        item_to_get_coord_x = 0;
     }
     // 1430 IF GY<0 THEN LET GY=0
-    if (GY < 0) {
-        GY = 0;
+    if (item_to_get_coord_y < 0) {
+        item_to_get_coord_y = 0;
     }
     // 1440 IF GX>15 THEN LET GX=15
-    if (GX > 15) {
-        GX = 15;
+    if (item_to_get_coord_x > 15) {
+        item_to_get_coord_x = 15;
     }
     // 1450 IF GY>15 THEN LET GY=15
-    if (GY > 15) {
-        GY = 15;
+    if (item_to_get_coord_y > 15) {
+        item_to_get_coord_y = 15;
     }
     // 1460 LET GT=R(GX,GY):IF GT>C1 AND GT<C4 THEN LET R(GX,GY)=C0
-    item_to_get = R[GX][GY];
+    item_to_get = R[item_to_get_coord_x][item_to_get_coord_y];
     if (item_to_get > char_code_wall && item_to_get < char_code_idol) {
-        R[GX][GY] = char_code_blank;
+        R[item_to_get_coord_x][item_to_get_coord_y] = char_code_blank;
     }
     // 1470 IF GT=C2 THEN LET O(23)=O(23)+1:LET O(24)=O(24)+1
     if (item_to_get == char_code_vase) {
@@ -1049,8 +1049,8 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
         );
     }
     // 1500 LET X=GX:LET Y=GY:GOSUB570
-    X = GX;
-    Y = GY;
+    X = item_to_get_coord_x;
+    Y = item_to_get_coord_y;
     lines570_610(
         screen, char_code_vase, char_code_safe_place, distance_to_monster_x,
         LX, LY, M_, MS, MT, MV, R, X, Y

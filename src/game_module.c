@@ -1007,7 +1007,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     char *char_code_hero, int *finished, int gold, int *LX,
                     int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
                     int NX, int NY, int O[25], int **R, int *T, int *TR) {
-    int J, GT, GX, GY, X, Y;
+    int J, item_to_get, GX, GY, X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
     GX = NX + vertices[*NF][1];
     GY = NY + vertices[*NF][2];
@@ -1028,21 +1028,21 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
         GY = 15;
     }
     // 1460 LET GT=R(GX,GY):IF GT>C1 AND GT<C4 THEN LET R(GX,GY)=C0
-    GT = R[GX][GY];
-    if (GT > char_code_wall && GT < char_code_idol) {
+    item_to_get = R[GX][GY];
+    if (item_to_get > char_code_wall && item_to_get < char_code_idol) {
         R[GX][GY] = char_code_blank;
     }
     // 1470 IF GT=C2 THEN LET O(23)=O(23)+1:LET O(24)=O(24)+1
-    if (GT == char_code_vase) {
+    if (item_to_get == char_code_vase) {
         O[23] += 1;
         O[24] += 1;
     }
     // 1480 IF GT=C3 THEN LET TR=TR+1
-    if (GT == char_code_chest) {
+    if (item_to_get == char_code_chest) {
         TR += 1;
     }
     // 1490 IF GT=C4 THEN GOSUB 1550
-    if (GT == char_code_idol) {
+    if (item_to_get == char_code_idol) {
         lines1550_1650(
             screen, attrs, char_code_hero, finished, gold, MS, NF, NX, NY, T,
             *TR
@@ -1056,10 +1056,10 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
         LX, LY, M_, MS, MT, MV, R, X, Y
     );
     // 1510 IF GT>C1 AND GT<C4 THEN LET J=GT:GOSUB350:LET J=GT+5:GOSUB350
-    if (GT > char_code_wall && GT < char_code_idol) {
-        J = GT;
+    if (item_to_get > char_code_wall && item_to_get < char_code_idol) {
+        J = item_to_get;
         lines350_355(J);
-        J = GT + 5;
+        J = item_to_get + 5;
         lines350_355(J);
     }
     // 1520 RETURN

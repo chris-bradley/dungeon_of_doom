@@ -502,7 +502,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   double *attrs, int *LX, int *LY, int *M_, int *MS, int *MT,
                   int *MV, int *MX, int *MY, int NX, int NY, int O[25],
                   int **R, int RH, const char **T$, int W, const char **W$) {
-    int distance_to_monster_y, H, I, J, MB, RM, SX, SY, X, Y;
+    int distance_to_monster_y, damage, I, J, MB, RM, SX, SY, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *distance_to_monster_x = *LX - NX;
@@ -537,15 +537,15 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 670 LET LX=MX:LET LY=MY:LET H=0
     *LX = *MX;
     *LY = *MY;
-    H = 0;
+    damage = 0;
     // 680 IF ABS(DX)<=1 AND ABS(DY)<=1 AND RH<>C7 THEN LET H=M*.5:LET J=H:GOSUB350
     if (
             abs(*distance_to_monster_x) <= 1 &&
             abs(distance_to_monster_y) <= 1 &&
             RH != char_code_safe_place
     ) {
-        H = *M_ * 0.5;
-        J = H;
+        damage = *M_ * 0.5;
+        J = damage;
         lines350_355(J);
     } else {
         // This line was not in the original. We set J here on the unlikely
@@ -556,7 +556,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
         J = 0;
     }
     // 690 IF H*12<F(6)+F(3) THEN RETURN
-    if (H * 12 < attrs[6] + attrs[3]) {
+    if (damage * 12 < attrs[6] + attrs[3]) {
         return;
     }
     // 700 LET M$=T$(5):GOSUB430:GOSUB360
@@ -570,10 +570,10 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     free(M$);
     lines360_365(J);
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
-    H /= (3 + O[9] + O[10] + O[11] + O[12] + O[13] + O[14]);
+    damage /= (3 + O[9] + O[10] + O[11] + O[12] + O[13] + O[14]);
     // 720 LET F(1)=F(1)-H:LET F(2)=F(2)-(H/101)
-    attrs[1] -= H;
-    attrs[2] -= H / 101;
+    attrs[1] -= damage;
+    attrs[2] -= damage / 101;
     // 730 LET I=1:LET WB=0:LET MB=rnd(M)
     I = 1;
     // WB is ony set here and not used anywhere.
@@ -670,7 +670,7 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *MV, int MX,  int MY, int O[25], int **R,
                   const char **T$, int W, int X, int Y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
-    int H, t$_ind = rand() % 3 + 1;
+    int damage, t$_ind = rand() % 3 + 1;
     char * M$;
     M$ = (char *) malloc(sizeof(char) * (strlen(T$[t$_ind]) + 1));
     if (M$ == NULL) {
@@ -685,7 +685,7 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
     lines360_365(100);
     free(M$);
     // 880 LET H=F(1)+O(1) + O(2) + O(3) + O(4) + O(5) + O(6) + O(7) + O(8) + rnd(F(6))
-    H =
+    damage =
         attrs[1] + O[1] + O[2] + O[3] + O[4] + O[5] + O[6] + O[7] + O[8] + \
         (rand() * attrs[6] / RAND_MAX);
     // 890 IF F(3)+F(6)< rnd(M)+2 THEN LET M$=T$(4):LET HT=0
@@ -698,14 +698,14 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
         strcpy(M$, T$[4]);
         // Probably a bug in the original game: HT is never set or referenced
         // anywhere else. It should be H instead.
-        H = 0;
+        damage = 0;
     }
     // 900 LET MS=MS-H:GOSUB430
-    *MS -= H;
+    *MS -= damage;
     lines430_430(screen, M$, W);
     free(M$);
     // 910 LET F(1)=F(1)-(H/100):LET F(5)=F(5)+0.05
-    attrs[1] -= H / 100;
+    attrs[1] -= damage / 100;
     attrs[5] += 0.05;
     // 920 IF MS<1 THEN GOSUB940
     if (*MS < 1) {

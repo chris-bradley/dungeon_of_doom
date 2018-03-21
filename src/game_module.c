@@ -34,11 +34,11 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
                     int char_code_idol, int char_code_safe_place,
                     int **vertices, int *distance_to_monster_x, double *attrs,
-                    char *char_code_hero, int *finished, int GC, int *LX,
+                    char *char_code_hero, int *finished, int gold, int *LX,
                     int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
                     int NX, int NY, int O[25], int **R, int *T, int *TR);
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
-                    int *finished, int GC, int *MS, int *NF, int NX, int NY,
+                    int *finished, int gold, int *MS, int *NF, int NX, int NY,
                     int *T, int TR);
 void lines1660_1680(double *attrs, int O[25], double S1, double S2);
 void lines1690_1750(screen_t *screen, int char_code_vase,
@@ -54,13 +54,13 @@ void lines1770_1950(screen_t *screen, char *character_name,
                     int *NX, int *NY, int OS, int *OX, int *OY, int **R,
                     double S3, const char **T$, int W);
 void lines2010_2250(screen_t *screen, int character_char_base,
-                    char **character_name, double *attrs, int *GC, int *LT,
+                    char **character_name, double *attrs, int *gold, int *LT,
                     int *M, int O[25], int *OT, double *S1, double *S2,
                     double *S3, const char **T$, int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
-                    char *character_name, double *attrs, int *finished, int GC,
-                    int LE, int NX, int NY, int O[25], int OS, int OT, int **R,
-                    int TR, int W);
+                    char *character_name, double *attrs, int *finished,
+                    int gold, int LE, int NX, int NY, int O[25], int OS,
+                    int OT, int **R, int TR, int W);
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         ** vertices,
         distance_to_monster_x,
         finished,
-        GC,
+        gold,
         LE,
         LT,
         LX,
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
     );
     // 20 GOSUB2010
     lines2010_2250(
-        screen, character_char_base, &character_name, attrs, &GC, &LT, M, O,
+        screen, character_char_base, &character_name, attrs, &gold, &LT, M, O,
         &OT, &S1, &S2, &S3, T$, &TR, W
     );
     // 30 GOSUB1770
@@ -173,8 +173,8 @@ int main(int argc, char *argv[]) {
                 screen, char_code_blank, char_code_wall, char_code_vase,
                 char_code_chest, char_code_idol, char_code_safe_place,
                 vertices, &distance_to_monster_x, attrs, char_code_hero,
-                &finished, GC, &LX, &LY, &M_, &MS, &MT, &MV, &NF, NX, NY, O, R,
-                T, &TR
+                &finished, gold, &LX, &LY, &M_, &MS, &MT, &MV, &NF, NX, NY, O,
+                R, T, &TR
             );
         }
     // 80 IF I$="P" THEN GOSUB1660
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
         if (I$ == 's') {
             lines2260_2490(
                 screen, character_char_base, character_name, attrs, &finished,
-                GC, LE, NX, NY, O, OS, OT, R, TR, W
+                gold, LE, NX, NY, O, OS, OT, R, TR, W
             );
         }
     // 110 IF I$="B" THEN LET NF=NF-1
@@ -1004,7 +1004,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
                     int char_code_idol, int char_code_safe_place,
                     int **vertices, int *distance_to_monster_x, double *attrs,
-                    char *char_code_hero, int *finished, int GC, int *LX,
+                    char *char_code_hero, int *finished, int gold, int *LX,
                     int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
                     int NX, int NY, int O[25], int **R, int *T, int *TR) {
     int J, GT, GX, GY, X, Y;
@@ -1044,7 +1044,8 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
     // 1490 IF GT=C4 THEN GOSUB 1550
     if (GT == char_code_idol) {
         lines1550_1650(
-            screen, attrs, char_code_hero, finished, GC, MS, NF, NX, NY, T, *TR
+            screen, attrs, char_code_hero, finished, gold, MS, NF, NX, NY, T,
+            *TR
         );
     }
     // 1500 LET X=GX:LET Y=GY:GOSUB570
@@ -1065,7 +1066,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
 }
 
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
-                    int *finished, int GC, int *MS, int *NF, int NX, int NY,
+                    int *finished, int gold, int *MS, int *NF, int NX, int NY,
                     int *T, int TR) {
     int I, J, N;
     // 1550 paper 2:ink 1
@@ -1101,7 +1102,7 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     sprintf(
         outstring,
         "THY SCORE=%i",
-        (int) ((TR * 10) + (GC * attrs[5]) + attrs[1] + attrs[2] + attrs[3])
+        (int) ((TR * 10) + (gold * attrs[5]) + attrs[1] + attrs[2] + attrs[3])
     );
     free(print_text(screen, outstring));
     free(outstring);
@@ -1305,7 +1306,7 @@ void lines1960_2000(screen_t *screen, double *attrs) {
 }
 
 void lines2010_2250(screen_t *screen, int character_char_base,
-                    char **character_name, double *attrs, int *GC, int *LT,
+                    char **character_name, double *attrs, int *gold, int *LT,
                     int *M, int O[25], int *OT, double *S1, double *S2,
                     double *S3, const char **T$, int *TR, int W) {
     char I$, * M$;
@@ -1362,7 +1363,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2150 NEXT I
     }
     // 2160 LET GC=ASC(MID$(S$,P,1))-AS
-    *GC = (int) S$[P - 1] - character_char_base;
+    *gold = (int) S$[P - 1] - character_char_base;
     // 2170 LET TR=ASC(MID$(S$,P+1,1))-AS
     *TR = (int) S$[P] - character_char_base;
     // 2180 LET C$=RIGHT$(S$,LEN(S$)-(P+1))
@@ -1394,9 +1395,9 @@ void lines2010_2250(screen_t *screen, int character_char_base,
 }
 
 void lines2260_2490(screen_t *screen, int character_char_base,
-                    char *character_name, double *attrs, int *finished, int GC,
-                    int LE, int NX, int NY, int O[25], int OS, int OT, int **R,
-                    int TR, int W) {
+                    char *character_name, double *attrs, int *finished,
+                    int gold, int LE, int NX, int NY, int O[25], int OS,
+                    int OT, int **R, int TR, int W) {
     int I, X, Y;
     char I$, * M$;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
@@ -1461,7 +1462,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     // 2410 NEXT I
     }
     // 2420 LET S$=S$+CHR$(GC+AS);
-    S$[s_index] = (char) (GC + character_char_base);
+    S$[s_index] = (char) (gold + character_char_base);
     s_index += 1;
     // 2430 LET S$=S$+CHR$(TR+AS);
     S$[s_index] = (char) (TR + character_char_base);

@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "dungeon_lib.h"
 
-void lines430_430(screen_t *screen, char *M$, int W);
+void lines430_430(screen_t *screen, char *message, int W);
 void lines480_560(screen_t *screen, double *attrs, char *char_code_hero,
                   int NF, int NX, int NY);
 void lines570_610(screen_t *screen, int char_code_vase,
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
     char * character_name = NULL,
          I$,
          * char_code_hero = NULL,
-         * M$;
+         * message;
     const char ** T$, **W$;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = init_screen();
@@ -307,15 +307,15 @@ int main(int argc, char *argv[]) {
         }
     // 320 IF RH=C5 THEN LET M$=T$(12):GOSUB430:GOSUB1760:GOTO40
         else if (RH == char_code_way_in) {
-            M$ = (char *) malloc(sizeof(char) * (strlen(T$[12]) + 1));
-            if (M$ == NULL) {
-                fprintf(stderr, "M$ is NULL!\n");
+            message = (char *) malloc(sizeof(char) * (strlen(T$[12]) + 1));
+            if (message == NULL) {
+                fprintf(stderr, "message is NULL!\n");
                 exit(1);
             }
-            strcpy(M$, T$[12]);
-            M$[strlen(T$[12])] = 0;
-            lines430_430(screen, M$, W);
-            free(M$);
+            strcpy(message, T$[12]);
+            message[strlen(T$[12])] = 0;
+            lines430_430(screen, message, W);
+            free(message);
             lines1760_1950(
                 screen, character_name, &distance_to_monster_x, attrs,
                 &dungeon_level, &NX, &NY, OS, &OX, &OY, R, S3, T$, W
@@ -372,13 +372,13 @@ void lines360_365(int sound_frequency) {
     // TODO: SOUND!
 }
 
-void lines370_420(screen_t *screen, char *I$, char *M$, int W) {
+void lines370_420(screen_t *screen, char *I$, char *message, int W) {
     // 370 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     // 380 PRINT tab(0,5):M$;
     tab(screen->cursor, 0, 5);
-    free(print_text(screen, M$));
+    free(print_text(screen, message));
     // 390 LET I$=inkey$
     // 400 IF I$="" THEN GOTO390
     SDL_RenderPresent(screen->ren);
@@ -390,19 +390,19 @@ void lines370_420(screen_t *screen, char *I$, char *M$, int W) {
     // 420 RETURN
 }
 
-void lines440_470(screen_t *screen, char *M$, int W);
+void lines440_470(screen_t *screen, char *message, int W);
 
-void lines430_430(screen_t *screen, char *M$, int W) {
+void lines430_430(screen_t *screen, char *message, int W) {
     // 430 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
-    lines440_470(screen, M$, W);
+    lines440_470(screen, message, W);
 }
 
-void lines440_470(screen_t *screen, char *M$, int W) {
+void lines440_470(screen_t *screen, char *message, int W) {
     // 440 PRINT tab(0,5);M$;
     tab(screen->cursor, 0, 5);
-    free(print_text(screen, M$));
+    free(print_text(screen, message));
     SDL_RenderPresent(screen->ren);
     // 450 FOR D=1 TO 600:NEXT D
     // C64: 450 FOR D=1 TO 200:NEXT D
@@ -514,7 +514,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   const char **W$) {
     int distance_to_monster_y, damage, item_num, sound_frequency, MB, RM, SX,
         SY, X, Y;
-    char * M$;
+    char * message;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *distance_to_monster_x = *monster_coord_x - NX;
     SX = sign(*distance_to_monster_x);
@@ -571,14 +571,14 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
         return;
     }
     // 700 LET M$=T$(5):GOSUB430:GOSUB360
-    M$ = (char *) malloc(sizeof(char) * (strlen(T$[5]) + 1));
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    message = (char *) malloc(sizeof(char) * (strlen(T$[5]) + 1));
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(M$, T$[5]);
-    lines430_430(screen, M$, W);
-    free(M$);
+    strcpy(message, T$[5]);
+    lines430_430(screen, message, W);
+    free(message);
     lines360_365(sound_frequency);
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
     damage /= (3 + O[9] + O[10] + O[11] + O[12] + O[13] + O[14]);
@@ -610,19 +610,19 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
 
 void lines780_800(screen_t *screen, int item_num, int sound_frequency, int *MB,
                   int O[25], const char **T$, int W, const char **W$) {
-    char * M$;
+    char * message;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     O[item_num] = 0;
-    M$ = (char *) malloc(
+    message = (char *) malloc(
         sizeof(char) * (strlen(T$[8]) + strlen(W$[item_num]) + 2)
     );
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    sprintf(M$, "%s %s", T$[8], W$[item_num]);
-    lines430_430(screen, M$, W);
-    free(M$);
+    sprintf(message, "%s %s", T$[8], W$[item_num]);
+    lines430_430(screen, message, W);
+    free(message);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
     *MB = 0;
     lines360_365(sound_frequency);
@@ -636,7 +636,7 @@ void lines810_860(screen_t *screen, int char_code_vase,
                   double *attrs, char *char_code_hero, int *monster_coord_x,
                   int *monster_coord_y, int *M_, int *MS, int *MT, int *MV,
                   int *NF, int NX, int NY, int **R, int W, int X, int Y) {
-    char * M$;
+    char * message;
     int sound_frequency;
     // 810 LET NF=5;LET F(1)=0:GOSUB 440
     *NF = 5;
@@ -645,14 +645,14 @@ void lines810_860(screen_t *screen, int char_code_vase,
     // without setting it first. The original BASIC code emptied M$ after each
     // time it was rendered. To aid de-globalization of variables, we empty M$
     // in those two places instead.
-    M$ = (char *) malloc(sizeof(char));
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    message = (char *) malloc(sizeof(char));
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(M$, "");
-    lines440_470(screen, M$, W);
-    free(M$);
+    strcpy(message, "");
+    lines440_470(screen, message, W);
+    free(message);
     // 820 PRINT tab(1,5);"THOU HAST EXPIRED!"
     tab(screen->cursor, 1, 5);
     free(print_text(screen, "THOU HAST EXPIRED!"));
@@ -685,40 +685,40 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
                   int O[25], int **R, const char **T$, int W, int X, int Y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
     int damage, t$_ind = rand() % 3 + 1;
-    char * M$;
-    M$ = (char *) malloc(sizeof(char) * (strlen(T$[t$_ind]) + 1));
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    char * message;
+    message = (char *) malloc(sizeof(char) * (strlen(T$[t$_ind]) + 1));
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(M$, T$[t$_ind]);
+    strcpy(message, T$[t$_ind]);
     /*
     The original code did not define sound_frequency before calling the
     subroutine at line 360 here. Since the value of sound_frequency is not
     easily predicted, we just use 100.
     */
     lines360_365(100);
-    free(M$);
+    free(message);
     // 880 LET H=F(1)+O(1) + O(2) + O(3) + O(4) + O(5) + O(6) + O(7) + O(8) + rnd(F(6))
     damage =
         attrs[1] + O[1] + O[2] + O[3] + O[4] + O[5] + O[6] + O[7] + O[8] + \
         (rand() * attrs[6] / RAND_MAX);
     // 890 IF F(3)+F(6)< rnd(M)+2 THEN LET M$=T$(4):LET HT=0
     if (attrs[3] + attrs[6] < rand() % *M_ + 2) {
-        M$ = (char *) malloc(sizeof(char) * (strlen(T$[4]) + 1));
-        if (M$ == NULL) {
-            fprintf(stderr, "M$ is NULL!\n");
+        message = (char *) malloc(sizeof(char) * (strlen(T$[4]) + 1));
+        if (message == NULL) {
+            fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(M$, T$[4]);
+        strcpy(message, T$[4]);
         // Probably a bug in the original game: HT is never set or referenced
         // anywhere else. It should be H instead.
         damage = 0;
     }
     // 900 LET MS=MS-H:GOSUB430
     *MS -= damage;
-    lines430_430(screen, M$, W);
-    free(M$);
+    lines430_430(screen, message, W);
+    free(message);
     // 910 LET F(1)=F(1)-(H/100):LET F(5)=F(5)+0.05
     attrs[1] -= damage / 100;
     attrs[5] += 0.05;
@@ -738,7 +738,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
                   double *attrs, int *monster_coord_x, int *monster_coord_y,
                   int *M_, int *MS, int *MT, int *MV, int MX, int MY, int **R,
                   const char **T$, int W, int X, int Y) {
-    char * M$;
+    char * message;
     int sound_frequency;
     // 940 LET DX=255:LET MS=0:LET R(MX,MY)=C0
     *distance_to_monster_x = 255;
@@ -747,14 +747,14 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
     // 950 LET F(5)=F(5)+.1
     attrs[5] += 0.1;
     // 960 LET M$=T$(6):GOSUB430
-    M$ = (char *) malloc(sizeof(char) * (strlen(T$[6]) + 1));
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    message = (char *) malloc(sizeof(char) * (strlen(T$[6]) + 1));
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(M$, T$[6]);
-    lines430_430(screen, M$, W);
-    free(M$);
+    strcpy(message, T$[6]);
+    lines430_430(screen, message, W);
+    free(message);
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
         lines350_355(sound_frequency);
@@ -792,7 +792,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int *NY, int O[25], int **R, int RH, double S1, double S2,
                    const char **T$, int W) {
     int row_num, SL, X, Y;
-    char I$, * M$;
+    char I$, * message;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(screen, attrs, char_code_hero, NF, *NX, *NY);
     paper(screen->cursor, YELLOW);
@@ -815,14 +815,14 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     free(print_text(screen, "CONSULT THE LORE"));
     // 1040 LET M$="USE SPELL NUMBER?":GOSUB370
     do {
-        M$ = (char *) malloc(sizeof(char) * 18);
-        if (M$ == NULL) {
-            fprintf(stderr, "M$ is NULL!\n");
+        message = (char *) malloc(sizeof(char) * 18);
+        if (message == NULL) {
+            fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(M$, "USE SPELL NUMBER?");
-        lines370_420(screen, &I$, M$, W);
-        free(M$);
+        strcpy(message, "USE SPELL NUMBER?");
+        lines370_420(screen, &I$, message, W);
+        free(message);
         char * outstring = (char *) malloc(sizeof(char) * 2);
         sprintf(outstring, "%c", I$);
     // 1050 LET SL=VAL(I$)
@@ -842,24 +842,24 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     Y = *NY;
     // 1080 IF M(SL)<0 THEN LET M$=T$(9):LET SL=7
     if (spells_remaining[SL] < 0) {
-        M$ = (char *) malloc(sizeof(char) * (strlen(T$[9]) + 1));
-        if (M$ == NULL) {
-            fprintf(stderr, "M$ is NULL!\n");
+        message = (char *) malloc(sizeof(char) * (strlen(T$[9]) + 1));
+        if (message == NULL) {
+            fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(M$, T$[9]);
+        strcpy(message, T$[9]);
         SL = 7;
     } else {
         // This is the other place where we may call a method for rendering M$
         // without setting it first. The original BASIC code emptied M$ after
         // each time it was rendered. In this case, we empty after the call to
         // lines940_980(), since we don't know when it will be used next.
-        M$ = (char *) malloc(sizeof(char));
-        if (M$ == NULL) {
-            fprintf(stderr, "M$ is NULL!\n");
+        message = (char *) malloc(sizeof(char));
+        if (message == NULL) {
+            fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(M$, "");
+        strcpy(message, "");
     }
     // 1090 FOR J=1 TO 5:PRINT tab(0,J);LEFT$(B$, W);:NEXT J:GOSUB570
     for (row_num = 1; row_num <= 5; row_num += 1) {
@@ -908,8 +908,8 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1110 LET F(5)=F(5)+.2
     attrs[5] += 0.2;
     // 1120 GOSUB430
-    lines430_430(screen, M$, W);
-    free(M$);
+    lines430_430(screen, message, W);
+    free(message);
     // 1130 RETURN
 }
 
@@ -1154,17 +1154,17 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
                     int *M_, int *MS, int *MT, int *MV, int NX, int NY,
                     int **R, const char **T$, int W) {
     int X, Y;
-    char * M$;
+    char * message;
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN
     if (*torches == 0) {
-        M$ = (char *) malloc(sizeof(char) * (strlen(T$[7]) + 1));
-        if (M$ == NULL) {
-            fprintf(stderr, "M$ is NULL!\n");
+        message = (char *) malloc(sizeof(char) * (strlen(T$[7]) + 1));
+        if (message == NULL) {
+            fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(M$, T$[7]);
-        lines430_430(screen, M$, W);
-        free(M$);
+        strcpy(message, T$[7]);
+        lines430_430(screen, message, W);
+        free(message);
         return;
     }
     // 1700 FOR Y=NY-3 TO NY+3
@@ -1187,7 +1187,7 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
     // 1750 RETURN
 }
 
-void lines370_420(screen_t *screen, char *I$, char *M$, int W);
+void lines370_420(screen_t *screen, char *I$, char *message, int W);
 void lines1960_2000(screen_t *screen, double *attrs);
 void lines2790_2920(screen_t *screen, char *character_name, int W);
 
@@ -1201,21 +1201,21 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
     int correct_level_loaded, index, entrance_coord_x, entrance_coord_y, X, Y;
-    char I$, * M$;
+    char I$, * message;
     do {
 
     // 1760 IF F(5)<S3+1 THEN LET M$=T$(11):LET NX=OX:LET NY=OY:GOSUB 430:RETURN
         if (!start_at_1770 && attrs[5] < S3 + 1) {
-            M$ = (char *) malloc(sizeof(char) * (strlen(T$[11]) + 1));
-            if (M$ == NULL) {
-                fprintf(stderr, "M$ is NULL!\n");
+            message = (char *) malloc(sizeof(char) * (strlen(T$[11]) + 1));
+            if (message == NULL) {
+                fprintf(stderr, "message is NULL!\n");
                 exit(1);
             }
-            strcpy(M$, T$[11]);
+            strcpy(message, T$[11]);
             *NX = *OX;
             *NY = *OY;
-            lines430_430(screen, M$, W);
-            free(M$);
+            lines430_430(screen, message, W);
+            free(message);
             return;
         }
         start_at_1770 = 0;
@@ -1224,14 +1224,14 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
         tab(screen->cursor, 0, 3);
         free(print_text(screen, "PREPARE DUNGEON TAPE"));
     // 1780 LET M$=T$(10):GOSUB370
-        M$ = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
-        if (M$ == NULL) {
-            fprintf(stderr, "M$ is NULL!\n");
+        message = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
+        if (message == NULL) {
+            fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(M$, T$[10]);
-        lines370_420(screen, &I$, M$, W);
-        free(M$);
+        strcpy(message, T$[10]);
+        lines370_420(screen, &I$, message, W);
+        free(message);
         size_t filesize;
     // 1790 S=OPENIN"LEVEL"
         FILE *S = fopen("LEVEL", "r");
@@ -1335,21 +1335,21 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *torches, int *spells_remaining, int O[25], int *OT,
                     double *S1, double *S2, double *S3, const char **T$,
                     int *TR, int W) {
-    char I$, * M$;
+    char I$, * message;
     int index, subindex, P;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
     free(print_text(screen, "PREPARE HERO TAPE"));
     // 2020 LET M$=T$(10):GOSUB370
-    M$ = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    message = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(M$, T$[10]);
-    lines370_420(screen, &I$, M$, W);
-    free(M$);
+    strcpy(message, T$[10]);
+    lines370_420(screen, &I$, message, W);
+    free(message);
     // 2030 S=OPENIN "HERO"
     FILE *S = fopen("HERO", "r");
     // 2040 INPUT#S,S$
@@ -1426,16 +1426,16 @@ void lines2260_2490(screen_t *screen, int character_char_base,
                     int gold, int dungeon_level, int NX, int NY, int O[25],
                     int OS, int OT, int **R, int TR, int W) {
     int index, X, Y;
-    char I$, * M$;
+    char I$, * message;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
-    M$ = (char *) malloc(sizeof(char) * 18);
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    message = (char *) malloc(sizeof(char) * 18);
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(M$, "ONE MOMENT PLEASE");
-    lines430_430(screen, M$, W);
-    free(M$);
+    strcpy(message, "ONE MOMENT PLEASE");
+    lines430_430(screen, message, W);
+    free(message);
     // 2270 LET S$="":LET T$=""
     char * S$ = (char *) malloc(
         sizeof(char) * (12 + OT + strlen(character_name))
@@ -1499,14 +1499,14 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     s_index += strlen(character_name);
     S$[s_index] = 0;
     // 2450 LET M$="ANY KEY TO SAVE":GOSUB 370
-    M$ = (char *) malloc(sizeof(char) * 16);
-    if (M$ == NULL) {
-        fprintf(stderr, "M$ is NULL!\n");
+    message = (char *) malloc(sizeof(char) * 16);
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(M$, "ANY KEY TO SAVE");
-    lines370_420(screen, &I$, M$, W);
-    free(M$);
+    strcpy(message, "ANY KEY TO SAVE");
+    lines370_420(screen, &I$, message, W);
+    free(message);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
     FILE *S = fopen("HERO", "w");
     int error = fputs(S$, S);

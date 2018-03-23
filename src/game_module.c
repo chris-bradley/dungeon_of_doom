@@ -1312,7 +1312,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *M, int O[25], int *OT, double *S1, double *S2,
                     double *S3, const char **T$, int *TR, int W) {
     char I$, * M$;
-    int index, J, P;
+    int index, subindex, P;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -1382,9 +1382,9 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2200 FOR I=1 TO 2
     for (index = 1; index <= 2; index += 1) {
     // 2210 FOR J=1 TO 3
-        for (J = 1; J <= 3; J += 1) {
+        for (subindex = 1; subindex <= 3; subindex += 1) {
     // 2220 LET M((I-1)*3+J)=O(16+I)*F(7)
-            M[(index - 1) * 3 + J] = O[16 + index] * attrs[7];
+            M[(index - 1) * 3 + subindex] = O[16 + index] * attrs[7];
     // 2230 NEXT J:NEXT I
         }
     }

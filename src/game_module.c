@@ -43,7 +43,7 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
 void lines1660_1680(double *attrs, int O[25], double S1, double S2);
 void lines1690_1750(screen_t *screen, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
-                    int *LT, int *LX, int *LY, int *M_, int *MS, int *MT,
+                    int *torches, int *LX, int *LY, int *M_, int *MS, int *MT,
                     int *MV, int NX, int NY, int **R, const char **T$, int W);
 void lines1760_1950(screen_t *screen, char *character_name,
                     int *distance_to_monster_x, double *attrs,
@@ -54,9 +54,9 @@ void lines1770_1950(screen_t *screen, char *character_name,
                     int *dungeon_level, int *NX, int *NY, int OS, int *OX,
                     int *OY, int **R, double S3, const char **T$, int W);
 void lines2010_2250(screen_t *screen, int character_char_base,
-                    char **character_name, double *attrs, int *gold, int *LT,
-                    int *M, int O[25], int *OT, double *S1, double *S2,
-                    double *S3, const char **T$, int *TR, int W);
+                    char **character_name, double *attrs, int *gold,
+                    int *torches, int *M, int O[25], int *OT, double *S1,
+                    double *S2, double *S3, const char **T$, int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int NX, int NY, int O[25],
@@ -67,10 +67,10 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_way_in, int *char_code_exit,
                     int *char_code_safe_place, int ***vertices,
                     int *distance_to_monster_x, double **attrs,
-                    char **char_code_hero, int *finished, int *LT, int **M,
-                    int *MX, int *MY, int *NF, int *NX, int *NY, int *OS,
-                    int ***R, int **T, const char ***T$, int *TF, int *TX,
-                    int *TY, int *W, const char ***W$);
+                    char **char_code_hero, int *finished, int *torches,
+                    int **M, int *MX, int *MY, int *NF, int *NX, int *NY,
+                    int *OS, int ***R, int **T, const char ***T$, int *TF,
+                    int *TX, int *TY, int *W, const char ***W$);
 
 int main(int argc, char *argv[]) {
     int character_char_base,
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
         finished,
         gold,
         dungeon_level,
-        LT,
+        torches,
         LX,
         LY,
         M_,
@@ -132,13 +132,13 @@ int main(int argc, char *argv[]) {
         &character_char_base, &char_code_blank, &char_code_wall,
         &char_code_vase, &char_code_chest, &char_code_idol, &char_code_way_in,
         &char_code_exit, &char_code_safe_place, &vertices,
-        &distance_to_monster_x, &attrs, &char_code_hero, &finished, &LT, &M,
-        &MX, &MY, &NF, &NX, &NY, &OS, &R, &T, &T$, &TF, &TX, &TY, &W, &W$
+        &distance_to_monster_x, &attrs, &char_code_hero, &finished, &torches,
+        &M, &MX, &MY, &NF, &NX, &NY, &OS, &R, &T, &T$, &TF, &TX, &TY, &W, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(
-        screen, character_char_base, &character_name, attrs, &gold, &LT, M, O,
-        &OT, &S1, &S2, &S3, T$, &TR, W
+        screen, character_char_base, &character_name, attrs, &gold, &torches,
+        M, O, &OT, &S1, &S2, &S3, T$, &TR, W
     );
     // 30 GOSUB1770
     lines1770_1950(
@@ -185,8 +185,8 @@ int main(int argc, char *argv[]) {
         if (I$ == 'r') {
             lines1690_1750(
                 screen, char_code_vase, char_code_safe_place,
-                &distance_to_monster_x, &LT, &LX, &LY, &M_, &MS, &MT, &MV, NX,
-                NY, R, T$, W
+                &distance_to_monster_x, &torches, &LX, &LY, &M_, &MS, &MT, &MV,
+                NX, NY, R, T$, W
             );
         }
     // 100 IF I$="S" THEN GOSUB2260
@@ -1132,12 +1132,12 @@ void lines1660_1680(double *attrs, int O[25], double S1, double S2) {
 
 void lines1690_1750(screen_t *screen, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
-                    int *LT, int *LX, int *LY, int *M_, int *MS, int *MT,
+                    int *torches, int *LX, int *LY, int *M_, int *MS, int *MT,
                     int *MV, int NX, int NY, int **R, const char **T$, int W) {
     int X, Y;
     char * M$;
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN
-    if (*LT == 0) {
+    if (*torches == 0) {
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[7]) + 1));
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
@@ -1163,7 +1163,7 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
         }
     }
     // 1740 LET LT=LT-1
-    *LT -= 1;
+    *torches -= 1;
     // 1750 RETURN
 }
 
@@ -1311,9 +1311,9 @@ void lines1960_2000(screen_t *screen, double *attrs) {
 }
 
 void lines2010_2250(screen_t *screen, int character_char_base,
-                    char **character_name, double *attrs, int *gold, int *LT,
-                    int *M, int O[25], int *OT, double *S1, double *S2,
-                    double *S3, const char **T$, int *TR, int W) {
+                    char **character_name, double *attrs, int *gold,
+                    int *torches, int *M, int O[25], int *OT, double *S1,
+                    double *S2, double *S3, const char **T$, int *TR, int W) {
     char I$, * M$;
     int index, subindex, P;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
@@ -1393,7 +1393,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     }
     // 2240 IF O(16)=1 THEN LET LT=20
     if (O[16] == 1) {
-        *LT = 20;
+        *torches = 20;
     }
     // 2250 RETURN
     free(S$);
@@ -1524,10 +1524,10 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_way_in, int *char_code_exit,
                     int *char_code_safe_place, int ***vertices,
                     int *distance_to_monster_x, double **attrs,
-                    char **char_code_hero, int *finished, int *LT, int **M,
-                    int *MX, int *MY, int *NF, int *NX, int *NY, int *OS,
-                    int ***R, int **T, const char ***T$, int *TF, int *TX,
-                    int *TY, int *W, const char ***W$) {
+                    char **char_code_hero, int *finished, int *torches,
+                    int **M, int *MX, int *MY, int *NF, int *NX, int *NY,
+                    int *OS, int ***R, int **T, const char ***T$, int *TF,
+                    int *TX, int *TY, int *W, const char ***W$) {
     int index;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
@@ -1663,7 +1663,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     *NX = 1;
     *NY = 1;
     // RE is never actually used.
-    *LT = 0;
+    *torches = 0;
     // 2730 FOR I = 1 TO 5
     for (index = 1; index <= 5; index += 1) {
     // 2740 LET F$=F$+CHR$(OS+I)

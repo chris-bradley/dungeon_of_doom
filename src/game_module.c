@@ -28,9 +28,9 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
 void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int char_code_safe_place, int *distance_to_monster_x,
                    double *attrs, char *char_code_hero, int *monster_coord_x,
-                   int *monster_coord_y, int *M, int *M_, int *MS, int *MT,
-                   int *MV, int MX, int MY, int NF, int *NX, int *NY,
-                   int O[25], int **R, int RH, double S1, double S2,
+                   int *monster_coord_y, int *spells_remaining, int *M_,
+                   int *MS, int *MT, int *MV, int MX, int MY, int NF, int *NX,
+                   int *NY, int O[25], int **R, int RH, double S1, double S2,
                    const char **T$, int W);
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
@@ -59,8 +59,9 @@ void lines1770_1950(screen_t *screen, char *character_name,
                     int *OY, int **R, double S3, const char **T$, int W);
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
-                    int *torches, int *M, int O[25], int *OT, double *S1,
-                    double *S2, double *S3, const char **T$, int *TR, int W);
+                    int *torches, int *spells_remaining, int O[25], int *OT,
+                    double *S1, double *S2, double *S3, const char **T$,
+                    int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int NX, int NY, int O[25],
@@ -72,9 +73,9 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_safe_place, int ***vertices,
                     int *distance_to_monster_x, double **attrs,
                     char **char_code_hero, int *finished, int *torches,
-                    int **M, int *MX, int *MY, int *NF, int *NX, int *NY,
-                    int *OS, int ***R, int **T, const char ***T$, int *TF,
-                    int *TX, int *TY, int *W, const char ***W$);
+                    int **spells_remaining, int *MX, int *MY, int *NF, int *NX,
+                    int *NY, int *OS, int ***R, int **T, const char ***T$,
+                    int *TF, int *TX, int *TY, int *W, const char ***W$);
 
 int main(int argc, char *argv[]) {
     int character_char_base,
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
         monster_coord_x,
         monster_coord_y,
         M_,
-        * M,
+        * spells_remaining,
         MS,
         MT,
         MV,
@@ -137,12 +138,13 @@ int main(int argc, char *argv[]) {
         &char_code_vase, &char_code_chest, &char_code_idol, &char_code_way_in,
         &char_code_exit, &char_code_safe_place, &vertices,
         &distance_to_monster_x, &attrs, &char_code_hero, &finished, &torches,
-        &M, &MX, &MY, &NF, &NX, &NY, &OS, &R, &T, &T$, &TF, &TX, &TY, &W, &W$
+        &spells_remaining, &MX, &MY, &NF, &NX, &NY, &OS, &R, &T, &T$, &TF, &TX,
+        &TY, &W, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
-        M, O, &OT, &S1, &S2, &S3, T$, &TR, W
+        spells_remaining, O, &OT, &S1, &S2, &S3, T$, &TR, W
     );
     // 30 GOSUB1770
     lines1770_1950(
@@ -167,8 +169,8 @@ int main(int argc, char *argv[]) {
             lines990_1130(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, attrs, char_code_hero,
-                &monster_coord_x, &monster_coord_y, M, &M_, &MS, &MT, &MV, MX,
-                MY, NF, &NX, &NY, O, R, RH, S1, S2, T$, W
+                &monster_coord_x, &monster_coord_y, spells_remaining, &M_, &MS,
+                &MT, &MV, MX, MY, NF, &NX, &NY, O, R, RH, S1, S2, T$, W
             );
         }
     // 70 IF I$="G" THEN GOSUB1410
@@ -343,7 +345,7 @@ int main(int argc, char *argv[]) {
     free(vertices);
     free(attrs);
     free(char_code_hero);
-    free(M);
+    free(spells_remaining);
     for (i = 0; i < 16; i += 1) {
         free(R[i]);
     }
@@ -774,7 +776,7 @@ void lines1190_1210(int char_code_blank, int char_code_safe_place, int NX,
                     int NY, int **R, int RH);
 void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
                     int NF, int *NX, int *NY);
-void lines1280_1290(double *attrs, int *M, int SL);
+void lines1280_1290(double *attrs, int *spells_remaining, int SL);
 void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     int *monster_coord_x, int *monster_coord_y, int *M_,
@@ -785,9 +787,9 @@ void lines1390_1400(double *attrs, double S1, double S2);
 void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int char_code_safe_place, int *distance_to_monster_x,
                    double *attrs, char *char_code_hero, int *monster_coord_x,
-                   int *monster_coord_y, int *M, int *M_, int *MS, int *MT,
-                   int *MV, int MX, int MY, int NF, int *NX, int *NY,
-                   int O[25], int **R, int RH, double S1, double S2,
+                   int *monster_coord_y, int *spells_remaining, int *M_,
+                   int *MS, int *MT, int *MV, int MX, int MY, int NF, int *NX,
+                   int *NY, int O[25], int **R, int RH, double S1, double S2,
                    const char **T$, int W) {
     int row_num, SL, X, Y;
     char I$, * M$;
@@ -835,11 +837,11 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     );
 
     // 1070 LET M(SL)=M(SL)-1:LET X=NX:LET Y=NY
-    M[SL] -= 1;
+    spells_remaining[SL] -= 1;
     X = *NX;
     Y = *NY;
     // 1080 IF M(SL)<0 THEN LET M$=T$(9):LET SL=7
-    if (M[SL] < 0) {
+    if (spells_remaining[SL] < 0) {
         M$ = (char *) malloc(sizeof(char) * (strlen(T$[9]) + 1));
         if (M$ == NULL) {
             fprintf(stderr, "M$ is NULL!\n");
@@ -887,7 +889,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
             lines1220_1270(screen, attrs, char_code_hero, NF, NX, NY);
             break;
         case 4:
-            lines1280_1290(attrs, M, SL);
+            lines1280_1290(attrs, spells_remaining, SL);
             break;
         case 5:
             lines1300_1380(
@@ -970,10 +972,10 @@ void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
     // 1270 RETURN
 }
 
-void lines1280_1290(double *attrs, int *M, int SL) {
+void lines1280_1290(double *attrs, int *spells_remaining, int SL) {
     // 1280 LET F(2)=F(2)+rnd(M(SL)):LET F(1)=F(1)+rnd(M(SL)):LET F(7)=F(7)-1
-    attrs[2] += rand() * M[SL];
-    attrs[1] += rand() * M[SL];
+    attrs[2] += rand() * spells_remaining[SL];
+    attrs[1] += rand() * spells_remaining[SL];
     attrs[7] -= 1;
     // 1290 RETURN
 }
@@ -1330,8 +1332,9 @@ void lines1960_2000(screen_t *screen, double *attrs) {
 
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
-                    int *torches, int *M, int O[25], int *OT, double *S1,
-                    double *S2, double *S3, const char **T$, int *TR, int W) {
+                    int *torches, int *spells_remaining, int O[25], int *OT,
+                    double *S1, double *S2, double *S3, const char **T$,
+                    int *TR, int W) {
     char I$, * M$;
     int index, subindex, P;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
@@ -1405,7 +1408,8 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2210 FOR J=1 TO 3
         for (subindex = 1; subindex <= 3; subindex += 1) {
     // 2220 LET M((I-1)*3+J)=O(16+I)*F(7)
-            M[(index - 1) * 3 + subindex] = O[16 + index] * attrs[7];
+            spells_remaining[(index - 1) * 3 + subindex] =
+                O[16 + index] * attrs[7];
     // 2230 NEXT J:NEXT I
         }
     }
@@ -1543,9 +1547,9 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_safe_place, int ***vertices,
                     int *distance_to_monster_x, double **attrs,
                     char **char_code_hero, int *finished, int *torches,
-                    int **M, int *MX, int *MY, int *NF, int *NX, int *NY,
-                    int *OS, int ***R, int **T, const char ***T$, int *TF,
-                    int *TX, int *TY, int *W, const char ***W$) {
+                    int **spells_remaining, int *MX, int *MY, int *NF, int *NX,
+                    int *NY, int *OS, int ***R, int **T, const char ***T$,
+                    int *TF, int *TX, int *TY, int *W, const char ***W$) {
     int index;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
@@ -1581,9 +1585,9 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
         exit(1);
     }
     // 2550 DIM M(6),D(4,2),T(18)
-    *M = (int *) malloc(sizeof(int) * 7);
-    if (*M == NULL) {
-        fprintf(stderr, "*M is NULL!\n");
+    *spells_remaining = (int *) malloc(sizeof(int) * 7);
+    if (*spells_remaining == NULL) {
+        fprintf(stderr, "*spells_remaining is NULL!\n");
         exit(1);
     }
     *vertices = (int **) malloc(sizeof(int *) * 5);

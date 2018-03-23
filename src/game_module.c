@@ -1177,7 +1177,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
-    int correct_level_loaded, index, IX, IY, X, Y;
+    int correct_level_loaded, index, entrance_coord_x, entrance_coord_y, X, Y;
     char I$, * M$;
     do {
 
@@ -1240,9 +1240,9 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // 1880 NEXT Y
         }
     // 1890 LET IX=ASC(MID$(S$,I,1))-OS
-        IX = (int) S$[index - 1] - OS;
+        entrance_coord_x = (int) S$[index - 1] - OS;
     // 1900 LET IY=ASC(MID$(S$,I+1,1))-OS
-        IY = (int) S$[index] - OS;
+        entrance_coord_y = (int) S$[index] - OS;
     // 1910 LET LE=ASC(MID$(S$,I+2,1))-OS
         *LE = (int) S$[index + 1] - OS;
     // 1920 IF LE>F(5) THEN GOSUB 1960:GOTO 1760
@@ -1256,8 +1256,8 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // 1930 GOSUB2790
     lines2790_2920(screen, character_name, W);
     // 1940 LET NX=IX:LET NY=IY:LET OX=NX:LET OY=NY:LET DX=255
-    *NX = IX;
-    *NY = IY;
+    *NX = entrance_coord_x;
+    *NY = entrance_coord_y;
     *OX = *NX;
     *OY = *NY;
     *distance_to_monster_x = 255;

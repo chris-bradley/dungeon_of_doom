@@ -1070,7 +1070,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *MS, int *NF, int NX, int NY,
                     int *T, int TR) {
-    int I, J, N;
+    int index, J, N;
     // 1550 paper 2:ink 1
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, RED);
@@ -1078,9 +1078,9 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     tab(screen->cursor, 0, 1);
     free(print_text(screen, " THY QUEST IS OVER! "));
     // 1570 FOR I = 1 TO 18
-    for (I = 1; I <= 18; I += 1) {
+    for (index = 1; index <= 18; index += 1) {
     // 1580 LET J=T(I):GOSUB350
-        J = T[I];
+        J = T[index];
         lines350_355(J);
 
     // 1590 LET X=NX:LET Y=NY
@@ -1177,7 +1177,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
-    int correct_level_loaded, I, IX, IY, X, Y;
+    int correct_level_loaded, index, IX, IY, X, Y;
     char I$, * M$;
     do {
 
@@ -1226,25 +1226,25 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // 1810 CLOSE#S
         fclose(S);
     // 1820 LET I=1
-        I = 1;
+        index = 1;
     // 1830 FOR Y=1 TO 15
         for (Y = 1; Y <= 15; Y += 1) {
     // 1840 FOR X=1 TO 15
             for (X = 1; X <= 15; X += 1) {
     // 1850 LET R(X,Y)=ASC(MID$(S$,I,1))
-                R[X][Y] = (int) S$[I - 1];
+                R[X][Y] = (int) S$[index - 1];
     // 1860 LET I=I+1
-                I += 1;
+                index += 1;
     // 1870 NEXT X
             }
     // 1880 NEXT Y
         }
     // 1890 LET IX=ASC(MID$(S$,I,1))-OS
-        IX = (int) S$[I - 1] - OS;
+        IX = (int) S$[index - 1] - OS;
     // 1900 LET IY=ASC(MID$(S$,I+1,1))-OS
-        IY = (int) S$[I] - OS;
+        IY = (int) S$[index] - OS;
     // 1910 LET LE=ASC(MID$(S$,I+2,1))-OS
-        *LE = (int) S$[I + 1] - OS;
+        *LE = (int) S$[index + 1] - OS;
     // 1920 IF LE>F(5) THEN GOSUB 1960:GOTO 1760
         if (*LE > attrs[5]) {
             lines1960_2000(screen, attrs);
@@ -1312,7 +1312,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *M, int O[25], int *OT, double *S1, double *S2,
                     double *S3, const char **T$, int *TR, int W) {
     char I$, * M$;
-    int I, J, P;
+    int index, J, P;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -1349,17 +1349,17 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2070 LET OT=ASC(MID$(S$,1,1))-AS
     *OT = (int) S$[0] - character_char_base;
     // 2080 FOR I= 1 TO 8
-    for (I = 1; I <= 8; I += 1) {
+    for (index = 1; index <= 8; index += 1) {
     // 2090 LET F(I)=ASC(MID$(S$,P,1)) - AS
-        attrs[I] = (int) S$[P - 1] - character_char_base;
+        attrs[index] = (int) S$[P - 1] - character_char_base;
     // 2100 LET P=P+1
         P += 1;
     // 2110 NEXT I
     }
     // 2120 FOR I=1 TO OT
-    for (I = 1; I <= *OT; I += 1) {
+    for (index = 1; index <= *OT; index += 1) {
     // 2130 LET O(I)=ASC(MID$(S$,P,1))-AS
-        O[I] = (int) S$[P - 1] - character_char_base;
+        O[index] = (int) S$[P - 1] - character_char_base;
     // 2140 LET P=P+1
         P += 1;
     // 2150 NEXT I
@@ -1380,11 +1380,11 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     *S2 = attrs[2];
     *S3 = attrs[5];
     // 2200 FOR I=1 TO 2
-    for (I = 1; I <= 2; I += 1) {
+    for (index = 1; index <= 2; index += 1) {
     // 2210 FOR J=1 TO 3
         for (J = 1; J <= 3; J += 1) {
     // 2220 LET M((I-1)*3+J)=O(16+I)*F(7)
-            M[(I - 1) * 3 + J] = O[16 + I] * attrs[7];
+            M[(index - 1) * 3 + J] = O[16 + index] * attrs[7];
     // 2230 NEXT J:NEXT I
         }
     }
@@ -1400,7 +1400,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int LE, int NX, int NY, int O[25], int OS,
                     int OT, int **R, int TR, int W) {
-    int I, X, Y;
+    int index, X, Y;
     char I$, * M$;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
     M$ = (char *) malloc(sizeof(char) * 18);
@@ -1450,16 +1450,16 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     S$[s_index] = (char) (character_char_base + OT);
     s_index += 1;
     // 2360 FOR I=1 TO 8
-    for (I = 1; I <= 8; I += 1) {
+    for (index = 1; index <= 8; index += 1) {
     // 2370 LET S$=S$+CHR$(F(I)+AS)
-        S$[s_index] = (char) (attrs[I] + character_char_base);
+        S$[s_index] = (char) (attrs[index] + character_char_base);
         s_index += 1;
     // 2380 NEXT I
     }
     // 2390 FOR I=1 TO OT
-    for (I = 1; I <= OT; I += 1) {
+    for (index = 1; index <= OT; index += 1) {
     // 2400 LET S$=S$+CHR$(O(I)+AS)
-        S$[s_index] = (char) (O[I] + character_char_base);
+        S$[s_index] = (char) (O[index] + character_char_base);
         s_index += 1;
     // 2410 NEXT I
     }
@@ -1525,7 +1525,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *MX, int *MY, int *NF, int *NX, int *NY, int *OS,
                     int ***R, int **T, const char ***T$, int *TF, int *TX,
                     int *TY, int *W, const char ***W$) {
-    int I;
+    int index;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
     // dungeon_lib removes the need for B$
@@ -1662,9 +1662,9 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     // RE is never actually used.
     *LT = 0;
     // 2730 FOR I = 1 TO 5
-    for (I = 1; I <= 5; I += 1) {
+    for (index = 1; index <= 5; index += 1) {
     // 2740 LET F$=F$+CHR$(OS+I)
-        (*char_code_hero)[I] = *OS + I;
+        (*char_code_hero)[index] = *OS + index;
     // 2750 NEXT I
     }
     (*char_code_hero)[6] = 0;
@@ -1697,7 +1697,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
 }
 
 void lines2790_2920(screen_t *screen, char *character_name, int W) {
-    int I;
+    int index;
     // 2790 paper 1:CLS
     paper(screen->cursor, RED);
     clear_screen(screen);
@@ -1712,7 +1712,7 @@ void lines2790_2920(screen_t *screen, char *character_name, int W) {
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, WHITE);
     // 2830 FOR I=1 TO 5:PRINT LEFT$(B$,W);:NEXT I
-    for (I = 1; I <= 5; I += 1) {
+    for (index = 1; index <= 5; index += 1) {
         print_left$_b$(screen, W);
         newline(screen->cursor);
     }
@@ -1720,8 +1720,8 @@ void lines2790_2920(screen_t *screen, char *character_name, int W) {
     paper(screen->cursor, BLACK);
     ink(screen->cursor, RED);
     // 2850 FOR I=1 TO 15:PRINT tab(1,5+I);LEFT$(B$,15);:NEXT I
-    for (I = 1; I <= 15; I += 1) {
-        tab(screen->cursor, 1, 5 + I);
+    for (index = 1; index <= 15; index += 1) {
+        tab(screen->cursor, 1, 5 + index);
         print_left$_b$(screen, 15);
     }
     // 2860 paper 1:ink 3

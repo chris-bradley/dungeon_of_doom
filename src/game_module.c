@@ -775,7 +775,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int *M, int *M_, int *MS, int *MT, int *MV, int MX, int MY,
                    int NF, int *NX, int *NY, int O[25], int **R, int RH,
                    double S1, double S2, const char **T$, int W) {
-    int J, SL, X, Y;
+    int row_num, SL, X, Y;
     char I$, * M$;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(screen, attrs, char_code_hero, NF, *NX, *NY);
@@ -846,8 +846,8 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
         strcpy(M$, "");
     }
     // 1090 FOR J=1 TO 5:PRINT tab(0,J);LEFT$(B$, W);:NEXT J:GOSUB570
-    for (J = 1; J <= 5; J += 1) {
-        tab(screen->cursor, 0, J);
+    for (row_num = 1; row_num <= 5; row_num += 1) {
+        tab(screen->cursor, 0, row_num);
         print_left$_b$(screen, W);
         newline(screen->cursor);
     }

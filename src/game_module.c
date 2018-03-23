@@ -494,7 +494,7 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
+void lines780_800(screen_t *screen, int item_num, int J, int *MB, int O[25],
                   const char **T$, int W, const char **W$);
 
 void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
@@ -502,7 +502,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   double *attrs, int *LX, int *LY, int *M_, int *MS, int *MT,
                   int *MV, int *MX, int *MY, int NX, int NY, int O[25],
                   int **R, int RH, const char **T$, int W, const char **W$) {
-    int distance_to_monster_y, damage, I, J, MB, RM, SX, SY, X, Y;
+    int distance_to_monster_y, damage, item_num, J, MB, RM, SX, SY, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *distance_to_monster_x = *LX - NX;
@@ -575,7 +575,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     attrs[1] -= damage;
     attrs[2] -= damage / 101;
     // 730 LET I=1:LET WB=0:LET MB=rnd(M)
-    I = 1;
+    item_num = 1;
     // WB is ony set here and not used anywhere.
     MB = rand() % *M_;
     // 740 LET J=MT:GOSUB350:GOSUB360
@@ -585,35 +585,37 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 750 IF MB=1 AND O(I)>0 THEN GOSUB780
     int done = 0;
     do {
-        if (MB == 1 && O[I] > 0) {
-            lines780_800(screen, I, J, &MB, O, T$, W, W$);
+        if (MB == 1 && O[item_num] > 0) {
+            lines780_800(screen, item_num, J, &MB, O, T$, W, W$);
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
-        if (I < 11) {
-            I += 1;
+        if (item_num < 11) {
+            item_num += 1;
             done = 1;
         }
     } while (!done);
     // 770 RETURN
 }
 
-void lines780_800(screen_t *screen, int I, int J, int *MB, int O[25],
+void lines780_800(screen_t *screen, int item_num, int J, int *MB, int O[25],
                   const char **T$, int W, const char **W$) {
     char * M$;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
-    O[I] = 0;
-    M$ = (char *) malloc(sizeof(char) * (strlen(T$[8]) + strlen(W$[I]) + 2));
+    O[item_num] = 0;
+    M$ = (char *) malloc(
+        sizeof(char) * (strlen(T$[8]) + strlen(W$[item_num]) + 2)
+    );
     if (M$ == NULL) {
         fprintf(stderr, "M$ is NULL!\n");
         exit(1);
     }
-    sprintf(M$, "%s %s", T$[8], W$[I]);
+    sprintf(M$, "%s %s", T$[8], W$[item_num]);
     lines430_430(screen, M$, W);
     free(M$);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
     *MB = 0;
     lines360_365(J);
-    J = I;
+    J = item_num;
     lines350_355(J);
     // 800 RETURN
 }

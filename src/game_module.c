@@ -347,7 +347,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines350_355(int J) {
+void lines350_355(int sound_frequency) {
     // C64:
     // 350 POKE VS+1,J:POKE VS+4,33
     // 355 POKE VS+4,32:RETURN
@@ -355,7 +355,7 @@ void lines350_355(int J) {
     // TODO: SOUND!
 }
 
-void lines360_365(int J) {
+void lines360_365(int sound_frequency) {
     // C64:
     // 360 POKE VS+8,J:POKE VS+11,129
     // 365 POKE VS+11,128:RETURN
@@ -494,15 +494,16 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800(screen_t *screen, int item_num, int J, int *MB, int O[25],
-                  const char **T$, int W, const char **W$);
+void lines780_800(screen_t *screen, int item_num, int sound_frequency, int *MB,
+                  int O[25], const char **T$, int W, const char **W$);
 
 void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, int *LX, int *LY, int *M_, int *MS, int *MT,
                   int *MV, int *MX, int *MY, int NX, int NY, int O[25],
                   int **R, int RH, const char **T$, int W, const char **W$) {
-    int distance_to_monster_y, damage, item_num, J, MB, RM, SX, SY, X, Y;
+    int distance_to_monster_y, damage, item_num, sound_frequency, MB, RM, SX,
+        SY, X, Y;
     char * M$;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *distance_to_monster_x = *LX - NX;
@@ -545,15 +546,15 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
             RH != char_code_safe_place
     ) {
         damage = *M_ * 0.5;
-        J = damage;
-        lines350_355(J);
+        sound_frequency = damage;
+        lines350_355(sound_frequency);
     } else {
         // This line was not in the original. We set J here on the unlikely
         // chance that the next condition is True while the previous condition
         // was False. This is unlikely because H would be zero, so the sum of
         // F[6] and F[3] would have to be zero or less. In case that does
         // happen, we make sure that J is defined.
-        J = 0;
+        sound_frequency = 0;
     }
     // 690 IF H*12<F(6)+F(3) THEN RETURN
     if (damage * 12 < attrs[6] + attrs[3]) {
@@ -568,7 +569,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     strcpy(M$, T$[5]);
     lines430_430(screen, M$, W);
     free(M$);
-    lines360_365(J);
+    lines360_365(sound_frequency);
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
     damage /= (3 + O[9] + O[10] + O[11] + O[12] + O[13] + O[14]);
     // 720 LET F(1)=F(1)-H:LET F(2)=F(2)-(H/101)
@@ -579,14 +580,14 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // WB is ony set here and not used anywhere.
     MB = rand() % *M_;
     // 740 LET J=MT:GOSUB350:GOSUB360
-    J = *MT;
-    lines350_355(J);
-    lines360_365(J);
+    sound_frequency = *MT;
+    lines350_355(sound_frequency);
+    lines360_365(sound_frequency);
     // 750 IF MB=1 AND O(I)>0 THEN GOSUB780
     int done = 0;
     do {
         if (MB == 1 && O[item_num] > 0) {
-            lines780_800(screen, item_num, J, &MB, O, T$, W, W$);
+            lines780_800(screen, item_num, sound_frequency, &MB, O, T$, W, W$);
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
         if (item_num < 11) {
@@ -597,8 +598,8 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 770 RETURN
 }
 
-void lines780_800(screen_t *screen, int item_num, int J, int *MB, int O[25],
-                  const char **T$, int W, const char **W$) {
+void lines780_800(screen_t *screen, int item_num, int sound_frequency, int *MB,
+                  int O[25], const char **T$, int W, const char **W$) {
     char * M$;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     O[item_num] = 0;
@@ -614,9 +615,9 @@ void lines780_800(screen_t *screen, int item_num, int J, int *MB, int O[25],
     free(M$);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
     *MB = 0;
-    lines360_365(J);
-    J = item_num;
-    lines350_355(J);
+    lines360_365(sound_frequency);
+    sound_frequency = item_num;
+    lines350_355(sound_frequency);
     // 800 RETURN
 }
 
@@ -626,7 +627,7 @@ void lines810_860(screen_t *screen, int char_code_vase,
                   int *M_, int *MS, int *MT, int *MV, int *NF, int NX, int NY,
                   int **R, int W, int X, int Y) {
     char * M$;
-    int J;
+    int sound_frequency;
     // 810 LET NF=5;LET F(1)=0:GOSUB 440
     *NF = 5;
     attrs[1] = 0;
@@ -646,10 +647,10 @@ void lines810_860(screen_t *screen, int char_code_vase,
     tab(screen->cursor, 1, 5);
     free(print_text(screen, "THOU HAST EXPIRED!"));
     // 830 FOR J=150 TO 1 STEP-4
-    for (J = 150; J >= 1; J -= 4) {
+    for (sound_frequency = 150; sound_frequency >= 1; sound_frequency -= 4) {
     // 840 GOSUB350:GOSUB360:GOSUB570:GOSUB480
-        lines350_355(J);
-        lines360_365(J);
+        lines350_355(sound_frequency);
+        lines360_365(sound_frequency);
         lines570_610(
             screen, char_code_vase, char_code_safe_place,
             distance_to_monster_x, LX, LY, M_, MS, MT, MV, R, X, Y
@@ -681,8 +682,9 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
     }
     strcpy(M$, T$[t$_ind]);
     /*
-    The original code did not define J before calling the subroutine at line
-    360 here. Since the value of J is not easily predicted, we just use 100.
+    The original code did not define sound_frequency before calling the
+    subroutine at line 360 here. Since the value of sound_frequency is not
+    easily predicted, we just use 100.
     */
     lines360_365(100);
     free(M$);
@@ -726,7 +728,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *MV, int MX, int MY, int **R, const char **T$, int W,
                   int X, int Y) {
     char * M$;
-    int J;
+    int sound_frequency;
     // 940 LET DX=255:LET MS=0:LET R(MX,MY)=C0
     *distance_to_monster_x = 255;
     *MS = 0;
@@ -743,9 +745,9 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
     lines430_430(screen, M$, W);
     free(M$);
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
-    for (J = 200; J >= 150; J -= 8) {
-        lines350_355(J);
-        lines360_365(J);
+    for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
+        lines350_355(sound_frequency);
+        lines360_365(sound_frequency);
     }
     // 980 GOSUB570:RETURN
     lines570_610(
@@ -901,12 +903,12 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     double *attrs, int *LX, int *LY, int *M_, int *MS, int *MT,
                     int *MV, int MX, int MY, int **R, const char **T$, int W) {
-    int J, X, Y;
+    int sound_frequency, X, Y;
     // 1140 FOR J=1 TO 12
-    for (J = 1; J <= 12; J += 1) {
+    for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
     // 1150 GOSUB350:GOSUB360
-        lines350_355(J);
-        lines360_365(J);
+        lines350_355(sound_frequency);
+        lines360_365(sound_frequency);
     // 1160 NEXT J
     }
     // 1170 IF DX<255 THEN LET X=MX:LET Y=MY:GOSUB940
@@ -924,30 +926,30 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
 
 void lines1190_1210(int char_code_blank, int char_code_safe_place, int NX,
                     int NY, int **R, int RH) {
-    int J;
+    int sound_frequency;
     // 1190 IF RH=C0 THEN LET R(NX,NY)=C7
     if (RH == char_code_blank) {
         R[NX][NY] = char_code_safe_place;
     }
     // 1200 LET J=100:GOSUB350:LET J=200:GOSUB350
-    J = 100;
-    lines350_355(J);
-    J = 200;
-    lines350_355(J);
+    sound_frequency = 100;
+    lines350_355(sound_frequency);
+    sound_frequency = 200;
+    lines350_355(sound_frequency);
     // 1210 RETURN
 }
 
 void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
                     int NF, int *NX, int *NY) {
-    int J;
+    int sound_frequency;
     // 1220 LET NX=rnd(13):LET NY=rnd(13)
     *NX = rand() % 13;
     *NY = rand() % 13;
     // 1230 FOR J=0 TO 255 STEP8
-    for (J = 0; J <= 255; J += 8) {
+    for (sound_frequency = 0; sound_frequency <= 255; sound_frequency += 8) {
     // 1240 GOSUB360:GOSUB350
-        lines360_365(J);
-        lines350_355(J);
+        lines360_365(sound_frequency);
+        lines350_355(sound_frequency);
     // 1250 NEXT J
     }
     // 1260 GOSUB480
@@ -967,13 +969,13 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     int *LX, int *LY, int *M_, int *MS, int *MT, int *MV,
                     int NX, int NY, int **R, int RH, int X, int Y) {
-    int J;
+    int sound_frequency;
     // 1300 FOR J=1 TO 30
-    for (J = 1; J <= 30; J += 1) {
+    for (sound_frequency = 1; sound_frequency <= 30; sound_frequency += 1) {
     // 1310 LET R(NX,NY)=rnd(8)+1+C0
         R[NX][NY] = rand() % 8 + 1 + char_code_blank;
     // 1320 GOSUB350:GOSUB570
-        lines350_355(J);
+        lines350_355(sound_frequency);
         lines570_610(
             screen, char_code_vase, char_code_safe_place,
             distance_to_monster_x, LX, LY, M_, MS, MT, MV, R, X, Y
@@ -986,9 +988,9 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
         *MS = 0;
     }
     // 1350 FOR J = 1 TO 2O STEP4
-    for (J = 1; J <= 20; J += 4) {
+    for (sound_frequency = 1; sound_frequency <= 20; sound_frequency += 4) {
     // 1360 GOSUB 350
-        lines350_355(J);
+        lines350_355(sound_frequency);
     // 1370 NEXT J
     }
     // 1380 RETURN
@@ -1009,7 +1011,8 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     char *char_code_hero, int *finished, int gold, int *LX,
                     int *LY, int *M_, int *MS, int *MT, int *MV, int *NF,
                     int NX, int NY, int O[25], int **R, int *T, int *TR) {
-    int J, item_to_get, item_to_get_coord_x, item_to_get_coord_y, X, Y;
+    int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y,
+        X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
     item_to_get_coord_x = NX + vertices[*NF][1];
     item_to_get_coord_y = NY + vertices[*NF][2];
@@ -1059,10 +1062,10 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
     );
     // 1510 IF GT>C1 AND GT<C4 THEN LET J=GT:GOSUB350:LET J=GT+5:GOSUB350
     if (item_to_get > char_code_wall && item_to_get < char_code_idol) {
-        J = item_to_get;
-        lines350_355(J);
-        J = item_to_get + 5;
-        lines350_355(J);
+        sound_frequency = item_to_get;
+        lines350_355(sound_frequency);
+        sound_frequency = item_to_get + 5;
+        lines350_355(sound_frequency);
     }
     // 1520 RETURN
 }
@@ -1070,7 +1073,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *MS, int *NF, int NX, int NY,
                     int *T, int TR) {
-    int index, J, N;
+    int index, sound_frequency, N;
     // 1550 paper 2:ink 1
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, RED);
@@ -1080,8 +1083,8 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     // 1570 FOR I = 1 TO 18
     for (index = 1; index <= 18; index += 1) {
     // 1580 LET J=T(I):GOSUB350
-        J = T[index];
-        lines350_355(J);
+        sound_frequency = T[index];
+        lines350_355(sound_frequency);
 
     // 1590 LET X=NX:LET Y=NY
         // X and Y are overwritten before the above values are used.

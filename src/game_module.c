@@ -510,8 +510,9 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800(screen_t *screen, int item_num, int sound_frequency, int *MB,
-                  int O[25], const char **T$, int W, const char **W$);
+void lines780_800(screen_t *screen, int item_num, int sound_frequency,
+                  int *monster_broke_item, int O[25], const char **T$, int W,
+                  const char **W$);
 
 void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
@@ -519,8 +520,8 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *MS, int *MT, int *MV, int *MX,
                   int *MY, int NX, int NY, int O[25], int **R, int RH,
                   const char **T$, int W, const char **W$) {
-    int distance_to_monster_y, damage, item_num, sound_frequency, MB, RM, SX,
-        SY, X, Y;
+    int distance_to_monster_y, damage, item_num, sound_frequency,
+        monster_broke_item, RM, SX, SY, X, Y;
     char * message;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *distance_to_monster_x = *monster_coord_x - NX;
@@ -595,7 +596,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 730 LET I=1:LET WB=0:LET MB=rnd(M)
     item_num = 1;
     // WB is ony set here and not used anywhere.
-    MB = rand() % *monster_type;
+    monster_broke_item = rand() % *monster_type;
     // 740 LET J=MT:GOSUB350:GOSUB360
     sound_frequency = *MT;
     lines350_355(sound_frequency);
@@ -603,8 +604,11 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 750 IF MB=1 AND O(I)>0 THEN GOSUB780
     int done = 0;
     do {
-        if (MB == 1 && O[item_num] > 0) {
-            lines780_800(screen, item_num, sound_frequency, &MB, O, T$, W, W$);
+        if (monster_broke_item == 1 && O[item_num] > 0) {
+            lines780_800(
+                screen, item_num, sound_frequency, &monster_broke_item, O, T$,
+                W, W$
+            );
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
         if (item_num < 11) {
@@ -615,8 +619,9 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 770 RETURN
 }
 
-void lines780_800(screen_t *screen, int item_num, int sound_frequency, int *MB,
-                  int O[25], const char **T$, int W, const char **W$) {
+void lines780_800(screen_t *screen, int item_num, int sound_frequency,
+                  int *monster_broke_item, int O[25], const char **T$, int W,
+                  const char **W$) {
     char * message;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     O[item_num] = 0;
@@ -631,7 +636,7 @@ void lines780_800(screen_t *screen, int item_num, int sound_frequency, int *MB,
     lines430_430(screen, message, W);
     free(message);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
-    *MB = 0;
+    *monster_broke_item = 0;
     lines360_365(sound_frequency);
     sound_frequency = item_num;
     lines350_355(sound_frequency);

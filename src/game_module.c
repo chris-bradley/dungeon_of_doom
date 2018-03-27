@@ -18,8 +18,9 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int *monster_next_coord_x, int *monster_next_coord_y,
-                  int character_coord_x, int character_coord_y, int O[25],
-                  int **R, int RH, const char **T$, int W, const char **W$);
+                  int character_coord_x, int character_coord_y,
+                  int inventory[25], int **R, int RH, const char **T$, int W,
+                  const char **W$);
 void lines810_860(screen_t *screen, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, char *char_code_hero, int *monster_coord_x,
@@ -34,7 +35,8 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int monster_next_coord_x, int monster_next_coord_y,
-                  int O[25], int **R, const char **T$, int W, int X, int Y);
+                  int inventory[25], int **R, const char **T$, int W, int X,
+                  int Y);
 void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int char_code_safe_place, int *distance_to_monster_x,
                    double *attrs, char *char_code_hero, int *monster_coord_x,
@@ -43,7 +45,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int *monster_char_code, int *monster_speed,
                    int monster_next_coord_x, int monster_next_coord_y,
                    int character_facing, int *character_coord_x,
-                   int *character_coord_y, int O[25], int **R, int RH,
+                   int *character_coord_y, int inventory[25], int **R, int RH,
                    double S1, double S2, const char **T$, int W);
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
@@ -54,13 +56,13 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int *monster_type, int *monster_strength,
                     int *monster_char_code, int *monster_speed,
                     int *character_facing, int character_coord_x,
-                    int character_coord_y, int O[25], int **R, int *T,
+                    int character_coord_y, int inventory[25], int **R, int *T,
                     int *TR);
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *monster_strength,
                     int *character_facing, int character_coord_x,
                     int character_coord_y, int *T, int TR);
-void lines1660_1680(double *attrs, int O[25], double S1, double S2);
+void lines1660_1680(double *attrs, int inventory[25], double S1, double S2);
 void lines1690_1750(screen_t *screen, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     int *torches, int *monster_coord_x, int *monster_coord_y,
@@ -80,14 +82,14 @@ void lines1770_1950(screen_t *screen, char *character_name,
                     double S3, const char **T$, int W);
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
-                    int *torches, int *spells_remaining, int O[25], int *OT,
-                    double *S1, double *S2, double *S3, const char **T$,
-                    int *TR, int W);
+                    int *torches, int *spells_remaining, int inventory[25],
+                    int *OT, double *S1, double *S2, double *S3,
+                    const char **T$, int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
-                    int character_coord_y, int O[25], int OS, int OT, int **R,
-                    int TR, int W);
+                    int character_coord_y, int inventory[25], int OS, int OT,
+                    int **R, int TR, int W);
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
@@ -129,7 +131,7 @@ int main(int argc, char *argv[]) {
         character_facing,  // Facing. NESW
         character_coord_x,
         character_coord_y,
-        O[25],
+        inventory[25],
         OS,
         OT,
         OX,
@@ -169,7 +171,7 @@ int main(int argc, char *argv[]) {
     // 20 GOSUB2010
     lines2010_2250(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
-        spells_remaining, O, &OT, &S1, &S2, &S3, T$, &TR, W
+        spells_remaining, inventory, &OT, &S1, &S2, &S3, T$, &TR, W
     );
     // 30 GOSUB1770
     lines1770_1950(
@@ -188,19 +190,19 @@ int main(int argc, char *argv[]) {
                 &distance_to_monster_x, attrs, &monster_coord_x,
                 &monster_coord_y, &monster_type, &monster_strength,
                 &monster_char_code, &monster_speed, monster_next_coord_x,
-                monster_next_coord_y, O, R, T$, W, X, Y
+                monster_next_coord_y, inventory, R, T$, W, X, Y
             );
         }
     // 60 IF I$="C" AND F(7)>0 AND O(17)+O(18)>0 THEN GOSUB990
-        if (I$ == 'c' && attrs[7] > 0 && O[17] + O[18] > 0) {
+        if (I$ == 'c' && attrs[7] > 0 && inventory[17] + inventory[18] > 0) {
             lines990_1130(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, attrs, char_code_hero,
                 &monster_coord_x, &monster_coord_y, spells_remaining,
                 &monster_type, &monster_strength, &monster_char_code,
                 &monster_speed, monster_next_coord_x, monster_next_coord_y,
-                character_facing, &character_coord_x, &character_coord_y, O, R,
-                RH, S1, S2, T$, W
+                character_facing, &character_coord_x, &character_coord_y,
+                inventory, R, RH, S1, S2, T$, W
             );
         }
     // 70 IF I$="G" THEN GOSUB1410
@@ -212,12 +214,12 @@ int main(int argc, char *argv[]) {
                 &finished, gold, &monster_coord_x, &monster_coord_y,
                 &monster_type, &monster_strength, &monster_char_code,
                 &monster_speed, &character_facing, character_coord_x,
-                character_coord_y, O, R, T, &TR
+                character_coord_y, inventory, R, T, &TR
             );
         }
     // 80 IF I$="P" THEN GOSUB1660
         if (I$ == 'p') {
-            lines1660_1680(attrs, O, S1, S2);
+            lines1660_1680(attrs, inventory, S1, S2);
         }
     // 90 IF I$="R" THEN GOSUB1690
         if (I$ == 'r') {
@@ -233,8 +235,8 @@ int main(int argc, char *argv[]) {
         if (I$ == 's') {
             lines2260_2490(
                 screen, character_char_base, character_name, attrs, &finished,
-                gold, dungeon_level, character_coord_x, character_coord_y, O,
-                OS, OT, R, TR, W
+                gold, dungeon_level, character_coord_x, character_coord_y,
+                inventory, OS, OT, R, TR, W
             );
         }
     // 110 IF I$="B" THEN LET NF=NF-1
@@ -339,8 +341,8 @@ int main(int argc, char *argv[]) {
                 &distance_to_monster_x, attrs, &monster_coord_x,
                 &monster_coord_y, &monster_type, &monster_strength,
                 &monster_char_code, &monster_speed, &monster_next_coord_x,
-                &monster_next_coord_y, character_coord_x, character_coord_y, O,
-                R, RH, T$, W, W$
+                &monster_next_coord_y, character_coord_x, character_coord_y,
+                inventory, R, RH, T$, W, W$
             );
         }
     // 310 IF F(1)>0 AND FI<1 AND RH<>C5 THEN GOTO 40
@@ -552,8 +554,8 @@ int sign(int x) {
 }
 
 void lines780_800(screen_t *screen, int item_num, int sound_frequency,
-                  int *monster_broke_item, int O[25], const char **T$, int W,
-                  const char **W$);
+                  int *monster_broke_item, int inventory[25], const char **T$,
+                  int W, const char **W$);
 
 void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
@@ -561,8 +563,9 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int *monster_next_coord_x, int *monster_next_coord_y,
-                  int character_coord_x, int character_coord_y, int O[25],
-                  int **R, int RH, const char **T$, int W, const char **W$) {
+                  int character_coord_x, int character_coord_y,
+                  int inventory[25], int **R, int RH, const char **T$, int W,
+                  const char **W$) {
     int distance_to_monster_y, damage, item_num, sound_frequency,
         monster_broke_item, RM, SX, SY, X, Y;
     char * message;
@@ -634,7 +637,10 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     free(message);
     lines360_365(sound_frequency);
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
-    damage /= (3 + O[9] + O[10] + O[11] + O[12] + O[13] + O[14]);
+    damage /= (
+        3 + inventory[9] + inventory[10] + inventory[11] + inventory[12] +
+        inventory[13] + inventory[14]
+    );
     // 720 LET F(1)=F(1)-H:LET F(2)=F(2)-(H/101)
     attrs[1] -= damage;
     attrs[2] -= damage / 101;
@@ -649,10 +655,10 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 750 IF MB=1 AND O(I)>0 THEN GOSUB780
     int done = 0;
     do {
-        if (monster_broke_item == 1 && O[item_num] > 0) {
+        if (monster_broke_item == 1 && inventory[item_num] > 0) {
             lines780_800(
-                screen, item_num, sound_frequency, &monster_broke_item, O, T$,
-                W, W$
+                screen, item_num, sound_frequency, &monster_broke_item,
+                inventory, T$, W, W$
             );
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
@@ -665,11 +671,11 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
 }
 
 void lines780_800(screen_t *screen, int item_num, int sound_frequency,
-                  int *monster_broke_item, int O[25], const char **T$, int W,
-                  const char **W$) {
+                  int *monster_broke_item, int inventory[25], const char **T$,
+                  int W, const char **W$) {
     char * message;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
-    O[item_num] = 0;
+    inventory[item_num] = 0;
     message = (char *) malloc(
         sizeof(char) * (strlen(T$[8]) + strlen(W$[item_num]) + 2)
     );
@@ -750,7 +756,8 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int monster_next_coord_x, int monster_next_coord_y,
-                  int O[25], int **R, const char **T$, int W, int X, int Y) {
+                  int inventory[25], int **R, const char **T$, int W, int X,
+                  int Y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
     int damage, t$_ind = rand() % 3 + 1;
     char * message;
@@ -769,7 +776,8 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
     free(message);
     // 880 LET H=F(1)+O(1) + O(2) + O(3) + O(4) + O(5) + O(6) + O(7) + O(8) + rnd(F(6))
     damage =
-        attrs[1] + O[1] + O[2] + O[3] + O[4] + O[5] + O[6] + O[7] + O[8] + \
+        attrs[1] + inventory[1] + inventory[2] + inventory[3] + inventory[4] +
+        inventory[5] + inventory[6] + inventory[7] + inventory[8] +
         (rand() * attrs[6] / RAND_MAX);
     // 890 IF F(3)+F(6)< rnd(M)+2 THEN LET M$=T$(4):LET HT=0
     if (attrs[3] + attrs[6] < rand() % *monster_type + 2) {
@@ -870,7 +878,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int *monster_char_code, int *monster_speed,
                    int monster_next_coord_x, int monster_next_coord_y,
                    int character_facing, int *character_coord_x,
-                   int *character_coord_y, int O[25], int **R, int RH,
+                   int *character_coord_y, int inventory[25], int **R, int RH,
                    double S1, double S2, const char **T$, int W) {
     int row_num, SL, X, Y;
     char I$, * message;
@@ -885,12 +893,12 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     tab(screen->cursor, 0, 1);
     free(print_text(screen, "YOU MAY USE MAGICKS"));
     // 1010 IF O(17)>0 THEN PRINT tab(0,2);"FROM NECRONOMICON";
-    if (O[17] > 0) {
+    if (inventory[17] > 0) {
         tab(screen->cursor, 0, 2);
         free(print_text(screen, "FROM NECRONOMICON"));
     }
     // 1020 IF O(18)>0 THEN PRINT tab(0,3);"FROM THE SCROLLS";
-    if (O[18] > 0) {
+    if (inventory[18] > 0) {
         tab(screen->cursor, 0, 3);
         free(print_text(screen, "FROM THE SCROLLS"));
     }
@@ -915,8 +923,8 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1060 IF SL=0 OR (O(17)=0 AND SL<5) OR (O(18)=0 AND SL>3) OR SL>6 THEN GOTO 1040
     } while (
             SL == 0 ||
-            (O[17] == 0 && SL < 5) ||
-            (O[19] == 0 && SL > 3) ||
+            (inventory[17] == 0 && SL < 5) ||
+            (inventory[19] == 0 && SL > 3) ||
             SL > 6
     );
 
@@ -1135,7 +1143,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int *monster_type, int *monster_strength,
                     int *monster_char_code, int *monster_speed,
                     int *character_facing, int character_coord_x,
-                    int character_coord_y, int O[25], int **R, int *T,
+                    int character_coord_y, int inventory[25], int **R, int *T,
                     int *TR) {
     int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y,
         X, Y;
@@ -1165,8 +1173,8 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
     }
     // 1470 IF GT=C2 THEN LET O(23)=O(23)+1:LET O(24)=O(24)+1
     if (item_to_get == char_code_vase) {
-        O[23] += 1;
-        O[24] += 1;
+        inventory[23] += 1;
+        inventory[24] += 1;
     }
     // 1480 IF GT=C3 THEN LET TR=TR+1
     if (item_to_get == char_code_chest) {
@@ -1247,16 +1255,16 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     // 1650 RETURN
 }
 
-void lines1660_1680(double *attrs, int O[25], double S1, double S2) {
+void lines1660_1680(double *attrs, int inventory[25], double S1, double S2) {
     // 1660 IF O(24)>0 AND F(1)<S1 THEN LET F(1)=S1:LET O(24)=O(24)-1
-    if (O[24] > 0 && attrs[1] < S1) {
+    if (inventory[24] > 0 && attrs[1] < S1) {
         attrs[1] = S1;
-        O[24] -= 1;
+        inventory[24] -= 1;
     }
     // 1670 IF O(23)>0 AND F(2)<S2 THEN LET F(2)=S2:LET O(23)=O(23)-1
-    if (O[23] > 0 && attrs[2] < S2) {
+    if (inventory[23] > 0 && attrs[2] < S2) {
         attrs[2] = S2;
-        O[23] -= 1;
+        inventory[23] -= 1;
     }
     // 1680 RETURN
 }
@@ -1451,9 +1459,9 @@ void lines1960_2000(screen_t *screen, double *attrs) {
 
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
-                    int *torches, int *spells_remaining, int O[25], int *OT,
-                    double *S1, double *S2, double *S3, const char **T$,
-                    int *TR, int W) {
+                    int *torches, int *spells_remaining, int inventory[25],
+                    int *OT, double *S1, double *S2, double *S3,
+                    const char **T$, int *TR, int W) {
     char I$, * message;
     int index, subindex, P;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
@@ -1502,7 +1510,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2120 FOR I=1 TO OT
     for (index = 1; index <= *OT; index += 1) {
     // 2130 LET O(I)=ASC(MID$(S$,P,1))-AS
-        O[index] = (int) S$[P - 1] - character_char_base;
+        inventory[index] = (int) S$[P - 1] - character_char_base;
     // 2140 LET P=P+1
         P += 1;
     // 2150 NEXT I
@@ -1528,12 +1536,12 @@ void lines2010_2250(screen_t *screen, int character_char_base,
         for (subindex = 1; subindex <= 3; subindex += 1) {
     // 2220 LET M((I-1)*3+J)=O(16+I)*F(7)
             spells_remaining[(index - 1) * 3 + subindex] =
-                O[16 + index] * attrs[7];
+                inventory[16 + index] * attrs[7];
     // 2230 NEXT J:NEXT I
         }
     }
     // 2240 IF O(16)=1 THEN LET LT=20
-    if (O[16] == 1) {
+    if (inventory[16] == 1) {
         *torches = 20;
     }
     // 2250 RETURN
@@ -1543,8 +1551,8 @@ void lines2010_2250(screen_t *screen, int character_char_base,
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
-                    int character_coord_y, int O[25], int OS, int OT, int **R,
-                    int TR, int W) {
+                    int character_coord_y, int inventory[25], int OS, int OT,
+                    int **R, int TR, int W) {
     int index, X, Y;
     char I$, * message;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
@@ -1604,7 +1612,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     // 2390 FOR I=1 TO OT
     for (index = 1; index <= OT; index += 1) {
     // 2400 LET S$=S$+CHR$(O(I)+AS)
-        S$[s_index] = (char) (O[index] + character_char_base);
+        S$[s_index] = (char) (inventory[index] + character_char_base);
         s_index += 1;
     // 2410 NEXT I
     }

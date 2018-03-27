@@ -1477,7 +1477,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *num_item_types, double *S1, double *S2, double *S3,
                     const char **T$, int *TR, int W) {
     char I$, * message;
-    int index, subindex, P;
+    int index, subindex, file_index;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -1510,36 +1510,36 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     free(S);
     S$[filesize] = 0;
     // 2060 LET P=2
-    P = 2;
+    file_index = 2;
     // 2070 LET OT=ASC(MID$(S$,1,1))-AS
     *num_item_types = (int) S$[0] - character_char_base;
     // 2080 FOR I= 1 TO 8
     for (index = 1; index <= 8; index += 1) {
     // 2090 LET F(I)=ASC(MID$(S$,P,1)) - AS
-        attrs[index] = (int) S$[P - 1] - character_char_base;
+        attrs[index] = (int) S$[file_index - 1] - character_char_base;
     // 2100 LET P=P+1
-        P += 1;
+        file_index += 1;
     // 2110 NEXT I
     }
     // 2120 FOR I=1 TO OT
     for (index = 1; index <= *num_item_types; index += 1) {
     // 2130 LET O(I)=ASC(MID$(S$,P,1))-AS
-        inventory[index] = (int) S$[P - 1] - character_char_base;
+        inventory[index] = (int) S$[file_index - 1] - character_char_base;
     // 2140 LET P=P+1
-        P += 1;
+        file_index += 1;
     // 2150 NEXT I
     }
     // 2160 LET GC=ASC(MID$(S$,P,1))-AS
-    *gold = (int) S$[P - 1] - character_char_base;
+    *gold = (int) S$[file_index - 1] - character_char_base;
     // 2170 LET TR=ASC(MID$(S$,P+1,1))-AS
-    *TR = (int) S$[P] - character_char_base;
+    *TR = (int) S$[file_index] - character_char_base;
     // 2180 LET C$=RIGHT$(S$,LEN(S$)-(P+1))
-    *character_name = (char *) malloc(sizeof(char) * (P + 2));
+    *character_name = (char *) malloc(sizeof(char) * (file_index + 2));
     if (*character_name == NULL) {
         fprintf(stderr, "character_name is NULL!\n");
         exit(1);
     }
-    strcpy(*character_name, S$ + P + 1);
+    strcpy(*character_name, S$ + file_index + 1);
     // 2190 LET S1=F(1):LET S2=F(2):LET S3=F(5)
     *S1 = attrs[1];
     *S2 = attrs[2];

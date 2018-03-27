@@ -1152,7 +1152,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *monster_strength, int *NF,
                     int NX, int NY, int *T, int TR) {
-    int index, sound_frequency, N;
+    int index, sound_frequency, direction;
     // 1550 paper 2:ink 1
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, RED);
@@ -1168,8 +1168,8 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     // 1590 LET X=NX:LET Y=NY
         // X and Y are overwritten before the above values are used.
     // 1600 FOR N=1 TO 4:LET NF=N:GOSUB480:NEXT N
-        for (N = 1; N <=4; N += 1) {
-            *NF = N;
+        for (direction = 1; direction <=4; direction += 1) {
+            *NF = direction;
             lines480_560(screen, attrs, char_code_hero, *NF, NX, NY);
         }
     // 1610 NEXT I

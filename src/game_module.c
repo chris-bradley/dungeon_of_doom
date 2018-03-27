@@ -83,13 +83,14 @@ void lines1770_1950(screen_t *screen, char *character_name,
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
-                    int *OT, double *S1, double *S2, double *S3,
+                    int *num_item_types, double *S1, double *S2, double *S3,
                     const char **T$, int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
                     int character_coord_y, int inventory[25],
-                    int dungeon_char_base, int OT, int **R, int TR, int W);
+                    int dungeon_char_base, int num_item_types, int **R, int TR,
+                    int W);
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
@@ -134,7 +135,7 @@ int main(int argc, char *argv[]) {
         character_coord_y,
         inventory[25],
         dungeon_char_base,
-        OT,
+        num_item_types,
         OX,
         OY,
         ** R,
@@ -172,7 +173,7 @@ int main(int argc, char *argv[]) {
     // 20 GOSUB2010
     lines2010_2250(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
-        spells_remaining, inventory, &OT, &S1, &S2, &S3, T$, &TR, W
+        spells_remaining, inventory, &num_item_types, &S1, &S2, &S3, T$, &TR, W
     );
     // 30 GOSUB1770
     lines1770_1950(
@@ -238,7 +239,7 @@ int main(int argc, char *argv[]) {
             lines2260_2490(
                 screen, character_char_base, character_name, attrs, &finished,
                 gold, dungeon_level, character_coord_x, character_coord_y,
-                inventory, dungeon_char_base, OT, R, TR, W
+                inventory, dungeon_char_base, num_item_types, R, TR, W
             );
         }
     // 110 IF I$="B" THEN LET NF=NF-1
@@ -1464,7 +1465,7 @@ void lines1960_2000(screen_t *screen, double *attrs) {
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
-                    int *OT, double *S1, double *S2, double *S3,
+                    int *num_item_types, double *S1, double *S2, double *S3,
                     const char **T$, int *TR, int W) {
     char I$, * message;
     int index, subindex, P;
@@ -1502,7 +1503,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2060 LET P=2
     P = 2;
     // 2070 LET OT=ASC(MID$(S$,1,1))-AS
-    *OT = (int) S$[0] - character_char_base;
+    *num_item_types = (int) S$[0] - character_char_base;
     // 2080 FOR I= 1 TO 8
     for (index = 1; index <= 8; index += 1) {
     // 2090 LET F(I)=ASC(MID$(S$,P,1)) - AS
@@ -1512,7 +1513,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2110 NEXT I
     }
     // 2120 FOR I=1 TO OT
-    for (index = 1; index <= *OT; index += 1) {
+    for (index = 1; index <= *num_item_types; index += 1) {
     // 2130 LET O(I)=ASC(MID$(S$,P,1))-AS
         inventory[index] = (int) S$[P - 1] - character_char_base;
     // 2140 LET P=P+1
@@ -1556,7 +1557,8 @@ void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
                     int character_coord_y, int inventory[25],
-                    int dungeon_char_base, int OT, int **R, int TR, int W) {
+                    int dungeon_char_base, int num_item_types, int **R, int TR,
+                    int W) {
     int index, X, Y;
     char I$, * message;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
@@ -1570,7 +1572,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     free(message);
     // 2270 LET S$="":LET T$=""
     char * S$ = (char *) malloc(
-        sizeof(char) * (12 + OT + strlen(character_name))
+        sizeof(char) * (12 + num_item_types + strlen(character_name))
     );
     if (S$ == NULL) {
         fprintf(stderr, "S$ is NULL!\n");
@@ -1604,7 +1606,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     t_index += 1;
     T$[t_index] = 0;
     // 2350 LET S$=S$+CHR$(AS+OT)
-    S$[s_index] = (char) (character_char_base + OT);
+    S$[s_index] = (char) (character_char_base + num_item_types);
     s_index += 1;
     // 2360 FOR I=1 TO 8
     for (index = 1; index <= 8; index += 1) {
@@ -1614,7 +1616,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     // 2380 NEXT I
     }
     // 2390 FOR I=1 TO OT
-    for (index = 1; index <= OT; index += 1) {
+    for (index = 1; index <= num_item_types; index += 1) {
     // 2400 LET S$=S$+CHR$(O(I)+AS)
         S$[s_index] = (char) (inventory[index] + character_char_base);
         s_index += 1;

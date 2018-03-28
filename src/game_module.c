@@ -1644,8 +1644,8 @@ void lines2260_2490(screen_t *screen, int character_char_base,
         fprintf(stderr, "character_file_contents is NULL!\n");
         exit(1);
     }
-    char * T$ = (char *) malloc(sizeof(char) * 229);
-    if (T$ == NULL) {
+    char * dungeon_file_contents = (char *) malloc(sizeof(char) * 229);
+    if (dungeon_file_contents == NULL) {
         fprintf(stderr, "T$ is NULL!\n");
         exit(1);
     }
@@ -1656,21 +1656,24 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     // 2290 FOR X=1 TO 15
         for (X = 1; X <= 15; X += 1) {
     // 2300 LET T$=T$+CHR$(R(X,Y))
-            T$[t_index] = (char) dungeon_contents[X][Y];
+            dungeon_file_contents[t_index] = (char) dungeon_contents[X][Y];
             t_index += 1;
     // 2310 NEXT X:NEXT Y
         }
     }
     // 2320 LET T$=T$+CHR$(OS+NX)
-    T$[t_index] = (char) (dungeon_char_base + character_coord_x);
+    dungeon_file_contents[t_index] =
+        (char) (dungeon_char_base + character_coord_x);
     t_index += 1;
     // 2330 LET T$=T$+CHR$(OS+NY)
-    T$[t_index] = (char) (dungeon_char_base + character_coord_y);
+    dungeon_file_contents[t_index] =
+        (char) (dungeon_char_base + character_coord_y);
     t_index += 1;
     // 2340 LET T$=T$+CHR$(OS+LE)
-    T$[t_index] = (char) (dungeon_char_base + dungeon_level);
+    dungeon_file_contents[t_index] =
+        (char) (dungeon_char_base + dungeon_level);
     t_index += 1;
-    T$[t_index] = 0;
+    dungeon_file_contents[t_index] = 0;
     // 2350 LET S$=S$+CHR$(AS+OT)
     character_file_contents[s_index] =
         (char) (character_char_base + num_item_types);
@@ -1723,7 +1726,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     free(file_handle);
     // 2470 S=OPENOUT"LEVEL":PRINT#S,T$:CLOSE#S
     file_handle = fopen("LEVEL", "w");
-    error = fputs(T$, file_handle);
+    error = fputs(dungeon_file_contents, file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the level!", error);
     }

@@ -531,27 +531,30 @@ void lines570_610(screen_t *screen, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int **dungeon_contents, int X, int Y) {
-    int RM;
+    int item_at_coord;
     // 570 paper 1:ink 2
     paper(screen->cursor, RED);
     ink(screen->cursor, YELLOW);
     // 580 LET RM=R(X,Y):PRINT tab(X,Y+5);CHR$(RM);
-    RM = dungeon_contents[X][Y];
+    item_at_coord = dungeon_contents[X][Y];
     tab(screen->cursor, X, Y + 5);
     char * outstring = (char *) malloc(sizeof(char) * 2);
     if (outstring == NULL) {
         fprintf(stderr, "outstring is NULL!\n");
         exit(1);
     }
-    sprintf(outstring, "%c", (char) RM);
+    sprintf(outstring, "%c", (char) item_at_coord);
     free(print_text(screen, outstring));
     free(outstring);
     // 590 IF ABS(DX)<4 OR RM<=C7 THEN RETURN
-    if (abs(*distance_to_monster_x) < 4 || RM <= char_code_safe_place) {
+    if (
+            abs(*distance_to_monster_x) < 4 ||
+            item_at_coord <= char_code_safe_place
+    ) {
         return;
     }
     // 600 LET MT=RM:LET M=MT-C2:LET MV=M/16:LET MS=M*6:LET DX=3:LET LX=X:LET LY=Y
-    *monster_char_code = RM;
+    *monster_char_code = item_at_coord;
     *monster_type = *monster_char_code - char_code_vase;
     *monster_speed = *monster_type / 16;
     *monster_strength = *monster_type * 6;

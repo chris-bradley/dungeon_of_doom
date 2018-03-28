@@ -1637,11 +1637,11 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     lines430_430(screen, message, W);
     free(message);
     // 2270 LET S$="":LET T$=""
-    char * file_contents = (char *) malloc(
+    char * character_file_contents = (char *) malloc(
         sizeof(char) * (12 + num_item_types + strlen(character_name))
     );
-    if (file_contents == NULL) {
-        fprintf(stderr, "file_contents is NULL!\n");
+    if (character_file_contents == NULL) {
+        fprintf(stderr, "character_file_contents is NULL!\n");
         exit(1);
     }
     char * T$ = (char *) malloc(sizeof(char) * 229);
@@ -1672,33 +1672,35 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     t_index += 1;
     T$[t_index] = 0;
     // 2350 LET S$=S$+CHR$(AS+OT)
-    file_contents[s_index] = (char) (character_char_base + num_item_types);
+    character_file_contents[s_index] =
+        (char) (character_char_base + num_item_types);
     s_index += 1;
     // 2360 FOR I=1 TO 8
     for (index = 1; index <= 8; index += 1) {
     // 2370 LET S$=S$+CHR$(F(I)+AS)
-        file_contents[s_index] = (char) (attrs[index] + character_char_base);
+        character_file_contents[s_index] =
+            (char) (attrs[index] + character_char_base);
         s_index += 1;
     // 2380 NEXT I
     }
     // 2390 FOR I=1 TO OT
     for (index = 1; index <= num_item_types; index += 1) {
     // 2400 LET S$=S$+CHR$(O(I)+AS)
-        file_contents[s_index] = (char)
+        character_file_contents[s_index] = (char)
             (inventory[index] + character_char_base);
         s_index += 1;
     // 2410 NEXT I
     }
     // 2420 LET S$=S$+CHR$(GC+AS);
-    file_contents[s_index] = (char) (gold + character_char_base);
+    character_file_contents[s_index] = (char) (gold + character_char_base);
     s_index += 1;
     // 2430 LET S$=S$+CHR$(TR+AS);
-    file_contents[s_index] = (char) (TR + character_char_base);
+    character_file_contents[s_index] = (char) (TR + character_char_base);
     s_index += 1;
     // 2440 LET S$=S$+C$
-    strcpy(file_contents + s_index, character_name);
+    strcpy(character_file_contents + s_index, character_name);
     s_index += strlen(character_name);
-    file_contents[s_index] = 0;
+    character_file_contents[s_index] = 0;
     // 2450 LET M$="ANY KEY TO SAVE":GOSUB 370
     message = (char *) malloc(sizeof(char) * 16);
     if (message == NULL) {
@@ -1710,7 +1712,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     free(message);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
     FILE *file_handle = fopen("HERO", "w");
-    int error = fputs(file_contents, file_handle);
+    int error = fputs(character_file_contents, file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the character!", error);
     }

@@ -589,7 +589,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int item_at_character_coord, const char **T$, int W,
                   const char **W$) {
     int distance_to_monster_y, damage, item_num, sound_frequency,
-        monster_broke_item, RM, SX, SY, X, Y;
+        monster_broke_item, item_at_monster_next_coord, SX, SY, X, Y;
     char * message;
     // 620 LET DX=LX-NX:LET SX=SGN(DX):LET DY=LY-NY:LET SY=SGN(DY)
     *distance_to_monster_x = *monster_coord_x - character_coord_x;
@@ -599,9 +599,13 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 630 LET MX=LX-(MV*SX):LET MY=LY-(MV*SY):LET RM=R(MX,MY)
     *monster_next_coord_x = *monster_coord_x - (*monster_speed * SX);
     *monster_next_coord_y = *monster_coord_y - (*monster_speed * SY);
-    RM = dungeon_contents[*monster_next_coord_x][*monster_next_coord_y];
+    item_at_monster_next_coord =
+        dungeon_contents[*monster_next_coord_x][*monster_next_coord_y];
     // 640 IF RM>C0 AND RM<>MT THEN LET MY=LY:LET MX=LX
-    if (RM > char_code_blank && RM != *monster_char_code) {
+    if (
+            item_at_monster_next_coord > char_code_blank &&
+            item_at_monster_next_coord != *monster_char_code
+    ) {
         *monster_next_coord_y = *monster_coord_y;
         *monster_next_coord_x = *monster_coord_x;
     }

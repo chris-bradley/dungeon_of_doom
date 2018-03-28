@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
         Y;
     double initial_strength, S2, S3, * attrs;
     char * character_name = NULL,
-         I$,
+         pressed_key,
          * char_code_hero = NULL,
          * message;
     const char ** T$, **W$;
@@ -192,9 +192,9 @@ int main(int argc, char *argv[]) {
     do {
         SDL_RenderPresent(screen->ren);
     // 40 LET I$=inkey$
-        I$ = inkey$();
+        pressed_key = inkey$();
     // 50 IF I$="A" AND DX<255 THEN GOSUB870
-        if (I$ == 'a' && distance_to_monster_x < 255 ) {
+        if (pressed_key == 'a' && distance_to_monster_x < 255 ) {
             lines870_930(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, attrs, &monster_coord_x,
@@ -204,7 +204,11 @@ int main(int argc, char *argv[]) {
             );
         }
     // 60 IF I$="C" AND F(7)>0 AND O(17)+O(18)>0 THEN GOSUB990
-        if (I$ == 'c' && attrs[7] > 0 && inventory[17] + inventory[18] > 0) {
+        if (
+                pressed_key == 'c' &&
+                attrs[7] > 0 &&
+                inventory[17] + inventory[18] > 0
+        ) {
             lines990_1130(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, attrs, char_code_hero,
@@ -217,7 +221,7 @@ int main(int argc, char *argv[]) {
             );
         }
     // 70 IF I$="G" THEN GOSUB1410
-        if (I$ == 'g') {
+        if (pressed_key == 'g') {
             lines1410_1520(
                 screen, char_code_blank, char_code_wall, char_code_vase,
                 char_code_chest, char_code_idol, char_code_safe_place,
@@ -229,11 +233,11 @@ int main(int argc, char *argv[]) {
             );
         }
     // 80 IF I$="P" THEN GOSUB1660
-        if (I$ == 'p') {
+        if (pressed_key == 'p') {
             lines1660_1680(attrs, inventory, initial_strength, S2);
         }
     // 90 IF I$="R" THEN GOSUB1690
-        if (I$ == 'r') {
+        if (pressed_key == 'r') {
             lines1690_1750(
                 screen, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, &torches, &monster_coord_x,
@@ -243,7 +247,7 @@ int main(int argc, char *argv[]) {
             );
         }
     // 100 IF I$="S" THEN GOSUB2260
-        if (I$ == 's') {
+        if (pressed_key == 's') {
             lines2260_2490(
                 screen, character_char_base, character_name, attrs, &finished,
                 gold, dungeon_level, character_coord_x, character_coord_y,
@@ -252,11 +256,11 @@ int main(int argc, char *argv[]) {
             );
         }
     // 110 IF I$="B" THEN LET NF=NF-1
-        if (I$ == 'b') {
+        if (pressed_key == 'b') {
             character_facing -= 1;
         }
     // 120 IF I$="N" THEN NF=NF+1
-        if (I$ == 'n') {
+        if (pressed_key == 'n') {
             character_facing += 1;
         }
     // 130 IF NF>4 THEN LET NF=1
@@ -268,7 +272,7 @@ int main(int argc, char *argv[]) {
             character_facing = 4;
         }
     // 150 IF I$="M" THEN LET NX=NX+D(NF,1): LET NY=NY+D(NF,2)
-        if (I$ == 'm') {
+        if (pressed_key == 'm') {
             character_coord_x += vertices[character_facing][1];
             character_coord_y += vertices[character_facing][2];
         }
@@ -321,7 +325,7 @@ int main(int argc, char *argv[]) {
             TF = 0;
         }
     // 250 IF I$>"" THEN LET F(1)=F(1)*0.99
-        if (I$ != 0) {
+        if (pressed_key != 0) {
             attrs[1] = attrs[1] * 0.99;
         }
     // 260 IF F(1) <S1 THEN LET F(1)=F(1)+(F(2)/1100)
@@ -439,7 +443,7 @@ void lines360_365(int sound_frequency) {
     // TODO: SOUND!
 }
 
-void lines370_420(screen_t *screen, char *I$, char *message, int W) {
+void lines370_420(screen_t *screen, char *pressed_key, char *message, int W) {
     // 370 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
@@ -449,7 +453,7 @@ void lines370_420(screen_t *screen, char *I$, char *message, int W) {
     // 390 LET I$=inkey$
     // 400 IF I$="" THEN GOTO390
     SDL_RenderPresent(screen->ren);
-    *I$ = inkey$();
+    *pressed_key = inkey$();
     // 410 PRINT tab(0,5);LEFT(B$, W);:LET M$=""
     tab(screen->cursor, 0, 5);
     print_left$_b$(screen, W);
@@ -917,7 +921,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    double initial_strength, double S2, const char **T$,
                    int W) {
     int row_num, SL, X, Y;
-    char I$, * message;
+    char pressed_key, * message;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(
         screen, attrs, char_code_hero, character_facing, *character_coord_x,
@@ -949,10 +953,10 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
             exit(1);
         }
         strcpy(message, "USE SPELL NUMBER?");
-        lines370_420(screen, &I$, message, W);
+        lines370_420(screen, &pressed_key, message, W);
         free(message);
         char * outstring = (char *) malloc(sizeof(char) * 2);
-        sprintf(outstring, "%c", I$);
+        sprintf(outstring, "%c", pressed_key);
     // 1050 LET SL=VAL(I$)
         SL = atoi(outstring);
         free(outstring);
@@ -1352,7 +1356,7 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
     // 1750 RETURN
 }
 
-void lines370_420(screen_t *screen, char *I$, char *message, int W);
+void lines370_420(screen_t *screen, char *pressed_key, char *message, int W);
 void lines1960_2000(screen_t *screen, double *attrs);
 void lines2790_2920(screen_t *screen, char *character_name, int W);
 
@@ -1368,7 +1372,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // 'GOTO 1760' towards the end.
     // We use the 'start_at_1770' flag to handle this.
     int correct_level_loaded, index, entrance_coord_x, entrance_coord_y, X, Y;
-    char I$, * message;
+    char pressed_key, * message;
     do {
 
     // 1760 IF F(5)<S3+1 THEN LET M$=T$(11):LET NX=OX:LET NY=OY:GOSUB 430:RETURN
@@ -1397,7 +1401,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
             exit(1);
         }
         strcpy(message, T$[10]);
-        lines370_420(screen, &I$, message, W);
+        lines370_420(screen, &pressed_key, message, W);
         free(message);
         size_t filesize;
     // 1790 S=OPENIN"LEVEL"
@@ -1512,7 +1516,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength, double *S2,
                     double *S3, const char **T$, int *TR, int W) {
-    char I$, * message;
+    char pressed_key, * message;
     int index, subindex, file_index;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
     clear_screen(screen);
@@ -1525,7 +1529,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
         exit(1);
     }
     strcpy(message, T$[10]);
-    lines370_420(screen, &I$, message, W);
+    lines370_420(screen, &pressed_key, message, W);
     free(message);
     // 2030 S=OPENIN "HERO"
     FILE *file_handle = fopen("HERO", "r");
@@ -1607,7 +1611,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
                     int dungeon_char_base, int num_item_types,
                     int **dungeon_contents, int TR, int W) {
     int index, X, Y;
-    char I$, * message;
+    char pressed_key, * message;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
     message = (char *) malloc(sizeof(char) * 18);
     if (message == NULL) {
@@ -1687,7 +1691,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
         exit(1);
     }
     strcpy(message, "ANY KEY TO SAVE");
-    lines370_420(screen, &I$, message, W);
+    lines370_420(screen, &pressed_key, message, W);
     free(message);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
     FILE *file_handle = fopen("HERO", "w");

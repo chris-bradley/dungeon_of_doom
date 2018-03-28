@@ -79,19 +79,21 @@ void lines1760_1950(screen_t *screen, char *character_name,
                     int *dungeon_level, int *character_coord_x,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
-                    int **dungeon_contents, double S3, const char **T$, int W);
+                    int **dungeon_contents, double initial_experience,
+                    const char **T$, int W);
 void lines1770_1950(screen_t *screen, char *character_name,
                     int *distance_to_monster_x, double *attrs,
                     int *dungeon_level, int *character_coord_x,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
-                    int **dungeon_contents, double S3, const char **T$, int W);
+                    int **dungeon_contents, double initial_experience,
+                    const char **T$, int W);
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,
-                    double *initial_vitality, double *S3, const char **T$,
-                    int *TR, int W);
+                    double *initial_vitality, double *initial_experience,
+                    const char **T$, int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
@@ -155,7 +157,7 @@ int main(int argc, char *argv[]) {
         W,
         X,
         Y;
-    double initial_strength, initial_vitality, S3, * attrs;
+    double initial_strength, initial_vitality, initial_experience, * attrs;
     char * character_name = NULL,
          pressed_key,
          * char_code_hero = NULL,
@@ -181,14 +183,14 @@ int main(int argc, char *argv[]) {
     lines2010_2250(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
         spells_remaining, inventory, &num_item_types, &initial_strength,
-        &initial_vitality, &S3, T$, &TR, W
+        &initial_vitality, &initial_experience, T$, &TR, W
     );
     // 30 GOSUB1770
     lines1770_1950(
         screen, character_name, &distance_to_monster_x, attrs, &dungeon_level,
         &character_coord_x, &character_coord_y, dungeon_char_base,
-        &character_prev_coord_x, &character_prev_coord_y, dungeon_contents, S3,
-        T$, W
+        &character_prev_coord_x, &character_prev_coord_y, dungeon_contents,
+        initial_experience, T$, W
     );
     int game_over = 0;
     do {
@@ -391,7 +393,8 @@ int main(int argc, char *argv[]) {
                 screen, character_name, &distance_to_monster_x, attrs,
                 &dungeon_level, &character_coord_x, &character_coord_y,
                 dungeon_char_base, &character_prev_coord_x,
-                &character_prev_coord_y, dungeon_contents, S3, T$, W
+                &character_prev_coord_y, dungeon_contents, initial_experience,
+                T$, W
             );
             game_over = 0;
         } else {
@@ -1372,7 +1375,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
                          int *character_coord_x, int *character_coord_y,
                          int dungeon_char_base, int *character_prev_coord_x,
                          int *character_prev_coord_y, int **dungeon_contents,
-                         double S3, const char **T$, int W) {
+                         double initial_experience, const char **T$, int W) {
     // The original BASIC code sometimes used 'GOSUB 1760' and sometimes
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
@@ -1382,7 +1385,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     do {
 
     // 1760 IF F(5)<S3+1 THEN LET M$=T$(11):LET NX=OX:LET NY=OY:GOSUB 430:RETURN
-        if (!start_at_1770 && attrs[5] < S3 + 1) {
+        if (!start_at_1770 && attrs[5] < initial_experience + 1) {
             message = (char *) malloc(sizeof(char) * (strlen(T$[11]) + 1));
             if (message == NULL) {
                 fprintf(stderr, "message is NULL!\n");
@@ -1469,13 +1472,13 @@ void lines1760_1950(screen_t *screen, char *character_name,
                     int *dungeon_level, int *character_coord_x,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
-                    int **dungeon_contents, double S3, const char **T$,
-                    int W) {
+                    int **dungeon_contents, double initial_experience,
+                    const char **T$, int W) {
     lines1760_1770_1950(
         screen, 0, character_name, distance_to_monster_x, attrs, dungeon_level,
         character_coord_x, character_coord_y, dungeon_char_base,
-        character_prev_coord_x, character_prev_coord_y, dungeon_contents, S3,
-        T$, W
+        character_prev_coord_x, character_prev_coord_y, dungeon_contents,
+        initial_experience, T$, W
     );
 }
 
@@ -1484,13 +1487,13 @@ void lines1770_1950(screen_t *screen, char *character_name,
                     int *dungeon_level, int *character_coord_x,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
-                    int **dungeon_contents, double S3, const char **T$,
-                    int W) {
+                    int **dungeon_contents, double initial_experience,
+                    const char **T$, int W) {
     lines1760_1770_1950(
         screen, 1, character_name, distance_to_monster_x, attrs, dungeon_level,
         character_coord_x, character_coord_y, dungeon_char_base,
-        character_prev_coord_x, character_prev_coord_y, dungeon_contents, S3,
-        T$, W
+        character_prev_coord_x, character_prev_coord_y, dungeon_contents,
+        initial_experience, T$, W
     );
 }
 
@@ -1521,8 +1524,8 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,
-                    double *initial_vitality, double *S3, const char **T$,
-                    int *TR, int W) {
+                    double *initial_vitality, double *initial_experience,
+                    const char **T$, int *TR, int W) {
     char pressed_key, * message;
     int index, subindex, file_index;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
@@ -1592,7 +1595,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2190 LET S1=F(1):LET S2=F(2):LET S3=F(5)
     *initial_strength = attrs[1];
     *initial_vitality = attrs[2];
-    *S3 = attrs[5];
+    *initial_experience = attrs[5];
     // 2200 FOR I=1 TO 2
     for (index = 1; index <= 2; index += 1) {
     // 2210 FOR J=1 TO 3

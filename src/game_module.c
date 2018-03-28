@@ -1397,20 +1397,20 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
         free(message);
         size_t filesize;
     // 1790 S=OPENIN"LEVEL"
-        FILE *S = fopen("LEVEL", "r");
+        FILE *file_handle = fopen("LEVEL", "r");
     // 1800 INPUT#S,S$
-        fseek(S, 0, SEEK_END);
+        fseek(file_handle, 0, SEEK_END);
         // TODO: Check for fseek errors.
-        filesize = ftell(S);
-        fseek(S, 0, SEEK_SET);
+        filesize = ftell(file_handle);
+        fseek(file_handle, 0, SEEK_SET);
         char * S$ = (char *) malloc(sizeof(char) * (filesize + 1));
         if (S$ == NULL) {
             fprintf(stderr, "S$ is NULL!\n");
             exit(1);
         }
-        fread(S$, 1, filesize, S);
+        fread(S$, 1, filesize, file_handle);
     // 1810 CLOSE#S
-        fclose(S);
+        fclose(file_handle);
     // 1820 LET I=1
         index = 1;
     // 1830 FOR Y=1 TO 15
@@ -1524,22 +1524,22 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     lines370_420(screen, &I$, message, W);
     free(message);
     // 2030 S=OPENIN "HERO"
-    FILE *S = fopen("HERO", "r");
+    FILE *file_handle = fopen("HERO", "r");
     // 2040 INPUT#S,S$
     size_t filesize;
-    fseek(S, 0, SEEK_END);
+    fseek(file_handle, 0, SEEK_END);
     // TODO: Check for fseek errors.
-    filesize = ftell(S);
-    fseek(S, 0, SEEK_SET);
+    filesize = ftell(file_handle);
+    fseek(file_handle, 0, SEEK_SET);
     char * S$ = (char *) malloc(sizeof(char) * (filesize + 1));
     if (S$ == NULL) {
         fprintf(stderr, "S$ is NULL!\n");
         exit(1);
     }
-    fread(S$, 1, filesize, S);
+    fread(S$, 1, filesize, file_handle);
     // 2050 CLOSE#S
-    fclose(S);
-    free(S);
+    fclose(file_handle);
+    free(file_handle);
     S$[filesize] = 0;
     // 2060 LET P=2
     file_index = 2;
@@ -1683,27 +1683,27 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     lines370_420(screen, &I$, message, W);
     free(message);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
-    FILE *S = fopen("HERO", "w");
-    int error = fputs(S$, S);
+    FILE *file_handle = fopen("HERO", "w");
+    int error = fputs(S$, file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the character!", error);
     }
-    error = fclose(S);
+    error = fclose(file_handle);
     if (error) {
         fprintf(stderr, "Error %i closing the character!", error);
     }
-    free(S);
+    free(file_handle);
     // 2470 S=OPENOUT"LEVEL":PRINT#S,T$:CLOSE#S
-    S = fopen("LEVEL", "w");
-    error = fputs(T$, S);
+    file_handle = fopen("LEVEL", "w");
+    error = fputs(T$, file_handle);
     if (error) {
         fprintf(stderr, "Error %i writing the level!", error);
     }
-    error = fclose(S);
+    error = fclose(file_handle);
     if (error) {
         fprintf(stderr, "Error %i closing the level!", error);
     }
-    free(S);
+    free(file_handle);
     // 2480 LET FI=1
     *finished = 1;
     // 2490 RETURN

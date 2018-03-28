@@ -904,7 +904,7 @@ void lines1190_1210(int char_code_blank, int char_code_safe_place,
 void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
                     int character_facing, int *character_coord_x,
                     int *character_coord_y);
-void lines1280_1290(double *attrs, int *spells_remaining, int SL);
+void lines1280_1290(double *attrs, int *spells_remaining, int spell_number);
 void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     int *monster_coord_x, int *monster_coord_y,
@@ -928,7 +928,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int **dungeon_contents, int item_at_character_coord,
                    double initial_strength, double initial_vitality,
                    const char **T$, int W) {
-    int row_num, SL, X, Y;
+    int row_num, spell_number, X, Y;
     char pressed_key, * message;
     // 990 GOSUB480:paper 2: ink 0
     lines480_560(
@@ -966,29 +966,29 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
         char * outstring = (char *) malloc(sizeof(char) * 2);
         sprintf(outstring, "%c", pressed_key);
     // 1050 LET SL=VAL(I$)
-        SL = atoi(outstring);
+        spell_number = atoi(outstring);
         free(outstring);
     // 1060 IF SL=0 OR (O(17)=0 AND SL<5) OR (O(18)=0 AND SL>3) OR SL>6 THEN GOTO 1040
     } while (
-            SL == 0 ||
-            (inventory[17] == 0 && SL < 5) ||
-            (inventory[19] == 0 && SL > 3) ||
-            SL > 6
+            spell_number == 0 ||
+            (inventory[17] == 0 && spell_number < 5) ||
+            (inventory[19] == 0 && spell_number > 3) ||
+            spell_number > 6
     );
 
     // 1070 LET M(SL)=M(SL)-1:LET X=NX:LET Y=NY
-    spells_remaining[SL] -= 1;
+    spells_remaining[spell_number] -= 1;
     X = *character_coord_x;
     Y = *character_coord_y;
     // 1080 IF M(SL)<0 THEN LET M$=T$(9):LET SL=7
-    if (spells_remaining[SL] < 0) {
+    if (spells_remaining[spell_number] < 0) {
         message = (char *) malloc(sizeof(char) * (strlen(T$[9]) + 1));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
         strcpy(message, T$[9]);
-        SL = 7;
+        spell_number = 7;
     } else {
         // This is the other place where we may call a method for rendering M$
         // without setting it first. The original BASIC code emptied M$ after
@@ -1013,7 +1013,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
         monster_char_code, monster_speed, dungeon_contents, X, Y
     );
     // 1100 ON SL GOSUB1140,1190,1220,1280,1300,1390,1130
-    switch (SL) {
+    switch (spell_number) {
         case 1:
             lines1140_1180(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
@@ -1036,7 +1036,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
             );
             break;
         case 4:
-            lines1280_1290(attrs, spells_remaining, SL);
+            lines1280_1290(attrs, spells_remaining, spell_number);
             break;
         case 5:
             lines1300_1380(
@@ -1131,10 +1131,10 @@ void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
     // 1270 RETURN
 }
 
-void lines1280_1290(double *attrs, int *spells_remaining, int SL) {
+void lines1280_1290(double *attrs, int *spells_remaining, int spell_number) {
     // 1280 LET F(2)=F(2)+rnd(M(SL)):LET F(1)=F(1)+rnd(M(SL)):LET F(7)=F(7)-1
-    attrs[2] += rand() * spells_remaining[SL];
-    attrs[1] += rand() * spells_remaining[SL];
+    attrs[2] += rand() * spells_remaining[spell_number];
+    attrs[1] += rand() * spells_remaining[spell_number];
     attrs[7] -= 1;
     // 1290 RETURN
 }

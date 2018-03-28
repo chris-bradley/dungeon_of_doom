@@ -20,7 +20,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_next_coord_x, int *monster_next_coord_y,
                   int character_coord_x, int character_coord_y,
                   int inventory[25], int **dungeon_contents,
-                  int item_at_character_coord, const char **T$, int W,
+                  int item_at_character_coord, const char **strings, int W,
                   const char **W$);
 void lines810_860(screen_t *screen, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
@@ -36,8 +36,8 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int monster_next_coord_x, int monster_next_coord_y,
-                  int inventory[25], int **dungeon_contents, const char **T$,
-                  int W, int X, int Y);
+                  int inventory[25], int **dungeon_contents,
+                  const char **strings, int W, int X, int Y);
 void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int char_code_safe_place, int *distance_to_monster_x,
                    double *attrs, char *char_code_hero, int *monster_coord_x,
@@ -49,7 +49,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int *character_coord_y, int inventory[25],
                    int **dungeon_contents, int item_at_character_coord,
                    double initial_strength, double initial_vitality,
-                   const char **T$, int W);
+                   const char **strings, int W);
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
                     int char_code_idol, int char_code_safe_place,
@@ -73,27 +73,27 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
                     int *monster_type, int *monster_strength,
                     int *monster_char_code, int *monster_speed,
                     int character_coord_x, int character_coord_y,
-                    int **dungeon_contents, const char **T$, int W);
+                    int **dungeon_contents, const char **strings, int W);
 void lines1760_1950(screen_t *screen, char *character_name,
                     int *distance_to_monster_x, double *attrs,
                     int *dungeon_level, int *character_coord_x,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
                     int **dungeon_contents, double initial_experience,
-                    const char **T$, int W);
+                    const char **strings, int W);
 void lines1770_1950(screen_t *screen, char *character_name,
                     int *distance_to_monster_x, double *attrs,
                     int *dungeon_level, int *character_coord_x,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
                     int **dungeon_contents, double initial_experience,
-                    const char **T$, int W);
+                    const char **strings, int W);
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,
                     double *initial_vitality, double *initial_experience,
-                    const char **T$, int *TR, int W);
+                    const char **strings, int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
@@ -111,7 +111,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *monster_next_coord_y, int *character_facing,
                     int *character_coord_x, int *character_coord_y,
                     int *dungeon_char_base, int ***dungeon_contents,
-                    int **song_notes, const char ***T$, int *TF, int *TX,
+                    int **song_notes, const char ***strings, int *TF, int *TX,
                     int *TY, int *W, const char ***W$);
 
 int main(int argc, char *argv[]) {
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
          pressed_key,
          * char_code_hero = NULL,
          * message;
-    const char ** T$, **W$;
+    const char ** strings, **W$;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = init_screen();
     paper(screen->cursor, YELLOW);
@@ -177,21 +177,21 @@ int main(int argc, char *argv[]) {
         &distance_to_monster_x, &attrs, &char_code_hero, &finished, &torches,
         &spells_remaining, &monster_next_coord_x, &monster_next_coord_y,
         &character_facing, &character_coord_x, &character_coord_y,
-        &dungeon_char_base, &dungeon_contents, &song_notes, &T$, &TF, &TX, &TY,
-        &W, &W$
+        &dungeon_char_base, &dungeon_contents, &song_notes, &strings, &TF, &TX,
+        &TY, &W, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
         spells_remaining, inventory, &num_item_types, &initial_strength,
-        &initial_vitality, &initial_experience, T$, &TR, W
+        &initial_vitality, &initial_experience, strings, &TR, W
     );
     // 30 GOSUB1770
     lines1770_1950(
         screen, character_name, &distance_to_monster_x, attrs, &dungeon_level,
         &character_coord_x, &character_coord_y, dungeon_char_base,
         &character_prev_coord_x, &character_prev_coord_y, dungeon_contents,
-        initial_experience, T$, W
+        initial_experience, strings, W
     );
     int game_over = 0;
     do {
@@ -205,7 +205,8 @@ int main(int argc, char *argv[]) {
                 &distance_to_monster_x, attrs, &monster_coord_x,
                 &monster_coord_y, &monster_type, &monster_strength,
                 &monster_char_code, &monster_speed, monster_next_coord_x,
-                monster_next_coord_y, inventory, dungeon_contents, T$, W, X, Y
+                monster_next_coord_y, inventory, dungeon_contents, strings, W,
+                X, Y
             );
         }
     // 60 IF I$="C" AND F(7)>0 AND O(17)+O(18)>0 THEN GOSUB990
@@ -222,7 +223,7 @@ int main(int argc, char *argv[]) {
                 &monster_speed, monster_next_coord_x, monster_next_coord_y,
                 character_facing, &character_coord_x, &character_coord_y,
                 inventory, dungeon_contents, item_at_character_coord,
-                initial_strength, initial_vitality, T$, W
+                initial_strength, initial_vitality, strings, W
             );
         }
     // 70 IF I$="G" THEN GOSUB1410
@@ -250,7 +251,7 @@ int main(int argc, char *argv[]) {
                 &distance_to_monster_x, &torches, &monster_coord_x,
                 &monster_coord_y, &monster_type, &monster_strength,
                 &monster_char_code, &monster_speed, character_coord_x,
-                character_coord_y, dungeon_contents, T$, W
+                character_coord_y, dungeon_contents, strings, W
             );
         }
     // 100 IF I$="S" THEN GOSUB2260
@@ -369,7 +370,8 @@ int main(int argc, char *argv[]) {
                 &monster_coord_y, &monster_type, &monster_strength,
                 &monster_char_code, &monster_speed, &monster_next_coord_x,
                 &monster_next_coord_y, character_coord_x, character_coord_y,
-                inventory, dungeon_contents, item_at_character_coord, T$, W, W$
+                inventory, dungeon_contents, item_at_character_coord, strings,
+                W, W$
             );
         }
     // 310 IF F(1)>0 AND FI<1 AND RH<>C5 THEN GOTO 40
@@ -381,13 +383,14 @@ int main(int argc, char *argv[]) {
         }
     // 320 IF RH=C5 THEN LET M$=T$(12):GOSUB430:GOSUB1760:GOTO40
         else if (item_at_character_coord == char_code_way_in) {
-            message = (char *) malloc(sizeof(char) * (strlen(T$[12]) + 1));
+            message =
+                (char *) malloc(sizeof(char) * (strlen(strings[12]) + 1));
             if (message == NULL) {
                 fprintf(stderr, "message is NULL!\n");
                 exit(1);
             }
-            strcpy(message, T$[12]);
-            message[strlen(T$[12])] = 0;
+            strcpy(message, strings[12]);
+            message[strlen(strings[12])] = 0;
             lines430_430(screen, message, W);
             free(message);
             lines1760_1950(
@@ -395,7 +398,7 @@ int main(int argc, char *argv[]) {
                 &dungeon_level, &character_coord_x, &character_coord_y,
                 dungeon_char_base, &character_prev_coord_x,
                 &character_prev_coord_y, dungeon_contents, initial_experience,
-                T$, W
+                strings, W
             );
             game_over = 0;
         } else {
@@ -430,7 +433,7 @@ int main(int argc, char *argv[]) {
     }
     free(dungeon_contents);
     free(song_notes);
-    free(T$);
+    free(strings);
     free(W$);
     return 0;
 }
@@ -589,8 +592,8 @@ int sign(int x) {
 }
 
 void lines780_800(screen_t *screen, int item_num, int sound_frequency,
-                  int *monster_broke_item, int inventory[25], const char **T$,
-                  int W, const char **W$);
+                  int *monster_broke_item, int inventory[25], \
+                  const char **strings, int W, const char **W$);
 
 void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
@@ -600,7 +603,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_next_coord_x, int *monster_next_coord_y,
                   int character_coord_x, int character_coord_y,
                   int inventory[25], int **dungeon_contents,
-                  int item_at_character_coord, const char **T$, int W,
+                  int item_at_character_coord, const char **strings, int W,
                   const char **W$) {
     int distance_to_monster_y, damage, item_num, sound_frequency,
         monster_broke_item, item_at_monster_next_coord, direction_to_monster_x,
@@ -671,12 +674,12 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
         return;
     }
     // 700 LET M$=T$(5):GOSUB430:GOSUB360
-    message = (char *) malloc(sizeof(char) * (strlen(T$[5]) + 1));
+    message = (char *) malloc(sizeof(char) * (strlen(strings[5]) + 1));
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(message, T$[5]);
+    strcpy(message, strings[5]);
     lines430_430(screen, message, W);
     free(message);
     lines360_365(sound_frequency);
@@ -702,7 +705,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
         if (monster_broke_item == 1 && inventory[item_num] > 0) {
             lines780_800(
                 screen, item_num, sound_frequency, &monster_broke_item,
-                inventory, T$, W, W$
+                inventory, strings, W, W$
             );
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
@@ -715,19 +718,19 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
 }
 
 void lines780_800(screen_t *screen, int item_num, int sound_frequency,
-                  int *monster_broke_item, int inventory[25], const char **T$,
-                  int W, const char **W$) {
+                  int *monster_broke_item, int inventory[25],
+                  const char **strings, int W, const char **W$) {
     char * message;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     inventory[item_num] = 0;
     message = (char *) malloc(
-        sizeof(char) * (strlen(T$[8]) + strlen(W$[item_num]) + 2)
+        sizeof(char) * (strlen(strings[8]) + strlen(W$[item_num]) + 2)
     );
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    sprintf(message, "%s %s", T$[8], W$[item_num]);
+    sprintf(message, "%s %s", strings[8], W$[item_num]);
     lines430_430(screen, message, W);
     free(message);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
@@ -792,7 +795,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int monster_next_coord_x, int monster_next_coord_y,
-                  int **dungeon_contents, const char **T$, int W, int X,
+                  int **dungeon_contents, const char **strings, int W, int X,
                   int Y);
 
 void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
@@ -801,17 +804,17 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int monster_next_coord_x, int monster_next_coord_y,
-                  int inventory[25], int **dungeon_contents, const char **T$,
-                  int W, int X, int Y) {
+                  int inventory[25], int **dungeon_contents,
+                  const char **strings, int W, int X, int Y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
     int damage, t$_ind = rand() % 3 + 1;
     char * message;
-    message = (char *) malloc(sizeof(char) * (strlen(T$[t$_ind]) + 1));
+    message = (char *) malloc(sizeof(char) * (strlen(strings[t$_ind]) + 1));
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(message, T$[t$_ind]);
+    strcpy(message, strings[t$_ind]);
     /*
     The original code did not define sound_frequency before calling the
     subroutine at line 360 here. Since the value of sound_frequency is not
@@ -826,12 +829,12 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
         (rand() * attrs[6] / RAND_MAX);
     // 890 IF F(3)+F(6)< rnd(M)+2 THEN LET M$=T$(4):LET HT=0
     if (attrs[3] + attrs[6] < rand() % *monster_type + 2) {
-        message = (char *) malloc(sizeof(char) * (strlen(T$[4]) + 1));
+        message = (char *) malloc(sizeof(char) * (strlen(strings[4]) + 1));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(message, T$[4]);
+        strcpy(message, strings[4]);
         // Probably a bug in the original game: HT is never set or referenced
         // anywhere else. It should be H instead.
         damage = 0;
@@ -849,8 +852,8 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
             screen, char_code_blank, char_code_vase, char_code_safe_place,
             distance_to_monster_x, attrs, monster_coord_x, monster_coord_y,
             monster_type, monster_strength, monster_char_code, monster_speed,
-            monster_next_coord_x, monster_next_coord_y, dungeon_contents, T$,
-            W, X, Y
+            monster_next_coord_x, monster_next_coord_y, dungeon_contents,
+            strings, W, X, Y
         );
     }
     // 930 RETURN
@@ -862,7 +865,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
                   int *monster_type, int *monster_strength,
                   int *monster_char_code, int *monster_speed,
                   int monster_next_coord_x, int monster_next_coord_y,
-                  int **dungeon_contents, const char **T$, int W, int X,
+                  int **dungeon_contents, const char **strings, int W, int X,
                   int Y) {
     char * message;
     int sound_frequency;
@@ -874,12 +877,12 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
     // 950 LET F(5)=F(5)+.1
     attrs[5] += 0.1;
     // 960 LET M$=T$(6):GOSUB430
-    message = (char *) malloc(sizeof(char) * (strlen(T$[6]) + 1));
+    message = (char *) malloc(sizeof(char) * (strlen(strings[6]) + 1));
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(message, T$[6]);
+    strcpy(message, strings[6]);
     lines430_430(screen, message, W);
     free(message);
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
@@ -901,7 +904,7 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
                     int *monster_type, int *monster_strength,
                     int *monster_char_code, int *monster_speed,
                     int monster_next_coord_x, int monster_next_coord_y,
-                    int **dungeon_contents, const char **T$, int W);
+                    int **dungeon_contents, const char **strings, int W);
 void lines1190_1210(int char_code_blank, int char_code_safe_place,
                     int character_coord_x, int character_coord_y,
                     int **dungeon_contents, int item_at_character_coord);
@@ -931,7 +934,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int *character_coord_y, int inventory[25],
                    int **dungeon_contents, int item_at_character_coord,
                    double initial_strength, double initial_vitality,
-                   const char **T$, int W) {
+                   const char **strings, int W) {
     int row_num, spell_number, X, Y;
     char pressed_key, * message;
     // 990 GOSUB480:paper 2: ink 0
@@ -986,12 +989,12 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     Y = *character_coord_y;
     // 1080 IF M(SL)<0 THEN LET M$=T$(9):LET SL=7
     if (spells_remaining[spell_number] < 0) {
-        message = (char *) malloc(sizeof(char) * (strlen(T$[9]) + 1));
+        message = (char *) malloc(sizeof(char) * (strlen(strings[9]) + 1));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(message, T$[9]);
+        strcpy(message, strings[9]);
         spell_number = 7;
     } else {
         // This is the other place where we may call a method for rendering M$
@@ -1024,7 +1027,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                 distance_to_monster_x, attrs, monster_coord_x, monster_coord_y,
                 monster_type, monster_strength, monster_char_code,
                 monster_speed, monster_next_coord_x, monster_next_coord_y,
-                dungeon_contents, T$, W
+                dungeon_contents, strings, W
             );
             break;
         case 2:
@@ -1072,7 +1075,7 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
                     int *monster_type, int *monster_strength,
                     int *monster_char_code, int *monster_speed,
                     int monster_next_coord_x, int monster_next_coord_y,
-                    int **dungeon_contents, const char **T$, int W) {
+                    int **dungeon_contents, const char **strings, int W) {
     int sound_frequency, X, Y;
     // 1140 FOR J=1 TO 12
     for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
@@ -1089,8 +1092,8 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
             screen, char_code_blank, char_code_vase, char_code_safe_place,
             distance_to_monster_x, attrs, monster_coord_x, monster_coord_y,
             monster_type, monster_strength, monster_char_code, monster_speed,
-            monster_next_coord_x, monster_next_coord_y, dungeon_contents, T$,
-            W, X, Y
+            monster_next_coord_x, monster_next_coord_y, dungeon_contents,
+            strings, W, X, Y
         );
     }
     // 1180 RETURN
@@ -1334,17 +1337,17 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
                     int *monster_type, int *monster_strength,
                     int *monster_char_code, int *monster_speed,
                     int character_coord_x, int character_coord_y,
-                    int **dungeon_contents, const char **T$, int W) {
+                    int **dungeon_contents, const char **strings, int W) {
     int X, Y;
     char * message;
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN
     if (*torches == 0) {
-        message = (char *) malloc(sizeof(char) * (strlen(T$[7]) + 1));
+        message = (char *) malloc(sizeof(char) * (strlen(strings[7]) + 1));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(message, T$[7]);
+        strcpy(message, strings[7]);
         lines430_430(screen, message, W);
         free(message);
         return;
@@ -1380,7 +1383,8 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
                          int *character_coord_x, int *character_coord_y,
                          int dungeon_char_base, int *character_prev_coord_x,
                          int *character_prev_coord_y, int **dungeon_contents,
-                         double initial_experience, const char **T$, int W) {
+                         double initial_experience, const char **strings,
+                         int W) {
     // The original BASIC code sometimes used 'GOSUB 1760' and sometimes
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
@@ -1391,12 +1395,13 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
 
     // 1760 IF F(5)<S3+1 THEN LET M$=T$(11):LET NX=OX:LET NY=OY:GOSUB 430:RETURN
         if (!start_at_1770 && attrs[5] < initial_experience + 1) {
-            message = (char *) malloc(sizeof(char) * (strlen(T$[11]) + 1));
+            message =
+                (char *) malloc(sizeof(char) * (strlen(strings[11]) + 1));
             if (message == NULL) {
                 fprintf(stderr, "message is NULL!\n");
                 exit(1);
             }
-            strcpy(message, T$[11]);
+            strcpy(message, strings[11]);
             *character_coord_x = *character_prev_coord_x;
             *character_coord_y = *character_prev_coord_y;
             lines430_430(screen, message, W);
@@ -1409,12 +1414,12 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
         tab(screen->cursor, 0, 3);
         free(print_text(screen, "PREPARE DUNGEON TAPE"));
     // 1780 LET M$=T$(10):GOSUB370
-        message = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
+        message = (char *) malloc(sizeof(char) * (strlen(strings[10]) + 1));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");
             exit(1);
         }
-        strcpy(message, T$[10]);
+        strcpy(message, strings[10]);
         lines370_420(screen, &pressed_key, message, W);
         free(message);
         size_t filesize;
@@ -1478,12 +1483,12 @@ void lines1760_1950(screen_t *screen, char *character_name,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
                     int **dungeon_contents, double initial_experience,
-                    const char **T$, int W) {
+                    const char **strings, int W) {
     lines1760_1770_1950(
         screen, 0, character_name, distance_to_monster_x, attrs, dungeon_level,
         character_coord_x, character_coord_y, dungeon_char_base,
         character_prev_coord_x, character_prev_coord_y, dungeon_contents,
-        initial_experience, T$, W
+        initial_experience, strings, W
     );
 }
 
@@ -1493,12 +1498,12 @@ void lines1770_1950(screen_t *screen, char *character_name,
                     int *character_coord_y, int dungeon_char_base,
                     int *character_prev_coord_x, int *character_prev_coord_y,
                     int **dungeon_contents, double initial_experience,
-                    const char **T$, int W) {
+                    const char **strings, int W) {
     lines1760_1770_1950(
         screen, 1, character_name, distance_to_monster_x, attrs, dungeon_level,
         character_coord_x, character_coord_y, dungeon_char_base,
         character_prev_coord_x, character_prev_coord_y, dungeon_contents,
-        initial_experience, T$, W
+        initial_experience, strings, W
     );
 }
 
@@ -1530,7 +1535,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,
                     double *initial_vitality, double *initial_experience,
-                    const char **T$, int *TR, int W) {
+                    const char **strings, int *TR, int W) {
     char pressed_key, * message;
     int index, subindex, file_index;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
@@ -1538,12 +1543,12 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     tab(screen->cursor, 0, 3);
     free(print_text(screen, "PREPARE HERO TAPE"));
     // 2020 LET M$=T$(10):GOSUB370
-    message = (char *) malloc(sizeof(char) * (strlen(T$[10]) + 1));
+    message = (char *) malloc(sizeof(char) * (strlen(strings[10]) + 1));
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    strcpy(message, T$[10]);
+    strcpy(message, strings[10]);
     lines370_420(screen, &pressed_key, message, W);
     free(message);
     // 2030 S=OPENIN "HERO"
@@ -1646,7 +1651,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     }
     char * dungeon_file_contents = (char *) malloc(sizeof(char) * 229);
     if (dungeon_file_contents == NULL) {
-        fprintf(stderr, "T$ is NULL!\n");
+        fprintf(stderr, "strings is NULL!\n");
         exit(1);
     }
     int s_index = 0;
@@ -1757,7 +1762,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *monster_next_coord_y, int *character_facing,
                     int *character_coord_x, int *character_coord_y,
                     int *dungeon_char_base, int ***dungeon_contents,
-                    int **song_notes, const char ***T$, int *TF, int *TX,
+                    int **song_notes, const char ***strings, int *TF, int *TX,
                     int *TY, int *W, const char ***W$) {
     int index;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
@@ -1840,24 +1845,24 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     // 2650 READ T$(I)
     // 2660 NEXT I
 
-    *T$ = (const char **) malloc(sizeof(const char *) * (13));
-    if (*T$ == NULL) {
-        fprintf(stderr, "*T$ is NULL!\n");
+    *strings = (const char **) malloc(sizeof(const char *) * (13));
+    if (*strings == NULL) {
+        fprintf(stderr, "*strings is NULL!\n");
         exit(1);
     }
 
-    (*T$)[1] = "A GOOD BLOW";
-    (*T$)[2] = "WELL HIT SIRE";
-    (*T$)[3] = "THY AIM IS TRUE";
-    (*T$)[4] = "MISSED!";
-    (*T$)[5] = "HIT THEE!!";
-    (*T$)[6] = "THE MONSTER IS SLAIN";
-    (*T$)[7] = "NO LIGHT";
-    (*T$)[8] = "BROKEN THY ";
-    (*T$)[9] = "SPELL EXHAUSTED";
-    (*T$)[10] = "PRESS ANY KEY";
-    (*T$)[11] = "YOU NEED EXPERIENCE";
-    (*T$)[12] = "EXIT FROM THIS LEVEL";
+    (*strings)[1] = "A GOOD BLOW";
+    (*strings)[2] = "WELL HIT SIRE";
+    (*strings)[3] = "THY AIM IS TRUE";
+    (*strings)[4] = "MISSED!";
+    (*strings)[5] = "HIT THEE!!";
+    (*strings)[6] = "THE MONSTER IS SLAIN";
+    (*strings)[7] = "NO LIGHT";
+    (*strings)[8] = "BROKEN THY ";
+    (*strings)[9] = "SPELL EXHAUSTED";
+    (*strings)[10] = "PRESS ANY KEY";
+    (*strings)[11] = "YOU NEED EXPERIENCE";
+    (*strings)[12] = "EXIT FROM THIS LEVEL";
 
 
     // 2670 DATA0,-1,1,0,0,1,-1,0

@@ -48,7 +48,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int character_facing, int *character_coord_x,
                    int *character_coord_y, int inventory[25],
                    int **dungeon_contents, int item_at_character_coord,
-                   double S1, double S2, const char **T$, int W);
+                   double initial_strength, double S2, const char **T$, int W);
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
                     int char_code_idol, int char_code_safe_place,
@@ -64,7 +64,8 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *monster_strength,
                     int *character_facing, int character_coord_x,
                     int character_coord_y, int *T, int TR);
-void lines1660_1680(double *attrs, int inventory[25], double S1, double S2);
+void lines1660_1680(double *attrs, int inventory[25], double initial_strength,
+                    double S2);
 void lines1690_1750(screen_t *screen, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     int *torches, int *monster_coord_x, int *monster_coord_y,
@@ -87,8 +88,8 @@ void lines1770_1950(screen_t *screen, char *character_name,
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
-                    int *num_item_types, double *S1, double *S2, double *S3,
-                    const char **T$, int *TR, int W);
+                    int *num_item_types, double *initial_strength, double *S2,
+                    double *S3, const char **T$, int *TR, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
@@ -152,7 +153,7 @@ int main(int argc, char *argv[]) {
         W,
         X,
         Y;
-    double S1, S2, S3, * attrs;
+    double initial_strength, S2, S3, * attrs;
     char * character_name = NULL,
          I$,
          * char_code_hero = NULL,
@@ -177,7 +178,8 @@ int main(int argc, char *argv[]) {
     // 20 GOSUB2010
     lines2010_2250(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
-        spells_remaining, inventory, &num_item_types, &S1, &S2, &S3, T$, &TR, W
+        spells_remaining, inventory, &num_item_types, &initial_strength, &S2,
+        &S3, T$, &TR, W
     );
     // 30 GOSUB1770
     lines1770_1950(
@@ -210,8 +212,8 @@ int main(int argc, char *argv[]) {
                 &monster_type, &monster_strength, &monster_char_code,
                 &monster_speed, monster_next_coord_x, monster_next_coord_y,
                 character_facing, &character_coord_x, &character_coord_y,
-                inventory, dungeon_contents, item_at_character_coord, S1, S2,
-                T$, W
+                inventory, dungeon_contents, item_at_character_coord,
+                initial_strength, S2, T$, W
             );
         }
     // 70 IF I$="G" THEN GOSUB1410
@@ -228,7 +230,7 @@ int main(int argc, char *argv[]) {
         }
     // 80 IF I$="P" THEN GOSUB1660
         if (I$ == 'p') {
-            lines1660_1680(attrs, inventory, S1, S2);
+            lines1660_1680(attrs, inventory, initial_strength, S2);
         }
     // 90 IF I$="R" THEN GOSUB1690
         if (I$ == 'r') {
@@ -315,7 +317,7 @@ int main(int argc, char *argv[]) {
             character_coord_y = TY;
         }
     // 240 IF F(1) > S1*.8 AND rnd(8)<F(6) THEN LET TF=0
-        if (attrs[1] > S1 * 0.8 && rand() % 8 < attrs[6]) {
+        if (attrs[1] > initial_strength * 0.8 && rand() % 8 < attrs[6]) {
             TF = 0;
         }
     // 250 IF I$>"" THEN LET F(1)=F(1)*0.99
@@ -323,7 +325,7 @@ int main(int argc, char *argv[]) {
             attrs[1] = attrs[1] * 0.99;
         }
     // 260 IF F(1) <S1 THEN LET F(1)=F(1)+(F(2)/1100)
-        if (attrs[1] < S1) {
+        if (attrs[1] < initial_strength) {
             attrs[1] += attrs[2] / 1100;
         }
     // 270 GOSUB480
@@ -900,7 +902,7 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
                     int character_coord_x, int character_coord_y,
                     int **dungeon_contents, int item_at_character_coord, int X,
                     int Y);
-void lines1390_1400(double *attrs, double S1, double S2);
+void lines1390_1400(double *attrs, double initial_strength, double S2);
 
 void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int char_code_safe_place, int *distance_to_monster_x,
@@ -912,7 +914,8 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int character_facing, int *character_coord_x,
                    int *character_coord_y, int inventory[25],
                    int **dungeon_contents, int item_at_character_coord,
-                   double S1, double S2, const char **T$, int W) {
+                   double initial_strength, double S2, const char **T$,
+                   int W) {
     int row_num, SL, X, Y;
     char I$, * message;
     // 990 GOSUB480:paper 2: ink 0
@@ -1033,7 +1036,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
             );
             break;
         case 6:
-            lines1390_1400(attrs, S1, S2);
+            lines1390_1400(attrs, initial_strength, S2);
             break;
         case 7:
             // Line 1130 is just a return statement.
@@ -1162,10 +1165,10 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1380 RETURN
 }
 
-void lines1390_1400(double *attrs, double S1, double S2) {
+void lines1390_1400(double *attrs, double initial_strength, double S2) {
     // 1390 LET F(2)=S2:LET F(1)=S1:LET F(7)=F(7)-1
     attrs[2] = S2;
-    attrs[1] = S1;
+    attrs[1] = initial_strength;
     attrs[7] -= 1;
     // 1400 RETURN
 }
@@ -1292,10 +1295,11 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     // 1650 RETURN
 }
 
-void lines1660_1680(double *attrs, int inventory[25], double S1, double S2) {
+void lines1660_1680(double *attrs, int inventory[25], double initial_strength,
+                    double S2) {
     // 1660 IF O(24)>0 AND F(1)<S1 THEN LET F(1)=S1:LET O(24)=O(24)-1
-    if (inventory[24] > 0 && attrs[1] < S1) {
-        attrs[1] = S1;
+    if (inventory[24] > 0 && attrs[1] < initial_strength) {
+        attrs[1] = initial_strength;
         inventory[24] -= 1;
     }
     // 1670 IF O(23)>0 AND F(2)<S2 THEN LET F(2)=S2:LET O(23)=O(23)-1
@@ -1506,8 +1510,8 @@ void lines1960_2000(screen_t *screen, double *attrs) {
 void lines2010_2250(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
-                    int *num_item_types, double *S1, double *S2, double *S3,
-                    const char **T$, int *TR, int W) {
+                    int *num_item_types, double *initial_strength, double *S2,
+                    double *S3, const char **T$, int *TR, int W) {
     char I$, * message;
     int index, subindex, file_index;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
@@ -1575,7 +1579,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     }
     strcpy(*character_name, file_contents + file_index + 1);
     // 2190 LET S1=F(1):LET S2=F(2):LET S3=F(5)
-    *S1 = attrs[1];
+    *initial_strength = attrs[1];
     *S2 = attrs[2];
     *S3 = attrs[5];
     // 2200 FOR I=1 TO 2

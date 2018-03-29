@@ -6,12 +6,17 @@ void draw_message(screen_t *screen, char *message, int screen_cols);
 void draw_character_and_stats(screen_t *screen, double *attrs,
                               char *char_code_hero, int character_facing,
                               int character_coord_x, int character_coord_y);
-void lines570_610(screen_t *screen, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  int *monster_coord_x, int *monster_coord_y,
-                  int *monster_type, int *monster_strength,
-                  int *monster_char_code, int *monster_speed,
-                  int **dungeon_contents, int coord_x, int coord_y);
+void render_coord_and_check_for_monster(screen_t *screen, int char_code_vase,
+                                        int char_code_safe_place,
+                                        int *distance_to_monster_x,
+                                        int *monster_coord_x,
+                                        int *monster_coord_y,
+                                        int *monster_type,
+                                        int *monster_strength,
+                                        int *monster_char_code,
+                                        int *monster_speed,
+                                        int **dungeon_contents, int coord_x,
+                                        int coord_y);
 void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, int *monster_coord_x, int *monster_coord_y,
@@ -312,7 +317,7 @@ int main(int argc, char *argv[]) {
         if (item_at_character_coord == char_code_wall) {
             coord_x = character_coord_x;
             coord_y = character_coord_y;
-            lines570_610(
+            render_coord_and_check_for_monster(
                 screen, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, &monster_coord_x, &monster_coord_y,
                 &monster_type, &monster_strength, &monster_char_code,
@@ -357,7 +362,7 @@ int main(int argc, char *argv[]) {
         ) {
             coord_x = character_prev_coord_x;
             coord_y = character_prev_coord_y;
-            lines570_610(
+            render_coord_and_check_for_monster(
                 screen, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, &monster_coord_x, &monster_coord_y,
                 &monster_type, &monster_strength, &monster_char_code,
@@ -551,12 +556,17 @@ void draw_character_and_stats(screen_t *screen, double *attrs,
     SDL_RenderPresent(screen->ren);
 }
 
-void lines570_610(screen_t *screen, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  int *monster_coord_x, int *monster_coord_y,
-                  int *monster_type, int *monster_strength,
-                  int *monster_char_code, int *monster_speed,
-                  int **dungeon_contents, int coord_x, int coord_y) {
+void render_coord_and_check_for_monster(screen_t *screen, int char_code_vase,
+                                        int char_code_safe_place,
+                                        int *distance_to_monster_x,
+                                        int *monster_coord_x,
+                                        int *monster_coord_y,
+                                        int *monster_type,
+                                        int *monster_strength,
+                                        int *monster_char_code,
+                                        int *monster_speed,
+                                        int **dungeon_contents, int coord_x,
+                                        int coord_y) {
     int item_at_coord;
     // 570 paper 1:ink 2
     paper(screen->cursor, RED);
@@ -643,7 +653,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     dungeon_contents[*monster_coord_x][*monster_coord_y] = char_code_blank;
     coord_x = *monster_coord_x;
     coord_y = *monster_coord_y;
-    lines570_610(
+    render_coord_and_check_for_monster(
         screen, char_code_vase, char_code_safe_place, distance_to_monster_x,
         monster_coord_x, monster_coord_y, monster_type, monster_strength,
         monster_char_code, monster_speed, dungeon_contents, coord_x, coord_y
@@ -653,7 +663,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
         *monster_char_code;
     coord_x = *monster_next_coord_x;
     coord_y = *monster_next_coord_y;
-    lines570_610(
+    render_coord_and_check_for_monster(
         screen, char_code_vase, char_code_safe_place, distance_to_monster_x,
         monster_coord_x, monster_coord_y, monster_type, monster_strength,
         monster_char_code, monster_speed, dungeon_contents, coord_x, coord_y
@@ -786,7 +796,7 @@ void lines810_860(screen_t *screen, int char_code_vase,
     // 840 GOSUB350:GOSUB360:GOSUB570:GOSUB480
         sound_sawtooth(sound_frequency);
         sound_noise(sound_frequency);
-        lines570_610(
+        render_coord_and_check_for_monster(
             screen, char_code_vase, char_code_safe_place,
             distance_to_monster_x, monster_coord_x, monster_coord_y,
             monster_type, monster_strength, monster_char_code, monster_speed,
@@ -905,7 +915,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
         sound_noise(sound_frequency);
     }
     // 980 GOSUB570:RETURN
-    lines570_610(
+    render_coord_and_check_for_monster(
         screen, char_code_vase, char_code_safe_place, distance_to_monster_x,
         monster_coord_x, monster_coord_y, monster_type, monster_strength,
         monster_char_code, monster_speed, dungeon_contents, coord_x, coord_y
@@ -1029,7 +1039,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
         print_left$_b$(screen, screen_cols);
         newline(screen->cursor);
     }
-    lines570_610(
+    render_coord_and_check_for_monster(
         screen, char_code_vase, char_code_safe_place, distance_to_monster_x,
         monster_coord_x, monster_coord_y, monster_type, monster_strength,
         monster_char_code, monster_speed, dungeon_contents, coord_x, coord_y
@@ -1178,7 +1188,7 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
             rand() % 8 + 1 + char_code_blank;
     // 1320 GOSUB350:GOSUB570
         sound_sawtooth(sound_frequency);
-        lines570_610(
+        render_coord_and_check_for_monster(
             screen, char_code_vase, char_code_safe_place,
             distance_to_monster_x, monster_coord_x, monster_coord_y,
             monster_type, monster_strength, monster_char_code, monster_speed,
@@ -1267,7 +1277,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
     // 1500 LET X=GX:LET Y=GY:GOSUB570
     coord_x = item_to_get_coord_x;
     coord_y = item_to_get_coord_y;
-    lines570_610(
+    render_coord_and_check_for_monster(
         screen, char_code_vase, char_code_safe_place, distance_to_monster_x,
         monster_coord_x, monster_coord_y, monster_type, monster_strength,
         monster_char_code, monster_speed, dungeon_contents, coord_x, coord_y
@@ -1386,7 +1396,7 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
         ) {
     // 1720 IF (X>0 AND X<16) AND (Y>0 AND Y<16)THEN GOSUB570
             if (coord_x > 0 && coord_x < 16 && coord_y > 0 && coord_y < 16) {
-                lines570_610(
+                render_coord_and_check_for_monster(
                     screen, char_code_vase, char_code_safe_place,
                     distance_to_monster_x, monster_coord_x, monster_coord_y,
                     monster_type, monster_strength, monster_char_code,

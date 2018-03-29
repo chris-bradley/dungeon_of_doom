@@ -610,10 +610,10 @@ int sign(int x) {
     return 0;
 }
 
-void lines780_800(screen_t *screen, int item_num, int sound_frequency,
-                  int *monster_broke_item, int inventory[25], \
-                  const char **strings, int screen_cols,
-                  const char **item_names);
+void monster_breaks_items(screen_t *screen, int item_num, int sound_frequency,
+                          int *monster_broke_item, int inventory[25],
+                          const char **strings, int screen_cols,
+                          const char **item_names);
 
 void monsters_turn(screen_t *screen, int char_code_blank, int char_code_vase,
                    int char_code_safe_place, int *distance_to_monster_x,
@@ -723,7 +723,7 @@ void monsters_turn(screen_t *screen, int char_code_blank, int char_code_vase,
     int done = 0;
     do {
         if (monster_broke_item == 1 && inventory[item_num] > 0) {
-            lines780_800(
+            monster_breaks_items(
                 screen, item_num, sound_frequency, &monster_broke_item,
                 inventory, strings, screen_cols, item_names
             );
@@ -737,10 +737,10 @@ void monsters_turn(screen_t *screen, int char_code_blank, int char_code_vase,
     // 770 RETURN
 }
 
-void lines780_800(screen_t *screen, int item_num, int sound_frequency,
-                  int *monster_broke_item, int inventory[25],
-                  const char **strings, int screen_cols,
-                  const char **item_names) {
+void monster_breaks_items(screen_t *screen, int item_num, int sound_frequency,
+                          int *monster_broke_item, int inventory[25],
+                          const char **strings, int screen_cols,
+                          const char **item_names) {
     char * message;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     inventory[item_num] = 0;

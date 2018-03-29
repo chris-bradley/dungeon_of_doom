@@ -45,18 +45,18 @@ void attack_monster(screen_t *screen, int char_code_blank, int char_code_vase,
                     int inventory[25], int **dungeon_contents,
                     const char **strings, int screen_cols, int coord_x,
                     int coord_y);
-void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
-                   int char_code_safe_place, int *distance_to_monster_x,
-                   double *attrs, char *char_code_hero, int *monster_coord_x,
-                   int *monster_coord_y, int *spells_remaining,
-                   int *monster_type, int *monster_strength,
-                   int *monster_char_code, int *monster_speed,
-                   int monster_next_coord_x, int monster_next_coord_y,
-                   int character_facing, int *character_coord_x,
-                   int *character_coord_y, int inventory[25],
-                   int **dungeon_contents, int item_at_character_coord,
-                   double initial_strength, double initial_vitality,
-                   const char **strings, int screen_cols);
+void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
+                int char_code_safe_place, int *distance_to_monster_x,
+                double *attrs, char *char_code_hero, int *monster_coord_x,
+                int *monster_coord_y, int *spells_remaining, int *monster_type,
+                int *monster_strength, int *monster_char_code,
+                int *monster_speed, int monster_next_coord_x,
+                int monster_next_coord_y, int character_facing,
+                int *character_coord_x, int *character_coord_y,
+                int inventory[25], int **dungeon_contents,
+                int item_at_character_coord, double initial_strength,
+                double initial_vitality, const char **strings,
+                int screen_cols);
 void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int char_code_vase, int char_code_chest,
                     int char_code_idol, int char_code_safe_place,
@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
                 attrs[7] > 0 &&
                 inventory[17] + inventory[18] > 0
         ) {
-            lines990_1130(
+            cast_spell(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, attrs, char_code_hero,
                 &monster_coord_x, &monster_coord_y, spells_remaining,
@@ -948,18 +948,18 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
 void lines1390_1400(double *attrs, double initial_strength,
                     double initial_vitality);
 
-void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
-                   int char_code_safe_place, int *distance_to_monster_x,
-                   double *attrs, char *char_code_hero, int *monster_coord_x,
-                   int *monster_coord_y, int *spells_remaining,
-                   int *monster_type, int *monster_strength,
-                   int *monster_char_code, int *monster_speed,
-                   int monster_next_coord_x, int monster_next_coord_y,
-                   int character_facing, int *character_coord_x,
-                   int *character_coord_y, int inventory[25],
-                   int **dungeon_contents, int item_at_character_coord,
-                   double initial_strength, double initial_vitality,
-                   const char **strings, int screen_cols) {
+void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
+                int char_code_safe_place, int *distance_to_monster_x,
+                double *attrs, char *char_code_hero, int *monster_coord_x,
+                int *monster_coord_y, int *spells_remaining, int *monster_type,
+                int *monster_strength, int *monster_char_code,
+                int *monster_speed, int monster_next_coord_x,
+                int monster_next_coord_y, int character_facing,
+                int *character_coord_x, int *character_coord_y,
+                int inventory[25], int **dungeon_contents,
+                int item_at_character_coord, double initial_strength,
+                double initial_vitality, const char **strings,
+                int screen_cols) {
     int row_num, spell_number, coord_x, coord_y;
     char pressed_key, * message;
     // 990 GOSUB480:paper 2: ink 0

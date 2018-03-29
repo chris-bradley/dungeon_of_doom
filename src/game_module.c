@@ -21,7 +21,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int character_coord_x, int character_coord_y,
                   int inventory[25], int **dungeon_contents,
                   int item_at_character_coord, const char **strings,
-                  int screen_cols, const char **W$);
+                  int screen_cols, const char **item_names);
 void lines810_860(screen_t *screen, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, char *char_code_hero, int *monster_coord_x,
@@ -116,7 +116,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *dungeon_char_base, int ***dungeon_contents,
                     int **song_notes, const char ***strings, int *trapped,
                     int *trap_coord_x, int *trap_coord_y, int *screen_cols,
-                    const char ***W$);
+                    const char ***item_names);
 
 int main(int argc, char *argv[]) {
     int character_char_base,
@@ -166,7 +166,7 @@ int main(int argc, char *argv[]) {
          pressed_key,
          * char_code_hero = NULL,
          * message;
-    const char ** strings, **W$;
+    const char ** strings, **item_names;
     // C64: 5 GOSUB 5000:POKE 53281,0
     screen_t *screen = init_screen();
     paper(screen->cursor, YELLOW);
@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
         &spells_remaining, &monster_next_coord_x, &monster_next_coord_y,
         &character_facing, &character_coord_x, &character_coord_y,
         &dungeon_char_base, &dungeon_contents, &song_notes, &strings, &trapped,
-        &trap_coord_x, &trap_coord_y, &screen_cols, &W$
+        &trap_coord_x, &trap_coord_y, &screen_cols, &item_names
     );
     // 20 GOSUB2010
     lines2010_2250(
@@ -376,7 +376,7 @@ int main(int argc, char *argv[]) {
                 &monster_char_code, &monster_speed, &monster_next_coord_x,
                 &monster_next_coord_y, character_coord_x, character_coord_y,
                 inventory, dungeon_contents, item_at_character_coord, strings,
-                screen_cols, W$
+                screen_cols, item_names
             );
         }
     // 310 IF F(1)>0 AND FI<1 AND RH<>C5 THEN GOTO 40
@@ -440,7 +440,7 @@ int main(int argc, char *argv[]) {
     free(dungeon_contents);
     free(song_notes);
     free(strings);
-    free(W$);
+    free(item_names);
     return 0;
 }
 
@@ -600,7 +600,8 @@ int sign(int x) {
 
 void lines780_800(screen_t *screen, int item_num, int sound_frequency,
                   int *monster_broke_item, int inventory[25], \
-                  const char **strings, int screen_cols, const char **W$);
+                  const char **strings, int screen_cols,
+                  const char **item_names);
 
 void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
@@ -611,7 +612,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
                   int character_coord_x, int character_coord_y,
                   int inventory[25], int **dungeon_contents,
                   int item_at_character_coord, const char **strings,
-                  int screen_cols, const char **W$) {
+                  int screen_cols, const char **item_names) {
     int distance_to_monster_y, damage, item_num, sound_frequency,
         monster_broke_item, item_at_monster_next_coord, direction_to_monster_x,
         direction_to_monster_y, coord_x, coord_y;
@@ -712,7 +713,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
         if (monster_broke_item == 1 && inventory[item_num] > 0) {
             lines780_800(
                 screen, item_num, sound_frequency, &monster_broke_item,
-                inventory, strings, screen_cols, W$
+                inventory, strings, screen_cols, item_names
             );
         }
     // 760 IF I<11 THEN LET I=I+1:GOTO750
@@ -726,18 +727,19 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
 
 void lines780_800(screen_t *screen, int item_num, int sound_frequency,
                   int *monster_broke_item, int inventory[25],
-                  const char **strings, int screen_cols, const char **W$) {
+                  const char **strings, int screen_cols,
+                  const char **item_names) {
     char * message;
     // 780 LET O(I)=0:LET M$=T$(8)+" "+W$(I):GOSUB430
     inventory[item_num] = 0;
     message = (char *) malloc(
-        sizeof(char) * (strlen(strings[8]) + strlen(W$[item_num]) + 2)
+        sizeof(char) * (strlen(strings[8]) + strlen(item_names[item_num]) + 2)
     );
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    sprintf(message, "%s %s", strings[8], W$[item_num]);
+    sprintf(message, "%s %s", strings[8], item_names[item_num]);
     lines430_430(screen, message, screen_cols);
     free(message);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
@@ -1792,7 +1794,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *dungeon_char_base, int ***dungeon_contents,
                     int **song_notes, const char ***strings, int *trapped,
                     int *trap_coord_x, int *trap_coord_y, int *screen_cols,
-                    const char ***W$) {
+                    const char ***item_names) {
     int index;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
@@ -1822,9 +1824,9 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
         exit(1);
     }
     // 2540 DIM W$(11),T$(12)
-    *W$ = (const char **) malloc(sizeof(const char *) * (12));
-    if (*W$ == NULL) {
-        fprintf(stderr, "*W$ is NULL!\n");
+    *item_names = (const char **) malloc(sizeof(const char *) * (12));
+    if (*item_names == NULL) {
+        fprintf(stderr, "*item_names is NULL!\n");
         exit(1);
     }
     // 2550 DIM M(6),D(4,2),T(18)
@@ -1855,17 +1857,17 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     // 2580 FOR I = 1 TO 11
     // 2590 READ W$(I)
     // 2600 NEXT I
-    (*W$)[1] = "GR SWORD";
-    (*W$)[2] = "SWORD";
-    (*W$)[3] = "AXE";
-    (*W$)[4] = "MACE";
-    (*W$)[5] = "FLAIL";
-    (*W$)[6] = "DAGGER";
-    (*W$)[7] = "ARMOUR";
-    (*W$)[8] = "ARMOUR";
-    (*W$)[9] = "ARMOUR";
-    (*W$)[10] = "HELMET";
-    (*W$)[11] = "HEADPC.";
+    (*item_names)[1] = "GR SWORD";
+    (*item_names)[2] = "SWORD";
+    (*item_names)[3] = "AXE";
+    (*item_names)[4] = "MACE";
+    (*item_names)[5] = "FLAIL";
+    (*item_names)[6] = "DAGGER";
+    (*item_names)[7] = "ARMOUR";
+    (*item_names)[8] = "ARMOUR";
+    (*item_names)[9] = "ARMOUR";
+    (*item_names)[10] = "HELMET";
+    (*item_names)[11] = "HEADPC.";
 
     // 2610 DATA"A GOOD BLOW","WELL HIT SIRE","THY AIM IS TRUE","MISSED!","HIT THEE!!"
     // 2620 DATA"THE MONSTER IS SLAIN","NO LIGHT","BROKEN THY ","SPELL EXHAUSTED"

@@ -945,8 +945,8 @@ void cast_metamorphosis(screen_t *screen, int char_code_blank,
                         int *monster_speed, int character_coord_x,
                         int character_coord_y, int **dungeon_contents,
                         int item_at_character_coord, int coord_x, int coord_y);
-void lines1390_1400(double *attrs, double initial_strength,
-                    double initial_vitality);
+void cast_healing(double *attrs, double initial_strength,
+                  double initial_vitality);
 
 void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
                 int char_code_safe_place, int *distance_to_monster_x,
@@ -1080,7 +1080,7 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
             );
             break;
         case 6:
-            lines1390_1400(attrs, initial_strength, initial_vitality);
+            cast_healing(attrs, initial_strength, initial_vitality);
             break;
         case 7:
             // Line 1130 is just a return statement.
@@ -1211,8 +1211,8 @@ void cast_metamorphosis(screen_t *screen, int char_code_blank,
     // 1380 RETURN
 }
 
-void lines1390_1400(double *attrs, double initial_strength,
-                    double initial_vitality) {
+void cast_healing(double *attrs, double initial_strength,
+                  double initial_vitality) {
     // 1390 LET F(2)=S2:LET F(1)=S1:LET F(7)=F(7)-1
     attrs[2] = initial_vitality;
     attrs[1] = initial_strength;

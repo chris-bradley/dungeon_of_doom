@@ -57,17 +57,16 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
                 int item_at_character_coord, double initial_strength,
                 double initial_vitality, const char **strings,
                 int screen_cols);
-void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
-                    int char_code_vase, int char_code_chest,
-                    int char_code_idol, int char_code_safe_place,
-                    int **vertices, int *distance_to_monster_x, double *attrs,
-                    char *char_code_hero, int *finished, int gold,
-                    int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int *character_facing, int character_coord_x,
-                    int character_coord_y, int inventory[25],
-                    int **dungeon_contents, int *song_notes, int *treasure);
+void get_item(screen_t *screen, int char_code_blank, int char_code_wall,
+              int char_code_vase, int char_code_chest,
+              int char_code_idol, int char_code_safe_place, int **vertices,
+              int *distance_to_monster_x, double *attrs, char *char_code_hero,
+              int *finished, int gold, int *monster_coord_x,
+              int *monster_coord_y, int *monster_type, int *monster_strength,
+              int *monster_char_code, int *monster_speed,
+              int *character_facing, int character_coord_x,
+              int character_coord_y, int inventory[25], int **dungeon_contents,
+              int *song_notes, int *treasure);
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *monster_strength,
                     int *character_facing, int character_coord_x,
@@ -237,7 +236,7 @@ int main(int argc, char *argv[]) {
         }
     // 70 IF I$="G" THEN GOSUB1410
         if (pressed_key == 'g') {
-            lines1410_1520(
+            get_item(
                 screen, char_code_blank, char_code_wall, char_code_vase,
                 char_code_chest, char_code_idol, char_code_safe_place,
                 vertices, &distance_to_monster_x, attrs, char_code_hero,
@@ -1220,17 +1219,16 @@ void cast_healing(double *attrs, double initial_strength,
     // 1400 RETURN
 }
 
-void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
-                    int char_code_vase, int char_code_chest,
-                    int char_code_idol, int char_code_safe_place,
-                    int **vertices, int *distance_to_monster_x, double *attrs,
-                    char *char_code_hero, int *finished, int gold,
-                    int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int *character_facing, int character_coord_x,
-                    int character_coord_y, int inventory[25],
-                    int **dungeon_contents, int *song_notes, int *treasure) {
+void get_item(screen_t *screen, int char_code_blank, int char_code_wall,
+              int char_code_vase, int char_code_chest, int char_code_idol,
+              int char_code_safe_place, int **vertices,
+              int *distance_to_monster_x, double *attrs, char *char_code_hero,
+              int *finished, int gold, int *monster_coord_x,
+              int *monster_coord_y, int *monster_type, int *monster_strength,
+              int *monster_char_code, int *monster_speed,
+              int *character_facing, int character_coord_x,
+              int character_coord_y, int inventory[25], int **dungeon_contents,
+              int *song_notes, int *treasure) {
     int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y,
         coord_x, coord_y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)

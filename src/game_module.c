@@ -444,7 +444,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lines350_355(int sound_frequency) {
+void sound_sawtooth(int sound_frequency) {
     // C64:
     // 350 POKE VS+1,J:POKE VS+4,33
     // 355 POKE VS+4,32:RETURN
@@ -668,7 +668,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     ) {
         damage = *monster_type * 0.5;
         sound_frequency = damage;
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
     } else {
         // This line was not in the original. We set J here on the unlikely
         // chance that the next condition is True while the previous condition
@@ -705,7 +705,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     monster_broke_item = rand() % *monster_type;
     // 740 LET J=MT:GOSUB350:GOSUB360
     sound_frequency = *monster_char_code;
-    lines350_355(sound_frequency);
+    sound_sawtooth(sound_frequency);
     lines360_365(sound_frequency);
     // 750 IF MB=1 AND O(I)>0 THEN GOSUB780
     int done = 0;
@@ -746,7 +746,7 @@ void lines780_800(screen_t *screen, int item_num, int sound_frequency,
     *monster_broke_item = 0;
     lines360_365(sound_frequency);
     sound_frequency = item_num;
-    lines350_355(sound_frequency);
+    sound_sawtooth(sound_frequency);
     // 800 RETURN
 }
 
@@ -782,7 +782,7 @@ void lines810_860(screen_t *screen, int char_code_vase,
     // 830 FOR J=150 TO 1 STEP-4
     for (sound_frequency = 150; sound_frequency >= 1; sound_frequency -= 4) {
     // 840 GOSUB350:GOSUB360:GOSUB570:GOSUB480
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
         lines360_365(sound_frequency);
         lines570_610(
             screen, char_code_vase, char_code_safe_place,
@@ -899,7 +899,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
     free(message);
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
         lines360_365(sound_frequency);
     }
     // 980 GOSUB570:RETURN
@@ -1094,7 +1094,7 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1140 FOR J=1 TO 12
     for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
     // 1150 GOSUB350:GOSUB360
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
         lines360_365(sound_frequency);
     // 1160 NEXT J
     }
@@ -1124,9 +1124,9 @@ void lines1190_1210(int char_code_blank, int char_code_safe_place,
     }
     // 1200 LET J=100:GOSUB350:LET J=200:GOSUB350
     sound_frequency = 100;
-    lines350_355(sound_frequency);
+    sound_sawtooth(sound_frequency);
     sound_frequency = 200;
-    lines350_355(sound_frequency);
+    sound_sawtooth(sound_frequency);
     // 1210 RETURN
 }
 
@@ -1141,7 +1141,7 @@ void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
     for (sound_frequency = 0; sound_frequency <= 255; sound_frequency += 8) {
     // 1240 GOSUB360:GOSUB350
         lines360_365(sound_frequency);
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
     // 1250 NEXT J
     }
     // 1260 GOSUB480
@@ -1175,7 +1175,7 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
         dungeon_contents[character_coord_x][character_coord_y] =
             rand() % 8 + 1 + char_code_blank;
     // 1320 GOSUB350:GOSUB570
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
         lines570_610(
             screen, char_code_vase, char_code_safe_place,
             distance_to_monster_x, monster_coord_x, monster_coord_y,
@@ -1192,7 +1192,7 @@ void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1350 FOR J = 1 TO 2O STEP4
     for (sound_frequency = 1; sound_frequency <= 20; sound_frequency += 4) {
     // 1360 GOSUB 350
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
     // 1370 NEXT J
     }
     // 1380 RETURN
@@ -1273,9 +1273,9 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
     // 1510 IF GT>C1 AND GT<C4 THEN LET J=GT:GOSUB350:LET J=GT+5:GOSUB350
     if (item_to_get > char_code_wall && item_to_get < char_code_idol) {
         sound_frequency = item_to_get;
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
         sound_frequency = item_to_get + 5;
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
     }
     // 1520 RETURN
 }
@@ -1295,7 +1295,7 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     for (index = 1; index <= 18; index += 1) {
     // 1580 LET J=T(I):GOSUB350
         sound_frequency = song_notes[index];
-        lines350_355(sound_frequency);
+        sound_sawtooth(sound_frequency);
 
     // 1590 LET X=NX:LET Y=NY
         // X and Y are overwritten before the above values are used.

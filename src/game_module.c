@@ -811,7 +811,7 @@ void character_dies(screen_t *screen, int char_code_vase,
     // 860 RETURN
 }
 
-void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
+void monster_dies(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, int *monster_coord_x, int *monster_coord_y,
                   int *monster_type, int *monster_strength,
@@ -872,7 +872,7 @@ void attack_monster(screen_t *screen, int char_code_blank, int char_code_vase,
     attrs[5] += 0.05;
     // 920 IF MS<1 THEN GOSUB940
     if (*monster_strength < 1) {
-        lines940_980(
+        monster_dies(
             screen, char_code_blank, char_code_vase, char_code_safe_place,
             distance_to_monster_x, attrs, monster_coord_x, monster_coord_y,
             monster_type, monster_strength, monster_char_code, monster_speed,
@@ -883,7 +883,7 @@ void attack_monster(screen_t *screen, int char_code_blank, int char_code_vase,
     // 930 RETURN
 }
 
-void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
+void monster_dies(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, int *monster_coord_x, int *monster_coord_y,
                   int *monster_type, int *monster_strength,
@@ -1025,7 +1025,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
         // This is the other place where we may call a method for rendering M$
         // without setting it first. The original BASIC code emptied M$ after
         // each time it was rendered. In this case, we empty after the call to
-        // lines940_980(), since we don't know when it will be used next.
+        // monster_dies(), since we don't know when it will be used next.
         message = (char *) malloc(sizeof(char));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");
@@ -1114,7 +1114,7 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
     if (*distance_to_monster_x < 255) {
         coord_x = monster_next_coord_x;
         coord_y = monster_next_coord_y;
-        lines940_980(
+        monster_dies(
             screen, char_code_blank, char_code_vase, char_code_safe_place,
             distance_to_monster_x, attrs, monster_coord_x, monster_coord_y,
             monster_type, monster_strength, monster_char_code, monster_speed,

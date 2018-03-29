@@ -452,7 +452,7 @@ void sound_sawtooth(int sound_frequency) {
     // TODO: SOUND!
 }
 
-void lines360_365(int sound_frequency) {
+void sound_noise(int sound_frequency) {
     // C64:
     // 360 POKE VS+8,J:POKE VS+11,129
     // 365 POKE VS+11,128:RETURN
@@ -690,7 +690,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     strcpy(message, strings[5]);
     lines430_430(screen, message, screen_cols);
     free(message);
-    lines360_365(sound_frequency);
+    sound_noise(sound_frequency);
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
     damage /= (
         3 + inventory[9] + inventory[10] + inventory[11] + inventory[12] +
@@ -706,7 +706,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
     // 740 LET J=MT:GOSUB350:GOSUB360
     sound_frequency = *monster_char_code;
     sound_sawtooth(sound_frequency);
-    lines360_365(sound_frequency);
+    sound_noise(sound_frequency);
     // 750 IF MB=1 AND O(I)>0 THEN GOSUB780
     int done = 0;
     do {
@@ -744,7 +744,7 @@ void lines780_800(screen_t *screen, int item_num, int sound_frequency,
     free(message);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
     *monster_broke_item = 0;
-    lines360_365(sound_frequency);
+    sound_noise(sound_frequency);
     sound_frequency = item_num;
     sound_sawtooth(sound_frequency);
     // 800 RETURN
@@ -783,7 +783,7 @@ void lines810_860(screen_t *screen, int char_code_vase,
     for (sound_frequency = 150; sound_frequency >= 1; sound_frequency -= 4) {
     // 840 GOSUB350:GOSUB360:GOSUB570:GOSUB480
         sound_sawtooth(sound_frequency);
-        lines360_365(sound_frequency);
+        sound_noise(sound_frequency);
         lines570_610(
             screen, char_code_vase, char_code_safe_place,
             distance_to_monster_x, monster_coord_x, monster_coord_y,
@@ -832,7 +832,7 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
     subroutine at line 360 here. Since the value of sound_frequency is not
     easily predicted, we just use 100.
     */
-    lines360_365(100);
+    sound_noise(100);
     free(message);
     // 880 LET H=F(1)+O(1) + O(2) + O(3) + O(4) + O(5) + O(6) + O(7) + O(8) + rnd(F(6))
     damage =
@@ -900,7 +900,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
         sound_sawtooth(sound_frequency);
-        lines360_365(sound_frequency);
+        sound_noise(sound_frequency);
     }
     // 980 GOSUB570:RETURN
     lines570_610(
@@ -1095,7 +1095,7 @@ void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
     for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
     // 1150 GOSUB350:GOSUB360
         sound_sawtooth(sound_frequency);
-        lines360_365(sound_frequency);
+        sound_noise(sound_frequency);
     // 1160 NEXT J
     }
     // 1170 IF DX<255 THEN LET X=MX:LET Y=MY:GOSUB940
@@ -1140,7 +1140,7 @@ void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
     // 1230 FOR J=0 TO 255 STEP8
     for (sound_frequency = 0; sound_frequency <= 255; sound_frequency += 8) {
     // 1240 GOSUB360:GOSUB350
-        lines360_365(sound_frequency);
+        sound_noise(sound_frequency);
         sound_sawtooth(sound_frequency);
     // 1250 NEXT J
     }

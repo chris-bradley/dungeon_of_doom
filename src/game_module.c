@@ -460,8 +460,8 @@ void sound_noise(int sound_frequency) {
     // TODO: SOUND!
 }
 
-void lines370_420(screen_t *screen, char *pressed_key, char *message,
-                  int screen_cols) {
+void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
+                        int screen_cols) {
     // 370 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
@@ -981,7 +981,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
             exit(1);
         }
         strcpy(message, "USE SPELL NUMBER?");
-        lines370_420(screen, &pressed_key, message, screen_cols);
+        get_keyboard_input(screen, &pressed_key, message, screen_cols);
         free(message);
         char * outstring = (char *) malloc(sizeof(char) * 2);
         sprintf(outstring, "%c", pressed_key);
@@ -1399,8 +1399,8 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
     // 1750 RETURN
 }
 
-void lines370_420(screen_t *screen, char *pressed_key, char *message,
-                  int screen_cols);
+void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
+                        int screen_cols);
 void lines1960_2000(screen_t *screen, double *attrs);
 void lines2790_2920(screen_t *screen, char *character_name, int screen_cols);
 
@@ -1448,7 +1448,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
             exit(1);
         }
         strcpy(message, strings[10]);
-        lines370_420(screen, &pressed_key, message, screen_cols);
+        get_keyboard_input(screen, &pressed_key, message, screen_cols);
         free(message);
         size_t filesize;
     // 1790 S=OPENIN"LEVEL"
@@ -1578,7 +1578,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
         exit(1);
     }
     strcpy(message, strings[10]);
-    lines370_420(screen, &pressed_key, message, screen_cols);
+    get_keyboard_input(screen, &pressed_key, message, screen_cols);
     free(message);
     // 2030 S=OPENIN "HERO"
     FILE *file_handle = fopen("HERO", "r");
@@ -1746,7 +1746,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
         exit(1);
     }
     strcpy(message, "ANY KEY TO SAVE");
-    lines370_420(screen, &pressed_key, message, screen_cols);
+    get_keyboard_input(screen, &pressed_key, message, screen_cols);
     free(message);
     // 2460 S=OPENOUT"HERO":PRINT#S,S$:CLOSE#S
     FILE *file_handle = fopen("HERO", "w");

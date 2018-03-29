@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "dungeon_lib.h"
 
-void lines430_430(screen_t *screen, char *message, int screen_cols);
+void draw_message(screen_t *screen, char *message, int screen_cols);
 void lines480_560(screen_t *screen, double *attrs, char *char_code_hero,
                   int character_facing, int character_coord_x,
                   int character_coord_y);
@@ -396,7 +396,7 @@ int main(int argc, char *argv[]) {
             }
             strcpy(message, strings[12]);
             message[strlen(strings[12])] = 0;
-            lines430_430(screen, message, screen_cols);
+            draw_message(screen, message, screen_cols);
             free(message);
             lines1760_1950(
                 screen, character_name, &distance_to_monster_x, attrs,
@@ -481,7 +481,7 @@ void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
 
 void lines440_470(screen_t *screen, char *message, int screen_cols);
 
-void lines430_430(screen_t *screen, char *message, int screen_cols) {
+void draw_message(screen_t *screen, char *message, int screen_cols) {
     // 430 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
@@ -688,7 +688,7 @@ void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
         exit(1);
     }
     strcpy(message, strings[5]);
-    lines430_430(screen, message, screen_cols);
+    draw_message(screen, message, screen_cols);
     free(message);
     sound_noise(sound_frequency);
     // 710 LET H=H/(3+O(9) + O(10) + O(11) + O(12) + O(13) + O(14))
@@ -740,7 +740,7 @@ void lines780_800(screen_t *screen, int item_num, int sound_frequency,
         exit(1);
     }
     sprintf(message, "%s %s", strings[8], item_names[item_num]);
-    lines430_430(screen, message, screen_cols);
+    draw_message(screen, message, screen_cols);
     free(message);
     // 790 LET MB=0:GOSUB360:LET J=I:GOSUB350
     *monster_broke_item = 0;
@@ -853,7 +853,7 @@ void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
     }
     // 900 LET MS=MS-H:GOSUB430
     *monster_strength -= damage;
-    lines430_430(screen, message, screen_cols);
+    draw_message(screen, message, screen_cols);
     free(message);
     // 910 LET F(1)=F(1)-(H/100):LET F(5)=F(5)+0.05
     attrs[1] -= damage / 100;
@@ -895,7 +895,7 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
         exit(1);
     }
     strcpy(message, strings[6]);
-    lines430_430(screen, message, screen_cols);
+    draw_message(screen, message, screen_cols);
     free(message);
     // 970 FOR J=200 TO 150STEP-8:GOSUB350:GOSUB360:NEXT J
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
@@ -1077,7 +1077,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1110 LET F(5)=F(5)+.2
     attrs[5] += 0.2;
     // 1120 GOSUB430
-    lines430_430(screen, message, screen_cols);
+    draw_message(screen, message, screen_cols);
     free(message);
     // 1130 RETURN
 }
@@ -1366,7 +1366,7 @@ void lines1690_1750(screen_t *screen, int char_code_vase,
             exit(1);
         }
         strcpy(message, strings[7]);
-        lines430_430(screen, message, screen_cols);
+        draw_message(screen, message, screen_cols);
         free(message);
         return;
     }
@@ -1432,7 +1432,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
             strcpy(message, strings[11]);
             *character_coord_x = *character_prev_coord_x;
             *character_coord_y = *character_prev_coord_y;
-            lines430_430(screen, message, screen_cols);
+            draw_message(screen, message, screen_cols);
             free(message);
             return;
         }
@@ -1668,7 +1668,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
         exit(1);
     }
     strcpy(message, "ONE MOMENT PLEASE");
-    lines430_430(screen, message, screen_cols);
+    draw_message(screen, message, screen_cols);
     free(message);
     // 2270 LET S$="":LET T$=""
     char * character_file_contents = (char *) malloc(

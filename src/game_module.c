@@ -930,7 +930,7 @@ void cast_superzap(screen_t *screen, int char_code_blank, int char_code_vase,
                    int monster_next_coord_x, int monster_next_coord_y,
                    int **dungeon_contents, const char **strings,
                    int screen_cols);
-void lines1190_1210(int char_code_blank, int char_code_safe_place,
+void cast_sanctuary(int char_code_blank, int char_code_safe_place,
                     int character_coord_x, int character_coord_y,
                     int **dungeon_contents, int item_at_character_coord);
 void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
@@ -1056,7 +1056,7 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
             );
             break;
         case 2:
-            lines1190_1210(
+            cast_sanctuary(
                 char_code_blank, char_code_safe_place, *character_coord_x,
                 *character_coord_y, dungeon_contents, item_at_character_coord
             );
@@ -1125,7 +1125,7 @@ void cast_superzap(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1180 RETURN
 }
 
-void lines1190_1210(int char_code_blank, int char_code_safe_place,
+void cast_sanctuary(int char_code_blank, int char_code_safe_place,
                     int character_coord_x, int character_coord_y,
                     int **dungeon_contents, int item_at_character_coord) {
     int sound_frequency;

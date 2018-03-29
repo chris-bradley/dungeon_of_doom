@@ -3,9 +3,9 @@
 #include "dungeon_lib.h"
 
 void draw_message(screen_t *screen, char *message, int screen_cols);
-void lines480_560(screen_t *screen, double *attrs, char *char_code_hero,
-                  int character_facing, int character_coord_x,
-                  int character_coord_y);
+void draw_character_and_stats(screen_t *screen, double *attrs,
+                              char *char_code_hero, int character_facing,
+                              int character_coord_x, int character_coord_y);
 void lines570_610(screen_t *screen, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   int *monster_coord_x, int *monster_coord_y,
@@ -346,7 +346,7 @@ int main(int argc, char *argv[]) {
             attrs[1] += attrs[2] / 1100;
         }
     // 270 GOSUB480
-        lines480_560(
+        draw_character_and_stats(
             screen, attrs, char_code_hero, character_facing, character_coord_x,
             character_coord_y
         );
@@ -505,9 +505,9 @@ void draw_message_wo_colour_change(screen_t *screen, char *message,
     // 470 RETURN
 }
 
-void lines480_560(screen_t *screen, double *attrs, char *char_code_hero,
-                  int character_facing, int character_coord_x,
-                  int character_coord_y) {
+void draw_character_and_stats(screen_t *screen, double *attrs,
+                              char *char_code_hero, int character_facing,
+                              int character_coord_x, int character_coord_y) {
     // 480 paper 1:ink 3
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
@@ -792,7 +792,7 @@ void lines810_860(screen_t *screen, int char_code_vase,
             monster_type, monster_strength, monster_char_code, monster_speed,
             dungeon_contents, coord_x, coord_y
         );
-        lines480_560(
+        draw_character_and_stats(
             screen, attrs, char_code_hero, *character_facing,
             character_coord_x, character_coord_y
         );
@@ -953,7 +953,7 @@ void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
     int row_num, spell_number, coord_x, coord_y;
     char pressed_key, * message;
     // 990 GOSUB480:paper 2: ink 0
-    lines480_560(
+    draw_character_and_stats(
         screen, attrs, char_code_hero, character_facing, *character_coord_x,
         *character_coord_y
     );
@@ -1147,7 +1147,7 @@ void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
     // 1250 NEXT J
     }
     // 1260 GOSUB480
-    lines480_560(
+    draw_character_and_stats(
         screen, attrs, char_code_hero, character_facing, *character_coord_x,
         *character_coord_y
     );
@@ -1304,7 +1304,7 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     // 1600 FOR N=1 TO 4:LET NF=N:GOSUB480:NEXT N
         for (direction = 1; direction <=4; direction += 1) {
             *character_facing = direction;
-            lines480_560(
+            draw_character_and_stats(
                 screen, attrs, char_code_hero, *character_facing,
                 character_coord_x, character_coord_y
             );

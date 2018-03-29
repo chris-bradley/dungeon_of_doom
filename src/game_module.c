@@ -936,7 +936,7 @@ void cast_sanctuary(int char_code_blank, int char_code_safe_place,
 void cast_teleport(screen_t *screen, double *attrs, char *char_code_hero,
                    int character_facing, int *character_coord_x,
                    int *character_coord_y);
-void lines1280_1290(double *attrs, int *spells_remaining, int spell_number);
+void cast_powersurge(double *attrs, int *spells_remaining, int spell_number);
 void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     int *monster_coord_x, int *monster_coord_y,
@@ -1068,7 +1068,7 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
             );
             break;
         case 4:
-            lines1280_1290(attrs, spells_remaining, spell_number);
+            cast_powersurge(attrs, spells_remaining, spell_number);
             break;
         case 5:
             lines1300_1380(
@@ -1164,7 +1164,7 @@ void cast_teleport(screen_t *screen, double *attrs, char *char_code_hero,
     // 1270 RETURN
 }
 
-void lines1280_1290(double *attrs, int *spells_remaining, int spell_number) {
+void cast_powersurge(double *attrs, int *spells_remaining, int spell_number) {
     // 1280 LET F(2)=F(2)+rnd(M(SL)):LET F(1)=F(1)+rnd(M(SL)):LET F(7)=F(7)-1
     attrs[2] += rand() * spells_remaining[spell_number];
     attrs[1] += rand() * spells_remaining[spell_number];

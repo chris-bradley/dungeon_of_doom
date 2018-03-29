@@ -103,7 +103,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *char_code_exit,
+                    int *char_code_way_in, int *char_code_trap,
                     int *char_code_safe_place, int ***vertices,
                     int *distance_to_monster_x, double **attrs,
                     char **char_code_hero, int *finished, int *torches,
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
         char_code_chest,
         char_code_idol,
         char_code_way_in,  // Symbol for Way In
-        char_code_exit,  // Symbol for Exit
+        char_code_trap,  // Symbol for Trap
         char_code_safe_place,
         ** vertices,
         distance_to_monster_x,
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]) {
     lines2500_2780(
         &character_char_base, &char_code_blank, &char_code_wall,
         &char_code_vase, &char_code_chest, &char_code_idol, &char_code_way_in,
-        &char_code_exit, &char_code_safe_place, &vertices,
+        &char_code_trap, &char_code_safe_place, &vertices,
         &distance_to_monster_x, &attrs, &char_code_hero, &finished, &torches,
         &spells_remaining, &monster_next_coord_x, &monster_next_coord_y,
         &character_facing, &character_coord_x, &character_coord_y,
@@ -318,7 +318,7 @@ int main(int argc, char *argv[]) {
             attrs[1] -= 0.03;
         }
     // 220 IF RH=C6 THEN LET TX=NX:LET TY=NY:LET TF=1
-        if (item_at_character_coord == char_code_exit) {
+        if (item_at_character_coord == char_code_trap) {
             TX = character_coord_x;
             TY = character_coord_y;
             TF = 1;
@@ -1748,13 +1748,13 @@ void lines2260_2490(screen_t *screen, int character_char_base,
 void lines2930_3200(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *char_code_exit,
+                    int *char_code_way_in, int *char_code_trap,
                     int *char_code_safe_place, int dungeon_char_base);
 
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *char_code_exit,
+                    int *char_code_way_in, int *char_code_trap,
                     int *char_code_safe_place, int ***vertices,
                     int *distance_to_monster_x, double **attrs,
                     char **char_code_hero, int *finished, int *torches,
@@ -1929,7 +1929,7 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     (*song_notes)[18] = 149;
     lines2930_3200(
         character_char_base, char_code_blank, char_code_wall, char_code_vase,
-        char_code_chest, char_code_idol, char_code_way_in, char_code_exit,
+        char_code_chest, char_code_idol, char_code_way_in, char_code_trap,
         char_code_safe_place, *dungeon_char_base
     );
     // 2780 RETURN
@@ -1987,7 +1987,7 @@ void lines2790_2920(screen_t *screen, char *character_name, int W) {
 void lines2930_3200(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
-                    int *char_code_way_in, int *char_code_exit,
+                    int *char_code_way_in, int *char_code_trap,
                     int *char_code_safe_place, int dungeon_char_base) {
     // 2930 REM ** USER DEF'D CHARACTERS **
     // 2940 GOSUB 4000
@@ -2009,7 +2009,7 @@ void lines2930_3200(int *character_char_base, int *char_code_blank,
     *char_code_idol = *char_code_blank + 4;
     // 3190 LET C5=C0+6:LET C6=C0+7:LET C7=C0+8:LET C8=C0+12
     *char_code_way_in = *char_code_blank + 6;
-    *char_code_exit = *char_code_blank + 7;
+    *char_code_trap = *char_code_blank + 7;
     *char_code_safe_place = *char_code_blank + 8;
     // C8 is never acyually used.
 

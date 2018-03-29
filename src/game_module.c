@@ -36,15 +36,15 @@ void character_dies(screen_t *screen, int char_code_vase,
                     int character_coord_x, int character_coord_y,
                     int **dungeon_contents, int screen_cols, int coord_x,
                     int coord_y);
-void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  double *attrs, int *monster_coord_x, int *monster_coord_y,
-                  int *monster_type, int *monster_strength,
-                  int *monster_char_code, int *monster_speed,
-                  int monster_next_coord_x, int monster_next_coord_y,
-                  int inventory[25], int **dungeon_contents,
-                  const char **strings, int screen_cols, int coord_x,
-                  int coord_y);
+void attack_monster(screen_t *screen, int char_code_blank, int char_code_vase,
+                    int char_code_safe_place, int *distance_to_monster_x,
+                    double *attrs, int *monster_coord_x, int *monster_coord_y,
+                    int *monster_type, int *monster_strength,
+                    int *monster_char_code, int *monster_speed,
+                    int monster_next_coord_x, int monster_next_coord_y,
+                    int inventory[25], int **dungeon_contents,
+                    const char **strings, int screen_cols, int coord_x,
+                    int coord_y);
 void lines990_1130(screen_t *screen, int char_code_blank, int char_code_vase,
                    int char_code_safe_place, int *distance_to_monster_x,
                    double *attrs, char *char_code_hero, int *monster_coord_x,
@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
         pressed_key = inkey$();
     // 50 IF I$="A" AND DX<255 THEN GOSUB870
         if (pressed_key == 'a' && distance_to_monster_x < 255 ) {
-            lines870_930(
+            attack_monster(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, attrs, &monster_coord_x,
                 &monster_coord_y, &monster_type, &monster_strength,
@@ -821,15 +821,15 @@ void lines940_980(screen_t *screen, int char_code_blank, int char_code_vase,
                   int screen_cols, int coord_x,
                   int coord_y);
 
-void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  double *attrs, int *monster_coord_x, int *monster_coord_y,
-                  int *monster_type, int *monster_strength,
-                  int *monster_char_code, int *monster_speed,
-                  int monster_next_coord_x, int monster_next_coord_y,
-                  int inventory[25], int **dungeon_contents,
-                  const char **strings, int screen_cols, int coord_x,
-                  int coord_y) {
+void attack_monster(screen_t *screen, int char_code_blank, int char_code_vase,
+                    int char_code_safe_place, int *distance_to_monster_x,
+                    double *attrs, int *monster_coord_x, int *monster_coord_y,
+                    int *monster_type, int *monster_strength,
+                    int *monster_char_code, int *monster_speed,
+                    int monster_next_coord_x, int monster_next_coord_y,
+                    int inventory[25], int **dungeon_contents,
+                    const char **strings, int screen_cols, int coord_x,
+                    int coord_y) {
     // 870 LET M$=T$(rnd(3)):GOSUB360
     int damage, t$_ind = rand() % 3 + 1;
     char * message;

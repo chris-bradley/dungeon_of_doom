@@ -479,16 +479,18 @@ void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
     // 420 RETURN
 }
 
-void lines440_470(screen_t *screen, char *message, int screen_cols);
+void draw_message_wo_colour_change(screen_t *screen, char *message,
+                                   int screen_cols);
 
 void draw_message(screen_t *screen, char *message, int screen_cols) {
     // 430 paper 2:ink 0
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
-    lines440_470(screen, message, screen_cols);
+    draw_message_wo_colour_change(screen, message, screen_cols);
 }
 
-void lines440_470(screen_t *screen, char *message, int screen_cols) {
+void draw_message_wo_colour_change(screen_t *screen, char *message,
+                                   int screen_cols) {
     // 440 PRINT tab(0,5);M$;
     tab(screen->cursor, 0, 5);
     free(print_text(screen, message));
@@ -774,7 +776,7 @@ void lines810_860(screen_t *screen, int char_code_vase,
         exit(1);
     }
     strcpy(message, "");
-    lines440_470(screen, message, screen_cols);
+    draw_message_wo_colour_change(screen, message, screen_cols);
     free(message);
     // 820 PRINT tab(1,5);"THOU HAST EXPIRED!"
     tab(screen->cursor, 1, 5);

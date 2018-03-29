@@ -27,15 +27,15 @@ void monsters_turn(screen_t *screen, int char_code_blank, int char_code_vase,
                    int inventory[25], int **dungeon_contents,
                    int item_at_character_coord, const char **strings,
                    int screen_cols, const char **item_names);
-void lines810_860(screen_t *screen, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  double *attrs, char *char_code_hero, int *monster_coord_x,
-                  int *monster_coord_y, int *monster_type,
-                  int *monster_strength, int *monster_char_code,
-                  int *monster_speed, int *character_facing,
-                  int character_coord_x, int character_coord_y,
-                  int **dungeon_contents, int screen_cols, int coord_x,
-                  int coord_y);
+void character_dies(screen_t *screen, int char_code_vase,
+                    int char_code_safe_place, int *distance_to_monster_x,
+                    double *attrs, char *char_code_hero, int *monster_coord_x,
+                    int *monster_coord_y, int *monster_type,
+                    int *monster_strength, int *monster_char_code,
+                    int *monster_speed, int *character_facing,
+                    int character_coord_x, int character_coord_y,
+                    int **dungeon_contents, int screen_cols, int coord_x,
+                    int coord_y);
 void lines870_930(screen_t *screen, int char_code_blank, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, int *monster_coord_x, int *monster_coord_y,
@@ -417,7 +417,7 @@ int main(int argc, char *argv[]) {
     } while (!game_over);
     // 330 IF F(1)<1 THEN GOSUB810
     if (attrs[1] < 1) {
-        lines810_860(
+        character_dies(
             screen, char_code_vase, char_code_safe_place,
             &distance_to_monster_x, attrs, char_code_hero, &monster_coord_x,
             &monster_coord_y, &monster_type, &monster_strength,
@@ -762,15 +762,15 @@ void monster_breaks_items(screen_t *screen, int item_num, int sound_frequency,
     // 800 RETURN
 }
 
-void lines810_860(screen_t *screen, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  double *attrs, char *char_code_hero, int *monster_coord_x,
-                  int *monster_coord_y, int *monster_type,
-                  int *monster_strength, int *monster_char_code,
-                  int *monster_speed, int *character_facing,
-                  int character_coord_x, int character_coord_y,
-                  int **dungeon_contents, int screen_cols, int coord_x,
-                  int coord_y) {
+void character_dies(screen_t *screen, int char_code_vase,
+                    int char_code_safe_place, int *distance_to_monster_x,
+                    double *attrs, char *char_code_hero, int *monster_coord_x,
+                    int *monster_coord_y, int *monster_type,
+                    int *monster_strength, int *monster_char_code,
+                    int *monster_speed, int *character_facing,
+                    int character_coord_x, int character_coord_y,
+                    int **dungeon_contents, int screen_cols, int coord_x,
+                    int coord_y) {
     char * message;
     int sound_frequency;
     // 810 LET NF=5;LET F(1)=0:GOSUB 440

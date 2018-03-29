@@ -922,14 +922,14 @@ void monster_dies(screen_t *screen, int char_code_blank, int char_code_vase,
     );
 }
 
-void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
-                    int char_code_safe_place, int *distance_to_monster_x,
-                    double *attrs, int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int monster_next_coord_x, int monster_next_coord_y,
-                    int **dungeon_contents, const char **strings,
-                    int screen_cols);
+void cast_superzap(screen_t *screen, int char_code_blank, int char_code_vase,
+                   int char_code_safe_place, int *distance_to_monster_x,
+                   double *attrs, int *monster_coord_x, int *monster_coord_y,
+                   int *monster_type, int *monster_strength,
+                   int *monster_char_code, int *monster_speed,
+                   int monster_next_coord_x, int monster_next_coord_y,
+                   int **dungeon_contents, const char **strings,
+                   int screen_cols);
 void lines1190_1210(int char_code_blank, int char_code_safe_place,
                     int character_coord_x, int character_coord_y,
                     int **dungeon_contents, int item_at_character_coord);
@@ -1047,7 +1047,7 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1100 ON SL GOSUB1140,1190,1220,1280,1300,1390,1130
     switch (spell_number) {
         case 1:
-            lines1140_1180(
+            cast_superzap(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 distance_to_monster_x, attrs, monster_coord_x, monster_coord_y,
                 monster_type, monster_strength, monster_char_code,
@@ -1094,14 +1094,14 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
     // 1130 RETURN
 }
 
-void lines1140_1180(screen_t *screen, int char_code_blank, int char_code_vase,
-                    int char_code_safe_place, int *distance_to_monster_x,
-                    double *attrs, int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int monster_next_coord_x, int monster_next_coord_y,
-                    int **dungeon_contents, const char **strings,
-                    int screen_cols) {
+void cast_superzap(screen_t *screen, int char_code_blank, int char_code_vase,
+                   int char_code_safe_place, int *distance_to_monster_x,
+                   double *attrs, int *monster_coord_x, int *monster_coord_y,
+                   int *monster_type, int *monster_strength,
+                   int *monster_char_code, int *monster_speed,
+                   int monster_next_coord_x, int monster_next_coord_y,
+                   int **dungeon_contents, const char **strings,
+                   int screen_cols) {
     int sound_frequency, coord_x, coord_y;
     // 1140 FOR J=1 TO 12
     for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {

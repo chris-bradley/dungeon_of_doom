@@ -933,9 +933,9 @@ void cast_superzap(screen_t *screen, int char_code_blank, int char_code_vase,
 void cast_sanctuary(int char_code_blank, int char_code_safe_place,
                     int character_coord_x, int character_coord_y,
                     int **dungeon_contents, int item_at_character_coord);
-void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
-                    int character_facing, int *character_coord_x,
-                    int *character_coord_y);
+void cast_teleport(screen_t *screen, double *attrs, char *char_code_hero,
+                   int character_facing, int *character_coord_x,
+                   int *character_coord_y);
 void lines1280_1290(double *attrs, int *spells_remaining, int spell_number);
 void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
@@ -1062,7 +1062,7 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
             );
             break;
         case 3:
-            lines1220_1270(
+            cast_teleport(
                 screen, attrs, char_code_hero, character_facing,
                 character_coord_x, character_coord_y
             );
@@ -1142,9 +1142,9 @@ void cast_sanctuary(int char_code_blank, int char_code_safe_place,
     // 1210 RETURN
 }
 
-void lines1220_1270(screen_t *screen, double *attrs, char *char_code_hero,
-                    int character_facing, int *character_coord_x,
-                    int *character_coord_y) {
+void cast_teleport(screen_t *screen, double *attrs, char *char_code_hero,
+                   int character_facing, int *character_coord_x,
+                   int *character_coord_y) {
     int sound_frequency;
     // 1220 LET NX=rnd(13):LET NY=rnd(13)
     *character_coord_x = rand() % 13;

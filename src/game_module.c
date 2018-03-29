@@ -60,11 +60,11 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int *monster_char_code, int *monster_speed,
                     int *character_facing, int character_coord_x,
                     int character_coord_y, int inventory[25],
-                    int **dungeon_contents, int *song_notes, int *TR);
+                    int **dungeon_contents, int *song_notes, int *treasure);
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *monster_strength,
                     int *character_facing, int character_coord_x,
-                    int character_coord_y, int *song_notes, int TR);
+                    int character_coord_y, int *song_notes, int treasure);
 void lines1660_1680(double *attrs, int inventory[25], double initial_strength,
                     double initial_vitality);
 void lines1690_1750(screen_t *screen, int char_code_vase,
@@ -93,13 +93,13 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,
                     double *initial_vitality, double *initial_experience,
-                    const char **strings, int *TR, int W);
+                    const char **strings, int *treasure, int W);
 void lines2260_2490(screen_t *screen, int character_char_base,
                     char *character_name, double *attrs, int *finished,
                     int gold, int dungeon_level, int character_coord_x,
                     int character_coord_y, int inventory[25],
                     int dungeon_char_base, int num_item_types,
-                    int **dungeon_contents, int TR, int W);
+                    int **dungeon_contents, int treasure, int W);
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
         item_at_character_coord,  // Object at character_coord_x / NY
         * song_notes,
         trapped,  // Flag to see if we can exit.
-        TR,
+        treasure,
         TX,
         TY,
         W,
@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
     lines2010_2250(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
         spells_remaining, inventory, &num_item_types, &initial_strength,
-        &initial_vitality, &initial_experience, strings, &TR, W
+        &initial_vitality, &initial_experience, strings, &treasure, W
     );
     // 30 GOSUB1770
     lines1770_1950(
@@ -235,7 +235,8 @@ int main(int argc, char *argv[]) {
                 &finished, gold, &monster_coord_x, &monster_coord_y,
                 &monster_type, &monster_strength, &monster_char_code,
                 &monster_speed, &character_facing, character_coord_x,
-                character_coord_y, inventory, dungeon_contents, song_notes, &TR
+                character_coord_y, inventory, dungeon_contents, song_notes,
+                &treasure
             );
         }
     // 80 IF I$="P" THEN GOSUB1660
@@ -260,7 +261,7 @@ int main(int argc, char *argv[]) {
                 screen, character_char_base, character_name, attrs, &finished,
                 gold, dungeon_level, character_coord_x, character_coord_y,
                 inventory, dungeon_char_base, num_item_types, dungeon_contents,
-                TR, W
+                treasure, W
             );
         }
     // 110 IF I$="B" THEN LET NF=NF-1
@@ -1203,7 +1204,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
                     int *monster_char_code, int *monster_speed,
                     int *character_facing, int character_coord_x,
                     int character_coord_y, int inventory[25],
-                    int **dungeon_contents, int *song_notes, int *TR) {
+                    int **dungeon_contents, int *song_notes, int *treasure) {
     int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y,
         X, Y;
     // 1410 LET GX=NX+D(NF,1):LET GY=NY+D(NF,2)
@@ -1238,14 +1239,14 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
     }
     // 1480 IF GT=C3 THEN LET TR=TR+1
     if (item_to_get == char_code_chest) {
-        TR += 1;
+        treasure += 1;
     }
     // 1490 IF GT=C4 THEN GOSUB 1550
     if (item_to_get == char_code_idol) {
         lines1550_1650(
             screen, attrs, char_code_hero, finished, gold, monster_strength,
             character_facing, character_coord_x, character_coord_y, song_notes,
-            *TR
+            *treasure
         );
     }
     // 1500 LET X=GX:LET Y=GY:GOSUB570
@@ -1269,7 +1270,7 @@ void lines1410_1520(screen_t *screen, int char_code_blank, int char_code_wall,
 void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
                     int *finished, int gold, int *monster_strength,
                     int *character_facing, int character_coord_x,
-                    int character_coord_y, int *song_notes, int TR) {
+                    int character_coord_y, int *song_notes, int treasure) {
     int index, sound_frequency, direction;
     // 1550 paper 2:ink 1
     paper(screen->cursor, YELLOW);
@@ -1307,7 +1308,10 @@ void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
     sprintf(
         outstring,
         "THY SCORE=%i",
-        (int) ((TR * 10) + (gold * attrs[5]) + attrs[1] + attrs[2] + attrs[3])
+        (int) (
+            (treasure * 10) + (gold * attrs[5]) + attrs[1] + attrs[2] +
+            attrs[3]
+        )
     );
     free(print_text(screen, outstring));
     free(outstring);
@@ -1535,7 +1539,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,
                     double *initial_vitality, double *initial_experience,
-                    const char **strings, int *TR, int W) {
+                    const char **strings, int *treasure, int W) {
     char pressed_key, * message;
     int index, subindex, file_index;
     // 2010 CLS:PRINT tab(0,3);"PREPARE HERO TAPE"
@@ -1594,7 +1598,7 @@ void lines2010_2250(screen_t *screen, int character_char_base,
     // 2160 LET GC=ASC(MID$(S$,P,1))-AS
     *gold = (int) file_contents[file_index - 1] - character_char_base;
     // 2170 LET TR=ASC(MID$(S$,P+1,1))-AS
-    *TR = (int) file_contents[file_index] - character_char_base;
+    *treasure = (int) file_contents[file_index] - character_char_base;
     // 2180 LET C$=RIGHT$(S$,LEN(S$)-(P+1))
     *character_name = (char *) malloc(sizeof(char) * (file_index + 2));
     if (*character_name == NULL) {
@@ -1629,7 +1633,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
                     int gold, int dungeon_level, int character_coord_x,
                     int character_coord_y, int inventory[25],
                     int dungeon_char_base, int num_item_types,
-                    int **dungeon_contents, int TR, int W) {
+                    int **dungeon_contents, int treasure, int W) {
     int index, X, Y;
     char pressed_key, * message;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430
@@ -1703,7 +1707,7 @@ void lines2260_2490(screen_t *screen, int character_char_base,
     character_file_contents[s_index] = (char) (gold + character_char_base);
     s_index += 1;
     // 2430 LET S$=S$+CHR$(TR+AS);
-    character_file_contents[s_index] = (char) (TR + character_char_base);
+    character_file_contents[s_index] = (char) (treasure + character_char_base);
     s_index += 1;
     // 2440 LET S$=S$+C$
     strcpy(character_file_contents + s_index, character_name);

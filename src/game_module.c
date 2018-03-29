@@ -112,7 +112,8 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *character_coord_x, int *character_coord_y,
                     int *dungeon_char_base, int ***dungeon_contents,
                     int **song_notes, const char ***strings, int *trapped,
-                    int *TX, int *TY, int *W, const char ***W$);
+                    int *trap_coord_x, int *trap_coord_y, int *W,
+                    const char ***W$);
 
 int main(int argc, char *argv[]) {
     int character_char_base,
@@ -152,8 +153,8 @@ int main(int argc, char *argv[]) {
         * song_notes,
         trapped,  // Flag to see if we can exit.
         treasure,
-        TX,
-        TY,
+        trap_coord_x,
+        trap_coord_y,
         W,
         X,
         Y;
@@ -178,7 +179,7 @@ int main(int argc, char *argv[]) {
         &spells_remaining, &monster_next_coord_x, &monster_next_coord_y,
         &character_facing, &character_coord_x, &character_coord_y,
         &dungeon_char_base, &dungeon_contents, &song_notes, &strings, &trapped,
-        &TX, &TY, &W, &W$
+        &trap_coord_x, &trap_coord_y, &W, &W$
     );
     // 20 GOSUB2010
     lines2010_2250(
@@ -320,14 +321,14 @@ int main(int argc, char *argv[]) {
         }
     // 220 IF RH=C6 THEN LET TX=NX:LET TY=NY:LET TF=1
         if (item_at_character_coord == char_code_trap) {
-            TX = character_coord_x;
-            TY = character_coord_y;
+            trap_coord_x = character_coord_x;
+            trap_coord_y = character_coord_y;
             trapped = 1;
         }
     // 230 IF TF=1 THEN LET NX=TX:LET NY=TY
         if (trapped == 1) {
-            character_coord_x = TX;
-            character_coord_y = TY;
+            character_coord_x = trap_coord_x;
+            character_coord_y = trap_coord_y;
         }
     // 240 IF F(1) > S1*.8 AND rnd(8)<F(6) THEN LET TF=0
         if (attrs[1] > initial_strength * 0.8 && rand() % 8 < attrs[6]) {
@@ -1767,7 +1768,8 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *character_coord_x, int *character_coord_y,
                     int *dungeon_char_base, int ***dungeon_contents,
                     int **song_notes, const char ***strings, int *trapped,
-                    int *TX, int *TY, int *W, const char ***W$) {
+                    int *trap_coord_x, int *trap_coord_y, int *W,
+                    const char ***W$) {
     int index;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.
@@ -1885,8 +1887,8 @@ void lines2500_2780(int *character_char_base, int *char_code_blank,
     *distance_to_monster_x = 255;
     *character_facing = 0;
     // 2700 LET TX=0:LET TY=0:LET TF=0:LET TR=0
-    *TX = 0;
-    *TY = 0;
+    *trap_coord_x = 0;
+    *trap_coord_y = 0;
     *trapped = 0;
     // The value of TR set here is not used. It is overwritten when the
     // character is loaded.

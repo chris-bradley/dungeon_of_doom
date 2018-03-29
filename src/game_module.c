@@ -937,14 +937,14 @@ void cast_teleport(screen_t *screen, double *attrs, char *char_code_hero,
                    int character_facing, int *character_coord_x,
                    int *character_coord_y);
 void cast_powersurge(double *attrs, int *spells_remaining, int spell_number);
-void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
-                    int char_code_safe_place, int *distance_to_monster_x,
-                    int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int character_coord_x, int character_coord_y,
-                    int **dungeon_contents, int item_at_character_coord,
-                    int coord_x, int coord_y);
+void cast_metamorphosis(screen_t *screen, int char_code_blank,
+                        int char_code_vase, int char_code_safe_place,
+                        int *distance_to_monster_x, int *monster_coord_x,
+                        int *monster_coord_y, int *monster_type,
+                        int *monster_strength, int *monster_char_code,
+                        int *monster_speed, int character_coord_x,
+                        int character_coord_y, int **dungeon_contents,
+                        int item_at_character_coord, int coord_x, int coord_y);
 void lines1390_1400(double *attrs, double initial_strength,
                     double initial_vitality);
 
@@ -1071,7 +1071,7 @@ void cast_spell(screen_t *screen, int char_code_blank, int char_code_vase,
             cast_powersurge(attrs, spells_remaining, spell_number);
             break;
         case 5:
-            lines1300_1380(
+            cast_metamorphosis(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 distance_to_monster_x, monster_coord_x, monster_coord_y,
                 monster_type, monster_strength, monster_char_code,
@@ -1172,14 +1172,15 @@ void cast_powersurge(double *attrs, int *spells_remaining, int spell_number) {
     // 1290 RETURN
 }
 
-void lines1300_1380(screen_t *screen, int char_code_blank, int char_code_vase,
-                    int char_code_safe_place, int *distance_to_monster_x,
-                    int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int character_coord_x, int character_coord_y,
-                    int **dungeon_contents, int item_at_character_coord,
-                    int coord_x, int coord_y) {
+void cast_metamorphosis(screen_t *screen, int char_code_blank,
+                        int char_code_vase, int char_code_safe_place,
+                        int *distance_to_monster_x, int *monster_coord_x,
+                        int *monster_coord_y, int *monster_type,
+                        int *monster_strength, int *monster_char_code,
+                        int *monster_speed, int character_coord_x,
+                        int character_coord_y, int **dungeon_contents,
+                        int item_at_character_coord, int coord_x,
+                        int coord_y) {
     int sound_frequency;
     // 1300 FOR J=1 TO 30
     for (sound_frequency = 1; sound_frequency <= 30; sound_frequency += 1) {

@@ -17,16 +17,16 @@ void render_coord_and_check_for_monster(screen_t *screen, int char_code_vase,
                                         int *monster_speed,
                                         int **dungeon_contents, int coord_x,
                                         int coord_y);
-void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  double *attrs, int *monster_coord_x, int *monster_coord_y,
-                  int *monster_type, int *monster_strength,
-                  int *monster_char_code, int *monster_speed,
-                  int *monster_next_coord_x, int *monster_next_coord_y,
-                  int character_coord_x, int character_coord_y,
-                  int inventory[25], int **dungeon_contents,
-                  int item_at_character_coord, const char **strings,
-                  int screen_cols, const char **item_names);
+void monsters_turn(screen_t *screen, int char_code_blank, int char_code_vase,
+                   int char_code_safe_place, int *distance_to_monster_x,
+                   double *attrs, int *monster_coord_x, int *monster_coord_y,
+                   int *monster_type, int *monster_strength,
+                   int *monster_char_code, int *monster_speed,
+                   int *monster_next_coord_x, int *monster_next_coord_y,
+                   int character_coord_x, int character_coord_y,
+                   int inventory[25], int **dungeon_contents,
+                   int item_at_character_coord, const char **strings,
+                   int screen_cols, const char **item_names);
 void lines810_860(screen_t *screen, int char_code_vase,
                   int char_code_safe_place, int *distance_to_monster_x,
                   double *attrs, char *char_code_hero, int *monster_coord_x,
@@ -374,7 +374,7 @@ int main(int argc, char *argv[]) {
         character_prev_coord_y = character_coord_y;
     // 300 IF DX<255 THEN GOSUB620
         if (distance_to_monster_x < 255) {
-            lines620_770(
+            monsters_turn(
                 screen, char_code_blank, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, attrs, &monster_coord_x,
                 &monster_coord_y, &monster_type, &monster_strength,
@@ -615,16 +615,16 @@ void lines780_800(screen_t *screen, int item_num, int sound_frequency,
                   const char **strings, int screen_cols,
                   const char **item_names);
 
-void lines620_770(screen_t *screen, int char_code_blank, int char_code_vase,
-                  int char_code_safe_place, int *distance_to_monster_x,
-                  double *attrs, int *monster_coord_x, int *monster_coord_y,
-                  int *monster_type, int *monster_strength,
-                  int *monster_char_code, int *monster_speed,
-                  int *monster_next_coord_x, int *monster_next_coord_y,
-                  int character_coord_x, int character_coord_y,
-                  int inventory[25], int **dungeon_contents,
-                  int item_at_character_coord, const char **strings,
-                  int screen_cols, const char **item_names) {
+void monsters_turn(screen_t *screen, int char_code_blank, int char_code_vase,
+                   int char_code_safe_place, int *distance_to_monster_x,
+                   double *attrs, int *monster_coord_x, int *monster_coord_y,
+                   int *monster_type, int *monster_strength,
+                   int *monster_char_code, int *monster_speed,
+                   int *monster_next_coord_x, int *monster_next_coord_y,
+                   int character_coord_x, int character_coord_y,
+                   int inventory[25], int **dungeon_contents,
+                   int item_at_character_coord, const char **strings,
+                   int screen_cols, const char **item_names) {
     int distance_to_monster_y, damage, item_num, sound_frequency,
         monster_broke_item, item_at_monster_next_coord, direction_to_monster_x,
         direction_to_monster_y, coord_x, coord_y;

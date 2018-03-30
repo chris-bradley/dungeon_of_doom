@@ -71,8 +71,8 @@ void game_won(screen_t *screen, double *attrs, char *char_code_hero,
               int *finished, int gold, int *monster_strength,
               int *character_facing, int character_coord_x,
               int character_coord_y, int *song_notes, int treasure);
-void lines1660_1680(double *attrs, int inventory[25], double initial_strength,
-                    double initial_vitality);
+void drink_potion(double *attrs, int inventory[25], double initial_strength,
+                  double initial_vitality);
 void lines1690_1750(screen_t *screen, int char_code_vase,
                     int char_code_safe_place, int *distance_to_monster_x,
                     int *torches, int *monster_coord_x, int *monster_coord_y,
@@ -249,7 +249,7 @@ int main(int argc, char *argv[]) {
         }
     // 80 IF I$="P" THEN GOSUB1660
         if (pressed_key == 'p') {
-            lines1660_1680(
+            drink_potion(
                 attrs, inventory, initial_strength, initial_vitality
             );
         }
@@ -1344,8 +1344,8 @@ void game_won(screen_t *screen, double *attrs, char *char_code_hero,
     // 1650 RETURN
 }
 
-void lines1660_1680(double *attrs, int inventory[25], double initial_strength,
-                    double initial_vitality) {
+void drink_potion(double *attrs, int inventory[25], double initial_strength,
+                  double initial_vitality) {
     // 1660 IF O(24)>0 AND F(1)<S1 THEN LET F(1)=S1:LET O(24)=O(24)-1
     if (inventory[24] > 0 && attrs[1] < initial_strength) {
         attrs[1] = initial_strength;

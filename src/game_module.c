@@ -73,14 +73,14 @@ void game_won(screen_t *screen, double *attrs, char *char_code_hero,
               int character_coord_y, int *song_notes, int treasure);
 void drink_potion(double *attrs, int inventory[25], double initial_strength,
                   double initial_vitality);
-void lines1690_1750(screen_t *screen, int char_code_vase,
-                    int char_code_safe_place, int *distance_to_monster_x,
-                    int *torches, int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int character_coord_x, int character_coord_y,
-                    int **dungeon_contents, const char **strings,
-                    int screen_cols);
+void light_torch(screen_t *screen, int char_code_vase,
+                 int char_code_safe_place, int *distance_to_monster_x,
+                 int *torches, int *monster_coord_x, int *monster_coord_y,
+                 int *monster_type, int *monster_strength,
+                 int *monster_char_code, int *monster_speed,
+                  int character_coord_x, int character_coord_y,
+                  int **dungeon_contents, const char **strings,
+                  int screen_cols);
 void lines1760_1950(screen_t *screen, char *character_name,
                     int *distance_to_monster_x, double *attrs,
                     int *dungeon_level, int *character_coord_x,
@@ -255,7 +255,7 @@ int main(int argc, char *argv[]) {
         }
     // 90 IF I$="R" THEN GOSUB1690
         if (pressed_key == 'r') {
-            lines1690_1750(
+            light_torch(
                 screen, char_code_vase, char_code_safe_place,
                 &distance_to_monster_x, &torches, &monster_coord_x,
                 &monster_coord_y, &monster_type, &monster_strength,
@@ -1359,14 +1359,14 @@ void drink_potion(double *attrs, int inventory[25], double initial_strength,
     // 1680 RETURN
 }
 
-void lines1690_1750(screen_t *screen, int char_code_vase,
-                    int char_code_safe_place, int *distance_to_monster_x,
-                    int *torches, int *monster_coord_x, int *monster_coord_y,
-                    int *monster_type, int *monster_strength,
-                    int *monster_char_code, int *monster_speed,
-                    int character_coord_x, int character_coord_y,
-                    int **dungeon_contents, const char **strings,
-                    int screen_cols) {
+void light_torch(screen_t *screen, int char_code_vase,
+                 int char_code_safe_place, int *distance_to_monster_x,
+                 int *torches, int *monster_coord_x, int *monster_coord_y,
+                 int *monster_type, int *monster_strength,
+                 int *monster_char_code, int *monster_speed,
+                 int character_coord_x, int character_coord_y,
+                 int **dungeon_contents, const char **strings,
+                 int screen_cols) {
     int coord_x, coord_y;
     char * message;
     // 1690 IF LT=0 THEN LET M$=T$(7):GOSUB430:RETURN

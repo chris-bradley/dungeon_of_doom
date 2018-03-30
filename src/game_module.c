@@ -81,13 +81,17 @@ void light_torch(screen_t *screen, int char_code_vase,
                   int character_coord_x, int character_coord_y,
                   int **dungeon_contents, const char **strings,
                   int screen_cols);
-void lines1760_1950(screen_t *screen, char *character_name,
-                    int *distance_to_monster_x, double *attrs,
-                    int *dungeon_level, int *character_coord_x,
-                    int *character_coord_y, int dungeon_char_base,
-                    int *character_prev_coord_x, int *character_prev_coord_y,
-                    int **dungeon_contents, double initial_experience,
-                    const char **strings, int screen_cols);
+void load_level_with_first_exp_check(screen_t *screen, char *character_name,
+                                     int *distance_to_monster_x, double *attrs,
+                                     int *dungeon_level,
+                                     int *character_coord_x,
+                                     int *character_coord_y,
+                                     int dungeon_char_base,
+                                     int *character_prev_coord_x,
+                                     int *character_prev_coord_y,
+                                     int **dungeon_contents,
+                                     double initial_experience,
+                                     const char **strings, int screen_cols);
 void lines1770_1950(screen_t *screen, char *character_name,
                     int *distance_to_monster_x, double *attrs,
                     int *dungeon_level, int *character_coord_x,
@@ -402,7 +406,7 @@ int main(int argc, char *argv[]) {
             message[strlen(strings[12])] = 0;
             draw_message(screen, message, screen_cols);
             free(message);
-            lines1760_1950(
+            load_level_with_first_exp_check(
                 screen, character_name, &distance_to_monster_x, attrs,
                 &dungeon_level, &character_coord_x, &character_coord_y,
                 dungeon_char_base, &character_prev_coord_x,
@@ -1516,13 +1520,17 @@ void load_level(screen_t *screen, int skip_first_exp_check,
     // 1950 RETURN
 }
 
-void lines1760_1950(screen_t *screen, char *character_name,
-                    int *distance_to_monster_x, double *attrs,
-                    int *dungeon_level, int *character_coord_x,
-                    int *character_coord_y, int dungeon_char_base,
-                    int *character_prev_coord_x, int *character_prev_coord_y,
-                    int **dungeon_contents, double initial_experience,
-                    const char **strings, int screen_cols) {
+void load_level_with_first_exp_check(screen_t *screen, char *character_name,
+                                     int *distance_to_monster_x, double *attrs,
+                                     int *dungeon_level,
+                                     int *character_coord_x,
+                                     int *character_coord_y,
+                                     int dungeon_char_base,
+                                     int *character_prev_coord_x,
+                                     int *character_prev_coord_y,
+                                     int **dungeon_contents,
+                                     double initial_experience,
+                                     const char **strings, int screen_cols) {
     load_level(
         screen, 0, character_name, distance_to_monster_x, attrs, dungeon_level,
         character_coord_x, character_coord_y, dungeon_char_base,

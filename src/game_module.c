@@ -1419,7 +1419,7 @@ void light_torch(screen_t *screen, int char_code_vase,
 
 void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
                         int screen_cols);
-void lines1960_2000(screen_t *screen, double *attrs);
+void show_level_too_deep_messages(screen_t *screen, double *attrs);
 void lines2790_2920(screen_t *screen, char *character_name, int screen_cols);
 
 void load_level(screen_t *screen, int skip_first_exp_check,
@@ -1506,7 +1506,7 @@ void load_level(screen_t *screen, int skip_first_exp_check,
         *dungeon_level = (int) file_contents[index + 1] - dungeon_char_base;
     // 1920 IF LE>F(5) THEN GOSUB 1960:GOTO 1760
         if (*dungeon_level > attrs[5]) {
-            lines1960_2000(screen, attrs);
+            show_level_too_deep_messages(screen, attrs);
             correct_level_loaded = 1;
         } else {
             correct_level_loaded = 0;
@@ -1560,7 +1560,7 @@ void load_level_wo_first_exp_check(screen_t *screen, char *character_name,
     );
 }
 
-void lines1960_2000(screen_t *screen, double *attrs) {
+void show_level_too_deep_messages(screen_t *screen, double *attrs) {
     // 1960 PRINT:PRINT"LEVEL TOO DEEP"
     newline(screen->cursor);
     free(print_text(screen, "LEVEL TOO DEEP"));

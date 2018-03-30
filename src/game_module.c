@@ -67,10 +67,10 @@ void get_item(screen_t *screen, int char_code_blank, int char_code_wall,
               int *character_facing, int character_coord_x,
               int character_coord_y, int inventory[25], int **dungeon_contents,
               int *song_notes, int *treasure);
-void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
-                    int *finished, int gold, int *monster_strength,
-                    int *character_facing, int character_coord_x,
-                    int character_coord_y, int *song_notes, int treasure);
+void game_won(screen_t *screen, double *attrs, char *char_code_hero,
+              int *finished, int gold, int *monster_strength,
+              int *character_facing, int character_coord_x,
+              int character_coord_y, int *song_notes, int treasure);
 void lines1660_1680(double *attrs, int inventory[25], double initial_strength,
                     double initial_vitality);
 void lines1690_1750(screen_t *screen, int char_code_vase,
@@ -1267,7 +1267,7 @@ void get_item(screen_t *screen, int char_code_blank, int char_code_wall,
     }
     // 1490 IF GT=C4 THEN GOSUB 1550
     if (item_to_get == char_code_idol) {
-        lines1550_1650(
+        game_won(
             screen, attrs, char_code_hero, finished, gold, monster_strength,
             character_facing, character_coord_x, character_coord_y, song_notes,
             *treasure
@@ -1291,10 +1291,10 @@ void get_item(screen_t *screen, int char_code_blank, int char_code_wall,
     // 1520 RETURN
 }
 
-void lines1550_1650(screen_t *screen, double *attrs, char *char_code_hero,
-                    int *finished, int gold, int *monster_strength,
-                    int *character_facing, int character_coord_x,
-                    int character_coord_y, int *song_notes, int treasure) {
+void game_won(screen_t *screen, double *attrs, char *char_code_hero,
+              int *finished, int gold, int *monster_strength,
+              int *character_facing, int character_coord_x,
+              int character_coord_y, int *song_notes, int treasure) {
     int index, sound_frequency, direction;
     // 1550 paper 2:ink 1
     paper(screen->cursor, YELLOW);

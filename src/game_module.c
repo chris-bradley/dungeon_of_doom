@@ -1415,14 +1415,13 @@ void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
 void lines1960_2000(screen_t *screen, double *attrs);
 void lines2790_2920(screen_t *screen, char *character_name, int screen_cols);
 
-void lines1760_1770_1950(screen_t *screen, int skip_first_exp_check,
-                         char *character_name, int *distance_to_monster_x,
-                         double *attrs, int *dungeon_level,
-                         int *character_coord_x, int *character_coord_y,
-                         int dungeon_char_base, int *character_prev_coord_x,
-                         int *character_prev_coord_y, int **dungeon_contents,
-                         double initial_experience, const char **strings,
-                         int screen_cols) {
+void load_level(screen_t *screen, int skip_first_exp_check,
+                char *character_name, int *distance_to_monster_x,
+                double *attrs, int *dungeon_level, int *character_coord_x,
+                int *character_coord_y, int dungeon_char_base,
+                int *character_prev_coord_x, int *character_prev_coord_y,
+                int **dungeon_contents, double initial_experience,
+                const char **strings, int screen_cols) {
     // The original BASIC code sometimes used 'GOSUB 1760' and sometimes
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
@@ -1524,7 +1523,7 @@ void lines1760_1950(screen_t *screen, char *character_name,
                     int *character_prev_coord_x, int *character_prev_coord_y,
                     int **dungeon_contents, double initial_experience,
                     const char **strings, int screen_cols) {
-    lines1760_1770_1950(
+    load_level(
         screen, 0, character_name, distance_to_monster_x, attrs, dungeon_level,
         character_coord_x, character_coord_y, dungeon_char_base,
         character_prev_coord_x, character_prev_coord_y, dungeon_contents,
@@ -1539,7 +1538,7 @@ void lines1770_1950(screen_t *screen, char *character_name,
                     int *character_prev_coord_x, int *character_prev_coord_y,
                     int **dungeon_contents, double initial_experience,
                     const char **strings, int screen_cols) {
-    lines1760_1770_1950(
+    load_level(
         screen, 1, character_name, distance_to_monster_x, attrs, dungeon_level,
         character_coord_x, character_coord_y, dungeon_char_base,
         character_prev_coord_x, character_prev_coord_y, dungeon_contents,

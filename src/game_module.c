@@ -1415,7 +1415,7 @@ void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
 void lines1960_2000(screen_t *screen, double *attrs);
 void lines2790_2920(screen_t *screen, char *character_name, int screen_cols);
 
-void lines1760_1770_1950(screen_t *screen, int start_at_1770,
+void lines1760_1770_1950(screen_t *screen, int skip_first_exp_check,
                          char *character_name, int *distance_to_monster_x,
                          double *attrs, int *dungeon_level,
                          int *character_coord_x, int *character_coord_y,
@@ -1426,14 +1426,14 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
     // The original BASIC code sometimes used 'GOSUB 1760' and sometimes
     // 'GOSUB 1770'. This is further complicated by their use of a
     // 'GOTO 1760' towards the end.
-    // We use the 'start_at_1770' flag to handle this.
+    // We use the 'skip_first_exp_check' flag to handle this.
     int correct_level_loaded, index, entrance_coord_x, entrance_coord_y,
         coord_x, coord_y;
     char pressed_key, * message;
     do {
 
     // 1760 IF F(5)<S3+1 THEN LET M$=T$(11):LET NX=OX:LET NY=OY:GOSUB 430:RETURN
-        if (!start_at_1770 && attrs[5] < initial_experience + 1) {
+        if (!skip_first_exp_check && attrs[5] < initial_experience + 1) {
             message =
                 (char *) malloc(sizeof(char) * (strlen(strings[11]) + 1));
             if (message == NULL) {
@@ -1447,7 +1447,7 @@ void lines1760_1770_1950(screen_t *screen, int start_at_1770,
             free(message);
             return;
         }
-        start_at_1770 = 0;
+        skip_first_exp_check = 0;
     // 1770 CLS:PRINT tab(0,3);"PREPARE DUNGEON TAPE"
         clear_screen(screen);
         tab(screen->cursor, 0, 3);

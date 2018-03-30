@@ -1418,7 +1418,7 @@ void light_torch(screen_t *screen, int char_code_vase,
 void get_keyboard_input(screen_t *screen, char *pressed_key, char *message,
                         int screen_cols);
 void show_level_too_deep_messages(screen_t *screen, double *attrs);
-void lines2790_2920(screen_t *screen, char *character_name, int screen_cols);
+void draw_interface(screen_t *screen, char *character_name, int screen_cols);
 
 void load_level(screen_t *screen, int skip_first_exp_check,
                 char *character_name, int *distance_to_monster_x,
@@ -1511,7 +1511,7 @@ void load_level(screen_t *screen, int skip_first_exp_check,
         }
     } while (correct_level_loaded);
     // 1930 GOSUB2790
-    lines2790_2920(screen, character_name, screen_cols);
+    draw_interface(screen, character_name, screen_cols);
     // 1940 LET NX=IX:LET NY=IY:LET OX=NX:LET OY=NY:LET DX=255
     *character_coord_x = entrance_coord_x;
     *character_coord_y = entrance_coord_y;
@@ -1986,7 +1986,7 @@ void init_vars(int *character_char_base, int *char_code_blank,
     // 2780 RETURN
 }
 
-void lines2790_2920(screen_t *screen, char *character_name, int screen_cols) {
+void draw_interface(screen_t *screen, char *character_name, int screen_cols) {
     int index;
     // 2790 paper 1:CLS
     paper(screen->cursor, RED);

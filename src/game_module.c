@@ -1796,11 +1796,11 @@ void save_game(screen_t *screen, int character_char_base, char *character_name,
     // 2490 RETURN
 }
 
-void lines2930_3200(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *char_code_vase,
-                    int *char_code_chest, int *char_code_idol,
-                    int *char_code_exit, int *char_code_trap,
-                    int *char_code_safe_place, int dungeon_char_base);
+void init_platform_vars(int *character_char_base, int *char_code_blank,
+                        int *char_code_wall, int *char_code_vase,
+                        int *char_code_chest, int *char_code_idol,
+                        int *char_code_exit, int *char_code_trap,
+                        int *char_code_safe_place, int dungeon_char_base);
 
 void init_vars(int *character_char_base, int *char_code_blank,
                int *char_code_wall, int *char_code_vase, int *char_code_chest,
@@ -1978,7 +1978,7 @@ void init_vars(int *character_char_base, int *char_code_blank,
     (*song_notes)[16] = 145;
     (*song_notes)[17] = 101;
     (*song_notes)[18] = 149;
-    lines2930_3200(
+    init_platform_vars(
         character_char_base, char_code_blank, char_code_wall, char_code_vase,
         char_code_chest, char_code_idol, char_code_exit, char_code_trap,
         char_code_safe_place, *dungeon_char_base
@@ -2035,11 +2035,11 @@ void draw_interface(screen_t *screen, char *character_name, int screen_cols) {
     // 2920 RETURN
 }
 
-void lines2930_3200(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *char_code_vase,
-                    int *char_code_chest, int *char_code_idol,
-                    int *char_code_exit, int *char_code_trap,
-                    int *char_code_safe_place, int dungeon_char_base) {
+void init_platform_vars(int *character_char_base, int *char_code_blank,
+                        int *char_code_wall, int *char_code_vase,
+                        int *char_code_chest, int *char_code_idol,
+                        int *char_code_exit, int *char_code_trap,
+                        int *char_code_safe_place, int dungeon_char_base) {
     // 2930 REM ** USER DEF'D CHARACTERS **
     // 2940 GOSUB 4000
     // Not needed due to dungeon_lib

@@ -102,7 +102,7 @@ void load_level_wo_first_exp_check(screen_t *screen, char *character_name,
                                    int **dungeon_contents,
                                    double initial_experience,
                                    const char **strings, int screen_cols);
-void lines2010_2250(screen_t *screen, int character_char_base,
+void load_character(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,
@@ -196,7 +196,7 @@ int main(int argc, char *argv[]) {
         &trap_coord_x, &trap_coord_y, &screen_cols, &item_names
     );
     // 20 GOSUB2010
-    lines2010_2250(
+    load_character(
         screen, character_char_base, &character_name, attrs, &gold, &torches,
         spells_remaining, inventory, &num_item_types, &initial_strength,
         &initial_vitality, &initial_experience, strings, &treasure, screen_cols
@@ -1583,7 +1583,7 @@ void show_level_too_deep_messages(screen_t *screen, double *attrs) {
     // 2000 RETURN
 }
 
-void lines2010_2250(screen_t *screen, int character_char_base,
+void load_character(screen_t *screen, int character_char_base,
                     char **character_name, double *attrs, int *gold,
                     int *torches, int *spells_remaining, int inventory[25],
                     int *num_item_types, double *initial_strength,

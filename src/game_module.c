@@ -108,12 +108,11 @@ void load_character(screen_t *screen, int character_char_base,
                     int *num_item_types, double *initial_strength,
                     double *initial_vitality, double *initial_experience,
                     const char **strings, int *treasure, int screen_cols);
-void lines2260_2490(screen_t *screen, int character_char_base,
-                    char *character_name, double *attrs, int *finished,
-                    int gold, int dungeon_level, int character_coord_x,
-                    int character_coord_y, int inventory[25],
-                    int dungeon_char_base, int num_item_types,
-                    int **dungeon_contents, int treasure, int screen_cols);
+void save_game(screen_t *screen, int character_char_base, char *character_name,
+               double *attrs, int *finished, int gold, int dungeon_level,
+               int character_coord_x, int character_coord_y, int inventory[25],
+               int dungeon_char_base, int num_item_types,
+               int **dungeon_contents, int treasure, int screen_cols);
 void lines2500_2780(int *character_char_base, int *char_code_blank,
                     int *char_code_wall, int *char_code_vase,
                     int *char_code_chest, int *char_code_idol,
@@ -272,7 +271,7 @@ int main(int argc, char *argv[]) {
         }
     // 100 IF I$="S" THEN GOSUB2260
         if (pressed_key == 's') {
-            lines2260_2490(
+            save_game(
                 screen, character_char_base, character_name, attrs, &finished,
                 gold, dungeon_level, character_coord_x, character_coord_y,
                 inventory, dungeon_char_base, num_item_types, dungeon_contents,
@@ -1677,12 +1676,11 @@ void load_character(screen_t *screen, int character_char_base,
     free(file_contents);
 }
 
-void lines2260_2490(screen_t *screen, int character_char_base,
-                    char *character_name, double *attrs, int *finished,
-                    int gold, int dungeon_level, int character_coord_x,
-                    int character_coord_y, int inventory[25],
-                    int dungeon_char_base, int num_item_types,
-                    int **dungeon_contents, int treasure, int screen_cols) {
+void save_game(screen_t *screen, int character_char_base, char *character_name,
+               double *attrs, int *finished, int gold, int dungeon_level,
+               int character_coord_x, int character_coord_y, int inventory[25],
+               int dungeon_char_base, int num_item_types,
+               int **dungeon_contents, int treasure, int screen_cols) {
     int index, coord_x, coord_y;
     char pressed_key, * message;
     // 2260 LET M$="ONE MOMENT PLEASE":GOSUB430

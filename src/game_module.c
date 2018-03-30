@@ -113,20 +113,19 @@ void save_game(screen_t *screen, int character_char_base, char *character_name,
                int character_coord_x, int character_coord_y, int inventory[25],
                int dungeon_char_base, int num_item_types,
                int **dungeon_contents, int treasure, int screen_cols);
-void lines2500_2780(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *char_code_vase,
-                    int *char_code_chest, int *char_code_idol,
-                    int *char_code_exit, int *char_code_trap,
-                    int *char_code_safe_place, int ***vertices,
-                    int *distance_to_monster_x, double **attrs,
-                    char **char_code_hero, int *finished, int *torches,
-                    int **spells_remaining, int *monster_next_coord_x,
-                    int *monster_next_coord_y, int *character_facing,
-                    int *character_coord_x, int *character_coord_y,
-                    int *dungeon_char_base, int ***dungeon_contents,
-                    int **song_notes, const char ***strings, int *trapped,
-                    int *trap_coord_x, int *trap_coord_y, int *screen_cols,
-                    const char ***item_names);
+void init_vars(int *character_char_base, int *char_code_blank,
+               int *char_code_wall, int *char_code_vase, int *char_code_chest,
+               int *char_code_idol, int *char_code_exit, int *char_code_trap,
+               int *char_code_safe_place, int ***vertices,
+               int *distance_to_monster_x, double **attrs,
+               char **char_code_hero, int *finished, int *torches,
+               int **spells_remaining, int *monster_next_coord_x,
+               int *monster_next_coord_y, int *character_facing,
+               int *character_coord_x, int *character_coord_y,
+               int *dungeon_char_base, int ***dungeon_contents,
+               int **song_notes, const char ***strings, int *trapped,
+               int *trap_coord_x, int *trap_coord_y, int *screen_cols,
+               const char ***item_names);
 
 int main(int argc, char *argv[]) {
     int character_char_base,
@@ -184,7 +183,7 @@ int main(int argc, char *argv[]) {
     clear_screen(screen);
     // lines 5000 on unneeded due to dungeon lib
     // 10 GOSUB2500
-    lines2500_2780(
+    init_vars(
         &character_char_base, &char_code_blank, &char_code_wall,
         &char_code_vase, &char_code_chest, &char_code_idol, &char_code_exit,
         &char_code_trap, &char_code_safe_place, &vertices,
@@ -1803,20 +1802,19 @@ void lines2930_3200(int *character_char_base, int *char_code_blank,
                     int *char_code_exit, int *char_code_trap,
                     int *char_code_safe_place, int dungeon_char_base);
 
-void lines2500_2780(int *character_char_base, int *char_code_blank,
-                    int *char_code_wall, int *char_code_vase,
-                    int *char_code_chest, int *char_code_idol,
-                    int *char_code_exit, int *char_code_trap,
-                    int *char_code_safe_place, int ***vertices,
-                    int *distance_to_monster_x, double **attrs,
-                    char **char_code_hero, int *finished, int *torches,
-                    int **spells_remaining, int *monster_next_coord_x,
-                    int *monster_next_coord_y, int *character_facing,
-                    int *character_coord_x, int *character_coord_y,
-                    int *dungeon_char_base, int ***dungeon_contents,
-                    int **song_notes, const char ***strings, int *trapped,
-                    int *trap_coord_x, int *trap_coord_y, int *screen_cols,
-                    const char ***item_names) {
+void init_vars(int *character_char_base, int *char_code_blank,
+               int *char_code_wall, int *char_code_vase, int *char_code_chest,
+               int *char_code_idol, int *char_code_exit, int *char_code_trap,
+               int *char_code_safe_place, int ***vertices,
+               int *distance_to_monster_x, double **attrs,
+               char **char_code_hero, int *finished, int *torches,
+               int **spells_remaining, int *monster_next_coord_x,
+               int *monster_next_coord_y, int *character_facing,
+               int *character_coord_x, int *character_coord_y,
+               int *dungeon_char_base, int ***dungeon_contents,
+               int **song_notes, const char ***strings, int *trapped,
+               int *trap_coord_x, int *trap_coord_y, int *screen_cols,
+               const char ***item_names) {
     int index;
     // 2500 LET C$="ROLE PLAYING GAME":LET B$=""
     // C$ is overwritten before being accessed again.

@@ -170,3 +170,35 @@ game_module : game_module.c dungeon_lib_lin.o
 		-o game_module \
 		dungeon_lib_lin.o \
 		game_module.c
+
+test_audio.exe : test_audio.c
+	        i686-w64-mingw32-gcc \
+			-g \
+			test_audio.c \
+			-static-libgcc \
+			-Wall \
+			-Wl,-Bstatic \
+			-L/usr/i686-w64-mingw32/sys-root/mingw/lib \
+			-l mingw32 \
+			-l SDL2main \
+			-l SDL2 \
+			-Wl,-Bdynamic \
+			-l winmm \
+			-l ole32 \
+			-l gdi32 \
+			-l imm32 \
+			-l version \
+			-l oleaut32 \
+			-I /usr/i686-w64-mingw32/sys-root/mingw/include \
+			-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
+			-D main=SDL_main \
+			-o test_audio.exe
+
+test_audio : test_audio.c
+	        gcc \
+			-g \
+			test_audio.c \
+			-Wall \
+			-l SDL2 \
+			-I /usr/include/SDL2 \
+			-o test_audio.exe

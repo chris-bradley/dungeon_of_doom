@@ -6,7 +6,7 @@ typedef struct {
     int current_wave_value;
 } audio_state_t;
 
-void sdl_callback_func(void * userdata, Uint8 * stream, int len) {
+void pulse(void * userdata, Uint8 * stream, int len) {
     audio_state_t * audio_state = (audio_state_t *) userdata;
     int pulse_chunk_length = 11025 / 440 / 2,
         stream_index = audio_state->remaining_pulse,
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
         .format=AUDIO_S8,
         .channels=1,
         .samples=4096,
-        .callback=sdl_callback_func,
+        .callback=pulse,
         .userdata=(void *) audio_state
     };
     obtained = (SDL_AudioSpec *) malloc(sizeof(SDL_AudioSpec));

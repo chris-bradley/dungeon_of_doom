@@ -4,11 +4,13 @@
 typedef struct {
     int remaining_pulse;
     int current_wave_value;
+    int frequency;
 } audio_state_t;
 
 void pulse(void * userdata, Uint8 * stream, int len) {
     audio_state_t * audio_state = (audio_state_t *) userdata;
-    int pulse_chunk_length = 11025 / 440 / 2,
+    int samples_per_cycle = 11025 / audio_state->frequency,
+        pulse_chunk_length = samples_per_cycle / 2,
         stream_index = audio_state->remaining_pulse,
         wave_value = audio_state->current_wave_value;
     memset(stream, wave_value, stream_index);
@@ -39,7 +41,8 @@ int main(int argc, char* argv[]) {
     audio_state_t * audio_state = malloc(sizeof(audio_state_t));
     *audio_state = (audio_state_t) {
         .current_wave_value = 0,
-        .remaining_pulse = 0
+        .remaining_pulse = 0,
+        .frequency=440
     };
     desired = (SDL_AudioSpec) {
         .freq=11025,

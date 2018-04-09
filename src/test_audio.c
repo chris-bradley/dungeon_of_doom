@@ -2,8 +2,7 @@
 #include "SDL.h"
 
 typedef struct {
-    int remaining_pulse;
-    int current_wave_value;
+    int samples_played;
     int frequency;
 } audio_state_t;
 
@@ -11,24 +10,30 @@ void pulse(void * userdata, Uint8 * stream, int len) {
     audio_state_t * audio_state = (audio_state_t *) userdata;
     int samples_per_cycle = 44100 / audio_state->frequency,
         pulse_chunk_length = samples_per_cycle / 2,
-        stream_index = audio_state->remaining_pulse,
-        wave_value = audio_state->current_wave_value;
-    memset(stream, wave_value, stream_index);
+        cycle_position = audio_state->samples_played % samples_per_cycle,
+        stream_index = 0,
+        wave_value;
+    if (cycle_position < pulse_chunk_length) {
+        memset(stream, 255, pulse_chunk_length - cycle_position);
+        stream_index += pulse_chunk_length - cycle_position;
+        cycle_position = pulse_chunk_length;
+    }
+    memset(stream + stream_index, 0, samples_per_cycle - cycle_position);
+    stream_index += samples_per_cycle - cycle_position;
+    wave_value = 255;
     while (stream_index < len) {
+        if (pulse_chunk_length > len - stream_index) {
+            pulse_chunk_length = len - stream_index;
+        }
+        memset(stream + stream_index, wave_value, pulse_chunk_length);
+        stream_index += pulse_chunk_length;
         if (wave_value == 255) {
             wave_value = 0;
         } else {
             wave_value = 255;
         }
-        if (pulse_chunk_length >= len - stream_index) {
-            audio_state->remaining_pulse =
-                pulse_chunk_length - len + stream_index;
-            audio_state->current_wave_value = wave_value;
-            pulse_chunk_length = len - stream_index;
-        }
-        memset(stream + stream_index, wave_value, pulse_chunk_length);
-        stream_index += pulse_chunk_length;
     }
+    audio_state->samples_played += len;
 }
 
 int main(int argc, char* argv[]) {
@@ -40,8 +45,7 @@ int main(int argc, char* argv[]) {
     SDL_AudioSpec desired, *obtained = NULL;
     audio_state_t * audio_state = malloc(sizeof(audio_state_t));
     *audio_state = (audio_state_t) {
-        .current_wave_value = 0,
-        .remaining_pulse = 0,
+        .samples_played=0,
         .frequency=440
     };
     desired = (SDL_AudioSpec) {

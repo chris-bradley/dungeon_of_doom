@@ -9,7 +9,7 @@ typedef struct {
 
 void pulse(void * userdata, Uint8 * stream, int len) {
     audio_state_t * audio_state = (audio_state_t *) userdata;
-    int samples_per_cycle = 11025 / audio_state->frequency,
+    int samples_per_cycle = 44100 / audio_state->frequency,
         pulse_chunk_length = samples_per_cycle / 2,
         stream_index = audio_state->remaining_pulse,
         wave_value = audio_state->current_wave_value;
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
         .frequency=440
     };
     desired = (SDL_AudioSpec) {
-        .freq=11025,
+        .freq=44100,
         .format=AUDIO_S8,
         .channels=1,
         .samples=4096,

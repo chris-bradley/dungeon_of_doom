@@ -79,6 +79,8 @@ int main(int argc, char* argv[]) {
         if (desired.samples != obtained->samples) {
             fprintf(stderr, "obtained.samples is %i\n", obtained->samples);
         }
+        fprintf(stderr, "obtained.silence is %i\n", obtained->silence);
+        fprintf(stderr, "obtained.size is %i\n", obtained->size);
         SDL_PauseAudioDevice(dev, 0);
         SDL_Delay(5000);
         SDL_CloseAudioDevice(dev);

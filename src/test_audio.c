@@ -3,18 +3,13 @@
 
 typedef struct {
     int samples_played;
-    int frequency;
     int length;
+    Uint8 * stream;
 } audio_state_t;
 
-void pulse(void * userdata, Uint8 * stream, int len) {
+void play_sound(void * userdata, Uint8 * stream, int len) {
     audio_state_t * audio_state = (audio_state_t *) userdata;
-    int samples_per_cycle = 44100 / audio_state->frequency,
-        pulse_chunk_length = samples_per_cycle / 2,
-        cycle_position = audio_state->samples_played % samples_per_cycle,
-        stream_index = 0,
-        wave_value,
-        silence;
+    int silence;
 
     if (len > audio_state->length - audio_state->samples_played) {
         silence = len - audio_state->length + audio_state->samples_played;
@@ -22,20 +17,22 @@ void pulse(void * userdata, Uint8 * stream, int len) {
     } else {
         silence = 0;
     }
-    if (len > 0) {
-        if (cycle_position < pulse_chunk_length) {
-            memset(stream, 255, pulse_chunk_length - cycle_position);
-            stream_index += pulse_chunk_length - cycle_position;
-            cycle_position = pulse_chunk_length;
-        }
-        memset(stream + stream_index, 0, samples_per_cycle - cycle_position);
-        stream_index += samples_per_cycle - cycle_position;
-        wave_value = 255;
-    }
+    memcpy(stream, audio_state->stream + audio_state->samples_played, len);
+    memset(stream + len, 0, silence);
+    audio_state->samples_played += len;
+}
 
-    while (stream_index < len) {
-        if (pulse_chunk_length > len - stream_index) {
-            pulse_chunk_length = len - stream_index;
+Uint8 * pulse(int frequency, int length) {
+    int samples_per_cycle = 44100 / frequency,
+        pulse_chunk_length = samples_per_cycle / 2,
+        stream_index = 0,
+        wave_value = 255;
+
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+
+    while (stream_index < length) {
+        if (pulse_chunk_length > length - stream_index) {
+            pulse_chunk_length = length - stream_index;
         }
         memset(stream + stream_index, wave_value, pulse_chunk_length);
         stream_index += pulse_chunk_length;
@@ -45,8 +42,7 @@ void pulse(void * userdata, Uint8 * stream, int len) {
             wave_value = 255;
         }
     }
-    memset(stream + stream_index, 0, silence);
-    audio_state->samples_played += len;
+    return stream;
 }
 
 int main(int argc, char* argv[]) {
@@ -59,15 +55,15 @@ int main(int argc, char* argv[]) {
     audio_state_t * audio_state = malloc(sizeof(audio_state_t));
     *audio_state = (audio_state_t) {
         .samples_played=0,
-        .frequency=440,
-        .length=44100 * 4
+        .length=44100 * 4,
+        .stream=pulse(440, 44100 * 4)
     };
     desired = (SDL_AudioSpec) {
         .freq=44100,
         .format=AUDIO_S8,
         .channels=1,
         .samples=4096,
-        .callback=pulse,
+        .callback=play_sound,
         .userdata=(void *) audio_state
     };
     obtained = (SDL_AudioSpec *) malloc(sizeof(SDL_AudioSpec));
@@ -100,6 +96,7 @@ int main(int argc, char* argv[]) {
         SDL_CloseAudioDevice(dev);
     }
     SDL_Quit();
+    free(audio_state->stream);
     free(audio_state);
     free(obtained);
     return 0;

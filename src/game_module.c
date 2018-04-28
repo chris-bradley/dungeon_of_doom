@@ -455,7 +455,10 @@ int main(int argc, char *argv[]) {
 
 void sound_sawtooth(int sound_frequency) {
     // C64:
+    // voice one frequency high byte J
+    // voice one sawtooth gate open
     // 350 POKE VS+1,J:POKE VS+4,33
+    // voice one sawtooth gate close
     // 355 POKE VS+4,32:RETURN
 
     // TODO: SOUND!
@@ -463,7 +466,10 @@ void sound_sawtooth(int sound_frequency) {
 
 void sound_noise(int sound_frequency) {
     // C64:
+    // voice two frequency high byte J
+    // voice two noise gate open
     // 360 POKE VS+8,J:POKE VS+11,129
+    // voice two noise gate close
     // 365 POKE VS+11,128:RETURN
 
     // TODO: SOUND!
@@ -2045,9 +2051,16 @@ void init_platform_vars(int *character_char_base, int *char_code_blank,
     // Not needed due to dungeon_lib
     // 2950 FOR I=0 To 143:READ A:POKE 36532+I,255-A:NEXT I
     // 2960 VS=54272
+    // max volume, no filters
     // 2970 POKE VS+24,15
+    // voice one 0 attack duration, 9 decay duration (300ms)
+    // voice one 0 sustain level, zero release duration
     // 2980 POKE VS+5,9:POKE VS+6,0
+    // voice two 0 attack duration, 9 decay duration (300ms)
+    // voice two 0 sustain level, zero release duration
     // 2990 POKE VS+12,9:POKE VS+13,0
+    // voice two frequency low byte 0
+    // voice one frequency low byte 0
     // 3000 POKE VS+7,0:POKE VS,0
     // Our font file handles the above
     // 3170 LET AS=65:LET CO=OS+6

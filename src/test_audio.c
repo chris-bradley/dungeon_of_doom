@@ -45,6 +45,25 @@ Uint8 * pulse(int frequency, int length) {
     return stream;
 }
 
+Uint8 * sawtooth(int frequency, int length) {
+    int samples_per_cycle = 44100 / frequency,
+        stream_index = 0,
+        index;
+
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+
+    while (stream_index < length) {
+        for (index = 0; index < samples_per_cycle; index += 1) {
+            stream[stream_index] = 255 * index / samples_per_cycle;
+            stream_index += 1;
+            if (stream_index > length) {
+                index = samples_per_cycle;
+            }
+        }
+    }
+    return stream;
+}
+
 int main(int argc, char* argv[]) {
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         fprintf(stderr, "SDL Init Failure!: %s\n", SDL_GetError());

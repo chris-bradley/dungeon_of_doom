@@ -234,4 +234,4 @@ test_audio : test_audio.c dungeon_audio_lin.o
 			-l SDL2 \
 			-I /usr/include/SDL2 \
 			dungeon_audio_lin.o \
-			-o test_audio.exe
+			-o test_audio

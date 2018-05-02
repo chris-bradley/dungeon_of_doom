@@ -22,7 +22,7 @@ void stream_queue_clear_first(stream_queue_t * stream_queue) {
     stream_queue_node_t * first_node = stream_queue->first_node;
     stream_queue->first_node = first_node->next_node;
     if (stream_queue->first_node == NULL) {
-        stream_queue->last_node == NULL;
+        stream_queue->last_node = NULL;
     }
     free(first_node->stream);
     free(first_node);

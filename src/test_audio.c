@@ -23,6 +23,11 @@ int main(int argc, char* argv[]) {
         pulse(440, 44100 * 4),
         44100 * 4
     );
+    stream_queue_enqueue(
+        audio_state->streams,
+        sawtooth(440, 44100 * 4),
+        44100 * 4
+    );
     desired = (SDL_AudioSpec) {
         .freq=44100,
         .format=AUDIO_S8,
@@ -57,7 +62,7 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "obtained.silence is %i\n", obtained->silence);
         fprintf(stderr, "obtained.size is %i\n", obtained->size);
         SDL_PauseAudioDevice(dev, 0);
-        SDL_Delay(5000);
+        SDL_Delay(9000);
         SDL_CloseAudioDevice(dev);
     }
     SDL_Quit();

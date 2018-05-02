@@ -11,10 +11,18 @@ int main(int argc, char* argv[]) {
     SDL_AudioSpec desired, *obtained = NULL;
     audio_state_t * audio_state = malloc(sizeof(audio_state_t));
     *audio_state = (audio_state_t) {
-        .samples_played=0,
-        .length=44100 * 4,
-        .stream=pulse(440, 44100 * 4)
+        .streams = malloc(sizeof(stream_queue_t))
     };
+    *audio_state->streams = (stream_queue_t) {
+        .length=0,
+        .first_node=NULL,
+        .last_node=NULL
+    };
+    stream_queue_enqueue(
+        audio_state->streams,
+        pulse(440, 44100 * 4),
+        44100 * 4
+    );
     desired = (SDL_AudioSpec) {
         .freq=44100,
         .format=AUDIO_S8,
@@ -53,7 +61,10 @@ int main(int argc, char* argv[]) {
         SDL_CloseAudioDevice(dev);
     }
     SDL_Quit();
-    free(audio_state->stream);
+    while (audio_state->streams->first_node != NULL) {
+        stream_queue_clear_first(audio_state->streams);
+    }
+    free(audio_state->streams);
     free(audio_state);
     free(obtained);
     return 0;

@@ -1,19 +1,60 @@
 #include <SDL.h>
 #include "dungeon_audio.h"
 
+void stream_queue_enqueue(stream_queue_t * stream_queue, Uint8 * stream,
+                          int length) {
+    stream_queue_node_t * stream_node = malloc(sizeof(stream_queue_node_t));
+    *stream_node = (stream_queue_node_t) {
+        .stream = stream,
+        .length = length,
+        .next_node = NULL
+    };
+    if (stream_queue->last_node != NULL) {
+        stream_queue->last_node->next_node = stream_node;
+    }
+    stream_queue->last_node = stream_node;
+    if (stream_queue->first_node == NULL) {
+        stream_queue->first_node = stream_node;
+    }
+}
+
+void stream_queue_clear_first(stream_queue_t * stream_queue) {
+    stream_queue_node_t * first_node = stream_queue->first_node;
+    stream_queue->first_node = first_node->next_node;
+    if (stream_queue->first_node == NULL) {
+        stream_queue->last_node == NULL;
+    }
+    free(first_node->stream);
+    free(first_node);
+}
+
 void play_sound(void * userdata, Uint8 * stream, int len) {
     audio_state_t * audio_state = (audio_state_t *) userdata;
-    int silence;
+    stream_queue_node_t * cur_node;
+    int silence = len, node_remaining;
 
-    if (len > audio_state->length - audio_state->samples_played) {
-        silence = len - audio_state->length + audio_state->samples_played;
-        len -= silence;
-    } else {
-        silence = 0;
+    while (
+            audio_state->streams->first_node != NULL &&
+            silence > 0
+    ) {
+        cur_node = audio_state->streams->first_node;
+        node_remaining = cur_node->length - cur_node->samples_played;
+        if (node_remaining > silence) {
+            node_remaining = silence;
+        }
+        memcpy(
+            stream + len - silence,
+            cur_node->stream + cur_node->samples_played,
+            node_remaining
+        );
+        silence -= node_remaining;
+        cur_node->samples_played += node_remaining;
+        if (cur_node->samples_played == cur_node->length) {
+            stream_queue_clear_first(audio_state->streams);
+        }
+
     }
-    memcpy(stream, audio_state->stream + audio_state->samples_played, len);
-    memset(stream + len, 0, silence);
-    audio_state->samples_played += len;
+    memset(stream + len - silence, 0, silence);
 }
 
 Uint8 * pulse(int frequency, int length) {

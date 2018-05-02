@@ -98,3 +98,26 @@ Uint8 * sawtooth(int frequency, int length) {
     }
     return stream;
 }
+
+#define PI 3.14159265358979323846
+
+Uint8 * sine_wave(int frequency, int length) {
+    int samples_per_cycle = 44100 / frequency,
+        stream_index = 0,
+        index;
+
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+
+    while (stream_index < length) {
+        for (index = 0; index < samples_per_cycle; index += 1) {
+            stream[stream_index] = 127 + (
+                127 * sin(index * 2 * PI / samples_per_cycle)
+            );
+            stream_index += 1;
+            if (stream_index > length) {
+                index = samples_per_cycle;
+            }
+        }
+    }
+    return stream;
+}

@@ -25,3 +25,4 @@ void play_sound(void * userdata, Uint8 * stream, int len);
 
 Uint8 * pulse(int frequency, int length);
 Uint8 * sawtooth(int frequency, int length);
+Uint8 * sine_wave(int frequency, int length);

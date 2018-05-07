@@ -121,3 +121,38 @@ Uint8 * sine_wave(int frequency, int length) {
     }
     return stream;
 }
+
+Uint8 * noise(int frequency, int length) {
+    int samples_per_shift = 44100 / frequency / 4,
+        stream_index = 0,
+        index,
+        bits_to_feed;
+    Uint8 wave_val;
+
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+
+    wave_val = 0;
+    bits_to_feed = rand() % 7;
+    for (
+            stream_index = 0;
+            stream_index < length;
+            stream_index += samples_per_shift
+    ) {
+        wave_val = wave_val << 1;
+        if ((wave_val & 127) == 0 || bits_to_feed > 0) {
+            if (bits_to_feed == 0) {
+                bits_to_feed = (rand() % 6) + 1;
+            }
+            wave_val = wave_val | 1;
+            bits_to_feed -= 1;
+        }
+        for (index = 0; index < samples_per_shift; index += 1) {
+            if (stream_index + index == length) {
+                index = samples_per_shift;
+            } else {
+                stream[stream_index + index] = wave_val;
+            }
+        }
+    }
+    return stream;
+}

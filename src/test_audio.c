@@ -18,9 +18,12 @@ int main(int argc, char* argv[]) {
         .first_node=NULL,
         .last_node=NULL
     };
+    Uint8 * stream = pulse(440, 44100 * 4);
+    volume_filter(stream, 44100 * 4, 22050, 22050, 8, 22050);
+
     stream_queue_enqueue(
         audio_state->streams,
-        pulse(440, 44100 * 4),
+        stream,
         44100 * 4
     );
     stream_queue_enqueue(

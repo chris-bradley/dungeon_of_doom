@@ -156,3 +156,32 @@ Uint8 * noise(int frequency, int length) {
     }
     return stream;
 }
+
+void volume_filter(Uint8 * stream, int length, int attack, int decay,
+                   int sustain, int release) {
+    int stream_index = 0;
+    float multiplier,
+          sustain_multiplier = sustain / 16.0;
+    while (stream_index < attack) {
+        multiplier = (float) stream_index / attack;
+        stream[stream_index] *= multiplier;
+        stream_index += 1;
+    }
+    while (stream_index < attack + decay) {
+        multiplier = (
+            1 - ((float) stream_index - attack) / decay
+        ) * (1 - sustain_multiplier) + sustain_multiplier;
+        stream[stream_index] *= multiplier;
+        stream_index += 1;
+    }
+    while (stream_index < length - release) {
+        stream[stream_index] *= sustain_multiplier;
+        stream_index += 1;
+    }
+    while (stream_index < length) {
+        multiplier =
+            sustain_multiplier * ((float) length - stream_index) / release;
+        stream[stream_index] *= multiplier;
+        stream_index += 1;
+    }
+}

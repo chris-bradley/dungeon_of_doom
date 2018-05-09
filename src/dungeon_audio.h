@@ -27,3 +27,6 @@ Uint8 * pulse(int frequency, int length);
 Uint8 * sawtooth(int frequency, int length);
 Uint8 * sine_wave(int frequency, int length);
 Uint8 * noise(int frequency, int length);
+
+void volume_filter(Uint8 * stream, int length, int attack, int decay,
+                   int sustain, int release);

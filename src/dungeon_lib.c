@@ -189,6 +189,7 @@ void destroy_screen(screen_t *screen) {
     SDL_DestroyRenderer(screen->ren);
     SDL_DestroyWindow(screen->win);
     SDL_Quit();
+    free(screen);
 }
 
 void clear_screen(screen_t *screen) {

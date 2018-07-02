@@ -1624,7 +1624,6 @@ void load_character(screen_t *screen, int character_char_base,
     fread(file_contents, 1, filesize, file_handle);
     // 2050 CLOSE#S
     fclose(file_handle);
-    free(file_handle);
     file_contents[filesize] = 0;
     // 2060 LET P=2
     file_index = 2;
@@ -1785,7 +1784,6 @@ void save_game(screen_t *screen, int character_char_base, char *character_name,
     if (error) {
         fprintf(stderr, "Error %i closing the character!", error);
     }
-    free(file_handle);
     // 2470 S=OPENOUT"LEVEL":PRINT#S,T$:CLOSE#S
     file_handle = fopen("LEVEL", "w");
     error = fputs(dungeon_file_contents, file_handle);
@@ -1796,7 +1794,6 @@ void save_game(screen_t *screen, int character_char_base, char *character_name,
     if (error) {
         fprintf(stderr, "Error %i closing the level!", error);
     }
-    free(file_handle);
     // 2480 LET FI=1
     *finished = 1;
     // 2490 RETURN

@@ -912,6 +912,7 @@ int main(int argc, char *argv[]) {
     free(header->message_rect);
     free(header->label_rect);
     free(header->points_rect);
+    free(header);
     free(character->name);
     for (index = 0; index < 8; index += 1) {
         free(main_menu->items[index]->label_rect);
@@ -920,12 +921,11 @@ int main(int argc, char *argv[]) {
     }
     free(main_menu->selector_rect);
     free(main_menu);
-
-    for (index = 1; index < 6; index += 1) {
+    for (index = 0; index < 5; index += 1) {
         free(character_classes[index]);
     }
     free(character_classes);
-
+    free(character->inventory);
     free(character);
     destroy_screen(screen);
 

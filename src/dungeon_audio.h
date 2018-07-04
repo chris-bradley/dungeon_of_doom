@@ -19,6 +19,7 @@ void stream_queue_clear_first(stream_queue_t * stream_queue);
 
 typedef struct {
     stream_queue_t * streams;
+    SDL_AudioDeviceID device;
 } audio_state_t;
 
 void play_sound(void * userdata, Uint8 * stream, int len);

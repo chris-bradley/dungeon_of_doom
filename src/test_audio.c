@@ -60,6 +60,7 @@ int main(int argc, char* argv[]) {
     if (dev == 0) {
         fprintf(stderr, "SDL_OpenAudioDevice() failure: %s\n", SDL_GetError());
     } else {
+        audio_state->device = dev;
         if (desired.freq != obtained->freq) {
             fprintf(stderr, "obtained->freq is %i\n", obtained->freq);
         }

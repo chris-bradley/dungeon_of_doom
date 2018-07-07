@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
 
     int i;
     free(character_name);
-    for (i = 0; i < 3; i += 1) {
+    for (i = 0; i < 5; i += 1) {
         free(vertices[i]);
     }
     free(vertices);

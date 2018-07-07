@@ -99,7 +99,7 @@ Uint8 * sawtooth(int frequency, int length) {
         for (index = 0; index < samples_per_cycle; index += 1) {
             stream[stream_index] = 255 * index / samples_per_cycle;
             stream_index += 1;
-            if (stream_index > length) {
+            if (stream_index >= length) {
                 index = samples_per_cycle;
             }
         }

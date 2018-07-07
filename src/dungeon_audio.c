@@ -58,12 +58,16 @@ void play_sound(void * userdata, Uint8 * stream, int len) {
 }
 
 Uint8 * pulse(int frequency, int length) {
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (frequency == 0) {
+        memset(stream, 0, length);
+        return stream;
+    }
+
     int samples_per_cycle = 44100 / frequency,
         pulse_chunk_length = samples_per_cycle / 2,
         stream_index = 0,
         wave_value = 255;
-
-    Uint8 * stream = malloc(sizeof(Uint8) * length);
 
     while (stream_index < length) {
         if (pulse_chunk_length > length - stream_index) {
@@ -81,11 +85,15 @@ Uint8 * pulse(int frequency, int length) {
 }
 
 Uint8 * sawtooth(int frequency, int length) {
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (frequency == 0) {
+        memset(stream, 0, length);
+        return stream;
+    }
+
     int samples_per_cycle = 44100 / frequency,
         stream_index = 0,
         index;
-
-    Uint8 * stream = malloc(sizeof(Uint8) * length);
 
     while (stream_index < length) {
         for (index = 0; index < samples_per_cycle; index += 1) {
@@ -102,11 +110,15 @@ Uint8 * sawtooth(int frequency, int length) {
 #define PI 3.14159265358979323846
 
 Uint8 * sine_wave(int frequency, int length) {
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (frequency == 0) {
+        memset(stream, 0, length);
+        return stream;
+    }
+
     int samples_per_cycle = 44100 / frequency,
         stream_index = 0,
         index;
-
-    Uint8 * stream = malloc(sizeof(Uint8) * length);
 
     while (stream_index < length) {
         for (index = 0; index < samples_per_cycle; index += 1) {
@@ -123,13 +135,17 @@ Uint8 * sine_wave(int frequency, int length) {
 }
 
 Uint8 * noise(int frequency, int length) {
+    Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (frequency == 0) {
+        memset(stream, 0, length);
+        return stream;
+    }
+
     int samples_per_shift = 44100 / frequency / 4,
         stream_index = 0,
         index,
         bits_to_feed;
     Uint8 wave_val;
-
-    Uint8 * stream = malloc(sizeof(Uint8) * length);
 
     wave_val = 0;
     bits_to_feed = rand() % 7;

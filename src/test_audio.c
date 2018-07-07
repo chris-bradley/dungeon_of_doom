@@ -9,15 +9,7 @@ int main(int argc, char* argv[]) {
     }
 
     SDL_AudioSpec desired, *obtained = NULL;
-    audio_state_t * audio_state = malloc(sizeof(audio_state_t));
-    *audio_state = (audio_state_t) {
-        .streams = malloc(sizeof(stream_queue_t))
-    };
-    *audio_state->streams = (stream_queue_t) {
-        .length=0,
-        .first_node=NULL,
-        .last_node=NULL
-    };
+    audio_state_t * audio_state = init_audio_state();
     Uint8 * stream = pulse(440, 44100 * 4);
     volume_filter(stream, 44100 * 4, 22050, 22050, 8, 22050);
 

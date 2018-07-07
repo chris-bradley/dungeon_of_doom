@@ -201,3 +201,16 @@ void volume_filter(Uint8 * stream, int length, int attack, int decay,
         stream_index += 1;
     }
 }
+
+audio_state_t * init_audio_state() {
+    audio_state_t * audio_state = malloc(sizeof(audio_state_t));
+    *audio_state = (audio_state_t) {
+        .streams = malloc(sizeof(stream_queue_t))
+    };
+    *audio_state->streams = (stream_queue_t) {
+        .length=0,
+        .first_node=NULL,
+        .last_node=NULL
+    };
+    return audio_state;
+}

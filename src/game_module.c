@@ -1176,8 +1176,8 @@ void cast_teleport(screen_t *screen, double *attrs, char *char_code_hero,
 
 void cast_powersurge(double *attrs, int *spells_remaining, int spell_number) {
     // 1280 LET F(2)=F(2)+rnd(M(SL)):LET F(1)=F(1)+rnd(M(SL)):LET F(7)=F(7)-1
-    attrs[2] += rand() * spells_remaining[spell_number];
-    attrs[1] += rand() * spells_remaining[spell_number];
+    attrs[2] += rand() % spells_remaining[spell_number];
+    attrs[1] += rand() % spells_remaining[spell_number];
     attrs[7] -= 1;
     // 1290 RETURN
 }

@@ -212,5 +212,65 @@ audio_state_t * init_audio_state() {
         .first_node=NULL,
         .last_node=NULL
     };
+    SDL_AudioSpec desired = {
+        .freq=44100,
+        .format=AUDIO_S8,
+        .channels=1,
+        .samples=4096,
+        .callback=play_sound,
+        .userdata=audio_state
+    };
+    SDL_AudioSpec * obtained = malloc(sizeof(SDL_AudioSpec));
+    SDL_AudioDeviceID device = SDL_OpenAudioDevice(
+        NULL,
+        0,
+        &desired,
+        obtained,
+        SDL_AUDIO_ALLOW_ANY_CHANGE
+    );
+    if (device == 0) {
+        fprintf(stderr, "SDL_OpenAudioDevice() failure: %s\n", SDL_GetError());
+        exit(1);
+    }
+    audio_state->device = device;
+    audio_state->audio_spec = obtained;
+    if (desired.freq != audio_state->audio_spec->freq) {
+        fprintf(
+            stderr,
+            "audio_state->audio_spec->freq is %i\n",
+            audio_state->audio_spec->freq
+        );
+    }
+    if (desired.format != audio_state->audio_spec->format) {
+        fprintf(
+            stderr,
+            "audio_state->audio_spec->format is %i\n",
+            audio_state->audio_spec->format
+        );
+    }
+    if (desired.channels != audio_state->audio_spec->channels) {
+        fprintf(
+            stderr,
+            "audio_state->audio_spec->channels is %i\n",
+            audio_state->audio_spec->channels
+        );
+    }
+    if (desired.samples != audio_state->audio_spec->samples) {
+        fprintf(
+            stderr,
+            "audio_state->audio_spec.samples is %i\n",
+            audio_state->audio_spec->samples
+        );
+    }
+    fprintf(
+        stderr,
+        "audio_state->audio_spec.silence is %i\n",
+        audio_state->audio_spec->silence
+    );
+    fprintf(
+        stderr,
+        "audio_state->audio_spec.size is %i\n",
+        audio_state->audio_spec->size
+    );
     return audio_state;
 }

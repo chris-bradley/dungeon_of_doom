@@ -8,7 +8,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    SDL_AudioSpec desired, *obtained = NULL;
     audio_state_t * audio_state = init_audio_state();
     Uint8 * stream = pulse(440, 44100 * 4);
     volume_filter(stream, 44100 * 4, 22050, 22050, 8, 22050);
@@ -33,51 +32,15 @@ int main(int argc, char* argv[]) {
         noise(440, 44100 * 4),
         44100 * 4
     );
-    desired = (SDL_AudioSpec) {
-        .freq=44100,
-        .format=AUDIO_S8,
-        .channels=1,
-        .samples=4096,
-        .callback=play_sound,
-        .userdata=(void *) audio_state
-    };
-    obtained = (SDL_AudioSpec *) malloc(sizeof(SDL_AudioSpec));
-    SDL_AudioDeviceID dev = SDL_OpenAudioDevice(
-        NULL,
-        0,
-        &desired,
-        obtained,
-        SDL_AUDIO_ALLOW_ANY_CHANGE
-    );
-    if (dev == 0) {
-        fprintf(stderr, "SDL_OpenAudioDevice() failure: %s\n", SDL_GetError());
-    } else {
-        audio_state->device = dev;
-        audio_state->audio_spec = obtained;
-        if (desired.freq != obtained->freq) {
-            fprintf(stderr, "obtained->freq is %i\n", obtained->freq);
-        }
-        if (desired.format != obtained->format) {
-            fprintf(stderr, "obtained->format is %i\n", obtained->format);
-        }
-        if (desired.channels != obtained->channels) {
-            fprintf(stderr, "obtained->channels is %i\n", obtained->channels);
-        }
-        if (desired.samples != obtained->samples) {
-            fprintf(stderr, "obtained.samples is %i\n", obtained->samples);
-        }
-        fprintf(stderr, "obtained.silence is %i\n", obtained->silence);
-        fprintf(stderr, "obtained.size is %i\n", obtained->size);
-        SDL_PauseAudioDevice(dev, 0);
-        SDL_Delay(15000);
-        SDL_CloseAudioDevice(dev);
-    }
+    SDL_PauseAudioDevice(audio_state->device, 0);
+    SDL_Delay(15000);
+    SDL_CloseAudioDevice(audio_state->device);
     SDL_Quit();
     while (audio_state->streams->first_node != NULL) {
         stream_queue_clear_first(audio_state->streams);
     }
     free(audio_state->streams);
+    free(audio_state->audio_spec);
     free(audio_state);
-    free(obtained);
     return 0;
 }

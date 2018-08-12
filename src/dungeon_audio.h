@@ -26,10 +26,10 @@ typedef struct {
 
 void play_sound(void * userdata, Uint8 * stream, int len);
 
-Uint8 * pulse(int frequency, int length);
-Uint8 * sawtooth(int frequency, int length);
-Uint8 * sine_wave(int frequency, int length);
-Uint8 * noise(int frequency, int length);
+Uint8 * pulse(int frequency, int length, SDL_AudioSpec * audio_spec);
+Uint8 * sawtooth(int frequency, int length, SDL_AudioSpec * audio_spec);
+Uint8 * sine_wave(int frequency, int length, SDL_AudioSpec * audio_spec);
+Uint8 * noise(int frequency, int length, SDL_AudioSpec * audio_spec);
 
 void volume_filter(Uint8 * stream, int length, int attack, int decay,
                    int sustain, int release);

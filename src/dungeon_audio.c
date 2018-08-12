@@ -61,14 +61,14 @@ void play_sound(void * userdata, Uint8 * stream, int len) {
     }
 }
 
-Uint8 * pulse(int frequency, int length) {
+Uint8 * pulse(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
     }
 
-    int samples_per_cycle = 44100 / frequency,
+    int samples_per_cycle = audio_spec->freq / frequency,
         pulse_chunk_length = samples_per_cycle / 2,
         stream_index = 0,
         wave_value = 255;
@@ -88,14 +88,14 @@ Uint8 * pulse(int frequency, int length) {
     return stream;
 }
 
-Uint8 * sawtooth(int frequency, int length) {
+Uint8 * sawtooth(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
     }
 
-    int samples_per_cycle = 44100 / frequency,
+    int samples_per_cycle = audio_spec->freq / frequency,
         stream_index = 0,
         index;
 
@@ -113,14 +113,14 @@ Uint8 * sawtooth(int frequency, int length) {
 
 #define PI 3.14159265358979323846
 
-Uint8 * sine_wave(int frequency, int length) {
+Uint8 * sine_wave(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
     }
 
-    int samples_per_cycle = 44100 / frequency,
+    int samples_per_cycle = audio_spec->freq / frequency,
         stream_index = 0,
         index;
 
@@ -138,14 +138,14 @@ Uint8 * sine_wave(int frequency, int length) {
     return stream;
 }
 
-Uint8 * noise(int frequency, int length) {
+Uint8 * noise(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
     }
 
-    int samples_per_shift = 44100 / frequency / 4,
+    int samples_per_shift = audio_spec->freq / frequency / 4,
         stream_index = 0,
         index,
         bits_to_feed;

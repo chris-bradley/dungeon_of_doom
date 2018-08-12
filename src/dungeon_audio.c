@@ -274,3 +274,13 @@ audio_state_t * init_audio_state() {
     );
     return audio_state;
 }
+
+void destroy_audio_state(audio_state_t * audio_state) {
+    SDL_CloseAudioDevice(audio_state->device);
+    while (audio_state->streams->first_node != NULL) {
+        stream_queue_clear_first(audio_state->streams);
+    }
+    free(audio_state->streams);
+    free(audio_state->audio_spec);
+    free(audio_state);
+}

@@ -34,13 +34,7 @@ int main(int argc, char* argv[]) {
     );
     SDL_PauseAudioDevice(audio_state->device, 0);
     SDL_Delay(15000);
-    SDL_CloseAudioDevice(audio_state->device);
+    destroy_audio_state(audio_state);
     SDL_Quit();
-    while (audio_state->streams->first_node != NULL) {
-        stream_queue_clear_first(audio_state->streams);
-    }
-    free(audio_state->streams);
-    free(audio_state->audio_spec);
-    free(audio_state);
     return 0;
 }

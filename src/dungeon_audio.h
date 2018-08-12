@@ -34,3 +34,4 @@ void volume_filter(Uint8 * stream, int length, int attack, int decay,
                    int sustain, int release);
 
 audio_state_t * init_audio_state();
+void destroy_audio_state(audio_state_t * audio_state);

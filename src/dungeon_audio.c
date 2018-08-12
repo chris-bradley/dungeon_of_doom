@@ -30,31 +30,35 @@ void stream_queue_clear_first(stream_queue_t * stream_queue) {
 
 void play_sound(void * userdata, Uint8 * stream, int len) {
     audio_state_t * audio_state = (audio_state_t *) userdata;
+    stream_queue_t * cur_stream;
     stream_queue_node_t * cur_node;
-    int silence = len, node_remaining;
+    int silence, node_remaining, index;
 
-    while (
-            audio_state->streams->first_node != NULL &&
-            silence > 0
-    ) {
-        cur_node = audio_state->streams->first_node;
-        node_remaining = cur_node->length - cur_node->samples_played;
-        if (node_remaining > silence) {
-            node_remaining = silence;
-        }
-        memcpy(
-            stream + len - silence,
-            cur_node->stream + cur_node->samples_played,
-            node_remaining
-        );
-        silence -= node_remaining;
-        cur_node->samples_played += node_remaining;
-        if (cur_node->samples_played == cur_node->length) {
-            stream_queue_clear_first(audio_state->streams);
-        }
+    SDL_memset(stream, 0, len);
 
+    for (index = 0; index < audio_state->num_stream_queues; index += 1) {
+        silence = len;
+        cur_stream = *(audio_state->streams + index);
+        while (cur_stream->first_node != NULL && silence > 0) {
+            cur_node = cur_stream->first_node;
+            node_remaining = cur_node->length - cur_node->samples_played;
+            if (node_remaining > silence) {
+                node_remaining = silence;
+            }
+            SDL_MixAudioFormat(
+                stream + len - silence,
+                cur_node->stream + cur_node->samples_played,
+                audio_state->audio_spec->format,
+                node_remaining,
+                SDL_MIX_MAXVOLUME
+            );
+            silence -= node_remaining;
+            cur_node->samples_played += node_remaining;
+            if (cur_node->samples_played == cur_node->length) {
+                stream_queue_clear_first(cur_stream);
+            }
+        }
     }
-    memset(stream + len - silence, 0, silence);
 }
 
 Uint8 * pulse(int frequency, int length) {
@@ -202,15 +206,22 @@ void volume_filter(Uint8 * stream, int length, int attack, int decay,
     }
 }
 
-audio_state_t * init_audio_state() {
+audio_state_t * init_audio_state(Uint8 num_stream_queues) {
+    int index;
+    stream_queue_t * new_stream_queue;
     audio_state_t * audio_state = malloc(sizeof(audio_state_t));
     *audio_state = (audio_state_t) {
-        .streams = malloc(sizeof(stream_queue_t))
+        .streams = malloc(sizeof(stream_queue_t *) * num_stream_queues),
+        .num_stream_queues = num_stream_queues
     };
-    *audio_state->streams = (stream_queue_t) {
-        .length=0,
-        .first_node=NULL,
-        .last_node=NULL
+    for (index = 0; index < num_stream_queues; index += 1) {
+        new_stream_queue = malloc(sizeof(stream_queue_t));
+        *new_stream_queue = (stream_queue_t) {
+            .length=0,
+            .first_node=NULL,
+            .last_node=NULL
+        };
+        *(audio_state->streams + index) = new_stream_queue;
     };
     SDL_AudioSpec desired = {
         .freq=44100,
@@ -276,9 +287,15 @@ audio_state_t * init_audio_state() {
 }
 
 void destroy_audio_state(audio_state_t * audio_state) {
+    int index;
+    stream_queue_t * cur_stream;
     SDL_CloseAudioDevice(audio_state->device);
-    while (audio_state->streams->first_node != NULL) {
-        stream_queue_clear_first(audio_state->streams);
+    for (index = 0; index < audio_state->num_stream_queues; index += 1) {
+        cur_stream = *(audio_state->streams + index);
+        while (cur_stream->first_node != NULL) {
+            stream_queue_clear_first(cur_stream);
+        }
+        free(cur_stream);
     }
     free(audio_state->streams);
     free(audio_state->audio_spec);

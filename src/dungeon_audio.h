@@ -18,7 +18,8 @@ void stream_queue_enqueue(stream_queue_t * stream_queue, Uint8 * stream,
 void stream_queue_clear_first(stream_queue_t * stream_queue);
 
 typedef struct {
-    stream_queue_t * streams;
+    stream_queue_t ** streams;
+    Uint8 num_stream_queues;
     SDL_AudioDeviceID device;
     SDL_AudioSpec * audio_spec;
 } audio_state_t;
@@ -33,5 +34,5 @@ Uint8 * noise(int frequency, int length);
 void volume_filter(Uint8 * stream, int length, int attack, int decay,
                    int sustain, int release);
 
-audio_state_t * init_audio_state();
+audio_state_t * init_audio_state(Uint8 num_stream_queues);
 void destroy_audio_state(audio_state_t * audio_state);

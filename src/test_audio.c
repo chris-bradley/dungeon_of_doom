@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
         freq * 4
     );
     SDL_PauseAudioDevice(audio_state->device, 0);
-    SDL_Delay(15000);
+    SDL_Delay(16000);
     destroy_audio_state(audio_state);
     SDL_Quit();
     return 0;

@@ -39,6 +39,31 @@ int main(int argc, char* argv[]) {
     );
     SDL_PauseAudioDevice(audio_state->device, 0);
     SDL_Delay(16000);
+    SDL_PauseAudioDevice(audio_state->device, 1);
+    int sound_frequency;
+    int length = 0.3 * freq;
+    for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
+        stream = sawtooth(
+            sound_frequency * 16.940,
+            length,
+            audio_state->audio_spec
+        );
+        if (sound_frequency == 12) {
+            volume_filter(stream, length, 0, length, 0, 0);
+        }
+        stream_queue_enqueue(main_stream, stream, length);
+        stream = noise(
+            sound_frequency * 16.940,
+            length,
+            audio_state->audio_spec
+        );
+        if (sound_frequency == 12) {
+            volume_filter(stream, length, 0, length, 0, 0);
+        }
+        stream_queue_enqueue(second_stream, stream, length);
+    }
+    SDL_PauseAudioDevice(audio_state->device, 0);
+    SDL_Delay(4000);
     destroy_audio_state(audio_state);
     SDL_Quit();
     return 0;

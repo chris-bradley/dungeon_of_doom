@@ -1335,6 +1335,7 @@ void load_level(screen_t *screen, int skip_first_exp_check,
         } else {
             correct_level_loaded = 0;
         }
+        free(file_contents);
     } while (correct_level_loaded);
     draw_interface(screen, character_name, screen_cols);
     *character_coord_x = entrance_coord_x;

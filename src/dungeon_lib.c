@@ -138,7 +138,7 @@ void newline(cursor_t *cursor) {
 
 screen_t * init_screen() {
     screen_t * screen;
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         fprintf(stderr, "SDL_Init error:%s\n", SDL_GetError());
         SDL_Quit();
         exit(1);;

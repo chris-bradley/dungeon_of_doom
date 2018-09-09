@@ -161,10 +161,11 @@ character_creator : character_creator.c dungeon_lib_lin.o
 		dungeon_lib_lin.o \
 		character_creator.c
 
-game_module.exe : game_module.c dungeon_lib_win.o
+game_module.exe : game_module.c dungeon_lib_win.o dungeon_audio_win.o
 	i686-w64-mingw32-gcc \
 		-g \
 		dungeon_lib_win.o \
+		dungeon_audio_win.o \
 		game_module.c \
 		-static-libgcc \
 		-Wall \
@@ -192,14 +193,16 @@ game_module.exe : game_module.c dungeon_lib_win.o
 		-D main=SDL_main \
 		-o game_module.exe
 
-game_module : game_module.c dungeon_lib_lin.o
+game_module : game_module.c dungeon_lib_lin.o dungeon_audio_lin.o
 	gcc \
 		-g \
 		-l SDL2 \
 		-l SDL2_ttf \
+		-l m \
 		-I /usr/include/SDL2 \
 		-o game_module \
 		dungeon_lib_lin.o \
+		dungeon_audio_lin.o \
 		game_module.c
 
 test_audio.exe : test_audio.c dungeon_audio_win.o

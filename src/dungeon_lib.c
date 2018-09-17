@@ -351,7 +351,8 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
         ),
         cur_colour;
     int source_row, bitmask, index, error,
-        pixel_index = 0;
+        pixel_index = 0,
+        i;
     SDL_Texture *texture;
     SDL_Rect pos = {
         .x = col * 8 * screen->zoom,
@@ -368,12 +369,10 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
                 } else {
                     cur_colour = background_pix_colour;
                 }
-                SDL_memset(
-                    surface->pixels + pixel_index * sizeof(uint32_t),
-                    cur_colour,
-                    screen->zoom * sizeof(uint32_t)
-                );
-                pixel_index += screen->zoom;
+                for (i = 0; i < screen->zoom; i += 1) {
+                    ((uint32_t *) surface->pixels)[pixel_index] = cur_colour;
+                    pixel_index += 1;
+                }
             }
         }
     }

@@ -71,17 +71,19 @@ void draw_message(screen_t *screen, char *message, int screen_cols) {
 void draw_character_and_stats(screen_t *screen, double *attrs,
                               char *char_code_hero, int character_facing,
                               int character_coord_x, int character_coord_y) {
-    paper(screen->cursor, RED);
-    ink(screen->cursor, WHITE);
-    tab(screen->cursor, character_coord_x, character_coord_y + 5);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
         fprintf(stderr, "outstring is NULL!\n");
         exit(1);
     }
-    outstring[0] = char_code_hero[character_facing];
-    outstring[1] = 0;
-    free(print_text(screen, outstring));
+    render_bitmap(
+        screen,
+        character_coord_x,
+        character_coord_y + 5,
+        char_code_hero[character_facing] - DUNGEON_BASE,
+        WHITE,
+        RED
+    );
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 16, 8);
@@ -120,14 +122,14 @@ void render_coord_and_check_for_monster(screen_t *screen,
     ink(screen->cursor, YELLOW);
     item_at_coord = dungeon_contents[coord_x][coord_y];
     tab(screen->cursor, coord_x, coord_y + 5);
-    char * outstring = (char *) malloc(sizeof(char) * 2);
-    if (outstring == NULL) {
-        fprintf(stderr, "outstring is NULL!\n");
-        exit(1);
-    }
-    sprintf(outstring, "%c", (char) item_at_coord);
-    free(print_text(screen, outstring));
-    free(outstring);
+    render_bitmap(
+        screen,
+        screen->cursor->curs_x,
+        screen->cursor->curs_y,
+        item_at_coord - DUNGEON_BASE,
+        YELLOW,
+        RED
+    );
     if (
             abs(*distance_to_monster_x) < 4 ||
             item_at_coord <= SAFE_PLACE

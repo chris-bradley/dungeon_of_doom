@@ -368,12 +368,12 @@ void attack_monster(screen_t *screen, audio_state_t * audio_state,
     easily predicted, we just use 100.
     */
     sound_noise(audio_state, 100);
-    free(message);
     damage =
         attrs[1] + inventory[1] + inventory[2] + inventory[3] + inventory[4] +
         inventory[5] + inventory[6] + inventory[7] + inventory[8] +
         (rand() * attrs[6] / RAND_MAX);
     if (attrs[3] + attrs[6] < rand() % cur_monster->type + 2) {
+        free(message);
         message = (char *) malloc(sizeof(char) * (strlen(strings[4]) + 1));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");

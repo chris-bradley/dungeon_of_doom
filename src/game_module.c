@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "dungeon_lib.h"
 #include "dungeon_audio.h"
+#include "character_lib.h"
 
 enum CharCode {
     CHARACTER_BASE = 65,
@@ -14,17 +15,6 @@ enum CharCode {
     EXIT = 108,
     TRAP = 109,
     SAFE_PLACE = 110
-};
-
-enum AttrNum {
-    STRENGTH = 0,
-    VITALITY = 1,
-    AGILITY = 2,
-    INTELLIGENCE = 3,
-    EXPERIENCE = 4,
-    LUCK = 5,
-    AURA = 6,
-    MORALITY = 7
 };
 
 typedef struct {

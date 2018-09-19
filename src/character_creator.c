@@ -1,16 +1,6 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
-
-enum AttrNum {
-    STRENGTH = 0,
-    VITALITY = 1,
-    AGILITY = 2,
-    INTELLIGENCE = 3,
-    EXPERIENCE = 4,
-    LUCK = 5,
-    AURA = 6,
-    MORALITY = 7
-};
+#include "character_lib.h"
 
 typedef struct {
     const char * title;

@@ -1,4 +1,6 @@
-all: dungeon_lib.c dungeon_generator.c dungeon_lib_win.o dungeon_lib_lin.o character_creator.c
+all: \
+	dungeon_lib.c dungeon_generator.c dungeon_lib_win.o dungeon_lib_lin.o \
+	character_creator.c character_lib.h
 	make \
 		dungeon_lib_win.o \
 		dungeon_lib_lin.o \
@@ -120,7 +122,7 @@ dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
 		dungeon_lib_lin.o \
 		dungeon_generator.c
 
-character_creator.exe : character_creator.c dungeon_lib_win.o
+character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 	i686-w64-mingw32-gcc \
 		-g \
 		dungeon_lib_win.o \
@@ -151,7 +153,7 @@ character_creator.exe : character_creator.c dungeon_lib_win.o
 		-D main=SDL_main \
 		-o character_creator.exe
 
-character_creator : character_creator.c dungeon_lib_lin.o
+character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 	gcc \
 		-g \
 		-l SDL2 \
@@ -161,7 +163,8 @@ character_creator : character_creator.c dungeon_lib_lin.o
 		dungeon_lib_lin.o \
 		character_creator.c
 
-game_module.exe : game_module.c dungeon_lib_win.o dungeon_audio_win.o
+game_module.exe : \
+	game_module.c dungeon_lib_win.o dungeon_audio_win.o character_lib.h
 	i686-w64-mingw32-gcc \
 		-g \
 		dungeon_lib_win.o \
@@ -193,7 +196,8 @@ game_module.exe : game_module.c dungeon_lib_win.o dungeon_audio_win.o
 		-D main=SDL_main \
 		-o game_module.exe
 
-game_module : game_module.c dungeon_lib_lin.o dungeon_audio_lin.o
+game_module : \
+	game_module.c dungeon_lib_lin.o dungeon_audio_lin.o character_lib.h
 	gcc \
 		-g \
 		-l SDL2 \

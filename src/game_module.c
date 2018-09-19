@@ -16,6 +16,17 @@ enum CharCode {
     SAFE_PLACE = 110
 };
 
+enum AttrNum {
+    STRENGTH = 1,
+    VITALITY = 2,
+    AGILITY = 3,
+    INTELLIGENCE = 4,
+    EXPERIENCE = 5,
+    LUCK = 6,
+    AURA = 7,
+    MORALITY = 8
+};
+
 typedef struct {
     float coord_x;
     float coord_y;
@@ -100,21 +111,21 @@ void draw_character_and_stats(screen_t *screen, double *attrs,
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 16, 8);
-    sprintf(outstring, "%i ", (int) attrs[1]);
+    sprintf(outstring, "%i ", (int) attrs[STRENGTH]);
     free(print_text(screen, outstring));
 
     tab(screen->cursor, 16, 11);
-    sprintf(outstring, "%i ", (int) attrs[2]);
+    sprintf(outstring, "%i ", (int) attrs[VITALITY]);
     free(print_text(screen, outstring));
     tab(screen->cursor, 16, 14);
-    sprintf(outstring, "%i ", (int) attrs[7]);
+    sprintf(outstring, "%i ", (int) attrs[AURA]);
     free(print_text(screen, outstring));
     tab(screen->cursor, 16, 17);
     outstring[0] = "NESW."[character_facing - 1];
     outstring[1] = 0;
     free(print_text(screen, outstring));
     tab(screen->cursor, 16, 20);
-    sprintf(outstring, "%i ", (int) attrs[5]);
+    sprintf(outstring, "%i ", (int) attrs[EXPERIENCE]);
     free(print_text(screen, outstring));
     free(outstring);
     SDL_RenderPresent(screen->ren);
@@ -248,7 +259,7 @@ void monsters_turn(screen_t *screen, audio_state_t * audio_state,
     } else {
         sound_frequency = 0;
     }
-    if (damage * 12 < attrs[6] + attrs[3]) {
+    if (damage * 12 < attrs[LUCK] + attrs[AGILITY]) {
         return;
     }
     message = (char *) malloc(sizeof(char) * (strlen(strings[5]) + 1));
@@ -264,8 +275,8 @@ void monsters_turn(screen_t *screen, audio_state_t * audio_state,
         3 + inventory[9] + inventory[10] + inventory[11] + inventory[12] +
         inventory[13] + inventory[14]
     );
-    attrs[1] -= damage;
-    attrs[2] -= damage / 101;
+    attrs[STRENGTH] -= damage;
+    attrs[VITALITY] -= damage / 101;
     item_num = 1;
     monster_broke_item = rand() % cur_monster->type;
     sound_frequency = cur_monster->char_code;
@@ -296,7 +307,7 @@ void character_dies(screen_t *screen, audio_state_t * audio_state,
     char * message;
     int sound_frequency;
     *character_facing = 5;
-    attrs[1] = 0;
+    attrs[STRENGTH] = 0;
     message = (char *) malloc(sizeof(char));
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
@@ -331,7 +342,7 @@ void monster_dies(screen_t *screen, audio_state_t * audio_state,
     dungeon_contents[
         (int) cur_monster->next_coord_x
     ][(int) cur_monster->next_coord_y] = BLANK;
-    attrs[5] += 0.1;
+    attrs[EXPERIENCE] += 0.1;
     message = (char *) malloc(sizeof(char) * (strlen(strings[6]) + 1));
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
@@ -369,10 +380,10 @@ void attack_monster(screen_t *screen, audio_state_t * audio_state,
     */
     sound_noise(audio_state, 100);
     damage =
-        attrs[1] + inventory[1] + inventory[2] + inventory[3] + inventory[4] +
-        inventory[5] + inventory[6] + inventory[7] + inventory[8] +
-        (rand() * attrs[6] / RAND_MAX);
-    if (attrs[3] + attrs[6] < rand() % cur_monster->type + 2) {
+        attrs[STRENGTH] + inventory[1] + inventory[2] + inventory[3] +
+        inventory[4] + inventory[5] + inventory[6] + inventory[7] +
+        inventory[8] + (rand() * attrs[LUCK] / RAND_MAX);
+    if (attrs[AGILITY] + attrs[LUCK] < rand() % cur_monster->type + 2) {
         free(message);
         message = (char *) malloc(sizeof(char) * (strlen(strings[4]) + 1));
         if (message == NULL) {
@@ -385,8 +396,8 @@ void attack_monster(screen_t *screen, audio_state_t * audio_state,
     cur_monster->strength -= damage;
     draw_message(screen, message, screen_cols);
     free(message);
-    attrs[1] -= damage / 100;
-    attrs[5] += 0.05;
+    attrs[STRENGTH] -= damage / 100;
+    attrs[EXPERIENCE] += 0.05;
     if (cur_monster->strength < 1) {
         monster_dies(
             screen, audio_state, attrs, cur_monster, dungeon_contents, strings,
@@ -444,9 +455,9 @@ void cast_teleport(screen_t *screen, audio_state_t * audio_state,
 }
 
 void cast_powersurge(double *attrs, int *spells_remaining, int spell_number) {
-    attrs[2] += rand() % spells_remaining[spell_number];
-    attrs[1] += rand() % spells_remaining[spell_number];
-    attrs[7] -= 1;
+    attrs[VITALITY] += rand() % spells_remaining[spell_number];
+    attrs[STRENGTH] += rand() % spells_remaining[spell_number];
+    attrs[AURA] -= 1;
 }
 
 void cast_metamorphosis(screen_t *screen, audio_state_t * audio_state,
@@ -474,9 +485,9 @@ void cast_metamorphosis(screen_t *screen, audio_state_t * audio_state,
 
 void cast_healing(double *attrs, double initial_strength,
                   double initial_vitality) {
-    attrs[2] = initial_vitality;
-    attrs[1] = initial_strength;
-    attrs[7] -= 1;
+    attrs[VITALITY] = initial_vitality;
+    attrs[STRENGTH] = initial_strength;
+    attrs[AURA] -= 1;
 }
 
 void cast_spell(screen_t *screen, audio_state_t * audio_state,
@@ -589,7 +600,7 @@ void cast_spell(screen_t *screen, audio_state_t * audio_state,
         case 7:
             break;
     }
-    attrs[5] += 0.2;
+    attrs[EXPERIENCE] += 0.2;
     draw_message(screen, message, screen_cols);
     free(message);
 }
@@ -627,8 +638,8 @@ void game_won(screen_t *screen, audio_state_t * audio_state, double *attrs,
         outstring,
         "THY SCORE=%i",
         (int) (
-            (treasure * 10) + (gold * attrs[5]) + attrs[1] + attrs[2] +
-            attrs[3]
+            (treasure * 10) + (gold * attrs[EXPERIENCE]) + attrs[STRENGTH] +
+            attrs[VITALITY] + attrs[AGILITY]
         )
     );
     free(print_text(screen, outstring));
@@ -691,12 +702,12 @@ void get_item(screen_t *screen, audio_state_t * audio_state,
 
 void drink_potion(double *attrs, int inventory[25], double initial_strength,
                   double initial_vitality) {
-    if (inventory[24] > 0 && attrs[1] < initial_strength) {
-        attrs[1] = initial_strength;
+    if (inventory[24] > 0 && attrs[STRENGTH] < initial_strength) {
+        attrs[STRENGTH] = initial_strength;
         inventory[24] -= 1;
     }
-    if (inventory[23] > 0 && attrs[2] < initial_vitality) {
-        attrs[2] = initial_vitality;
+    if (inventory[23] > 0 && attrs[VITALITY] < initial_vitality) {
+        attrs[VITALITY] = initial_vitality;
         inventory[23] -= 1;
     }
 }
@@ -751,7 +762,7 @@ void show_level_too_deep_messages(screen_t *screen, double *attrs) {
         fprintf(stderr, "outstring is NULL!\n");
         exit(1);
     }
-    sprintf(outstring, "FOR LEVEL %d", (int) attrs[5]);
+    sprintf(outstring, "FOR LEVEL %d", (int) attrs[EXPERIENCE]);
     free(print_text(screen, outstring));
     free(outstring);
 }
@@ -804,7 +815,10 @@ void load_level(screen_t *screen, int skip_first_exp_check,
     char pressed_key, * message;
     do {
 
-        if (!skip_first_exp_check && attrs[5] < initial_experience + 1) {
+        if (
+                !skip_first_exp_check &&
+                attrs[EXPERIENCE] < initial_experience + 1
+        ) {
             message =
                 (char *) malloc(sizeof(char) * (strlen(strings[11]) + 1));
             if (message == NULL) {
@@ -854,7 +868,7 @@ void load_level(screen_t *screen, int skip_first_exp_check,
         entrance_coord_x = (int) file_contents[index - 1] - DUNGEON_BASE;
         entrance_coord_y = (int) file_contents[index] - DUNGEON_BASE;
         *dungeon_level = (int) file_contents[index + 1] - DUNGEON_BASE;
-        if (*dungeon_level > attrs[5]) {
+        if (*dungeon_level > attrs[EXPERIENCE]) {
             show_level_too_deep_messages(screen, attrs);
             correct_level_loaded = 1;
         } else {
@@ -959,13 +973,13 @@ void load_character(screen_t *screen, char **character_name, double *attrs,
         exit(1);
     }
     strcpy(*character_name, file_contents + file_index + 1);
-    *initial_strength = attrs[1];
-    *initial_vitality = attrs[2];
-    *initial_experience = attrs[5];
+    *initial_strength = attrs[STRENGTH];
+    *initial_vitality = attrs[VITALITY];
+    *initial_experience = attrs[EXPERIENCE];
     for (index = 1; index <= 2; index += 1) {
         for (subindex = 1; subindex <= 3; subindex += 1) {
             spells_remaining[(index - 1) * 3 + subindex] =
-                inventory[16 + index] * attrs[7];
+                inventory[16 + index] * attrs[AURA];
         }
     }
     if (inventory[16] == 1) {
@@ -1284,7 +1298,7 @@ int main(int argc, char *argv[]) {
         }
         if (
                 pressed_key == 'c' &&
-                attrs[7] > 0 &&
+                attrs[AURA] > 0 &&
                 inventory[17] + inventory[18] > 0
         ) {
             cast_spell(
@@ -1359,7 +1373,7 @@ int main(int argc, char *argv[]) {
             );
             character_coord_x = character_prev_coord_x;
             character_coord_y = character_prev_coord_y;
-            attrs[1] -= 0.03;
+            attrs[STRENGTH] -= 0.03;
         }
         if (item_at_character_coord == TRAP) {
             trap_coord_x = character_coord_x;
@@ -1370,14 +1384,17 @@ int main(int argc, char *argv[]) {
             character_coord_x = trap_coord_x;
             character_coord_y = trap_coord_y;
         }
-        if (attrs[1] > initial_strength * 0.8 && rand() % 8 < attrs[6]) {
+        if (
+                attrs[STRENGTH] > initial_strength * 0.8 &&
+                rand() % 8 < attrs[LUCK]
+        ) {
             trapped = 0;
         }
         if (pressed_key != 0) {
-            attrs[1] = attrs[1] * 0.99;
+            attrs[STRENGTH] = attrs[STRENGTH] * 0.99;
         }
-        if (attrs[1] < initial_strength) {
-            attrs[1] += attrs[2] / 1100;
+        if (attrs[STRENGTH] < initial_strength) {
+            attrs[STRENGTH] += attrs[VITALITY] / 1100;
         }
         draw_character_and_stats(
             screen, attrs, char_code_hero, character_facing, character_coord_x,
@@ -1402,7 +1419,10 @@ int main(int argc, char *argv[]) {
                 item_at_character_coord, strings, screen_cols, item_names
             );
         }
-        if (attrs[1] > 0 && finished < 1 && item_at_character_coord != EXIT) {
+        if (
+                attrs[STRENGTH] > 0 && finished < 1 &&
+                item_at_character_coord != EXIT
+        ) {
             game_over = 0;
         }
         else if (item_at_character_coord == EXIT) {
@@ -1427,7 +1447,7 @@ int main(int argc, char *argv[]) {
             game_over = 1;
         }
     } while (!game_over);
-    if (attrs[1] < 1) {
+    if (attrs[STRENGTH] < 1) {
         character_dies(
             screen, audio_state, attrs, char_code_hero, cur_monster,
             &character_facing, character_coord_x, character_coord_y,

@@ -17,14 +17,14 @@ enum CharCode {
 };
 
 enum AttrNum {
-    STRENGTH = 1,
-    VITALITY = 2,
-    AGILITY = 3,
-    INTELLIGENCE = 4,
-    EXPERIENCE = 5,
-    LUCK = 6,
-    AURA = 7,
-    MORALITY = 8
+    STRENGTH = 0,
+    VITALITY = 1,
+    AGILITY = 2,
+    INTELLIGENCE = 3,
+    EXPERIENCE = 4,
+    LUCK = 5,
+    AURA = 6,
+    MORALITY = 7
 };
 
 typedef struct {
@@ -955,7 +955,7 @@ void load_character(screen_t *screen, char **character_name, double *attrs,
     file_contents[filesize] = 0;
     file_index = 2;
     *num_item_types = (int) file_contents[0] - CHARACTER_BASE;
-    for (index = 1; index <= 8; index += 1) {
+    for (index = 0; index < 8; index += 1) {
         attrs[index] =
             (int) file_contents[file_index - 1] - CHARACTER_BASE;
         file_index += 1;
@@ -1037,7 +1037,7 @@ void save_game(screen_t *screen, char *character_name, double *attrs,
     character_file_contents[s_index] =
         (char) (CHARACTER_BASE + num_item_types);
     s_index += 1;
-    for (index = 1; index <= 8; index += 1) {
+    for (index = 0; index < 8; index += 1) {
         character_file_contents[s_index] =
             (char) (attrs[index] + CHARACTER_BASE);
         s_index += 1;

@@ -17,6 +17,33 @@ enum CharCode {
     SAFE_PLACE = 110
 };
 
+enum InventoryCode {
+    TWO_HAND_SWORD = 1,
+    BROADSWORD = 2,
+    SHORTSWORD = 3,
+    AXE = 4,
+    MACE = 5,
+    FLAIL = 6,
+    DAGGER = 7,
+    GAUNTLET = 8,
+    HEAVY_ARMOUR = 9,
+    CHAIN_ARMOUR = 10,
+    LEATHER_ARMOUR = 11,
+    HEAVY_ROBE = 12,
+    GOLD_HELMET = 13,
+    HEADPIECE = 14,
+    SHIELD = 15,
+    TORCH = 16,
+    NECRONOMICON = 17,
+    SCROLLS = 18,
+    RING = 19,
+    MYSTIC_AMULET = 20,
+    SASH = 21,
+    CLOAK = 22,
+    HEALING_SALVE = 23,
+    POTIONS = 24
+};
+
 typedef struct {
     float coord_x;
     float coord_y;
@@ -262,8 +289,9 @@ void monsters_turn(screen_t *screen, audio_state_t * audio_state,
     free(message);
     sound_noise(audio_state, sound_frequency);
     damage /= (
-        3 + inventory[9] + inventory[10] + inventory[11] + inventory[12] +
-        inventory[13] + inventory[14]
+        3 + inventory[HEAVY_ARMOUR] + inventory[CHAIN_ARMOUR] +
+        inventory[LEATHER_ARMOUR] + inventory[HEAVY_ROBE] +
+        inventory[GOLD_HELMET] + inventory[HEADPIECE]
     );
     attrs[STRENGTH] -= damage;
     attrs[VITALITY] -= damage / 101;
@@ -370,9 +398,11 @@ void attack_monster(screen_t *screen, audio_state_t * audio_state,
     */
     sound_noise(audio_state, 100);
     damage =
-        attrs[STRENGTH] + inventory[1] + inventory[2] + inventory[3] +
-        inventory[4] + inventory[5] + inventory[6] + inventory[7] +
-        inventory[8] + (rand() * attrs[LUCK] / RAND_MAX);
+        attrs[STRENGTH] + inventory[TWO_HAND_SWORD] + inventory[BROADSWORD] +
+        inventory[SHORTSWORD] + inventory[AXE] + inventory[MACE] +
+        inventory[FLAIL] + inventory[DAGGER] + inventory[GAUNTLET] + (
+            rand() * attrs[LUCK] / RAND_MAX
+        );
     if (attrs[AGILITY] + attrs[LUCK] < rand() % cur_monster->type + 2) {
         free(message);
         message = (char *) malloc(sizeof(char) * (strlen(strings[4]) + 1));
@@ -498,11 +528,11 @@ void cast_spell(screen_t *screen, audio_state_t * audio_state,
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 0, 1);
     free(print_text(screen, "YOU MAY USE MAGICKS"));
-    if (inventory[17] > 0) {
+    if (inventory[NECRONOMICON] > 0) {
         tab(screen->cursor, 0, 2);
         free(print_text(screen, "FROM NECRONOMICON"));
     }
-    if (inventory[18] > 0) {
+    if (inventory[SCROLLS] > 0) {
         tab(screen->cursor, 0, 3);
         free(print_text(screen, "FROM THE SCROLLS"));
     }
@@ -523,8 +553,8 @@ void cast_spell(screen_t *screen, audio_state_t * audio_state,
         free(outstring);
     } while (
             spell_number == 0 ||
-            (inventory[17] == 0 && spell_number < 5) ||
-            (inventory[18] == 0 && spell_number > 3) ||
+            (inventory[NECRONOMICON] == 0 && spell_number < 5) ||
+            (inventory[SCROLLS] == 0 && spell_number > 3) ||
             spell_number > 6
     );
 
@@ -664,8 +694,8 @@ void get_item(screen_t *screen, audio_state_t * audio_state,
         dungeon_contents[item_to_get_coord_x][item_to_get_coord_y] = BLANK;
     }
     if (item_to_get == VASE) {
-        inventory[23] += 1;
-        inventory[24] += 1;
+        inventory[HEALING_SALVE] += 1;
+        inventory[POTIONS] += 1;
     }
     if (item_to_get == CHEST) {
         treasure += 1;
@@ -692,13 +722,13 @@ void get_item(screen_t *screen, audio_state_t * audio_state,
 
 void drink_potion(double *attrs, int inventory[25], double initial_strength,
                   double initial_vitality) {
-    if (inventory[24] > 0 && attrs[STRENGTH] < initial_strength) {
+    if (inventory[POTIONS] > 0 && attrs[STRENGTH] < initial_strength) {
         attrs[STRENGTH] = initial_strength;
-        inventory[24] -= 1;
+        inventory[POTIONS] -= 1;
     }
-    if (inventory[23] > 0 && attrs[VITALITY] < initial_vitality) {
+    if (inventory[HEALING_SALVE] > 0 && attrs[VITALITY] < initial_vitality) {
         attrs[VITALITY] = initial_vitality;
-        inventory[23] -= 1;
+        inventory[HEALING_SALVE] -= 1;
     }
 }
 
@@ -969,10 +999,10 @@ void load_character(screen_t *screen, char **character_name, double *attrs,
     for (index = 1; index <= 2; index += 1) {
         for (subindex = 1; subindex <= 3; subindex += 1) {
             spells_remaining[(index - 1) * 3 + subindex] =
-                inventory[16 + index] * attrs[AURA];
+                inventory[TORCH + index] * attrs[AURA];
         }
     }
-    if (inventory[16] == 1) {
+    if (inventory[TORCH] == 1) {
         *torches = 20;
     }
     free(file_contents);
@@ -1289,7 +1319,7 @@ int main(int argc, char *argv[]) {
         if (
                 pressed_key == 'c' &&
                 attrs[AURA] > 0 &&
-                inventory[17] + inventory[18] > 0
+                inventory[NECRONOMICON] + inventory[SCROLLS] > 0
         ) {
             cast_spell(
                 screen, audio_state, attrs, char_code_hero, cur_monster,

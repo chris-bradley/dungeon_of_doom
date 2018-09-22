@@ -18,30 +18,30 @@ enum CharCode {
 };
 
 enum InventoryCode {
-    TWO_HAND_SWORD = 1,
-    BROADSWORD = 2,
-    SHORTSWORD = 3,
-    AXE = 4,
-    MACE = 5,
-    FLAIL = 6,
-    DAGGER = 7,
-    GAUNTLET = 8,
-    HEAVY_ARMOUR = 9,
-    CHAIN_ARMOUR = 10,
-    LEATHER_ARMOUR = 11,
-    HEAVY_ROBE = 12,
-    GOLD_HELMET = 13,
-    HEADPIECE = 14,
-    SHIELD = 15,
-    TORCH = 16,
-    NECRONOMICON = 17,
-    SCROLLS = 18,
-    RING = 19,
-    MYSTIC_AMULET = 20,
-    SASH = 21,
-    CLOAK = 22,
-    HEALING_SALVE = 23,
-    POTIONS = 24
+    TWO_HAND_SWORD = 0,
+    BROADSWORD = 1,
+    SHORTSWORD = 2,
+    AXE = 3,
+    MACE = 4,
+    FLAIL = 5,
+    DAGGER = 6,
+    GAUNTLET = 7,
+    HEAVY_ARMOUR = 8,
+    CHAIN_ARMOUR = 9,
+    LEATHER_ARMOUR = 10,
+    HEAVY_ROBE = 11,
+    GOLD_HELMET = 12,
+    HEADPIECE = 13,
+    SHIELD = 14,
+    TORCH = 15,
+    NECRONOMICON = 16,
+    SCROLLS = 17,
+    RING = 18,
+    MYSTIC_AMULET = 19,
+    SASH = 20,
+    CLOAK = 21,
+    HEALING_SALVE = 22,
+    POTIONS = 23
 };
 
 typedef struct {
@@ -192,7 +192,7 @@ int sign(int x) {
 
 void monster_breaks_items(screen_t *screen, audio_state_t * audio_state,
                           int item_num, int sound_frequency,
-                          int *monster_broke_item, int inventory[25],
+                          int *monster_broke_item, int inventory[24],
                           const char **strings, int screen_cols,
                           const char **item_names) {
     char * message;
@@ -216,7 +216,7 @@ void monster_breaks_items(screen_t *screen, audio_state_t * audio_state,
 void monsters_turn(screen_t *screen, audio_state_t * audio_state,
                    double *attrs, monster_t *cur_monster,
                    int character_coord_x, int character_coord_y,
-                   int inventory[25], int **dungeon_contents,
+                   int inventory[24], int **dungeon_contents,
                    int item_at_character_coord, const char **strings,
                    int screen_cols, const char **item_names) {
     int damage, item_num, sound_frequency, monster_broke_item,
@@ -295,7 +295,7 @@ void monsters_turn(screen_t *screen, audio_state_t * audio_state,
     );
     attrs[STRENGTH] -= damage;
     attrs[VITALITY] -= damage / 101;
-    item_num = 1;
+    item_num = 0;
     monster_broke_item = rand() % cur_monster->type;
     sound_frequency = cur_monster->char_code;
     sound_sawtooth(audio_state, sound_frequency);
@@ -309,7 +309,7 @@ void monsters_turn(screen_t *screen, audio_state_t * audio_state,
                 item_names
             );
         }
-        if (item_num < 11) {
+        if (item_num < 10) {
             item_num += 1;
             done = 1;
         }
@@ -380,7 +380,7 @@ void monster_dies(screen_t *screen, audio_state_t * audio_state,
 
 
 void attack_monster(screen_t *screen, audio_state_t * audio_state,
-                    double *attrs, monster_t *cur_monster, int inventory[25],
+                    double *attrs, monster_t *cur_monster, int inventory[24],
                     int **dungeon_contents, const char **strings,
                     int screen_cols, int coord_x, int coord_y) {
     int damage, t$_ind = rand() % 3 + 1;
@@ -514,7 +514,7 @@ void cast_spell(screen_t *screen, audio_state_t * audio_state,
                 double *attrs, char *char_code_hero, monster_t *cur_monster,
                 int *spells_remaining, int character_facing,
                 int *character_coord_x, int *character_coord_y,
-                int inventory[25], int **dungeon_contents,
+                int inventory[24], int **dungeon_contents,
                 int item_at_character_coord, double initial_strength,
                 double initial_vitality, const char **strings,
                 int screen_cols) {
@@ -671,7 +671,7 @@ void get_item(screen_t *screen, audio_state_t * audio_state,
               int **vertices, double *attrs, char *char_code_hero,
               int *finished, int gold, monster_t *cur_monster,
               int *character_facing, int character_coord_x,
-              int character_coord_y, int inventory[25], int **dungeon_contents,
+              int character_coord_y, int inventory[24], int **dungeon_contents,
               int *song_notes, int *treasure) {
     int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y,
         coord_x, coord_y;
@@ -720,7 +720,7 @@ void get_item(screen_t *screen, audio_state_t * audio_state,
     }
 }
 
-void drink_potion(double *attrs, int inventory[25], double initial_strength,
+void drink_potion(double *attrs, int inventory[24], double initial_strength,
                   double initial_vitality) {
     if (inventory[POTIONS] > 0 && attrs[STRENGTH] < initial_strength) {
         attrs[STRENGTH] = initial_strength;
@@ -942,7 +942,7 @@ void load_level_wo_first_exp_check(screen_t *screen, char *character_name,
 
 void load_character(screen_t *screen, char **character_name, double *attrs,
                     int *gold, int *torches, int *spells_remaining,
-                    int inventory[25], int *num_item_types,
+                    int inventory[24], int *num_item_types,
                     double *initial_strength, double *initial_vitality,
                     double *initial_experience, const char **strings,
                     int *treasure, int screen_cols) {
@@ -980,7 +980,7 @@ void load_character(screen_t *screen, char **character_name, double *attrs,
             (int) file_contents[file_index - 1] - CHARACTER_BASE;
         file_index += 1;
     }
-    for (index = 1; index <= *num_item_types; index += 1) {
+    for (index = 0; index < *num_item_types; index += 1) {
         inventory[index] =
             (int) file_contents[file_index - 1] - CHARACTER_BASE;
         file_index += 1;
@@ -1010,7 +1010,7 @@ void load_character(screen_t *screen, char **character_name, double *attrs,
 
 void save_game(screen_t *screen, char *character_name, double *attrs,
                int *finished, int gold, int dungeon_level,
-               int character_coord_x, int character_coord_y, int inventory[25],
+               int character_coord_x, int character_coord_y, int inventory[24],
                int num_item_types, int **dungeon_contents, int treasure,
                int screen_cols) {
     int index, coord_x, coord_y;
@@ -1062,7 +1062,7 @@ void save_game(screen_t *screen, char *character_name, double *attrs,
             (char) (attrs[index] + CHARACTER_BASE);
         s_index += 1;
     }
-    for (index = 1; index <= num_item_types; index += 1) {
+    for (index = 0; index < num_item_types; index += 1) {
         character_file_contents[s_index] = (char)
             (inventory[index] + CHARACTER_BASE);
         s_index += 1;
@@ -1138,7 +1138,7 @@ void init_vars(int ***vertices, double **attrs, char **char_code_hero,
         fprintf(stderr, "*attrs is NULL!\n");
         exit(1);
     }
-    *item_names = (const char **) malloc(sizeof(const char *) * (12));
+    *item_names = (const char **) malloc(sizeof(const char *) * (11));
     if (*item_names == NULL) {
         fprintf(stderr, "*item_names is NULL!\n");
         exit(1);
@@ -1165,17 +1165,17 @@ void init_vars(int ***vertices, double **attrs, char **char_code_hero,
         fprintf(stderr, "*song_notes is NULL!\n");
         exit(1);
     }
-    (*item_names)[1] = "GR SWORD";
-    (*item_names)[2] = "SWORD";
-    (*item_names)[3] = "AXE";
-    (*item_names)[4] = "MACE";
-    (*item_names)[5] = "FLAIL";
-    (*item_names)[6] = "DAGGER";
+    (*item_names)[0] = "GR SWORD";
+    (*item_names)[1] = "SWORD";
+    (*item_names)[2] = "AXE";
+    (*item_names)[3] = "MACE";
+    (*item_names)[4] = "FLAIL";
+    (*item_names)[5] = "DAGGER";
+    (*item_names)[6] = "ARMOUR";
     (*item_names)[7] = "ARMOUR";
     (*item_names)[8] = "ARMOUR";
-    (*item_names)[9] = "ARMOUR";
-    (*item_names)[10] = "HELMET";
-    (*item_names)[11] = "HEADPC.";
+    (*item_names)[9] = "HELMET";
+    (*item_names)[10] = "HEADPC.";
 
 
     *strings = (const char **) malloc(sizeof(const char *) * (13));
@@ -1255,7 +1255,7 @@ int main(int argc, char *argv[]) {
         character_facing,  // Facing. NESW
         character_coord_x,
         character_coord_y,
-        inventory[25],
+        inventory[24],
         num_item_types,
         character_prev_coord_x,
         character_prev_coord_y,

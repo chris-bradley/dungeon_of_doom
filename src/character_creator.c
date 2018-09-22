@@ -52,7 +52,7 @@ typedef struct {
 } character_class_t;
 
 typedef struct {
-    int id;
+    enum InventoryCode id;
     const char * name;
     int price;
     int batch_size;
@@ -476,49 +476,49 @@ store_t * init_stores() {
         .name="ARMOURY",
         .items={
             (item_t) {
-                .id=0,
+                .id=TWO_HAND_SWORD,
                 .name="2 HAND SWORD",
                 .price=20,
                 .batch_size=5
             },
             (item_t) {
-                .id=1,
+                .id=BROADSWORD,
                 .name="BROADSWORD",
                 .price=16,
                 .batch_size=4
             },
             (item_t) {
-                .id=2,
+                .id=SHORTSWORD,
                 .name="SHORTSWORD",
                 .price=12,
                 .batch_size=3
             },
             (item_t) {
-                .id=3,
+                .id=AXE,
                 .name="AXE",
                 .price=15,
                 .batch_size=3
             },
             (item_t) {
-                .id=4,
+                .id=MACE,
                 .name="MACE",
                 .price=8,
                 .batch_size=2
             },
             (item_t) {
-                .id=5,
+                .id=FLAIL,
                 .name="FLAIL",
                 .price=10,
                 .batch_size=2
             },
             (item_t) {
-                .id=6,
+                .id=DAGGER,
                 .name="DAGGER",
                 .price=8,
                 .batch_size=1
             },
             (item_t) {
-                .id=7,
+                .id=GAUNTLET,
                 .name="GAUNTLET",
                 .price=6,
                 .batch_size=1
@@ -529,49 +529,49 @@ store_t * init_stores() {
         .name="ACCOUTREMENTS",
         .items={
             (item_t) {
-                .id=8,
+                .id=HEAVY_ARMOUR,
                 .name="HEAVY ARMOUR",
                 .price=18,
                 .batch_size=5
             },
             (item_t) {
-                .id=9,
+                .id=CHAIN_ARMOUR,
                 .name="CHAIN ARMOUR",
                 .price=15,
                 .batch_size=4
             },
             (item_t) {
-                .id=10,
+                .id=LEATHER_ARMOUR,
                 .name="LEATHER ARMOUR",
                 .price=9,
                 .batch_size=3
             },
             (item_t) {
-                .id=11,
+                .id=HEAVY_ROBE,
                 .name="HEAVY ROBE",
                 .price=9,
                 .batch_size=1
             },
             (item_t) {
-                .id=12,
+                .id=GOLD_HELMET,
                 .name="GOLD HELMET",
                 .price=14,
                 .batch_size=2
             },
             (item_t) {
-                .id=13,
+                .id=HEADPIECE,
                 .name="HEADPIECE",
                 .price=8,
                 .batch_size=1
             },
             (item_t) {
-                .id=14,
+                .id=SHIELD,
                 .name="SHIELD",
                 .price=6,
                 .batch_size=3
             },
             (item_t) {
-                .id=15,
+                .id=TORCH,
                 .name="TORCH",
                 .price=6,
                 .batch_size=1
@@ -582,49 +582,49 @@ store_t * init_stores() {
         .name="EMPORIUM",
         .items={
             (item_t) {
-                .id=16,
+                .id=NECRONOMICON,
                 .name="NECRONOMICON",
                 .price=20,
                 .batch_size=4
             },
             (item_t) {
-                .id=17,
+                .id=SCROLLS,
                 .name="SCROLLS",
                 .price=15,
                 .batch_size=3
             },
             (item_t) {
-                .id=18,
+                .id=RING,
                 .name="RING",
                 .price=14,
                 .batch_size=2
             },
             (item_t) {
-                .id=19,
+                .id=MYSTIC_AMULET,
                 .name="MYSTIC AMULET",
                 .price=12,
                 .batch_size=2
             },
             (item_t) {
-                .id=20,
+                .id=SASH,
                 .name="SASH",
                 .price=10,
                 .batch_size=3
             },
             (item_t) {
-                .id=21,
+                .id=CLOAK,
                 .name="CLOAK",
                 .price=8,
                 .batch_size=1
             },
             (item_t) {
-                .id=22,
+                .id=HEALING_SALVE,
                 .name="HEALING SALVE",
                 .price=6,
                 .batch_size=1
             },
             (item_t) {
-                .id=23,
+                .id=POTIONS,
                 .name="POTIONS",
                 .price=6,
                 .batch_size=1

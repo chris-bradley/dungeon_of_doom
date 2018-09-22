@@ -524,7 +524,7 @@ void cast_spell(screen_t *screen, audio_state_t * audio_state,
     } while (
             spell_number == 0 ||
             (inventory[17] == 0 && spell_number < 5) ||
-            (inventory[19] == 0 && spell_number > 3) ||
+            (inventory[18] == 0 && spell_number > 3) ||
             spell_number > 6
     );
 

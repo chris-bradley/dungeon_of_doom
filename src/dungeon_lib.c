@@ -10,8 +10,8 @@ uint8_t colours [4][4] = {
     {0xff, 0xff, 0xff, 0}
 };
 
-SDL_Rect * print_text(screen_t *screen, const char *message) {
-    TTF_Font *c64_font = TTF_OpenFont(
+SDL_Rect * print_text(screen_t * screen, const char * message) {
+    TTF_Font * c64_font = TTF_OpenFont(
         "fonts/dungeon_of_doom.ttf",
         8 * screen->zoom
     );
@@ -20,7 +20,7 @@ SDL_Rect * print_text(screen_t *screen, const char *message) {
         exit(1);
     }
     int message_length = (int) strlen(message);
-    SDL_Rect *text_pos;
+    SDL_Rect * text_pos;
     text_pos = malloc(sizeof(SDL_Rect));
     *text_pos = (SDL_Rect) {
         .x = screen->cursor->curs_x * 8 * screen->zoom,
@@ -57,13 +57,13 @@ SDL_Rect * print_text(screen_t *screen, const char *message) {
         .b = b
     };
 
-    SDL_Surface *text_surface = TTF_RenderText_Solid(
+    SDL_Surface * text_surface = TTF_RenderText_Solid(
         c64_font,
         message,
         text_color
     );
 
-    SDL_Texture *text_texture = SDL_CreateTextureFromSurface(
+    SDL_Texture * text_texture = SDL_CreateTextureFromSurface(
         screen->ren,
         text_surface
     );
@@ -88,21 +88,21 @@ SDL_Rect * print_text(screen_t *screen, const char *message) {
     return text_pos;
 }
 
-void ink(cursor_t *cursor, enum ColourNum c_num) {
+void ink(cursor_t * cursor, enum ColourNum c_num) {
     cursor->foreground_colour[0] = colours[c_num][0];
     cursor->foreground_colour[1] = colours[c_num][1];
     cursor->foreground_colour[2] = colours[c_num][2];
     cursor->foreground_colour[3] = colours[c_num][3];
 }
 
-void paper(cursor_t *cursor, enum ColourNum c_num) {
+void paper(cursor_t * cursor, enum ColourNum c_num) {
     cursor->background_colour[0] = colours[c_num][0];
     cursor->background_colour[1] = colours[c_num][1];
     cursor->background_colour[2] = colours[c_num][2];
     cursor->background_colour[3] = colours[c_num][3];
 }
 
-void print_left$_b$(screen_t *screen, int width) {
+void print_left$_b$(screen_t * screen, int width) {
     int error = SDL_SetRenderDrawColor(
         screen->ren,
         screen->cursor->background_colour[0],
@@ -126,12 +126,12 @@ void print_left$_b$(screen_t *screen, int width) {
     }
 }
 
-void tab(cursor_t *cursor, int x, int y) {
+void tab(cursor_t * cursor, int x, int y) {
     cursor->curs_x = x;
     cursor->curs_y = y;
 }
 
-void newline(cursor_t *cursor) {
+void newline(cursor_t * cursor) {
     cursor->curs_x = 0;
     cursor->curs_y += 1;
 }
@@ -182,7 +182,7 @@ screen_t * init_screen() {
     return screen;
 }
 
-void destroy_screen(screen_t *screen) {
+void destroy_screen(screen_t * screen) {
     free(screen->cursor);
 
     TTF_Quit();
@@ -192,7 +192,7 @@ void destroy_screen(screen_t *screen) {
     free(screen);
 }
 
-void clear_screen(screen_t *screen) {
+void clear_screen(screen_t * screen) {
     SDL_SetRenderDrawColor(
         screen->ren,
         screen->cursor->background_colour[0],
@@ -231,7 +231,7 @@ char inkey$() {
     return key;
 }
 
-void draw_bordered_box(screen_t *screen, int top_row, int left_col, int rows,
+void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
                        int cols, enum ColourNum background_colour,
                        enum ColourNum border_colour) {
     int error;
@@ -281,7 +281,7 @@ void draw_bordered_box(screen_t *screen, int top_row, int left_col, int rows,
     }
 }
 
-void clear_box(screen_t *screen, SDL_Rect * rect, enum ColourNum colour) {
+void clear_box(screen_t * screen, SDL_Rect * rect, enum ColourNum colour) {
     int error = SDL_SetRenderDrawColor(
         screen->ren,
         colours[colour][0],
@@ -353,7 +353,7 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
     int source_row, bitmask, index, error,
         pixel_index = 0,
         i;
-    SDL_Texture *texture;
+    SDL_Texture * texture;
     SDL_Rect pos = {
         .x = col * 8 * screen->zoom,
         .y = row * 8 * screen->zoom,

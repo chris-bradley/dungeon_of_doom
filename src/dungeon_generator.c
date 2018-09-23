@@ -13,7 +13,7 @@ typedef struct {
 } dungeon_t;
 
 
-void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key) {
+void place_item(coord_t cur_coord, dungeon_t * dungeon, char pressed_key) {
     int pressed_key_num = atoi(&pressed_key);
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
@@ -24,7 +24,7 @@ void place_item(coord_t cur_coord, dungeon_t *dungeon, char pressed_key) {
     dungeon->contents[cur_coord.x][cur_coord.y] = pressed_key_num;
 }
 
-void draw_help(screen_t *screen, const char * help_lines[10]) {
+void draw_help(screen_t * screen, const char * help_lines[10]) {
     int index;
     SDL_Rect * help_line_rect;
     paper(screen->cursor, RED);
@@ -53,7 +53,7 @@ dungeon_t * init_level(int level_num) {
     return dungeon;
 }
 
-dungeon_t * save_level(screen_t *screen, dungeon_t * dungeon) {
+dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     int char_base = 96,
         char_code_blank = char_base + 6;
     SDL_Rect * text_rect;
@@ -65,7 +65,7 @@ dungeon_t * save_level(screen_t *screen, dungeon_t * dungeon) {
     text_rect = print_text(screen, "ANY KEY TO SAVE");
     SDL_RenderPresent(screen->ren);
     inkey$();
-    FILE *save_file_handle = fopen("LEVEL", "w");
+    FILE * save_file_handle = fopen("LEVEL", "w");
     for (coord_x = 0; coord_x < 15; coord_x += 1) {
         for (coord_y = 0; coord_y < 15; coord_y += 1) {
             if (
@@ -152,7 +152,7 @@ void init_help_lines(const char * help_lines[10]) {
     help_lines[9] = "S TO SAVE";
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[]) {
     int screen_cols;
     coord_t cur_coord;
     const char * help_lines[10];
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
     init_help_lines(help_lines);
     screen_cols = init_screen_cols();
     dungeon_t * dungeon = init_level(1);
-    screen_t *screen = init_screen();
+    screen_t * screen = init_screen();
     draw_bordered_box(screen, 0, 0, 3, screen_cols - 3, YELLOW, RED);
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);

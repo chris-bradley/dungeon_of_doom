@@ -8,7 +8,7 @@ typedef struct {
 } title_row_t;
 
 typedef struct {
-    const char *label;
+    const char * label;
     int points;
     char * message;
     int left_col;
@@ -34,7 +34,7 @@ typedef struct {
     int selected_row;
     int num_rows;
     int cols;
-    menu_item_t *items[8];
+    menu_item_t * items[8];
     int top_row;
     enum ColourNum text_colour;
     enum ColourNum selector_colour;
@@ -68,7 +68,7 @@ typedef struct character_s_t {
     character_class_t * class;
     char * name;
     int gold;
-    int *inventory;
+    int * inventory;
 } character_t;
 
 header_t * init_header(int screen_cols) {
@@ -91,7 +91,7 @@ header_t * init_header(int screen_cols) {
     return header;
 }
 
-char * get_player_string(screen_t *screen, int col, int row,
+char * get_player_string(screen_t * screen, int col, int row,
                          enum ColourNum background_colour) {
     int ind = 0;
     char pressed_key, * typed_string;
@@ -120,7 +120,7 @@ char * get_player_string(screen_t *screen, int col, int row,
     }
 }
 
-void update_header(screen_t *screen, header_t *header) {
+void update_header(screen_t * screen, header_t * header) {
     paper(screen->cursor, header->background_colour);
     ink(screen->cursor, header->text_colour);
 
@@ -156,7 +156,7 @@ void update_header(screen_t *screen, header_t *header) {
     free(outstring);
 }
 
-int can_class_buy_item(character_class_t *character_class, int item_num,
+int can_class_buy_item(character_class_t * character_class, int item_num,
                        int ** item_to_char_class) {
     if (item_to_char_class[item_num][character_class->id] == 1) {
         return 1;
@@ -164,8 +164,8 @@ int can_class_buy_item(character_class_t *character_class, int item_num,
     return 0;
 }
 
-void buy_item(item_t *item, character_t *character, int max_accepted_discount,
-              int offer, header_t *header) {
+void buy_item(item_t * item, character_t * character,
+              int max_accepted_discount, int offer, header_t * header) {
     int price;
     if (character->inventory[item->id] > 0 && item->id < 22) {
         strcpy(header->message, "YOU HAVE IT SIRE");
@@ -186,9 +186,9 @@ void buy_item(item_t *item, character_t *character, int max_accepted_discount,
     }
 }
 
-void make_offer_for_item(screen_t *screen, item_t *item,
+void make_offer_for_item(screen_t * screen, item_t * item,
                          int max_accepted_discount,
-                         character_t *character, header_t *header) {
+                         character_t * character, header_t * header) {
     int offer;
     char * typed_string = NULL;
     strcpy(header->message, "YOUR OFFER");
@@ -200,11 +200,11 @@ void make_offer_for_item(screen_t *screen, item_t *item,
     buy_item(item, character, max_accepted_discount, offer, header);
 }
 
-int calc_row_pos(main_menu_t *main_menu, int row_num) {
+int calc_row_pos(main_menu_t * main_menu, int row_num) {
     return row_num * 2 + main_menu->top_row + 1;
 }
 
-void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
+void select_row(screen_t * screen, main_menu_t * main_menu, char pressed_key) {
     paper(screen->cursor, WHITE);
     ink(screen->cursor, RED);
     if (main_menu->selector_rect != NULL) {
@@ -229,7 +229,7 @@ void select_row(screen_t *screen, main_menu_t *main_menu, char pressed_key) {
     main_menu->selector_rect = print_text(screen, ">");
 }
 
-void draw_title_row(screen_t *screen, title_row_t * title_row)  {
+void draw_title_row(screen_t * screen, title_row_t * title_row)  {
     paper(screen->cursor, BLACK);
     ink(screen->cursor, YELLOW);
     if (title_row->title_rect != NULL) {
@@ -248,7 +248,7 @@ title_row_t * init_title_row() {
     return title_row;
 }
 
-void draw_header(screen_t *screen, header_t *header) {
+void draw_header(screen_t * screen, header_t * header) {
     draw_bordered_box(
         screen,
         header->top_row,
@@ -261,7 +261,7 @@ void draw_header(screen_t *screen, header_t *header) {
     update_header(screen, header);
 }
 
-void update_main(screen_t *screen, main_menu_t *main_menu) {
+void update_main(screen_t * screen, main_menu_t * main_menu) {
     int index, row;
     menu_item_t * menu_item;
     paper(screen->cursor, main_menu->background_colour);
@@ -303,7 +303,7 @@ void update_main(screen_t *screen, main_menu_t *main_menu) {
     }
 }
 
-void draw_main(screen_t *screen, main_menu_t *main_menu) {
+void draw_main(screen_t * screen, main_menu_t * main_menu) {
     main_menu->top_row = 5;
     draw_bordered_box(
         screen, main_menu->top_row, 0, main_menu->num_rows * 2 - 1,
@@ -317,7 +317,7 @@ int init_screen_cols() {
 }
 
 main_menu_t * init_main_menu(int screen_cols) {
-    main_menu_t *main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
+    main_menu_t * main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
     *main_menu = (main_menu_t) {
         .num_rows = 8,
         .cols = screen_cols - 2,
@@ -332,7 +332,7 @@ main_menu_t * init_main_menu(int screen_cols) {
 
 character_t * init_character(int inventory_size) {
     int index;
-    character_t *character = (character_t *) malloc(sizeof(character_t));
+    character_t * character = (character_t *) malloc(sizeof(character_t));
     character->inventory = (int *) malloc(sizeof(int) * inventory_size);
     if (character->inventory == NULL) {
         fprintf(stderr, "*inventory is NULL!\n");
@@ -652,7 +652,7 @@ const char ** init_attr_names() {
 
 void save_character(character_t * character, int num_item_types) {
     int char_base = 65, error, index;
-    FILE *save_file_handle = fopen("HERO", "w");
+    FILE * save_file_handle = fopen("HERO", "w");
 
     if (!fputc((char) (num_item_types + char_base), save_file_handle)) {
         fprintf(
@@ -872,15 +872,15 @@ void character_naming_phase(screen_t * screen, character_t * character,
     } while (strlen(character->name) > 10);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[]) {
     int index, num_item_types,
         screen_cols = init_screen_cols();
     character_class_t ** character_classes = init_character_classes();
     store_t * stores = init_stores();
     header_t * header = init_header(screen_cols);
-    main_menu_t *main_menu = init_main_menu(screen_cols);
-    character_t *character = init_character(main_menu->num_rows * 3);
-    screen_t *screen = init_screen();
+    main_menu_t * main_menu = init_main_menu(screen_cols);
+    character_t * character = init_character(main_menu->num_rows * 3);
+    screen_t * screen = init_screen();
     title_row_t * title_row = init_title_row();
 
     paper(screen->cursor, BLACK);

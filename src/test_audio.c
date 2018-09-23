@@ -2,7 +2,7 @@
 #include "SDL.h"
 #include "dungeon_audio.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char * argv[]) {
     int freq;
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         fprintf(stderr, "SDL Init Failure!: %s\n", SDL_GetError());

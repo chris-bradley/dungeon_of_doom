@@ -146,8 +146,8 @@ screen_t * init_screen() {
     TTF_Init();
     screen = (screen_t *) malloc(sizeof(screen_t));
     if (screen == NULL) {
-       fprintf(stderr, "screen is NULL!\n");
-       exit(1);
+        fprintf(stderr, "screen is NULL!\n");
+        exit(1);
     }
     screen->zoom = 3;
     screen->win = SDL_CreateWindow(
@@ -174,8 +174,8 @@ screen_t * init_screen() {
 
     screen->cursor = (cursor_t *) malloc(sizeof(cursor_t));
     if (screen->cursor == NULL) {
-       fprintf(stderr, "screen->cursor is NULL!\n");
-       exit(1);
+        fprintf(stderr, "screen->cursor is NULL!\n");
+        exit(1);
     }
     screen->cursor->curs_x = 0;
     screen->cursor->curs_y = 0;

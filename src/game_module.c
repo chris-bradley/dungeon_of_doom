@@ -613,7 +613,7 @@ void game_won(screen_t * screen, audio_state_t * audio_state, double * attrs,
         sound_frequency = song_notes[index];
         sound_sawtooth(audio_state, sound_frequency);
 
-        for (direction = 1; direction <=4; direction += 1) {
+        for (direction = 1; direction <= 4; direction += 1) {
             *character_facing = direction;
             draw_character_and_stats(
                 screen, attrs, char_code_hero, *character_facing,

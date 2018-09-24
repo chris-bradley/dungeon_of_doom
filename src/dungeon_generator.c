@@ -18,8 +18,8 @@ void place_item(coord_t cur_coord, dungeon_t * dungeon, char pressed_key) {
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
     } else if (pressed_key_num == 5) {
-       dungeon->entrance_coord.x = cur_coord.x;
-       dungeon->entrance_coord.y = cur_coord.y;
+        dungeon->entrance_coord.x = cur_coord.x;
+        dungeon->entrance_coord.y = cur_coord.y;
     }
     dungeon->contents[cur_coord.x][cur_coord.y] = pressed_key_num;
 }
@@ -136,7 +136,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
 }
 
 int init_screen_cols() {
-  return 40;
+    return 40;
 }
 
 void init_help_lines(const char * help_lines[10]) {
@@ -168,10 +168,10 @@ int main(int argc, char * argv[]) {
     tab(screen->cursor, 1, 1);
     free(print_text(screen, "LEVEL GENERATOR"));
     tab(screen->cursor, 1, 2);
-    char* outstring = (char *) malloc(sizeof(char) * 40);
+    char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
-       fprintf(stdout, "Allocating outstring failed!");
-       exit(1);
+        fprintf(stdout, "Allocating outstring failed!");
+        exit(1);
     }
     snprintf(outstring, 40, "THIS IS LEVEL: %i", dungeon->level_num);
     free(print_text(screen, outstring));

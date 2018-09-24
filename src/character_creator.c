@@ -174,7 +174,7 @@ void buy_item(item_t * item, character_t * character,
         if (character->gold < price) {
             strcpy(header->message, "YOU CANNOT AFFORD");
         } else {
-            if (offer >= price)  {
+            if (offer >= price) {
                 character->inventory[item->id] += item->batch_size;
                 character->gold -= offer;
                 header->points -= offer;
@@ -229,7 +229,7 @@ void select_row(screen_t * screen, main_menu_t * main_menu, char pressed_key) {
     main_menu->selector_rect = print_text(screen, ">");
 }
 
-void draw_title_row(screen_t * screen, title_row_t * title_row)  {
+void draw_title_row(screen_t * screen, title_row_t * title_row) {
     paper(screen->cursor, BLACK);
     ink(screen->cursor, YELLOW);
     if (title_row->title_rect != NULL) {

@@ -631,8 +631,9 @@ int * init_song_notes() {
 
 void game_won(screen_t * screen, audio_state_t * audio_state,
               char * char_code_hero, int * finished, monster_t * cur_monster,
-              character_t * character, int * song_notes) {
-    int index, sound_frequency, direction;
+              character_t * character) {
+    int index, sound_frequency, direction,
+        * song_notes = init_song_notes();
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, RED);
     tab(screen->cursor, 0, 1);
@@ -665,13 +666,14 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
     );
     free(print_text(screen, outstring));
     free(outstring);
+    free(song_notes);
     *finished = 1;
 }
 
 void get_item(screen_t * screen, audio_state_t * audio_state,
               int ** vertices, char * char_code_hero, int * finished,
               monster_t * cur_monster, character_t * character,
-              int ** dungeon_contents, int * song_notes) {
+              int ** dungeon_contents) {
     int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y,
         coord_x, coord_y;
     item_to_get_coord_x = character->coord_x + vertices[character->facing][1];
@@ -702,7 +704,7 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
     if (item_to_get == IDOL) {
         game_won(
             screen, audio_state, char_code_hero, finished, cur_monster,
-            character, song_notes
+            character
         );
     }
     coord_x = item_to_get_coord_x;
@@ -1214,7 +1216,6 @@ int main(int argc, char * argv[]) {
         num_item_types,
         ** dungeon_contents,
         item_at_character_coord,  // Object at character->coord_x / NY
-        * song_notes,
         trapped,  // Flag to see if we can exit.
         trap_coord_x,
         trap_coord_y,
@@ -1245,7 +1246,6 @@ int main(int argc, char * argv[]) {
         &strings, &trapped, &trap_coord_x, &trap_coord_y, &screen_cols,
         &item_names, &audio_state
     );
-    song_notes = init_song_notes();
     load_character(screen, character, &num_item_types, strings, screen_cols);
     load_level_wo_first_exp_check(
         screen, cur_monster, &dungeon_level, character, dungeon_contents,
@@ -1275,7 +1275,7 @@ int main(int argc, char * argv[]) {
         if (pressed_key == 'g') {
             get_item(
                 screen, audio_state, vertices, char_code_hero, &finished,
-                cur_monster, character, dungeon_contents, song_notes
+                cur_monster, character, dungeon_contents
             );
         }
         if (pressed_key == 'p') {
@@ -1424,7 +1424,6 @@ int main(int argc, char * argv[]) {
         free(dungeon_contents[i]);
     }
     free(dungeon_contents);
-    free(song_notes);
     free(strings);
     free(item_names);
     free(character);

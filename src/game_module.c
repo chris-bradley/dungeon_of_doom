@@ -89,7 +89,7 @@ void draw_message_wo_colour_change(screen_t * screen, char * message,
     tab(screen->cursor, 0, 5);
     free(print_text(screen, message));
     SDL_RenderPresent(screen->ren);
-    sleep(0.34);
+    SDL_Delay(340);
     tab(screen->cursor, 0, 5);
     print_left$_b$(screen, screen_cols);
 }

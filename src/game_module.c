@@ -645,6 +645,7 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
         for (direction = 1; direction <= 4; direction += 1) {
             character->facing = direction;
             draw_character_and_stats(screen, char_code_hero, character);
+            SDL_Delay(300 / 4);
         }
     }
     cur_monster->strength = 0;

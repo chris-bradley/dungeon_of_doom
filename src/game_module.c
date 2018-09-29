@@ -601,30 +601,32 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     free(message);
 }
 
-void init_song_notes(int ** song_notes) {
-    *song_notes = (int *) malloc(sizeof(int) * 18);
-    if (*song_notes == NULL) {
-        fprintf(stderr, "*song_notes is NULL!\n");
+int * init_song_notes() {
+    int * song_notes = malloc(sizeof(int) * 18);
+    if (song_notes == NULL) {
+        fprintf(stderr, "song_notes is NULL!\n");
         exit(1);
     }
-    (*song_notes)[0] = 69;
-    (*song_notes)[1] = 117;
-    (*song_notes)[2] = 73;
-    (*song_notes)[3] = 121;
-    (*song_notes)[4] = 81;
-    (*song_notes)[5] = 129;
-    (*song_notes)[6] = 69;
-    (*song_notes)[7] = 117;
-    (*song_notes)[8] = 73;
-    (*song_notes)[9] = 121;
-    (*song_notes)[10] = 81;
-    (*song_notes)[11] = 129;
-    (*song_notes)[12] = 89;
-    (*song_notes)[13] = 137;
-    (*song_notes)[14] = 97;
-    (*song_notes)[15] = 145;
-    (*song_notes)[16] = 101;
-    (*song_notes)[17] = 149;
+    song_notes[0] = 69;
+    song_notes[1] = 117;
+    song_notes[2] = 73;
+    song_notes[3] = 121;
+    song_notes[4] = 81;
+    song_notes[5] = 129;
+    song_notes[6] = 69;
+    song_notes[7] = 117;
+    song_notes[8] = 73;
+    song_notes[9] = 121;
+    song_notes[10] = 81;
+    song_notes[11] = 129;
+    song_notes[12] = 89;
+    song_notes[13] = 137;
+    song_notes[14] = 97;
+    song_notes[15] = 145;
+    song_notes[16] = 101;
+    song_notes[17] = 149;
+
+    return song_notes;
 }
 
 void game_won(screen_t * screen, audio_state_t * audio_state,
@@ -1243,7 +1245,7 @@ int main(int argc, char * argv[]) {
         &strings, &trapped, &trap_coord_x, &trap_coord_y, &screen_cols,
         &item_names, &audio_state
     );
-    init_song_notes(&song_notes);
+    song_notes = init_song_notes();
     load_character(screen, character, &num_item_types, strings, screen_cols);
     load_level_wo_first_exp_check(
         screen, cur_monster, &dungeon_level, character, dungeon_contents,

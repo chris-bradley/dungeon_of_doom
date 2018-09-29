@@ -609,7 +609,7 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
     ink(screen->cursor, RED);
     tab(screen->cursor, 0, 1);
     free(print_text(screen, " THY QUEST IS OVER! "));
-    for (index = 1; index <= 18; index += 1) {
+    for (index = 0; index < 18; index += 1) {
         sound_frequency = song_notes[index];
         sound_sawtooth(audio_state, sound_frequency);
 
@@ -1117,7 +1117,7 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
             exit(1);
         }
     }
-    *song_notes = (int *) malloc(sizeof(int) * 19);
+    *song_notes = (int *) malloc(sizeof(int) * 18);
     if (*song_notes == NULL) {
         fprintf(stderr, "*song_notes is NULL!\n");
         exit(1);
@@ -1181,24 +1181,24 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
         (*char_code_hero)[index] = DUNGEON_BASE + index;
     }
     (*char_code_hero)[6] = 0;
-    (*song_notes)[1] = 69;
-    (*song_notes)[2] = 117;
-    (*song_notes)[3] = 73;
-    (*song_notes)[4] = 121;
-    (*song_notes)[5] = 81;
-    (*song_notes)[6] = 129;
-    (*song_notes)[7] = 69;
-    (*song_notes)[8] = 117;
-    (*song_notes)[9] = 73;
-    (*song_notes)[10] = 121;
-    (*song_notes)[11] = 81;
-    (*song_notes)[12] = 129;
-    (*song_notes)[13] = 89;
-    (*song_notes)[14] = 137;
-    (*song_notes)[15] = 97;
-    (*song_notes)[16] = 145;
-    (*song_notes)[17] = 101;
-    (*song_notes)[18] = 149;
+    (*song_notes)[0] = 69;
+    (*song_notes)[1] = 117;
+    (*song_notes)[2] = 73;
+    (*song_notes)[3] = 121;
+    (*song_notes)[4] = 81;
+    (*song_notes)[5] = 129;
+    (*song_notes)[6] = 69;
+    (*song_notes)[7] = 117;
+    (*song_notes)[8] = 73;
+    (*song_notes)[9] = 121;
+    (*song_notes)[10] = 81;
+    (*song_notes)[11] = 129;
+    (*song_notes)[12] = 89;
+    (*song_notes)[13] = 137;
+    (*song_notes)[14] = 97;
+    (*song_notes)[15] = 145;
+    (*song_notes)[16] = 101;
+    (*song_notes)[17] = 149;
     init_platform_vars(audio_state);
 }
 

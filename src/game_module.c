@@ -601,6 +601,32 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     free(message);
 }
 
+void init_song_notes(int ** song_notes) {
+    *song_notes = (int *) malloc(sizeof(int) * 18);
+    if (*song_notes == NULL) {
+        fprintf(stderr, "*song_notes is NULL!\n");
+        exit(1);
+    }
+    (*song_notes)[0] = 69;
+    (*song_notes)[1] = 117;
+    (*song_notes)[2] = 73;
+    (*song_notes)[3] = 121;
+    (*song_notes)[4] = 81;
+    (*song_notes)[5] = 129;
+    (*song_notes)[6] = 69;
+    (*song_notes)[7] = 117;
+    (*song_notes)[8] = 73;
+    (*song_notes)[9] = 121;
+    (*song_notes)[10] = 81;
+    (*song_notes)[11] = 129;
+    (*song_notes)[12] = 89;
+    (*song_notes)[13] = 137;
+    (*song_notes)[14] = 97;
+    (*song_notes)[15] = 145;
+    (*song_notes)[16] = 101;
+    (*song_notes)[17] = 149;
+}
+
 void game_won(screen_t * screen, audio_state_t * audio_state,
               char * char_code_hero, int * finished, monster_t * cur_monster,
               character_t * character, int * song_notes) {
@@ -1072,8 +1098,8 @@ void init_platform_vars(audio_state_t ** audio_state) {
 
 void init_vars(int *** vertices, char ** char_code_hero, int * finished,
                character_t * character, int *** dungeon_contents,
-               int ** song_notes, const char *** strings, int * trapped,
-               int * trap_coord_x, int * trap_coord_y, int * screen_cols,
+               const char *** strings, int * trapped, int * trap_coord_x,
+               int * trap_coord_y, int * screen_cols,
                const char *** item_names, audio_state_t ** audio_state) {
     int index;
     *screen_cols = 40;
@@ -1116,11 +1142,6 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
             fprintf(stderr, "(*vertices)[%i] is NULL!\n", i);
             exit(1);
         }
-    }
-    *song_notes = (int *) malloc(sizeof(int) * 18);
-    if (*song_notes == NULL) {
-        fprintf(stderr, "*song_notes is NULL!\n");
-        exit(1);
     }
     (*item_names)[0] = "GR SWORD";
     (*item_names)[1] = "SWORD";
@@ -1181,24 +1202,6 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
         (*char_code_hero)[index] = DUNGEON_BASE + index;
     }
     (*char_code_hero)[6] = 0;
-    (*song_notes)[0] = 69;
-    (*song_notes)[1] = 117;
-    (*song_notes)[2] = 73;
-    (*song_notes)[3] = 121;
-    (*song_notes)[4] = 81;
-    (*song_notes)[5] = 129;
-    (*song_notes)[6] = 69;
-    (*song_notes)[7] = 117;
-    (*song_notes)[8] = 73;
-    (*song_notes)[9] = 121;
-    (*song_notes)[10] = 81;
-    (*song_notes)[11] = 129;
-    (*song_notes)[12] = 89;
-    (*song_notes)[13] = 137;
-    (*song_notes)[14] = 97;
-    (*song_notes)[15] = 145;
-    (*song_notes)[16] = 101;
-    (*song_notes)[17] = 149;
     init_platform_vars(audio_state);
 }
 
@@ -1237,9 +1240,10 @@ int main(int argc, char * argv[]) {
     clear_screen(screen);
     init_vars(
         &vertices, &char_code_hero, &finished, character, &dungeon_contents,
-        &song_notes, &strings, &trapped, &trap_coord_x, &trap_coord_y,
-        &screen_cols, &item_names, &audio_state
+        &strings, &trapped, &trap_coord_x, &trap_coord_y, &screen_cols,
+        &item_names, &audio_state
     );
+    init_song_notes(&song_notes);
     load_character(screen, character, &num_item_types, strings, screen_cols);
     load_level_wo_first_exp_check(
         screen, cur_monster, &dungeon_level, character, dungeon_contents,

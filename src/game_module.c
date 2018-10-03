@@ -501,7 +501,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
                 character_t * character, int ** dungeon_contents,
                 int item_at_character_coord, const char ** strings,
                 int screen_cols) {
-    int row_num, spell_number, coord_x, coord_y;
+    int spell_number, coord_x, coord_y;
     char pressed_key, * message;
     draw_character_and_stats(screen, char_code_hero, character);
     paper(screen->cursor, YELLOW);
@@ -557,11 +557,13 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
         }
         strcpy(message, "");
     }
-    for (row_num = 1; row_num <= 5; row_num += 1) {
-        tab(screen->cursor, 0, row_num);
-        print_left$_b$(screen, screen_cols);
-        newline(screen->cursor);
-    }
+    SDL_Rect rect = {
+        .x = 0,
+        .y = 8 * screen->zoom,
+        .w = screen_cols * 8 * screen->zoom,
+        .h = 5 * 8 * screen->zoom
+    };
+    clear_box(screen, &rect, YELLOW);
     render_coord_and_check_for_monster(
         screen, cur_monster, dungeon_contents, coord_x, coord_y
     );

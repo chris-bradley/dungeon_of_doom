@@ -66,8 +66,8 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     SDL_RenderPresent(screen->ren);
     inkey$();
     FILE * save_file_handle = fopen("LEVEL", "w");
-    for (coord_x = 0; coord_x < 15; coord_x += 1) {
-        for (coord_y = 0; coord_y < 15; coord_y += 1) {
+    for (coord_y = 0; coord_y < 15; coord_y += 1) {
+        for (coord_x = 0; coord_x < 15; coord_x += 1) {
             if (
                     !fputc(
                         (char) dungeon->contents[coord_x][coord_y] +

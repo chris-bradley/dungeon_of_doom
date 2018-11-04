@@ -1,3 +1,5 @@
+MINGW_ROOT = /usr/i686-w64-mingw32/sys-root/mingw/
+
 all: \
 	dungeon_lib.c dungeon_generator.c dungeon_lib_win.o dungeon_lib_lin.o \
 	character_creator.c character_lib.h
@@ -19,7 +21,7 @@ dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
-		-L/usr/i686-w64-mingw32/sys-root/mingw/lib \
+		-L$(MINGW_ROOT)/lib \
 		-l mingw32 \
 		-l SDL2main \
 		-l SDL2 \
@@ -36,7 +38,7 @@ dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 		-l imm32 \
 		-l version \
 		-l oleaut32 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
+		-I $(MINGW_ROOT)/include/SDL2 \
 		-D main=SDL_main \
 		-o dungeon_lib_win.o
 
@@ -78,7 +80,7 @@ dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
 		-l imm32 \
 		-l version \
 		-l oleaut32 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
+		-I $(MINGW_ROOT)/include/SDL2 \
 		-o dungeon_audio_win.o
 
 dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
@@ -89,7 +91,7 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
-		-L/usr/i686-w64-mingw32/sys-root/mingw/lib \
+		-L$(MINGW_ROOT)/lib \
 		-l mingw32 \
 		-l SDL2main \
 		-l SDL2 \
@@ -106,9 +108,9 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		-l imm32 \
 		-l version \
 		-l oleaut32 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/freetype2 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
+		-I $(MINGW_ROOT)/include \
+		-I $(MINGW_ROOT)/include/freetype2 \
+		-I $(MINGW_ROOT)/include/SDL2 \
 		-D main=SDL_main \
 		-o dungeon_generator.exe
 
@@ -130,7 +132,7 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
-		-L/usr/i686-w64-mingw32/sys-root/mingw/lib \
+		-L$(MINGW_ROOT)/lib \
 		-l mingw32 \
 		-l SDL2main \
 		-l SDL2 \
@@ -147,9 +149,9 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 		-l imm32 \
 		-l version \
 		-l oleaut32 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/freetype2 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
+		-I $(MINGW_ROOT)/include \
+		-I $(MINGW_ROOT)/include/freetype2 \
+		-I $(MINGW_ROOT)/include/SDL2 \
 		-D main=SDL_main \
 		-o character_creator.exe
 
@@ -173,7 +175,7 @@ game_module.exe : \
 		-static-libgcc \
 		-Wall \
 		-Wl,-Bstatic \
-		-L/usr/i686-w64-mingw32/sys-root/mingw/lib \
+		-L$(MINGW_ROOT)/lib \
 		-l mingw32 \
 		-l SDL2main \
 		-l SDL2 \
@@ -190,9 +192,9 @@ game_module.exe : \
 		-l imm32 \
 		-l version \
 		-l oleaut32 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/freetype2 \
-		-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
+		-I $(MINGW_ROOT)/include \
+		-I $(MINGW_ROOT)/include/freetype2 \
+		-I $(MINGW_ROOT)/include/SDL2 \
 		-D main=SDL_main \
 		-o game_module.exe
 
@@ -216,7 +218,7 @@ test_audio.exe : test_audio.c dungeon_audio_win.o
 			-static-libgcc \
 			-Wall \
 			-Wl,-Bstatic \
-			-L/usr/i686-w64-mingw32/sys-root/mingw/lib \
+			-L$(MINGW_ROOT)/lib \
 			-l mingw32 \
 			-l SDL2main \
 			-l SDL2 \
@@ -227,8 +229,8 @@ test_audio.exe : test_audio.c dungeon_audio_win.o
 			-l imm32 \
 			-l version \
 			-l oleaut32 \
-			-I /usr/i686-w64-mingw32/sys-root/mingw/include \
-			-I /usr/i686-w64-mingw32/sys-root/mingw/include/SDL2 \
+			-I $(MINGW_ROOT)/include \
+			-I $(MINGW_ROOT)/include/SDL2 \
 			-D main=SDL_main \
 			dungeon_audio_win.o \
 			-o test_audio.exe

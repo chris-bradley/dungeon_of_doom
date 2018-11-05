@@ -1,4 +1,14 @@
+TTF_LIBS = -l SDL2_ttf
+
 MINGW_ROOT = /usr/i686-w64-mingw32/sys-root/mingw/
+MINGW_TTF_LIBS = \
+		-l SDL2_ttf \
+		-l freetype \
+		-l iconv \
+		-l png \
+		-l bz2 \
+		-l z
+MINGW_TTF_CFLAGS =  -I $(MINGW_ROOT)/include/freetype2
 
 all: \
 	dungeon_lib.c dungeon_generator.c dungeon_lib_win.o dungeon_lib_lin.o \
@@ -22,12 +32,7 @@ dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-		-l SDL2_ttf \
-		-l freetype \
-		-l iconv \
-		-l png \
-		-l bz2 \
-		-l z \
+		$(MINGW_TTF_LIBS) \
 		-Wl,-Bdynamic \
 		-l winmm \
 		-l ole32 \
@@ -43,7 +48,7 @@ dungeon_lib_lin.o : dungeon_lib.c dungeon_lib.h
 		-g \
 		-c dungeon_lib.c \
 		`sdl2-config --libs` \
-		-l SDL2_ttf \
+		$(TTF_LIBS) \
 		-D main=SDL_main \
 		`sdl2-config --cflags` \
 		-o dungeon_lib_lin.o
@@ -85,12 +90,7 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-		-l SDL2_ttf \
-		-l freetype \
-		-l iconv \
-		-l png \
-		-l bz2 \
-		-l z \
+		$(MINGW_TTF_LIBS) \
 		-Wl,-Bdynamic \
 		-l winmm \
 		-l ole32 \
@@ -99,7 +99,7 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		-l version \
 		-l oleaut32 \
 		-I $(MINGW_ROOT)/include \
-		-I $(MINGW_ROOT)/include/freetype2 \
+		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o dungeon_generator.exe
 
@@ -107,7 +107,7 @@ dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
 	gcc \
 		-g \
 		`sdl2-config --libs` \
-		-l SDL2_ttf \
+		$(TTF_LIBS) \
 		`sdl2-config --cflags` \
 		-o dungeon_generator \
 		dungeon_lib_lin.o \
@@ -122,12 +122,7 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-		-l SDL2_ttf \
-		-l freetype \
-		-l iconv \
-		-l png \
-		-l bz2 \
-		-l z \
+		$(MINGW_TTF_LIBS) \
 		-Wl,-Bdynamic \
 		-l winmm \
 		-l ole32 \
@@ -136,7 +131,7 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 		-l version \
 		-l oleaut32 \
 		-I $(MINGW_ROOT)/include \
-		-I $(MINGW_ROOT)/include/freetype2 \
+		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o character_creator.exe
 
@@ -144,7 +139,7 @@ character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 	gcc \
 		-g \
 		`sdl2-config --libs` \
-		-l SDL2_ttf \
+		$(TTF_LIBS) \
 		`sdl2-config --cflags` \
 		-o character_creator \
 		dungeon_lib_lin.o \
@@ -161,12 +156,7 @@ game_module.exe : \
 		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-		-l SDL2_ttf \
-		-l freetype \
-		-l iconv \
-		-l png \
-		-l bz2 \
-		-l z \
+		$(MINGW_TTF_LIBS) \
 		-Wl,-Bdynamic \
 		-l winmm \
 		-l ole32 \
@@ -175,7 +165,7 @@ game_module.exe : \
 		-l version \
 		-l oleaut32 \
 		-I $(MINGW_ROOT)/include \
-		-I $(MINGW_ROOT)/include/freetype2 \
+		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o game_module.exe
 
@@ -184,7 +174,7 @@ game_module : \
 	gcc \
 		-g \
 		`sdl2-config --libs` \
-		-l SDL2_ttf \
+		$(TTF_LIBS) \
 		-l m \
 		`sdl2-config --cflags` \
 		-o game_module \

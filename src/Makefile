@@ -10,6 +10,16 @@ MINGW_TTF_LIBS = \
 		-l bz2 \
 		-l z
 MINGW_TTF_CFLAGS =  -I $(MINGW_ROOT)/include/freetype2
+MINGW_DYN_LIBS = \
+		-Wl,-Bdynamic \
+		-l winmm \
+		-l ole32 \
+		-l gdi32 \
+		-l imm32 \
+		-l version \
+		-l oleaut32
+
+
 
 all: \
 	dungeon_lib.c dungeon_generator.c dungeon_lib_win.o dungeon_lib_lin.o \
@@ -32,13 +42,7 @@ dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
-		-Wl,-Bdynamic \
-		-l winmm \
-		-l ole32 \
-		-l gdi32 \
-		-l imm32 \
-		-l version \
-		-l oleaut32 \
+		$(MINGW_DYN_LIBS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o dungeon_lib_win.o
 
@@ -68,13 +72,7 @@ dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
 		dungeon_audio.c \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-		-Wl,-Bdynamic \
-		-l winmm \
-		-l ole32 \
-		-l gdi32 \
-		-l imm32 \
-		-l version \
-		-l oleaut32 \
+		$(MINGW_DYN_LIBS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o dungeon_audio_win.o
 
@@ -87,13 +85,7 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
-		-Wl,-Bdynamic \
-		-l winmm \
-		-l ole32 \
-		-l gdi32 \
-		-l imm32 \
-		-l version \
-		-l oleaut32 \
+		$(MINGW_DYN_LIBS) \
 		-I $(MINGW_ROOT)/include \
 		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
@@ -118,13 +110,7 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
-		-Wl,-Bdynamic \
-		-l winmm \
-		-l ole32 \
-		-l gdi32 \
-		-l imm32 \
-		-l version \
-		-l oleaut32 \
+		$(MINGW_DYN_LIBS) \
 		-I $(MINGW_ROOT)/include \
 		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
@@ -151,13 +137,7 @@ game_module.exe : \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
-		-Wl,-Bdynamic \
-		-l winmm \
-		-l ole32 \
-		-l gdi32 \
-		-l imm32 \
-		-l version \
-		-l oleaut32 \
+		$(MINGW_DYN_LIBS) \
 		-I $(MINGW_ROOT)/include \
 		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
@@ -177,29 +157,23 @@ game_module : \
 		game_module.c
 
 test_audio.exe : test_audio.c dungeon_audio_win.o
-	        i686-w64-mingw32-gcc \
-			$(BASE_FLAGS) \
-			test_audio.c \
-			-static-libgcc \
-			-Wl,-Bstatic \
-			`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-			-Wl,-Bdynamic \
-			-l winmm \
-			-l ole32 \
-			-l gdi32 \
-			-l imm32 \
-			-l version \
-			-l oleaut32 \
-			-I $(MINGW_ROOT)/include \
-		        `$(MINGW_ROOT)/bin/sdl2-config --cflags` \
-			dungeon_audio_win.o \
-			-o test_audio.exe
+	i686-w64-mingw32-gcc \
+		$(BASE_FLAGS) \
+		test_audio.c \
+		-static-libgcc \
+		-Wl,-Bstatic \
+		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
+		$(MINGW_DYN_LIBS) \
+		-I $(MINGW_ROOT)/include \
+		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
+		dungeon_audio_win.o \
+		-o test_audio.exe
 
 test_audio : test_audio.c dungeon_audio_lin.o
-	        gcc \
-			$(BASE_FLAGS) \
-			test_audio.c \
-			`sdl2-config --libs` \
-			`sdl2-config --cflags` \
-			dungeon_audio_lin.o \
-			-o test_audio
+	gcc \
+		$(BASE_FLAGS) \
+		test_audio.c \
+		`sdl2-config --libs` \
+		`sdl2-config --cflags` \
+		dungeon_audio_lin.o \
+		-o test_audio

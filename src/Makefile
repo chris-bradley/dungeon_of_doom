@@ -1,3 +1,4 @@
+BASE_FLAGS = -g -Wall
 TTF_LIBS = -l SDL2_ttf
 
 MINGW_ROOT = /usr/i686-w64-mingw32/sys-root/mingw/
@@ -25,11 +26,9 @@ all: \
 
 dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 	i686-w64-mingw32-gcc \
-		-g \
-		-Wall \
+		$(BASE_FLAGS) \
 		-c dungeon_lib.c \
 		-static-libgcc \
-		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
@@ -45,7 +44,7 @@ dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 
 dungeon_lib_lin.o : dungeon_lib.c dungeon_lib.h
 	gcc \
-		-g \
+		$(BASE_FLAGS) \
 		-c dungeon_lib.c \
 		`sdl2-config --libs` \
 		$(TTF_LIBS) \
@@ -55,20 +54,18 @@ dungeon_lib_lin.o : dungeon_lib.c dungeon_lib.h
 
 dungeon_audio_lin.o : dungeon_audio.c dungeon_audio.h
 	gcc \
-		-g \
+		$(BASE_FLAGS) \
 		-c \
 		dungeon_audio.c \
-		-Wall \
 		`sdl2-config --libs` \
 		`sdl2-config --cflags` \
 		-o dungeon_audio_lin.o
 
 dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
 	i686-w64-mingw32-gcc \
-		-g \
+		$(BASE_FLAGS) \
 		-c \
 		dungeon_audio.c \
-		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		-Wl,-Bdynamic \
@@ -83,11 +80,10 @@ dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
 
 dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 	i686-w64-mingw32-gcc \
-		-g \
+		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
 		dungeon_generator.c \
 		-static-libgcc \
-		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
@@ -105,7 +101,7 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 
 dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
 	gcc \
-		-g \
+		$(BASE_FLAGS) \
 		`sdl2-config --libs` \
 		$(TTF_LIBS) \
 		`sdl2-config --cflags` \
@@ -115,11 +111,10 @@ dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
 
 character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 	i686-w64-mingw32-gcc \
-		-g \
+		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
 		character_creator.c \
 		-static-libgcc \
-		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
@@ -137,7 +132,7 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 
 character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 	gcc \
-		-g \
+		$(BASE_FLAGS) \
 		`sdl2-config --libs` \
 		$(TTF_LIBS) \
 		`sdl2-config --cflags` \
@@ -148,12 +143,11 @@ character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 game_module.exe : \
 	game_module.c dungeon_lib_win.o dungeon_audio_win.o character_lib.h
 	i686-w64-mingw32-gcc \
-		-g \
+		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
 		dungeon_audio_win.o \
 		game_module.c \
 		-static-libgcc \
-		-Wall \
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
@@ -172,7 +166,7 @@ game_module.exe : \
 game_module : \
 	game_module.c dungeon_lib_lin.o dungeon_audio_lin.o character_lib.h
 	gcc \
-		-g \
+		$(BASE_FLAGS) \
 		`sdl2-config --libs` \
 		$(TTF_LIBS) \
 		-l m \
@@ -184,10 +178,9 @@ game_module : \
 
 test_audio.exe : test_audio.c dungeon_audio_win.o
 	        i686-w64-mingw32-gcc \
-			-g \
+			$(BASE_FLAGS) \
 			test_audio.c \
 			-static-libgcc \
-			-Wall \
 			-Wl,-Bstatic \
 			`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 			-Wl,-Bdynamic \
@@ -204,9 +197,8 @@ test_audio.exe : test_audio.c dungeon_audio_win.o
 
 test_audio : test_audio.c dungeon_audio_lin.o
 	        gcc \
-			-g \
+			$(BASE_FLAGS) \
 			test_audio.c \
-			-Wall \
 			`sdl2-config --libs` \
 			`sdl2-config --cflags` \
 			dungeon_audio_lin.o \

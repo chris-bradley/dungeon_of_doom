@@ -52,7 +52,6 @@ dungeon_lib_lin.o : dungeon_lib.c dungeon_lib.h
 		-c dungeon_lib.c \
 		`sdl2-config --libs` \
 		$(TTF_LIBS) \
-		-D main=SDL_main \
 		`sdl2-config --cflags` \
 		-o dungeon_lib_lin.o
 
@@ -86,7 +85,6 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
 		$(MINGW_DYN_LIBS) \
-		-I $(MINGW_ROOT)/include \
 		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o dungeon_generator.exe
@@ -111,7 +109,6 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
 		$(MINGW_DYN_LIBS) \
-		-I $(MINGW_ROOT)/include \
 		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o character_creator.exe
@@ -138,7 +135,6 @@ game_module.exe : \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_TTF_LIBS) \
 		$(MINGW_DYN_LIBS) \
-		-I $(MINGW_ROOT)/include \
 		$(MINGW_TTF_CFLAGS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o game_module.exe
@@ -164,7 +160,6 @@ test_audio.exe : test_audio.c dungeon_audio_win.o
 		-Wl,-Bstatic \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		$(MINGW_DYN_LIBS) \
-		-I $(MINGW_ROOT)/include \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		dungeon_audio_win.o \
 		-o test_audio.exe

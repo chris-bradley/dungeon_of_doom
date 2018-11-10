@@ -73,6 +73,10 @@ typedef struct character_s_t {
 
 header_t * init_header(int screen_cols) {
     header_t * header = malloc(sizeof(header_t));
+    if (header == NULL) {
+        fprintf(stderr, "header is NULL!\n");
+        exit(1);
+    }
     *header = (header_t) {
         .left_col = 0,
         .top_row = 1,
@@ -242,6 +246,10 @@ void draw_title_row(screen_t * screen, title_row_t * title_row) {
 
 title_row_t * init_title_row() {
     title_row_t * title_row = (title_row_t *) malloc(sizeof(title_row_t));
+    if (title_row == NULL) {
+        fprintf(stderr, "title_row is NULL!\n");
+        exit(1);
+    }
     *title_row = (title_row_t) {
         .title = "CHARACTER CREATION"
     };
@@ -318,6 +326,10 @@ int init_screen_cols() {
 
 main_menu_t * init_main_menu(int screen_cols) {
     main_menu_t * main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
+    if (main_menu == NULL) {
+        fprintf(stderr, "main_menu is NULL!\n");
+        exit(1);
+    }
     *main_menu = (main_menu_t) {
         .num_rows = 8,
         .cols = screen_cols - 2,
@@ -333,6 +345,10 @@ main_menu_t * init_main_menu(int screen_cols) {
 character_t * init_character(int inventory_size) {
     int index;
     character_t * character = (character_t *) malloc(sizeof(character_t));
+    if (character == NULL) {
+        fprintf(stderr, "character is NULL!\n");
+        exit(1);
+    }
     character->inventory = (int *) malloc(sizeof(int) * inventory_size);
     if (character->inventory == NULL) {
         fprintf(stderr, "*inventory is NULL!\n");
@@ -399,8 +415,16 @@ character_class_t ** init_character_classes() {
     character_class_t ** character_classes = malloc(
         sizeof(character_class_t *) * 5
     );
+    if (character_classes == NULL) {
+        fprintf(stderr, "character_classes is NULL!\n");
+        exit(1);
+    }
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
+        if (character_classes[index] == NULL) {
+            fprintf(stderr, "character_classes[%i] is NULL!\n", index);
+            exit(1);
+        }
     }
     *character_classes[0] = (character_class_t) {
         .id = 0,
@@ -433,6 +457,10 @@ character_class_t ** init_character_classes() {
 
 int ** init_item_to_char_class() {
     int ** item_to_char_class = malloc(sizeof(int *) * 24);
+    if (item_to_char_class == NULL) {
+        fprintf(stderr, "item_to_char_class is NULL!\n");
+        exit(1);
+    }
     int index_a, index_b,
         values[24][5] = {
             {0, 0, 0, 0, 1},
@@ -462,6 +490,10 @@ int ** init_item_to_char_class() {
         };
     for (index_a = 0; index_a < 24; index_a += 1) {
         item_to_char_class[index_a] = malloc(sizeof(int) * 5);
+        if (item_to_char_class[index_a] == NULL) {
+            fprintf(stderr, "item_to_char_class[%i] is NULL!\n", index_a);
+            exit(1);
+        }
         for (index_b = 0; index_b < 5; index_b += 1) {
             item_to_char_class[index_a][index_b] = values[index_a][index_b];
         }
@@ -472,6 +504,10 @@ int ** init_item_to_char_class() {
 
 store_t * init_stores() {
     store_t * stores = malloc(sizeof(store_t) * 3);
+    if (stores == NULL) {
+        fprintf(stderr, "stores is NULL!\n");
+        exit(1);
+    }
     stores[0] = (store_t) {
         .name="ARMOURY",
         .items={
@@ -639,6 +675,10 @@ const char ** init_attr_names() {
     const char ** attr_names = (const char **) malloc(
         sizeof(const char *) * 8
     );
+    if (attr_names == NULL) {
+        fprintf(stderr, "attr_names is NULL!\n");
+        exit(1);
+    }
     attr_names[STRENGTH] = "STRENGTH";
     attr_names[VITALITY] = "VITALITY";
     attr_names[AGILITY] = "AGILITY";
@@ -731,6 +771,10 @@ void set_attr_phase(screen_t * screen, character_t * character,
     main_menu->selected_row = 0;
     for (index = 0; index < 8; index += 1) {
         main_menu->items[index] = malloc(sizeof(menu_item_t));
+        if (main_menu->items[index] == NULL) {
+            fprintf(stderr, "main_menu->items[%i] is NULL!\n", index);
+            exit(1);
+        }
         *main_menu->items[index] = (menu_item_t) {
             .label = attr_names[index],
             .value = character->attrs[index]

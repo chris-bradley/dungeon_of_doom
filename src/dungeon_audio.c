@@ -4,6 +4,10 @@
 void stream_queue_enqueue(stream_queue_t * stream_queue, Uint8 * stream,
                           int length) {
     stream_queue_node_t * stream_node = malloc(sizeof(stream_queue_node_t));
+    if (stream_node == NULL) {
+        fprintf(stderr, "stream_node is NULL!\n");
+        exit(1);
+    }
     *stream_node = (stream_queue_node_t) {
         .stream = stream,
         .length = length,
@@ -63,6 +67,10 @@ void play_sound(void * userdata, Uint8 * stream, int len) {
 
 Uint8 * pulse(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (stream == NULL) {
+        fprintf(stderr, "stream is NULL!\n");
+        exit(1);
+    }
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
@@ -90,6 +98,10 @@ Uint8 * pulse(int frequency, int length, SDL_AudioSpec * audio_spec) {
 
 Uint8 * sawtooth(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (stream == NULL) {
+        fprintf(stderr, "stream is NULL!\n");
+        exit(1);
+    }
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
@@ -115,6 +127,10 @@ Uint8 * sawtooth(int frequency, int length, SDL_AudioSpec * audio_spec) {
 
 Uint8 * sine_wave(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (stream == NULL) {
+        fprintf(stderr, "stream is NULL!\n");
+        exit(1);
+    }
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
@@ -140,6 +156,10 @@ Uint8 * sine_wave(int frequency, int length, SDL_AudioSpec * audio_spec) {
 
 Uint8 * noise(int frequency, int length, SDL_AudioSpec * audio_spec) {
     Uint8 * stream = malloc(sizeof(Uint8) * length);
+    if (stream == NULL) {
+        fprintf(stderr, "stream is NULL!\n");
+        exit(1);
+    }
     if (frequency == 0) {
         memset(stream, 0, length);
         return stream;
@@ -210,12 +230,24 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
     int index;
     stream_queue_t * new_stream_queue;
     audio_state_t * audio_state = malloc(sizeof(audio_state_t));
+    if (audio_state == NULL) {
+        fprintf(stderr, "audio_state is NULL!\n");
+        exit(1);
+    }
     *audio_state = (audio_state_t) {
         .streams = malloc(sizeof(stream_queue_t *) * num_stream_queues),
         .num_stream_queues = num_stream_queues
     };
+    if (*audio_state->streams == NULL) {
+        fprintf(stderr, "*audio_state->streams is NULL!\n");
+        exit(1);
+    }
     for (index = 0; index < num_stream_queues; index += 1) {
         new_stream_queue = malloc(sizeof(stream_queue_t));
+        if (new_stream_queue == NULL) {
+            fprintf(stderr, "new_stream_queue is NULL!\n");
+            exit(1);
+        }
         *new_stream_queue = (stream_queue_t) {
             .length=0,
             .first_node=NULL,
@@ -232,6 +264,10 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
         .userdata=audio_state
     };
     SDL_AudioSpec * obtained = malloc(sizeof(SDL_AudioSpec));
+    if (obtained == NULL) {
+        fprintf(stderr, "obtained is NULL!\n");
+        exit(1);
+    }
     SDL_AudioDeviceID device = SDL_OpenAudioDevice(
         NULL,
         0,

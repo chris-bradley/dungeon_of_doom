@@ -528,6 +528,10 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
         get_keyboard_input(screen, &pressed_key, message, screen_cols);
         free(message);
         char * outstring = (char *) malloc(sizeof(char) * 2);
+        if (outstring == NULL) {
+            fprintf(stderr, "outstring is NULL!\n");
+            exit(1);
+        }
         sprintf(outstring, "%c", pressed_key);
         spell_number = atoi(outstring);
         free(outstring);
@@ -1230,6 +1234,10 @@ int main(int argc, char * argv[]) {
          * message;
     const char ** strings, ** item_names;
     monster_t * cur_monster = malloc(sizeof(monster_t));
+    if (cur_monster == NULL) {
+        fprintf(stderr, "cur_monster is NULL!\n");
+        exit(1);
+    }
     *cur_monster = (monster_t) {
         .coord_x = 0,
         .coord_y = 0,
@@ -1239,6 +1247,10 @@ int main(int argc, char * argv[]) {
         .distance_x = 255
     };
     character_t * character = malloc(sizeof(character_t));
+    if (character == NULL) {
+        fprintf(stderr, "character is NULL!\n");
+        exit(1);
+    }
     screen_t * screen = init_screen();
     audio_state_t * audio_state;
     paper(screen->cursor, YELLOW);

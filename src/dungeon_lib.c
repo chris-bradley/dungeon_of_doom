@@ -22,6 +22,10 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
     int message_length = (int) strlen(message);
     SDL_Rect * text_pos;
     text_pos = malloc(sizeof(SDL_Rect));
+    if (text_pos == NULL) {
+        fprintf(stderr, "text_pos is NULL!\n");
+        exit(1);
+    }
     *text_pos = (SDL_Rect) {
         .x = screen->cursor->curs_x * 8 * screen->zoom,
         .y = screen->cursor->curs_y * 8 * screen->zoom,

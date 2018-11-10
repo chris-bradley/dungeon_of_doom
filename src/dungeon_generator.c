@@ -42,6 +42,10 @@ void draw_help(screen_t * screen, const char * help_lines[10]) {
 
 dungeon_t * init_level(int level_num) {
     dungeon_t * dungeon = malloc(sizeof(dungeon_t));
+    if (dungeon == NULL) {
+        fprintf(stderr, "dungeon is NULL!\n");
+        exit(1);
+    }
     for (int coord_x = 0; coord_x < 15; coord_x++) {
         for (int coord_y = 0; coord_y < 15; coord_y++) {
             dungeon->contents[coord_x][coord_y] = 0;

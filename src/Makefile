@@ -34,6 +34,24 @@ all: \
 		game_module.exe \
 		game_module
 
+all-linux: \
+	dungeon_lib.c dungeon_generator.c dungeon_lib_lin.o \
+	character_creator.c character_lib.h
+	make \
+		dungeon_lib_lin.o \
+		dungeon_generator \
+		character_creator \
+		game_module
+
+all-windows: \
+	dungeon_lib.c dungeon_generator.c dungeon_lib_win.o \
+	character_creator.c character_lib.h
+	make \
+		dungeon_lib_win.o \
+		dungeon_generator.exe \
+		character_creator.exe \
+		game_module.exe \
+
 dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 	i686-w64-mingw32-gcc \
 		$(BASE_FLAGS) \

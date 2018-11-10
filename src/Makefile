@@ -1,6 +1,7 @@
 BASE_FLAGS = -g -Wall
 TTF_LIBS = -l SDL2_ttf
 
+MINGW_GCC = i686-w64-mingw32-gcc
 MINGW_ROOT = /usr/i686-w64-mingw32/sys-root/mingw/
 MINGW_TTF_LIBS = \
 		-l SDL2_ttf \
@@ -53,7 +54,7 @@ all-windows: \
 		game_module.exe \
 
 dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
-	i686-w64-mingw32-gcc \
+	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		-c dungeon_lib.c \
 		-static-libgcc \
@@ -83,7 +84,7 @@ dungeon_audio_lin.o : dungeon_audio.c dungeon_audio.h
 		-o dungeon_audio_lin.o
 
 dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
-	i686-w64-mingw32-gcc \
+	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		-c \
 		dungeon_audio.c \
@@ -94,7 +95,7 @@ dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
 		-o dungeon_audio_win.o
 
 dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
-	i686-w64-mingw32-gcc \
+	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
 		dungeon_generator.c \
@@ -118,7 +119,7 @@ dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
 		dungeon_generator.c
 
 character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
-	i686-w64-mingw32-gcc \
+	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
 		character_creator.c \
@@ -143,7 +144,7 @@ character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 
 game_module.exe : \
 	game_module.c dungeon_lib_win.o dungeon_audio_win.o character_lib.h
-	i686-w64-mingw32-gcc \
+	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
 		dungeon_audio_win.o \
@@ -171,7 +172,7 @@ game_module : \
 		game_module.c
 
 test_audio.exe : test_audio.c dungeon_audio_win.o
-	i686-w64-mingw32-gcc \
+	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		test_audio.c \
 		-static-libgcc \

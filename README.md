@@ -157,26 +157,22 @@ Run with `game_module` on Linux, `game_module.exe` on Windows. The game loads th
 The initial number of each spells is the character's Aura at multiplied by four if the spell requires the Necronomicon or by three if the spell requires the Scrolls. Casting a spell reduces the character's Aura by 0.2.
 
 When casting a spell, the player is prompted to type a spell number. The spell numbers are:
- - `1`: Superzap
-   - Kills the active monster
-   - Requires the Necronomicon
- - `2`: Sanctuary
-   - Converts the current location to a Safe Place if empty
-   - Requires the Necronomicon
- - `3`: Teleport
-   - Teleports the character to a random location
-   - Requires the Necronomicon
- - `4`: Powersurge
-   - Increases the character's Strength and Vitality. The increase in the number of points is between one and the number of remaining Powersurges
-   - Reduces the character's Aura by an additional point
-   - Requires the Scrolls
- - `5`: Metamorphosis
-   - Changes the current location into a random item.
-   - Requires the Scrolls
- - `6`: Healing
-   - Returns the character's Strength and Vitality to their initial values.
-   - Reduces the character's Aura by an additional point
-   - Requires the Scrolls
+ - From the Necronomicon:
+    - `1`: Superzap
+      - Kills the active monster
+    - `2`: Sanctuary
+      - Converts the current location to a Safe Place if empty
+    - `3`: Teleport
+      - Teleports the character to a random location
+ - From the Scrolls:
+    - `4`: Powersurge
+      - Increases the character's Strength and Vitality. The increase in the number of points is between one and the number of remaining Powersurges
+      - Reduces the character's Aura by an additional point
+    - `5`: Metamorphosis
+      - Changes the current location into a random item.
+    - `6`: Healing
+      - Returns the character's Strength and Vitality to their initial values.
+      - Reduces the character's Aura by an additional point
 
 #### Saving Games
 

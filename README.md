@@ -25,6 +25,16 @@ The project currently has a simple makefile in the `src` directory. It currently
 ### Troubleshooting
  - Check the values for the `MINGW_GCC` and `MINGW_ROOT` Makefile macros if you get errors building for Windows targets
 
+## INSTALLING
+
+ - Issue #20 exists for creating installers / packages.
+
+### Linux
+Copy `dungeon_generator`, `character_creator`, `game_module` and the `fonts` directory to where you want to install the game.
+
+### Windows
+Copy `dungeon_generator.exe`, `character_creator.exe`, `game_module.exe`, the `fonts` directory and a copy of your MinGW's `libwinpthread-1.dll` to where you want to install the game.
+
 ## RUNNING THE PROGRAMS
 
 ### Dungeon Generator

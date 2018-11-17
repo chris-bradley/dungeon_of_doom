@@ -72,16 +72,17 @@ void sound_noise(audio_state_t * audio_state, int sound_frequency) {
     SDL_PauseAudioDevice(audio_state->device, 0);
 }
 
-void get_keyboard_input(screen_t * screen, char * pressed_key, char * message,
-                        int screen_cols) {
+char get_keyboard_input(screen_t * screen, char * message, int screen_cols) {
+    char pressed_key;
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 0, 5);
     free(print_text(screen, message));
     SDL_RenderPresent(screen->ren);
-    *pressed_key = inkey$();
+    pressed_key = inkey$();
     tab(screen->cursor, 0, 5);
     print_left$_b$(screen, screen_cols);
+    return pressed_key;
 }
 
 void draw_message_wo_colour_change(screen_t * screen, char * message,
@@ -525,7 +526,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
             exit(1);
         }
         strcpy(message, "USE SPELL NUMBER?");
-        get_keyboard_input(screen, &pressed_key, message, screen_cols);
+        pressed_key = get_keyboard_input(screen, message, screen_cols);
         free(message);
         char * outstring = (char *) malloc(sizeof(char) * 2);
         if (outstring == NULL) {
@@ -841,7 +842,7 @@ void load_level(screen_t * screen, int skip_first_exp_check,
                 const char ** strings, int screen_cols) {
     int correct_level_loaded, index, entrance_coord_x, entrance_coord_y,
         coord_x, coord_y;
-    char pressed_key, * message;
+    char * message;
     do {
 
         if (
@@ -872,7 +873,7 @@ void load_level(screen_t * screen, int skip_first_exp_check,
             exit(1);
         }
         strcpy(message, strings[10]);
-        get_keyboard_input(screen, &pressed_key, message, screen_cols);
+        get_keyboard_input(screen, message, screen_cols);
         free(message);
         size_t filesize;
         FILE * file_handle = fopen("LEVEL", "r");
@@ -940,7 +941,7 @@ void load_level_wo_first_exp_check(screen_t * screen, monster_t * cur_monster,
 void load_character(screen_t * screen, character_t * character,
                     int * num_item_types, const char ** strings,
                     int screen_cols) {
-    char pressed_key, * message;
+    char * message;
     int index, subindex, file_index;
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
@@ -951,7 +952,7 @@ void load_character(screen_t * screen, character_t * character,
         exit(1);
     }
     strcpy(message, strings[10]);
-    get_keyboard_input(screen, &pressed_key, message, screen_cols);
+    get_keyboard_input(screen, message, screen_cols);
     free(message);
     FILE * file_handle = fopen("HERO", "r");
     size_t filesize;
@@ -1006,7 +1007,7 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
                character_t * character, int num_item_types,
                int ** dungeon_contents, int screen_cols) {
     int index, coord_x, coord_y;
-    char pressed_key, * message;
+    char * message;
     message = (char *) malloc(sizeof(char) * 18);
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
@@ -1076,7 +1077,7 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
         exit(1);
     }
     strcpy(message, "ANY KEY TO SAVE");
-    get_keyboard_input(screen, &pressed_key, message, screen_cols);
+    get_keyboard_input(screen, message, screen_cols);
     free(message);
     FILE * file_handle = fopen("HERO", "w");
     int error = fputs(character_file_contents, file_handle);

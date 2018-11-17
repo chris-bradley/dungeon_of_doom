@@ -143,7 +143,12 @@ int init_screen_cols() {
     return 40;
 }
 
-void init_help_lines(const char * help_lines[10]) {
+const char ** init_help_lines() {
+    const char ** help_lines = malloc(sizeof(const char *) * 10);
+    if (help_lines == NULL) {
+        fprintf(stderr, "help_lines is NULL!\n");
+        exit(1);
+    }
     help_lines[0] = "PRESS ANY KEY";
     help_lines[1] = "TO MOVE A Z N M";
     help_lines[2] = "1 WALL    2 VASE";
@@ -154,15 +159,15 @@ void init_help_lines(const char * help_lines[10]) {
     help_lines[7] = "9 GUARD";
     help_lines[8] = "0 TO ERASE";
     help_lines[9] = "S TO SAVE";
+    return help_lines;
 }
 
 int main(int argc, char * argv[]) {
     int screen_cols;
     coord_t cur_coord;
-    const char * help_lines[10];
+    const char ** help_lines = init_help_lines();
     char pressed_key;
 
-    init_help_lines(help_lines);
     screen_cols = init_screen_cols();
     dungeon_t * dungeon = init_level(1);
     screen_t * screen = init_screen();
@@ -224,6 +229,6 @@ int main(int argc, char * argv[]) {
     }
     free(dungeon);
     destroy_screen(screen);
-
+    free(help_lines);
     return 0;
 }

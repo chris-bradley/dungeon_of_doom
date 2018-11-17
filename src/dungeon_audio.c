@@ -238,8 +238,8 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
         .streams = malloc(sizeof(stream_queue_t *) * num_stream_queues),
         .num_stream_queues = num_stream_queues
     };
-    if (*audio_state->streams == NULL) {
-        fprintf(stderr, "*audio_state->streams is NULL!\n");
+    if (audio_state->streams == NULL) {
+        fprintf(stderr, "audio_state->streams is NULL!\n");
         exit(1);
     }
     for (index = 0; index < num_stream_queues; index += 1) {

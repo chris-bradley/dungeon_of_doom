@@ -48,28 +48,27 @@ typedef struct {
     int char_code;
 } monster_t;
 
-void sound_sawtooth(audio_state_t * audio_state, int sound_frequency) {
+void sound(audio_state_t * audio_state,
+           Uint8 *(sound_func)(
+               int frequency, int length, SDL_AudioSpec * audio_spec
+           ), int stream_num, int sound_frequency) {
     int length = 0.3 * audio_state->audio_spec->freq;
-    Uint8 * stream = sawtooth(
+    Uint8 * stream = sound_func(
         sound_frequency * 16.940,
         length,
         audio_state->audio_spec
     );
     volume_filter(stream, length, 0, length, 0, 0);
-    stream_queue_enqueue(*audio_state->streams, stream, length);
+    stream_queue_enqueue(*(audio_state->streams + stream_num), stream, length);
     SDL_PauseAudioDevice(audio_state->device, 0);
 }
 
+void sound_sawtooth(audio_state_t * audio_state, int sound_frequency) {
+    sound(audio_state, &sawtooth, 0, sound_frequency);
+}
+
 void sound_noise(audio_state_t * audio_state, int sound_frequency) {
-    int length = 0.3 * audio_state->audio_spec->freq;
-    Uint8 * stream = noise(
-        sound_frequency * 16.940,
-        length,
-        audio_state->audio_spec
-    );
-    volume_filter(stream, length, 0, length, 0, 0);
-    stream_queue_enqueue(*(audio_state->streams + 1), stream, length);
-    SDL_PauseAudioDevice(audio_state->device, 0);
+    sound(audio_state, &noise, 1, sound_frequency);
 }
 
 char get_keyboard_input(screen_t * screen, char * message, int screen_cols) {

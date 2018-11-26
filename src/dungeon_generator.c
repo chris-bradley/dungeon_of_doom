@@ -91,7 +91,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     }
     if (
             !fputc(
-                (char) dungeon->entrance_coord.x + char_base,
+                (char) dungeon->entrance_coord.x + char_base + 1,
                 save_file_handle
             )
     ) {
@@ -103,7 +103,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     }
     if (
             !fputc(
-                (char) dungeon->entrance_coord.y + char_base,
+                (char) dungeon->entrance_coord.y + char_base + 1,
                 save_file_handle
             )
     ) {

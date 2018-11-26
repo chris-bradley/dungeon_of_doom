@@ -192,6 +192,7 @@ test_audio : test_audio.c dungeon_audio_lin.o
 	gcc \
 		$(BASE_FLAGS) \
 		test_audio.c \
+		-l m \
 		`sdl2-config --libs` \
 		`sdl2-config --cflags` \
 		dungeon_audio_lin.o \

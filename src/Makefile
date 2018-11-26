@@ -182,6 +182,7 @@ test_audio.exe : test_audio.c dungeon_audio_win.o
 		-Wl,-Bstatic \
 		-l setupapi \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
+		-l setupapi \
 		$(MINGW_DYN_LIBS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		dungeon_audio_win.o \

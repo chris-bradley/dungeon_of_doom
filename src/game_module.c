@@ -73,14 +73,15 @@ void sound_noise(audio_state_t * audio_state, int sound_frequency) {
 
 char get_keyboard_input(screen_t * screen, char * message, int screen_cols) {
     char pressed_key;
+    SDL_Rect * text_rect;
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 0, 5);
-    free(print_text(screen, message));
+    text_rect = print_text(screen, message);
     SDL_RenderPresent(screen->ren);
     pressed_key = inkey$();
-    tab(screen->cursor, 0, 5);
-    print_left$_b$(screen, screen_cols);
+    clear_box(screen, text_rect, YELLOW);
+    free(text_rect);
     return pressed_key;
 }
 
@@ -88,11 +89,11 @@ void draw_message(screen_t * screen, char * message, int screen_cols) {
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 0, 5);
-    free(print_text(screen, message));
+    SDL_Rect * text_rect = print_text(screen, message);
     SDL_RenderPresent(screen->ren);
     SDL_Delay(340);
-    tab(screen->cursor, 0, 5);
-    print_left$_b$(screen, screen_cols);
+    clear_box(screen, text_rect, YELLOW);
+    free(text_rect);
 }
 
 void draw_character_and_stats(screen_t * screen, char * char_code_hero,

@@ -84,20 +84,15 @@ char get_keyboard_input(screen_t * screen, char * message, int screen_cols) {
     return pressed_key;
 }
 
-void draw_message_wo_colour_change(screen_t * screen, char * message,
-                                   int screen_cols) {
+void draw_message(screen_t * screen, char * message, int screen_cols) {
+    paper(screen->cursor, YELLOW);
+    ink(screen->cursor, BLACK);
     tab(screen->cursor, 0, 5);
     free(print_text(screen, message));
     SDL_RenderPresent(screen->ren);
     SDL_Delay(340);
     tab(screen->cursor, 0, 5);
     print_left$_b$(screen, screen_cols);
-}
-
-void draw_message(screen_t * screen, char * message, int screen_cols) {
-    paper(screen->cursor, YELLOW);
-    ink(screen->cursor, BLACK);
-    draw_message_wo_colour_change(screen, message, screen_cols);
 }
 
 void draw_character_and_stats(screen_t * screen, char * char_code_hero,
@@ -321,7 +316,7 @@ void character_dies(screen_t * screen, audio_state_t * audio_state,
         exit(1);
     }
     strcpy(message, "");
-    draw_message_wo_colour_change(screen, message, screen_cols);
+    draw_message(screen, message, screen_cols);
     free(message);
     tab(screen->cursor, 1, 5);
     free(print_text(screen, "THOU HAST EXPIRED!"));

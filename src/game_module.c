@@ -298,6 +298,7 @@ void monsters_turn(screen_t * screen, audio_state_t * audio_state,
         }
         if (item_num < 10) {
             item_num += 1;
+        } else {
             done = 1;
         }
     } while (!done);

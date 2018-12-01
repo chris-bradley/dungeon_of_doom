@@ -178,9 +178,8 @@ int sign(int x) {
 
 void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
                           int item_num, int sound_frequency,
-                          int * monster_broke_item, character_t * character,
-                          const char ** strings, int screen_cols,
-                          const char ** item_names) {
+                          character_t * character, const char ** strings,
+                          int screen_cols, const char ** item_names) {
     char * message;
     character->inventory[item_num] = 0;
     message = (char *) malloc(
@@ -193,7 +192,6 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
     sprintf(message, "%s %s", strings[8], item_names[item_num]);
     draw_message(screen, message, screen_cols);
     free(message);
-    *monster_broke_item = 0;
     sound_noise(audio_state, sound_frequency);
     sound_frequency = item_num;
     sound_sawtooth(audio_state, sound_frequency);
@@ -291,10 +289,10 @@ void monsters_turn(screen_t * screen, audio_state_t * audio_state,
     do {
         if (monster_broke_item == 1 && character->inventory[item_num] > 0) {
             monster_breaks_items(
-                screen, audio_state, item_num, sound_frequency,
-                &monster_broke_item, character, strings, screen_cols,
-                item_names
+                screen, audio_state, item_num, sound_frequency, character,
+                strings, screen_cols, item_names
             );
+            monster_broke_item = 0;
         }
         if (item_num < 10) {
             item_num += 1;

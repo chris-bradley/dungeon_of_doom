@@ -200,7 +200,7 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
 void monster_moves(screen_t * screen, monster_t * cur_monster,
                    character_t * character, int ** dungeon_contents) {
     int item_at_monster_next_coord, direction_to_monster_x,
-        direction_to_monster_y, coord_x, coord_y;
+        direction_to_monster_y;
     cur_monster->distance_x = (int) cur_monster->coord_x - character->coord_x;
     direction_to_monster_x = sign(cur_monster->distance_x);
     cur_monster->distance_y = (int) cur_monster->coord_y - character->coord_y;
@@ -227,18 +227,16 @@ void monster_moves(screen_t * screen, monster_t * cur_monster,
     dungeon_contents[
         (int) cur_monster->coord_x
     ][(int) cur_monster->coord_y] = BLANK;
-    coord_x = cur_monster->coord_x;
-    coord_y = cur_monster->coord_y;
     render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, coord_x, coord_y
+        screen, cur_monster, dungeon_contents, cur_monster->coord_x,
+        cur_monster->coord_y
     );
     dungeon_contents[
         (int) cur_monster->next_coord_x
     ][(int) cur_monster->next_coord_y] = cur_monster->char_code;
-    coord_x = (int) cur_monster->next_coord_x;
-    coord_y = (int) cur_monster->next_coord_y;
     render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, coord_x, coord_y
+        screen, cur_monster, dungeon_contents, (int) cur_monster->next_coord_x,
+        (int) cur_monster->next_coord_y
     );
     cur_monster->coord_x = cur_monster->next_coord_x;
     cur_monster->coord_y = cur_monster->next_coord_y;
@@ -579,7 +577,8 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     };
     clear_box(screen, &rect, YELLOW);
     render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, coord_x, coord_y
+        screen, cur_monster, dungeon_contents, character->coord_x,
+        character->coord_y
     );
     switch (spell_number) {
         case 1:
@@ -691,8 +690,7 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
               int ** vertices, char * char_code_hero, int * finished,
               monster_t * cur_monster, character_t * character,
               int ** dungeon_contents) {
-    int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y,
-        coord_x, coord_y;
+    int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y;
     item_to_get_coord_x = character->coord_x + vertices[character->facing][1];
     item_to_get_coord_y = character->coord_y + vertices[character->facing][2];
     if (item_to_get_coord_x < 0) {
@@ -724,10 +722,9 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
             character
         );
     }
-    coord_x = item_to_get_coord_x;
-    coord_y = item_to_get_coord_y;
     render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, coord_x, coord_y
+        screen, cur_monster, dungeon_contents, item_to_get_coord_x,
+        item_to_get_coord_y
     );
     if (item_to_get > WALL && item_to_get < IDOL) {
         sound_frequency = item_to_get;
@@ -1352,7 +1349,8 @@ int main(int argc, char * argv[]) {
             coord_x = character->coord_x;
             coord_y = character->coord_y;
             render_coord_and_check_for_monster(
-                screen, cur_monster, dungeon_contents, coord_x, coord_y
+                screen, cur_monster, dungeon_contents, character->coord_x,
+                character->coord_y
             );
             character->coord_x = character->prev_coord_x;
             character->coord_y = character->prev_coord_y;
@@ -1388,7 +1386,8 @@ int main(int argc, char * argv[]) {
             coord_x = character->prev_coord_x;
             coord_y = character->prev_coord_y;
             render_coord_and_check_for_monster(
-                screen, cur_monster, dungeon_contents, coord_x, coord_y
+                screen, cur_monster, dungeon_contents, character->prev_coord_x,
+                character->prev_coord_y
             );
         }
         character->prev_coord_x = character->coord_x;

@@ -339,8 +339,7 @@ void character_dies(screen_t * screen, audio_state_t * audio_state,
 
 void monster_dies(screen_t * screen, audio_state_t * audio_state,
                   character_t * character, monster_t * cur_monster,
-                  int ** dungeon_contents, const char ** strings,
-                  int coord_x, int coord_y) {
+                  int ** dungeon_contents, const char ** strings) {
     char * message;
     int sound_frequency;
     cur_monster->distance_x = 255;
@@ -362,15 +361,15 @@ void monster_dies(screen_t * screen, audio_state_t * audio_state,
         sound_noise(audio_state, sound_frequency);
     }
     render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, coord_x, coord_y
+        screen, cur_monster, dungeon_contents, cur_monster->coord_x,
+        cur_monster->coord_y
     );
 }
 
 
 void attack_monster(screen_t * screen, audio_state_t * audio_state,
                     character_t * character, monster_t * cur_monster,
-                    int ** dungeon_contents, const char ** strings,
-                    int coord_x, int coord_y) {
+                    int ** dungeon_contents, const char ** strings) {
     int damage, t$_ind = rand() % 3 + 1;
     char * message;
     message = (char *) malloc(sizeof(char) * (strlen(strings[t$_ind]) + 1));
@@ -414,7 +413,7 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
     if (cur_monster->strength < 1) {
         monster_dies(
             screen, audio_state, character, cur_monster, dungeon_contents,
-            strings, coord_x, coord_y
+            strings
         );
     }
 }
@@ -422,17 +421,15 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
 void cast_superzap(screen_t * screen, audio_state_t * audio_state,
                    character_t * character, monster_t * cur_monster,
                    int ** dungeon_contents, const char ** strings) {
-    int sound_frequency, coord_x, coord_y;
+    int sound_frequency;
     for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
         sound_sawtooth(audio_state, sound_frequency);
         sound_noise(audio_state, sound_frequency);
     }
     if (cur_monster->distance_x < 255) {
-        coord_x = cur_monster->next_coord_x;
-        coord_y = cur_monster->next_coord_y;
         monster_dies(
             screen, audio_state, character, cur_monster, dungeon_contents,
-            strings, coord_x, coord_y
+            strings
         );
     }
 }
@@ -1226,9 +1223,7 @@ int main(__attribute__((__unused__)) int argc,
         trapped,  // Flag to see if we can exit.
         trap_coord_x,
         trap_coord_y,
-        screen_cols,
-        coord_x,
-        coord_y;
+        screen_cols;
     char pressed_key,
          * char_code_hero = NULL,
          * message;
@@ -1273,7 +1268,7 @@ int main(__attribute__((__unused__)) int argc,
         if (pressed_key == 'a' && cur_monster->distance_x < 255 ) {
             attack_monster(
                 screen, audio_state, character, cur_monster, dungeon_contents,
-                strings, coord_x, coord_y
+                strings
             );
         }
         if (
@@ -1338,8 +1333,6 @@ int main(__attribute__((__unused__)) int argc,
         item_at_character_coord =
             dungeon_contents[character->coord_x][character->coord_y];
         if (item_at_character_coord == WALL) {
-            coord_x = character->coord_x;
-            coord_y = character->coord_y;
             render_coord_and_check_for_monster(
                 screen, cur_monster, dungeon_contents, character->coord_x,
                 character->coord_y
@@ -1375,8 +1368,6 @@ int main(__attribute__((__unused__)) int argc,
                 character->prev_coord_x != character->coord_x ||
                 character->prev_coord_y != character->coord_y
         ) {
-            coord_x = character->prev_coord_x;
-            coord_y = character->prev_coord_y;
             render_coord_and_check_for_monster(
                 screen, cur_monster, dungeon_contents, character->prev_coord_x,
                 character->prev_coord_y

@@ -197,15 +197,10 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
     sound_sawtooth(audio_state, sound_frequency);
 }
 
-void monsters_turn(screen_t * screen, audio_state_t * audio_state,
-                   monster_t * cur_monster, character_t * character,
-                   int ** dungeon_contents, int item_at_character_coord,
-                   const char ** strings, int screen_cols,
-                   const char ** item_names) {
-    int damage, item_num, sound_frequency, monster_broke_item,
-        item_at_monster_next_coord, direction_to_monster_x,
+void monster_moves(screen_t * screen, monster_t * cur_monster,
+                   character_t * character, int ** dungeon_contents) {
+    int item_at_monster_next_coord, direction_to_monster_x,
         direction_to_monster_y, coord_x, coord_y;
-    char * message;
     cur_monster->distance_x = (int) cur_monster->coord_x - character->coord_x;
     direction_to_monster_x = sign(cur_monster->distance_x);
     cur_monster->distance_y = (int) cur_monster->coord_y - character->coord_y;
@@ -247,6 +242,14 @@ void monsters_turn(screen_t * screen, audio_state_t * audio_state,
     );
     cur_monster->coord_x = cur_monster->next_coord_x;
     cur_monster->coord_y = cur_monster->next_coord_y;
+}
+
+void monster_attacks(screen_t * screen, audio_state_t * audio_state,
+                     monster_t * cur_monster, character_t * character,
+                     int item_at_character_coord, const char ** strings,
+                     int screen_cols, const char ** item_names) {
+    int damage, sound_frequency, item_num, monster_broke_item;
+    char * message;
     damage = 0;
     if (
             abs(cur_monster->distance_x) <= 1 &&
@@ -300,6 +303,18 @@ void monsters_turn(screen_t * screen, audio_state_t * audio_state,
             done = 1;
         }
     } while (!done);
+}
+
+void monsters_turn(screen_t * screen, audio_state_t * audio_state,
+                   monster_t * cur_monster, character_t * character,
+                   int ** dungeon_contents, int item_at_character_coord,
+                   const char ** strings, int screen_cols,
+                   const char ** item_names) {
+    monster_moves(screen, cur_monster, character, dungeon_contents);
+    monster_attacks(
+        screen, audio_state, cur_monster, character, item_at_character_coord,
+        strings, screen_cols, item_names
+    );
 }
 
 void character_dies(screen_t * screen, audio_state_t * audio_state,

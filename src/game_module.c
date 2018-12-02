@@ -468,15 +468,15 @@ void cast_powersurge(character_t * character, int spell_number) {
 
 void cast_metamorphosis(screen_t * screen, audio_state_t * audio_state,
                         monster_t * cur_monster, character_t * character,
-                        int ** dungeon_contents, int item_at_character_coord,
-                        int coord_x, int coord_y) {
+                        int ** dungeon_contents, int item_at_character_coord) {
     int sound_frequency;
     for (sound_frequency = 1; sound_frequency <= 30; sound_frequency += 1) {
         dungeon_contents[character->coord_x][character->coord_y] =
             rand() % 8 + 1 + BLANK;
         sound_sawtooth(audio_state, sound_frequency);
         render_coord_and_check_for_monster(
-            screen, cur_monster, dungeon_contents, coord_x, coord_y
+            screen, cur_monster, dungeon_contents, character->coord_x,
+            character->coord_y
         );
     }
     if (item_at_character_coord <= SAFE_PLACE) {
@@ -499,7 +499,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
                 character_t * character, int ** dungeon_contents,
                 int item_at_character_coord, const char ** strings,
                 int screen_cols) {
-    int spell_number, coord_x, coord_y;
+    int spell_number;
     char pressed_key, * message;
     draw_character_and_stats(screen, char_code_hero, character);
     paper(screen->cursor, YELLOW);
@@ -541,8 +541,6 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     );
 
     character->spells_remaining[spell_number] -= 1;
-    coord_x = character->coord_x;
-    coord_y = character->coord_y;
     if (character->spells_remaining[spell_number] < 0) {
         message = (char *) malloc(sizeof(char) * (strlen(strings[9]) + 1));
         if (message == NULL) {
@@ -592,7 +590,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
         case 5:
             cast_metamorphosis(
                 screen, audio_state, cur_monster, character, dungeon_contents,
-                item_at_character_coord, coord_x, coord_y
+                item_at_character_coord
             );
             break;
         case 6:

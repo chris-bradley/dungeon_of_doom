@@ -1,4 +1,4 @@
-BASE_FLAGS = -g -Wall
+BASE_FLAGS = -g -Wall -Wextra
 TTF_LIBS = -l SDL2_ttf
 
 MINGW_GCC = i686-w64-mingw32-gcc

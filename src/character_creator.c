@@ -367,7 +367,7 @@ character_t * init_character(int inventory_size) {
     return character;
 }
 
-int can_be_wanderer(character_t * character) {
+int can_be_wanderer(__attribute__((__unused__)) character_t * character) {
     return 1;
 }
 
@@ -916,7 +916,8 @@ void character_naming_phase(screen_t * screen, character_t * character,
     } while (strlen(character->name) > 10);
 }
 
-int main(int argc, char * argv[]) {
+int main(__attribute__((__unused__)) int argc,
+         __attribute__((__unused__)) char * argv[]) {
     int index, num_item_types,
         screen_cols = init_screen_cols();
     character_class_t ** character_classes = init_character_classes();

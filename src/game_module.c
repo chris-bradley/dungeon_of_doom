@@ -1219,7 +1219,8 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
     init_platform_vars(audio_state);
 }
 
-int main(int argc, char * argv[]) {
+int main(__attribute__((__unused__)) int argc,
+         __attribute__((__unused__)) char * argv[]) {
     int ** vertices,
         finished,
         dungeon_level,

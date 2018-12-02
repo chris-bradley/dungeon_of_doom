@@ -316,9 +316,8 @@ void monsters_turn(screen_t * screen, audio_state_t * audio_state,
 }
 
 void character_dies(screen_t * screen, audio_state_t * audio_state,
-                    char * char_code_hero, monster_t * cur_monster,
-                    character_t * character, int ** dungeon_contents,
-                    int screen_cols, int coord_x, int coord_y) {
+                    char * char_code_hero, character_t * character,
+                    int screen_cols) {
     char * message;
     int sound_frequency;
     character->facing = 5;
@@ -336,9 +335,6 @@ void character_dies(screen_t * screen, audio_state_t * audio_state,
     for (sound_frequency = 150; sound_frequency >= 1; sound_frequency -= 4) {
         sound_sawtooth(audio_state, sound_frequency);
         sound_noise(audio_state, sound_frequency);
-        render_coord_and_check_for_monster(
-            screen, cur_monster, dungeon_contents, coord_x, coord_y
-        );
         draw_character_and_stats(screen, char_code_hero, character);
     }
 }
@@ -1426,8 +1422,7 @@ int main(int argc, char * argv[]) {
     } while (!game_over);
     if (character->attrs[STRENGTH] < 1) {
         character_dies(
-            screen, audio_state, char_code_hero, cur_monster, character,
-            dungeon_contents, screen_cols, coord_x, coord_y
+            screen, audio_state, char_code_hero, character, screen_cols
         );
     }
     tab(screen->cursor, 0, 10);

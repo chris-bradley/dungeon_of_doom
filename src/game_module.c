@@ -798,14 +798,11 @@ void draw_interface(screen_t * screen, character_t * character,
                     int screen_cols) {
     paper(screen->cursor, RED);
     clear_screen(screen);
+    draw_box(screen, 0, 0, 1, screen_cols, WHITE);
     tab(screen->cursor, 0, 0);
     paper(screen->cursor, WHITE);
     ink(screen->cursor, BLACK);
     free(print_text(screen, character->name));
-    draw_box(
-        screen, 0, strlen(character->name), 1,
-        screen_cols - strlen(character->name), WHITE
-    );
     draw_box(screen, 1, 0, 5, screen_cols, YELLOW);
     draw_box(screen, 6, 1, 15, 15, BLACK);
     paper(screen->cursor, RED);

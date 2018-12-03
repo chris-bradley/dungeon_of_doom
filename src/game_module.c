@@ -799,13 +799,14 @@ void draw_interface(screen_t * screen, character_t * character,
     int index;
     paper(screen->cursor, RED);
     clear_screen(screen);
-    tab(screen->cursor, 1, 1);
+    tab(screen->cursor, 0, 0);
     paper(screen->cursor, WHITE);
     ink(screen->cursor, BLACK);
     free(print_text(screen, character->name));
     print_left$_b$(screen, screen_cols - strlen(character->name));
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, WHITE);
+    tab(screen->cursor, 0, 1);
     for (index = 1; index <= 5; index += 1) {
         print_left$_b$(screen, screen_cols);
         newline(screen->cursor);

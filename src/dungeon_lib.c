@@ -106,30 +106,6 @@ void paper(cursor_t * cursor, enum ColourNum c_num) {
     cursor->background_colour[3] = colours[c_num][3];
 }
 
-void print_left$_b$(screen_t * screen, int width) {
-    int error = SDL_SetRenderDrawColor(
-        screen->ren,
-        screen->cursor->background_colour[0],
-        screen->cursor->background_colour[1],
-        screen->cursor->background_colour[2],
-        screen->cursor->background_colour[3]
-    );
-    if (error) {
-        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
-    }
-    const SDL_Rect rect = {
-        .x = screen->cursor->curs_x * 8 * screen->zoom,
-        .y = screen->cursor->curs_y * 8 * screen->zoom,
-        .w = width * 8 * screen->zoom,
-        .h = 8 * screen->zoom
-    };
-    screen->cursor->curs_x += width;
-    error = SDL_RenderFillRect(screen->ren, &rect);
-    if (error) {
-        fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
-    }
-}
-
 void tab(cursor_t * cursor, int x, int y) {
     cursor->curs_x = x;
     cursor->curs_y = y;

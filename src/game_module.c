@@ -796,27 +796,18 @@ void show_level_too_deep_messages(screen_t * screen, character_t * character) {
 
 void draw_interface(screen_t * screen, character_t * character,
                     int screen_cols) {
-    int index;
     paper(screen->cursor, RED);
     clear_screen(screen);
     tab(screen->cursor, 0, 0);
     paper(screen->cursor, WHITE);
     ink(screen->cursor, BLACK);
     free(print_text(screen, character->name));
-    print_left$_b$(screen, screen_cols - strlen(character->name));
-    paper(screen->cursor, YELLOW);
-    ink(screen->cursor, WHITE);
-    tab(screen->cursor, 0, 1);
-    for (index = 1; index <= 5; index += 1) {
-        print_left$_b$(screen, screen_cols);
-        newline(screen->cursor);
-    }
-    paper(screen->cursor, BLACK);
-    ink(screen->cursor, RED);
-    for (index = 1; index <= 15; index += 1) {
-        tab(screen->cursor, 1, 5 + index);
-        print_left$_b$(screen, 15);
-    }
+    draw_box(
+        screen, 0, strlen(character->name), 1,
+        screen_cols - strlen(character->name), WHITE
+    );
+    draw_box(screen, 1, 0, 5, screen_cols, YELLOW);
+    draw_box(screen, 6, 1, 15, 15, BLACK);
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
     tab(screen->cursor, 16, 7);

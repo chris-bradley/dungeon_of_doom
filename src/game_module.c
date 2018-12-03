@@ -80,7 +80,7 @@ char get_keyboard_input(screen_t * screen, char * message) {
     text_rect = print_text(screen, message);
     SDL_RenderPresent(screen->ren);
     pressed_key = inkey$();
-    clear_box(screen, text_rect, YELLOW);
+    clear_rect(screen, text_rect, YELLOW);
     free(text_rect);
     return pressed_key;
 }
@@ -92,7 +92,7 @@ void draw_message(screen_t * screen, char * message) {
     SDL_Rect * text_rect = print_text(screen, message);
     SDL_RenderPresent(screen->ren);
     SDL_Delay(340);
-    clear_box(screen, text_rect, YELLOW);
+    clear_rect(screen, text_rect, YELLOW);
     free(text_rect);
 }
 
@@ -563,7 +563,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
         .w = screen_cols * 8 * screen->zoom,
         .h = 5 * 8 * screen->zoom
     };
-    clear_box(screen, &rect, YELLOW);
+    clear_rect(screen, &rect, YELLOW);
     render_coord_and_check_for_monster(
         screen, cur_monster, dungeon_contents, character->coord_x,
         character->coord_y

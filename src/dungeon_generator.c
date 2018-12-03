@@ -34,7 +34,7 @@ void draw_help(screen_t * screen, const char * help_lines[10]) {
         help_line_rect = print_text(screen, help_lines[index]);
         SDL_RenderPresent(screen->ren);
         inkey$();
-        clear_box(screen, help_line_rect, RED);
+        clear_rect(screen, help_line_rect, RED);
         free(help_line_rect);
     }
     SDL_RenderPresent(screen->ren);
@@ -131,7 +131,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
         fprintf(stderr, "Error %i saving the level!\n", error);
     }
     tab(screen->cursor, 1, 4);
-    clear_box(screen, text_rect, RED);
+    clear_rect(screen, text_rect, RED);
     free(text_rect);
     SDL_RenderPresent(screen->ren);
     new_dungeon = init_level(dungeon->level_num + 1);

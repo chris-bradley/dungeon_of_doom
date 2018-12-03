@@ -109,7 +109,7 @@ char * get_player_string(screen_t * screen, int col, int row,
     while (1) {
         pressed_key = inkey$();
         if (pressed_key == '\n') {
-            clear_box(screen, typed_rect, background_colour);
+            clear_rect(screen, typed_rect, background_colour);
             free(typed_rect);
             return typed_string;
         } else if (pressed_key > '/' && pressed_key < ']' && ind < 39) {
@@ -129,19 +129,19 @@ void update_header(screen_t * screen, header_t * header) {
     ink(screen->cursor, header->text_colour);
 
     if (header->message_rect != NULL) {
-        clear_box(screen, header->message_rect, header->background_colour);
+        clear_rect(screen, header->message_rect, header->background_colour);
         free(header->message_rect);
     }
     tab(screen->cursor, header->left_col + 2, header->top_row + 1);
     header->message_rect = print_text(screen, header->message);
 
     if (header->label_rect != NULL) {
-        clear_box(screen, header->label_rect, header->background_colour);
+        clear_rect(screen, header->label_rect, header->background_colour);
         free(header->label_rect);
         header->label_rect = NULL;
     }
     if (header->points_rect != NULL) {
-        clear_box(screen, header->points_rect, header->background_colour);
+        clear_rect(screen, header->points_rect, header->background_colour);
         free(header->points_rect);
     }
 
@@ -212,7 +212,7 @@ void select_row(screen_t * screen, main_menu_t * main_menu, char pressed_key) {
     paper(screen->cursor, WHITE);
     ink(screen->cursor, RED);
     if (main_menu->selector_rect != NULL) {
-        clear_box(
+        clear_rect(
             screen,
             main_menu->selector_rect,
             main_menu->background_colour
@@ -237,7 +237,7 @@ void draw_title_row(screen_t * screen, title_row_t * title_row) {
     paper(screen->cursor, BLACK);
     ink(screen->cursor, YELLOW);
     if (title_row->title_rect != NULL) {
-        clear_box(screen, title_row->title_rect, BLACK);
+        clear_rect(screen, title_row->title_rect, BLACK);
         free(title_row->title_rect);
     }
     tab(screen->cursor, 0, 0);
@@ -279,7 +279,7 @@ void update_main(screen_t * screen, main_menu_t * main_menu) {
         menu_item = main_menu->items[index];
 
         if (menu_item->label_rect != NULL) {
-            clear_box(
+            clear_rect(
                 screen,
                 menu_item->label_rect,
                 main_menu->background_colour
@@ -288,7 +288,7 @@ void update_main(screen_t * screen, main_menu_t * main_menu) {
             menu_item->label_rect = NULL;
         }
         if (menu_item->value_rect != NULL) {
-            clear_box(
+            clear_rect(
                 screen,
                 menu_item->value_rect,
                 main_menu->background_colour
@@ -891,12 +891,12 @@ void character_naming_phase(screen_t * screen, character_t * character,
         tab(screen->cursor, 1, 2);
         free(print_text(screen, "NAME THY CHARACTER"));
         if (header->label_rect != NULL) {
-            clear_box(screen, header->label_rect, header->background_colour);
+            clear_rect(screen, header->label_rect, header->background_colour);
             free(header->label_rect);
             header->label_rect = NULL;
         }
         if (header->points_rect != NULL) {
-            clear_box(screen, header->points_rect, header->background_colour);
+            clear_rect(screen, header->points_rect, header->background_colour);
             free(header->points_rect);
             header->points_rect = NULL;
         }

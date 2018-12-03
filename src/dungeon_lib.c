@@ -282,7 +282,7 @@ void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
     }
 }
 
-void clear_box(screen_t * screen, SDL_Rect * rect, enum ColourNum colour) {
+void clear_rect(screen_t * screen, SDL_Rect * rect, enum ColourNum colour) {
     int error = SDL_SetRenderDrawColor(
         screen->ren,
         colours[colour][0],

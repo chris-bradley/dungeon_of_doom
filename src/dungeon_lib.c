@@ -240,9 +240,6 @@ void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
                        enum ColourNum border_colour) {
     int error;
     SDL_Rect rect;
-    tab(screen->cursor, left_col, top_row);
-    paper(screen->cursor, border_colour);
-    print_left$_b$(screen, cols + 2);
     error = SDL_SetRenderDrawColor(
         screen->ren,
         colours[border_colour][0],

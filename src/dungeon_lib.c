@@ -235,17 +235,16 @@ char inkey$() {
     return key;
 }
 
-void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
-                       int cols, enum ColourNum background_colour,
-                       enum ColourNum border_colour) {
+void draw_box(screen_t * screen, int top_row, int left_col, int rows, int cols,
+              enum ColourNum colour) {
     int error;
     SDL_Rect rect;
     error = SDL_SetRenderDrawColor(
         screen->ren,
-        colours[border_colour][0],
-        colours[border_colour][1],
-        colours[border_colour][2],
-        colours[border_colour][3]
+        colours[colour][0],
+        colours[colour][1],
+        colours[colour][2],
+        colours[colour][3]
     );
     if (error) {
         fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
@@ -253,26 +252,6 @@ void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
     rect = (SDL_Rect) {
         .x = left_col * 8 * screen->zoom,
         .y = top_row * 8 * screen->zoom,
-        .w = (cols + 2) * 8 * screen->zoom,
-        .h = (rows + 2) * 8 * screen->zoom
-    };
-    error = SDL_RenderFillRect(screen->ren, &rect);
-    if (error) {
-        fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
-    }
-    error = SDL_SetRenderDrawColor(
-        screen->ren,
-        colours[background_colour][0],
-        colours[background_colour][1],
-        colours[background_colour][2],
-        colours[background_colour][3]
-    );
-    if (error) {
-        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
-    }
-    rect = (SDL_Rect) {
-        .x = (left_col + 1) * 8 * screen->zoom,
-        .y = (top_row  + 1) * 8 * screen->zoom,
         .w = cols * 8 * screen->zoom,
         .h = rows * 8 * screen->zoom
     };
@@ -280,6 +259,13 @@ void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
     if (error) {
         fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
     }
+}
+
+void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
+                       int cols, enum ColourNum background_colour,
+                       enum ColourNum border_colour) {
+    draw_box(screen, top_row, left_col, rows + 2, cols + 2, border_colour);
+    draw_box(screen, top_row + 1, left_col + 1, rows, cols, background_colour);
 }
 
 void clear_rect(screen_t * screen, SDL_Rect * rect, enum ColourNum colour) {

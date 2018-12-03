@@ -39,6 +39,9 @@ void clear_screen(screen_t * screen);
 
 char inkey$();
 
+void draw_box(screen_t * screen, int top_row, int left_col, int rows, int cols,
+              enum ColourNum colour);
+
 void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
                        int cols, enum ColourNum background_colour,
                        enum ColourNum border_colour);

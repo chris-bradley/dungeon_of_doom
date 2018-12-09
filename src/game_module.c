@@ -244,15 +244,14 @@ void monster_moves(screen_t * screen, monster_t * cur_monster,
     dungeon_contents[
         (int) cur_monster->coord_x
     ][(int) cur_monster->coord_y] = BLANK;
-    render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, cur_monster->coord_x,
-        cur_monster->coord_y
+    render_coord(
+        screen, dungeon_contents, cur_monster->coord_x, cur_monster->coord_y
     );
     dungeon_contents[
         (int) cur_monster->next_coord_x
     ][(int) cur_monster->next_coord_y] = cur_monster->char_code;
-    render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, (int) cur_monster->next_coord_x,
+    render_coord(
+        screen, dungeon_contents, (int) cur_monster->next_coord_x,
         (int) cur_monster->next_coord_y
     );
     cur_monster->coord_x = cur_monster->next_coord_x;
@@ -377,9 +376,8 @@ void monster_dies(screen_t * screen, audio_state_t * audio_state,
         sound_sawtooth(audio_state, sound_frequency);
         sound_noise(audio_state, sound_frequency);
     }
-    render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, cur_monster->coord_x,
-        cur_monster->coord_y
+    render_coord(
+        screen, dungeon_contents, cur_monster->coord_x, cur_monster->coord_y
     );
 }
 
@@ -491,9 +489,8 @@ void cast_metamorphosis(screen_t * screen, audio_state_t * audio_state,
         dungeon_contents[character->coord_x][character->coord_y] =
             rand() % 8 + 1 + BLANK;
         sound_sawtooth(audio_state, sound_frequency);
-        render_coord_and_check_for_monster(
-            screen, cur_monster, dungeon_contents, character->coord_x,
-            character->coord_y
+        render_coord(
+            screen, dungeon_contents, character->coord_x, character->coord_y
         );
     }
     if (item_at_character_coord <= SAFE_PLACE) {
@@ -727,9 +724,8 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
             character
         );
     }
-    render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, item_to_get_coord_x,
-        item_to_get_coord_y
+    render_coord(
+        screen, dungeon_contents, item_to_get_coord_x, item_to_get_coord_y
     );
     if (item_to_get > WALL && item_to_get < IDOL) {
         sound_frequency = item_to_get;
@@ -1337,8 +1333,8 @@ int main(__attribute__((__unused__)) int argc,
         item_at_character_coord =
             dungeon_contents[character->coord_x][character->coord_y];
         if (item_at_character_coord == WALL) {
-            render_coord_and_check_for_monster(
-                screen, cur_monster, dungeon_contents, character->coord_x,
+            render_coord(
+                screen, dungeon_contents, character->coord_x,
                 character->coord_y
             );
             character->coord_x = character->prev_coord_x;

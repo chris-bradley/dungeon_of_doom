@@ -4,19 +4,6 @@
 #include "dungeon_audio.h"
 #include "character_lib.h"
 
-enum CharCode {
-    CHARACTER_BASE = 65,
-    DUNGEON_BASE = 96,
-    BLANK = 102,
-    WALL = 103,
-    VASE = 104,
-    CHEST = 105,
-    IDOL = 106,
-    EXIT = 108,
-    TRAP = 109,
-    SAFE_PLACE = 110
-};
-
 typedef struct {
     int coord_x;
     int coord_y;

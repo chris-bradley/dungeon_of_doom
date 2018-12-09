@@ -134,10 +134,8 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
     SDL_RenderPresent(screen->ren);
 }
 
-void render_coord_and_check_for_monster(screen_t * screen,
-                                        monster_t * cur_monster,
-                                        int ** dungeon_contents, int coord_x,
-                                        int coord_y) {
+enum CharCode render_coord(screen_t * screen, int ** dungeon_contents,
+                           int coord_x, int coord_y) {
     enum CharCode item_at_coord;
     paper(screen->cursor, RED);
     ink(screen->cursor, YELLOW);
@@ -151,6 +149,11 @@ void render_coord_and_check_for_monster(screen_t * screen,
         YELLOW,
         RED
     );
+    return item_at_coord;
+}
+
+void check_for_monster(enum CharCode item_at_coord, monster_t * cur_monster,
+                       int coord_x, int coord_y) {
     if (
             abs(cur_monster->distance_x) < 4 ||
             item_at_coord <= SAFE_PLACE
@@ -164,6 +167,20 @@ void render_coord_and_check_for_monster(screen_t * screen,
     cur_monster->distance_x = 3;
     cur_monster->coord_x = (float) coord_x;
     cur_monster->coord_y = (float) coord_y;
+}
+
+
+void render_coord_and_check_for_monster(screen_t * screen,
+                                        monster_t * cur_monster,
+                                        int ** dungeon_contents, int coord_x,
+                                        int coord_y) {
+    int item_at_coord = render_coord(
+            screen,
+            dungeon_contents,
+            coord_x,
+            coord_y
+        );
+    check_for_monster(item_at_coord, cur_monster, coord_x, coord_y);
 }
 
 int sign(int x) {

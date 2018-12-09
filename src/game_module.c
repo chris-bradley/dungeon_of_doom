@@ -578,10 +578,6 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
         .h = 5 * 8 * screen->zoom
     };
     clear_rect(screen, &rect, YELLOW);
-    render_coord_and_check_for_monster(
-        screen, cur_monster, dungeon_contents, character->coord_x,
-        character->coord_y
-    );
     switch (spell_number) {
         case 1:
             cast_superzap(

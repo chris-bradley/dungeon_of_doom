@@ -64,7 +64,7 @@ typedef struct {
 } store_t;
 
 typedef struct character_s_t {
-    int * attrs;
+    double * attrs;
     character_class_t * class;
     char * name;
     int gold;
@@ -358,7 +358,7 @@ character_t * init_character(int inventory_size) {
     for (index = 0; index < inventory_size; index += 1) {
         character->inventory[index] = 0;
     }
-    character->attrs = malloc(sizeof(int) * 8);
+    character->attrs = malloc(sizeof(double) * 8);
     for (index = 0; index < 8; index += 1) {
         character->attrs[index] = (rand() % 5) + 2;
     }
@@ -373,7 +373,7 @@ int can_be_wanderer(__attribute__((__unused__)) character_t * character) {
 }
 
 int can_be_cleric(character_t * character) {
-    int * attrs = character->attrs;
+    double * attrs = character->attrs;
     if (attrs[INTELLIGENCE] > 6 && attrs[MORALITY] > 7) {
         return 1;
     }
@@ -381,7 +381,7 @@ int can_be_cleric(character_t * character) {
 }
 
 int can_be_mage(character_t * character) {
-    int * attrs = character->attrs;
+    double * attrs = character->attrs;
     if (attrs[INTELLIGENCE] > 8 && attrs[AURA] > 7) {
         return 1;
     }
@@ -389,7 +389,7 @@ int can_be_mage(character_t * character) {
 }
 
 int can_be_warrior(character_t * character) {
-    int * attrs = character->attrs;
+    double * attrs = character->attrs;
     if (
             attrs[STRENGTH] > 7 && attrs[MORALITY] > 5 &&
             attrs[STRENGTH] + attrs[VITALITY] > 10
@@ -400,7 +400,7 @@ int can_be_warrior(character_t * character) {
 }
 
 int can_be_barbarian(character_t * character) {
-    int * attrs = character->attrs;
+    double * attrs = character->attrs;
     if (
             attrs[STRENGTH] > 8 &&
             attrs[VITALITY] + attrs[AGILITY] > 12 &&

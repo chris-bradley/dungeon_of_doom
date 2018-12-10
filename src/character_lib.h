@@ -35,3 +35,30 @@ enum InventoryCode {
     HEALING_SALVE = 22,
     POTIONS = 23
 };
+
+struct character_s_t;
+
+typedef struct {
+    int id;
+    const char * name;
+    int (*elig_func)(struct character_s_t *);
+} character_class_t;
+
+typedef struct character_s_t {
+    int coord_x;
+    int coord_y;
+    int prev_coord_x;
+    int prev_coord_y;
+    int facing;  // Facing. NESW
+    double * attrs;
+    double initial_strength;
+    double initial_vitality;
+    double initial_experience;
+    character_class_t * class;
+    char * name;
+    int * inventory;
+    int * spells_remaining;
+    int treasure;
+    int gold;
+    int torches;
+} character_t;

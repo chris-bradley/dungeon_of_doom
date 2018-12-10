@@ -5,24 +5,6 @@
 #include "character_lib.h"
 
 typedef struct {
-    int coord_x;
-    int coord_y;
-    int prev_coord_x;
-    int prev_coord_y;
-    int facing;  // Facing. NESW
-    double * attrs;
-    double initial_strength;
-    double initial_vitality;
-    double initial_experience;
-    char * name;
-    int * inventory;
-    int * spells_remaining;
-    int treasure;
-    int gold;
-    int torches;
-} character_t;
-
-typedef struct {
     float coord_x;
     float coord_y;
     float next_coord_x;

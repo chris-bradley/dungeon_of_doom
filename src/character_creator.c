@@ -43,14 +43,6 @@ typedef struct {
     SDL_Rect * selector_rect;
 } main_menu_t;
 
-struct character_s_t;
-
-typedef struct {
-    int id;
-    const char * name;
-    int (*elig_func)(struct character_s_t *);
-} character_class_t;
-
 typedef struct {
     enum InventoryCode id;
     const char * name;
@@ -62,14 +54,6 @@ typedef struct {
     const char * name;
     item_t items[8];
 } store_t;
-
-typedef struct character_s_t {
-    double * attrs;
-    character_class_t * class;
-    char * name;
-    int gold;
-    int * inventory;
-} character_t;
 
 header_t * init_header(int screen_cols) {
     header_t * header = malloc(sizeof(header_t));

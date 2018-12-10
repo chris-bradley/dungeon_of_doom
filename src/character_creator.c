@@ -64,7 +64,7 @@ typedef struct {
 } store_t;
 
 typedef struct character_s_t {
-    int attrs[8];
+    int * attrs;
     character_class_t * class;
     char * name;
     int gold;
@@ -358,6 +358,7 @@ character_t * init_character(int inventory_size) {
     for (index = 0; index < inventory_size; index += 1) {
         character->inventory[index] = 0;
     }
+    character->attrs = malloc(sizeof(int) * 8);
     for (index = 0; index < 8; index += 1) {
         character->attrs[index] = (rand() % 5) + 2;
     }
@@ -949,6 +950,7 @@ int main(__attribute__((__unused__)) int argc,
     free(header->points_rect);
     free(header);
     free(character->name);
+    free(character->attrs);
     for (index = 0; index < 8; index += 1) {
         free(main_menu->items[index]->label_rect);
         free(main_menu->items[index]->value_rect);

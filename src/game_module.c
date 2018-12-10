@@ -15,7 +15,7 @@ typedef struct {
     double initial_vitality;
     double initial_experience;
     char * name;
-    int inventory[24];
+    int * inventory;
     int * spells_remaining;
     int treasure;
     int gold;
@@ -953,6 +953,7 @@ void load_character(screen_t * screen, character_t * character,
             (int) file_contents[file_index - 1] - CHARACTER_BASE;
         file_index += 1;
     }
+    character->inventory = malloc(sizeof(int) * *num_item_types);
     for (index = 0; index < *num_item_types; index += 1) {
         character->inventory[index] =
             (int) file_contents[file_index - 1] - CHARACTER_BASE;
@@ -1400,6 +1401,7 @@ int main(__attribute__((__unused__)) int argc,
 
     int i;
     free(character->name);
+    free(character->inventory);
     for (i = 0; i < 5; i += 1) {
         free(vertices[i]);
     }

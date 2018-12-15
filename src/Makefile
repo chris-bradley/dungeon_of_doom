@@ -145,7 +145,8 @@ character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 		character_creator.c
 
 game_module.exe : \
-	game_module.c dungeon_lib_win.o dungeon_audio_win.o character_lib.h
+	game_module.c dungeon_lib_win.o dungeon_audio_win.o character_lib.h \
+	monster_lib.h
 	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
@@ -162,7 +163,8 @@ game_module.exe : \
 		-o game_module.exe
 
 game_module : \
-	game_module.c dungeon_lib_lin.o dungeon_audio_lin.o character_lib.h
+	game_module.c dungeon_lib_lin.o dungeon_audio_lin.o character_lib.h \
+	monster_lib.h
 	gcc \
 		$(BASE_FLAGS) \
 		`sdl2-config --libs` \

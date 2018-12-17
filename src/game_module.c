@@ -600,8 +600,7 @@ int * init_song_notes() {
 }
 
 void game_won(screen_t * screen, audio_state_t * audio_state,
-              char * char_code_hero, int * finished, monster_t * cur_monster,
-              character_t * character) {
+              char * char_code_hero, int * finished, character_t * character) {
     int index, sound_frequency, direction,
         * song_notes = init_song_notes();
     paper(screen->cursor, YELLOW);
@@ -618,7 +617,6 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
             SDL_Delay(300 / 4);
         }
     }
-    cur_monster->strength = 0;
     tab(screen->cursor, 1, 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
@@ -643,8 +641,7 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
 
 void get_item(screen_t * screen, audio_state_t * audio_state,
               int ** vertices, char * char_code_hero, int * finished,
-              monster_t * cur_monster, character_t * character,
-              int ** dungeon_contents) {
+              character_t * character, int ** dungeon_contents) {
     int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y;
     item_to_get_coord_x = character->coord_x + vertices[character->facing][1];
     item_to_get_coord_y = character->coord_y + vertices[character->facing][2];
@@ -672,10 +669,7 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
         character->treasure += 1;
     }
     if (item_to_get == IDOL) {
-        game_won(
-            screen, audio_state, char_code_hero, finished, cur_monster,
-            character
-        );
+        game_won(screen, audio_state, char_code_hero, finished, character);
     }
     render_coord(
         screen, dungeon_contents, item_to_get_coord_x, item_to_get_coord_y
@@ -1239,7 +1233,7 @@ int main(__attribute__((__unused__)) int argc,
         if (pressed_key == 'g') {
             get_item(
                 screen, audio_state, vertices, char_code_hero, &finished,
-                cur_monster, character, dungeon_contents
+                character, dungeon_contents
             );
         }
         if (pressed_key == 'p') {

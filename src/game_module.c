@@ -109,26 +109,31 @@ enum CharCode render_coord(screen_t * screen, int ** dungeon_contents,
     return item_at_coord;
 }
 
-void check_for_monster(enum CharCode item_at_coord, monster_t * cur_monster,
-                       int coord_x, int coord_y) {
-    if (
-            abs(cur_monster->distance_x) < 4 ||
-            item_at_coord <= SAFE_PLACE
-    ) {
+void check_for_monster(enum CharCode item_at_coord,
+                       monster_list_t * monster_list, int coord_x,
+                       int coord_y) {
+    if (item_at_coord <= SAFE_PLACE) {
         return;
     }
-    cur_monster->char_code = item_at_coord;
-    cur_monster->type = cur_monster->char_code - VASE;
-    cur_monster->speed = cur_monster->type / 16.0;
-    cur_monster->strength = cur_monster->type * 6;
-    cur_monster->distance_x = 3;
-    cur_monster->coord_x = (float) coord_x;
-    cur_monster->coord_y = (float) coord_y;
+    monster_list_node_t * monster_list_node = monster_list->first_node;
+    while (monster_list_node != NULL) {
+       if (
+               monster_list_node->monster->coord_x == coord_x &&
+               monster_list_node->monster->coord_x == coord_x
+        ) {
+           return;
+        }
+        monster_list_node = monster_list_node->next_node;
+    }
+    monster_list_add(
+        monster_list,
+        monster_init(item_at_coord - VASE, coord_x, coord_y)
+    );
 }
 
 
 void render_coord_and_check_for_monster(screen_t * screen,
-                                        monster_t * cur_monster,
+                                        monster_list_t * monster_list,
                                         int ** dungeon_contents, int coord_x,
                                         int coord_y) {
     int item_at_coord = render_coord(
@@ -137,7 +142,7 @@ void render_coord_and_check_for_monster(screen_t * screen,
             coord_x,
             coord_y
         );
-    check_for_monster(item_at_coord, cur_monster, coord_x, coord_y);
+    check_for_monster(item_at_coord, monster_list, coord_x, coord_y);
 }
 
 int sign(int x) {
@@ -171,63 +176,63 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
     sound_sawtooth(audio_state, sound_frequency);
 }
 
-void monster_moves(screen_t * screen, monster_t * cur_monster,
+void monster_moves(screen_t * screen, monster_t * monster,
                    character_t * character, int ** dungeon_contents) {
     int item_at_monster_next_coord, direction_to_monster_x,
         direction_to_monster_y;
-    cur_monster->distance_x = (int) cur_monster->coord_x - character->coord_x;
-    direction_to_monster_x = sign(cur_monster->distance_x);
-    cur_monster->distance_y = (int) cur_monster->coord_y - character->coord_y;
-    direction_to_monster_y = sign(cur_monster->distance_y);
-    cur_monster->next_coord_x =
-        cur_monster->coord_x - (
-            cur_monster->speed * (float) direction_to_monster_x
+    monster->distance_x = (int) monster->coord_x - character->coord_x;
+    direction_to_monster_x = sign(monster->distance_x);
+    monster->distance_y = (int) monster->coord_y - character->coord_y;
+    direction_to_monster_y = sign(monster->distance_y);
+    monster->next_coord_x =
+        monster->coord_x - (
+            monster->speed * (float) direction_to_monster_x
         );
-    cur_monster->next_coord_y =
-        cur_monster->coord_y - (
-            cur_monster->speed * (float) direction_to_monster_y
+    monster->next_coord_y =
+        monster->coord_y - (
+            monster->speed * (float) direction_to_monster_y
         );
     item_at_monster_next_coord =
         dungeon_contents[
-            (int) cur_monster->next_coord_x
-        ][(int) cur_monster->next_coord_y];
+            (int) monster->next_coord_x
+        ][(int) monster->next_coord_y];
     if (
             item_at_monster_next_coord > BLANK &&
-            item_at_monster_next_coord != cur_monster->char_code
+            item_at_monster_next_coord != monster->char_code
     ) {
-        cur_monster->next_coord_y = cur_monster->coord_y;
-        cur_monster->next_coord_x = cur_monster->coord_x;
+        monster->next_coord_y = monster->coord_y;
+        monster->next_coord_x = monster->coord_x;
     }
     dungeon_contents[
-        (int) cur_monster->coord_x
-    ][(int) cur_monster->coord_y] = BLANK;
+        (int) monster->coord_x
+    ][(int) monster->coord_y] = BLANK;
     render_coord(
-        screen, dungeon_contents, cur_monster->coord_x, cur_monster->coord_y
+        screen, dungeon_contents, monster->coord_x, monster->coord_y
     );
     dungeon_contents[
-        (int) cur_monster->next_coord_x
-    ][(int) cur_monster->next_coord_y] = cur_monster->char_code;
+        (int) monster->next_coord_x
+    ][(int) monster->next_coord_y] = monster->char_code;
     render_coord(
-        screen, dungeon_contents, (int) cur_monster->next_coord_x,
-        (int) cur_monster->next_coord_y
+        screen, dungeon_contents, (int) monster->next_coord_x,
+        (int) monster->next_coord_y
     );
-    cur_monster->coord_x = cur_monster->next_coord_x;
-    cur_monster->coord_y = cur_monster->next_coord_y;
+    monster->coord_x = monster->next_coord_x;
+    monster->coord_y = monster->next_coord_y;
 }
 
 void monster_attacks(screen_t * screen, audio_state_t * audio_state,
-                     monster_t * cur_monster, character_t * character,
+                     monster_t * monster, character_t * character,
                      int item_at_character_coord, const char ** strings,
                      const char ** item_names) {
     int damage, sound_frequency, item_num, monster_broke_item;
     char * message;
     damage = 0;
     if (
-            abs(cur_monster->distance_x) <= 1 &&
-            abs(cur_monster->distance_y) <= 1 &&
+            abs(monster->distance_x) <= 1 &&
+            abs(monster->distance_y) <= 1 &&
             item_at_character_coord != SAFE_PLACE
     ) {
-        damage = cur_monster->type * 0.5;
+        damage = monster->type * 0.5;
         sound_frequency = damage;
         sound_sawtooth(audio_state, sound_frequency);
     } else {
@@ -255,8 +260,8 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
     character->attrs[STRENGTH] -= damage;
     character->attrs[VITALITY] -= damage / 101;
     item_num = 0;
-    monster_broke_item = rand() % cur_monster->type;
-    sound_frequency = cur_monster->char_code;
+    monster_broke_item = rand() % monster->type;
+    sound_frequency = monster->char_code;
     sound_sawtooth(audio_state, sound_frequency);
     sound_noise(audio_state, sound_frequency);
     int done = 0;
@@ -277,14 +282,20 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
 }
 
 void monsters_turn(screen_t * screen, audio_state_t * audio_state,
-                   monster_t * cur_monster, character_t * character,
+                   monster_list_t * monster_list, character_t * character,
                    int ** dungeon_contents, int item_at_character_coord,
                    const char ** strings, const char ** item_names) {
-    monster_moves(screen, cur_monster, character, dungeon_contents);
-    monster_attacks(
-        screen, audio_state, cur_monster, character, item_at_character_coord,
-        strings, item_names
-    );
+    monster_list_node_t * monster_list_node = monster_list->first_node;
+    monster_t * monster = NULL;
+    while (monster_list_node != NULL) {
+        monster = monster_list_node->monster;
+        monster_moves(screen, monster, character, dungeon_contents);
+        monster_attacks(
+            screen, audio_state, monster, character, item_at_character_coord,
+            strings, item_names
+        );
+        monster_list_node = monster_list_node->next_node;
+    }
 }
 
 void character_dies(screen_t * screen, audio_state_t * audio_state,
@@ -311,15 +322,16 @@ void character_dies(screen_t * screen, audio_state_t * audio_state,
 }
 
 void monster_dies(screen_t * screen, audio_state_t * audio_state,
-                  character_t * character, monster_t * cur_monster,
-                  int ** dungeon_contents, const char ** strings) {
+                  character_t * character, monster_list_t * monster_list,
+                  monster_t * monster, int ** dungeon_contents,
+                  const char ** strings) {
     char * message;
-    int sound_frequency;
-    cur_monster->distance_x = 255;
-    cur_monster->strength = 0;
-    dungeon_contents[
-        (int) cur_monster->next_coord_x
-    ][(int) cur_monster->next_coord_y] = BLANK;
+    int coord_x = (int) monster->coord_x,
+        coord_y = (int) monster->coord_y,
+        sound_frequency;
+    monster_list_remove(monster_list, monster);
+    free(monster);
+    dungeon_contents[coord_x][coord_y] = BLANK;
     character->attrs[EXPERIENCE] += 0.1;
     message = (char *) malloc(sizeof(char) * (strlen(strings[6]) + 1));
     if (message == NULL) {
@@ -333,15 +345,14 @@ void monster_dies(screen_t * screen, audio_state_t * audio_state,
         sound_sawtooth(audio_state, sound_frequency);
         sound_noise(audio_state, sound_frequency);
     }
-    render_coord(
-        screen, dungeon_contents, cur_monster->coord_x, cur_monster->coord_y
-    );
+    render_coord(screen, dungeon_contents, coord_x, coord_y);
 }
 
 
 void attack_monster(screen_t * screen, audio_state_t * audio_state,
-                    character_t * character, monster_t * cur_monster,
-                    int ** dungeon_contents, const char ** strings) {
+                    character_t * character, monster_list_t * monster_list,
+                    monster_t * monster, int ** dungeon_contents,
+                    const char ** strings) {
     int damage, t$_ind = rand() % 3 + 1;
     char * message;
     message = (char *) malloc(sizeof(char) * (strlen(strings[t$_ind]) + 1));
@@ -366,7 +377,7 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
         );
     if (
             character->attrs[AGILITY] + character->attrs[LUCK] <
-                rand() % cur_monster->type + 2
+                rand() % monster->type + 2
     ) {
         free(message);
         message = (char *) malloc(sizeof(char) * (strlen(strings[4]) + 1));
@@ -377,31 +388,35 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
         strcpy(message, strings[4]);
         damage = 0;
     }
-    cur_monster->strength -= damage;
+    monster->strength -= damage;
     draw_message(screen, message);
     free(message);
     character->attrs[STRENGTH] -= damage / 100;
     character->attrs[EXPERIENCE] += 0.05;
-    if (cur_monster->strength < 1) {
+    if (monster->strength < 1) {
         monster_dies(
-            screen, audio_state, character, cur_monster, dungeon_contents,
-            strings
+            screen, audio_state, character, monster_list, monster,
+            dungeon_contents, strings
         );
     }
 }
 
 void cast_superzap(screen_t * screen, audio_state_t * audio_state,
-                   character_t * character, monster_t * cur_monster,
+                   character_t * character, monster_list_t * monster_list,
                    int ** dungeon_contents, const char ** strings) {
     int sound_frequency;
+    monster_t * monster;
     for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
         sound_sawtooth(audio_state, sound_frequency);
         sound_noise(audio_state, sound_frequency);
     }
-    if (cur_monster->distance_x < 255) {
+    if (monster_list->first_node != NULL) {
+        monster = monster_list_get_nearest(
+            monster_list, character->coord_x, character->coord_y
+        );
         monster_dies(
-            screen, audio_state, character, cur_monster, dungeon_contents,
-            strings
+            screen, audio_state, character, monster_list, monster,
+            dungeon_contents, strings
         );
     }
 }
@@ -439,9 +454,10 @@ void cast_powersurge(character_t * character, int spell_number) {
 }
 
 void cast_metamorphosis(screen_t * screen, audio_state_t * audio_state,
-                        monster_t * cur_monster, character_t * character,
+                        monster_list_t * monster_list, character_t * character,
                         int ** dungeon_contents, int item_at_character_coord) {
     int sound_frequency;
+    monster_t * monster;
     for (sound_frequency = 1; sound_frequency <= 30; sound_frequency += 1) {
         dungeon_contents[character->coord_x][character->coord_y] =
             rand() % 8 + 1 + BLANK;
@@ -451,8 +467,12 @@ void cast_metamorphosis(screen_t * screen, audio_state_t * audio_state,
         );
     }
     if (item_at_character_coord <= SAFE_PLACE) {
-        cur_monster->distance_x = 255;
-        cur_monster->strength = 0;
+        monster = monster_list_get_nearest(
+            monster_list, character->coord_x, character->coord_y
+        );
+        if (monster != NULL) {
+            monster_list_remove(monster_list, monster);
+        }
     }
     for (sound_frequency = 1; sound_frequency <= 20; sound_frequency += 4) {
         sound_sawtooth(audio_state, sound_frequency);
@@ -466,7 +486,7 @@ void cast_healing(character_t * character) {
 }
 
 void cast_spell(screen_t * screen, audio_state_t * audio_state,
-                char * char_code_hero, monster_t * cur_monster,
+                char * char_code_hero, monster_list_t * monster_list,
                 character_t * character, int ** dungeon_contents,
                 int item_at_character_coord, const char ** strings,
                 int screen_cols) {
@@ -538,7 +558,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     switch (spell_number) {
         case 1:
             cast_superzap(
-                screen, audio_state, character, cur_monster, dungeon_contents,
+                screen, audio_state, character, monster_list, dungeon_contents,
                 strings
             );
             break;
@@ -556,7 +576,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
             break;
         case 5:
             cast_metamorphosis(
-                screen, audio_state, cur_monster, character, dungeon_contents,
+                screen, audio_state, monster_list, character, dungeon_contents,
                 item_at_character_coord
             );
             break;
@@ -699,7 +719,7 @@ void drink_potion(character_t * character) {
     }
 }
 
-void light_torch(screen_t * screen, monster_t * cur_monster,
+void light_torch(screen_t * screen, monster_list_t * monster_list,
                  character_t * character, int ** dungeon_contents,
                  const char ** strings) {
     int coord_x, coord_y;
@@ -727,7 +747,7 @@ void light_torch(screen_t * screen, monster_t * cur_monster,
         ) {
             if (coord_x > 0 && coord_x < 16 && coord_y > 0 && coord_y < 16) {
                 render_coord_and_check_for_monster(
-                    screen, cur_monster, dungeon_contents, coord_x, coord_y
+                    screen, monster_list, dungeon_contents, coord_x, coord_y
                 );
             }
         }
@@ -780,7 +800,7 @@ void draw_interface(screen_t * screen, character_t * character,
 }
 
 void load_level(screen_t * screen, int skip_first_exp_check,
-                monster_t * cur_monster, int * dungeon_level,
+                monster_list_t * monster_list, int * dungeon_level,
                 character_t * character, int ** dungeon_contents,
                 const char ** strings, int screen_cols) {
     int correct_level_loaded, index, entrance_coord_x, entrance_coord_y,
@@ -855,28 +875,29 @@ void load_level(screen_t * screen, int skip_first_exp_check,
     character->coord_y = entrance_coord_y;
     character->prev_coord_x = character->coord_x;
     character->prev_coord_y = character->coord_y;
-    cur_monster->distance_x = 255;
+    monster_list_clear(monster_list);
 }
 
 void load_level_with_first_exp_check(screen_t * screen,
-                                     monster_t * cur_monster,
+                                     monster_list_t * monster_list,
                                      int * dungeon_level,
                                      character_t * character,
                                      int ** dungeon_contents,
                                      const char ** strings, int screen_cols) {
     load_level(
-        screen, 0, cur_monster, dungeon_level, character, dungeon_contents,
+        screen, 0, monster_list, dungeon_level, character, dungeon_contents,
         strings, screen_cols
     );
 }
 
-void load_level_wo_first_exp_check(screen_t * screen, monster_t * cur_monster,
+void load_level_wo_first_exp_check(screen_t * screen,
+                                   monster_list_t * monster_list,
                                    int * dungeon_level,
                                    character_t * character,
                                    int ** dungeon_contents,
                                    const char ** strings, int screen_cols) {
     load_level(
-        screen, 1, cur_monster, dungeon_level, character, dungeon_contents,
+        screen, 1, monster_list, dungeon_level, character, dungeon_contents,
         strings, screen_cols
     );
 }
@@ -1176,19 +1197,8 @@ int main(__attribute__((__unused__)) int argc,
          * char_code_hero = NULL,
          * message;
     const char ** strings, ** item_names;
-    monster_t * cur_monster = malloc(sizeof(monster_t));
-    if (cur_monster == NULL) {
-        fprintf(stderr, "cur_monster is NULL!\n");
-        exit(1);
-    }
-    *cur_monster = (monster_t) {
-        .coord_x = 0,
-        .coord_y = 0,
-        .next_coord_x = 0,
-        .next_coord_y = 0,
-        .speed = 0,
-        .distance_x = 255
-    };
+    monster_list_t * monster_list = monster_list_init();
+    monster_t * monster;
     character_t * character = malloc(sizeof(character_t));
     if (character == NULL) {
         fprintf(stderr, "character is NULL!\n");
@@ -1206,18 +1216,23 @@ int main(__attribute__((__unused__)) int argc,
     );
     load_character(screen, character, &num_item_types, strings);
     load_level_wo_first_exp_check(
-        screen, cur_monster, &dungeon_level, character, dungeon_contents,
+        screen, monster_list, &dungeon_level, character, dungeon_contents,
         strings, screen_cols
     );
     int game_over = 0;
     do {
         SDL_RenderPresent(screen->ren);
         pressed_key = inkey$();
-        if (pressed_key == 'a' && cur_monster->distance_x < 255 ) {
-            attack_monster(
-                screen, audio_state, character, cur_monster, dungeon_contents,
-                strings
+        if (pressed_key == 'a' && monster_list->first_node != NULL) {
+            monster = monster_list_get_nearest(
+                monster_list, character->coord_x, character->coord_y
             );
+            if (monster != NULL) {
+                attack_monster(
+                    screen, audio_state, character, monster_list, monster,
+                    dungeon_contents, strings
+                );
+            }
         }
         if (
                 pressed_key == 'c' &&
@@ -1226,7 +1241,7 @@ int main(__attribute__((__unused__)) int argc,
                     character->inventory[SCROLLS] > 0
         ) {
             cast_spell(
-                screen, audio_state, char_code_hero, cur_monster, character,
+                screen, audio_state, char_code_hero, monster_list, character,
                 dungeon_contents, item_at_character_coord, strings, screen_cols
             );
         }
@@ -1241,7 +1256,7 @@ int main(__attribute__((__unused__)) int argc,
         }
         if (pressed_key == 'r') {
             light_torch(
-                screen, cur_monster, character, dungeon_contents, strings
+                screen, monster_list, character, dungeon_contents, strings
             );
         }
         if (pressed_key == 's') {
@@ -1317,15 +1332,15 @@ int main(__attribute__((__unused__)) int argc,
                 character->prev_coord_y != character->coord_y
         ) {
             render_coord_and_check_for_monster(
-                screen, cur_monster, dungeon_contents, character->prev_coord_x,
+                screen, monster_list, dungeon_contents, character->prev_coord_x,
                 character->prev_coord_y
             );
         }
         character->prev_coord_x = character->coord_x;
         character->prev_coord_y = character->coord_y;
-        if (cur_monster->distance_x < 255) {
+        if (monster_list->first_node != NULL) {
             monsters_turn(
-                screen, audio_state, cur_monster, character, dungeon_contents,
+                screen, audio_state, monster_list, character, dungeon_contents,
                 item_at_character_coord, strings, item_names
             );
         }
@@ -1347,7 +1362,7 @@ int main(__attribute__((__unused__)) int argc,
             draw_message(screen, message);
             free(message);
             load_level_with_first_exp_check(
-                screen, cur_monster, &dungeon_level, character,
+                screen, monster_list, &dungeon_level, character,
                 dungeon_contents, strings, screen_cols
             );
             game_over = 0;
@@ -1380,6 +1395,7 @@ int main(__attribute__((__unused__)) int argc,
     free(strings);
     free(item_names);
     free(character);
-    free(cur_monster);
+    monster_list_clear(monster_list);
+    free(monster_list);
     return 0;
 }

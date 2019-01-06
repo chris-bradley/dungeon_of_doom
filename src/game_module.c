@@ -118,8 +118,8 @@ void check_for_monster(enum CharCode item_at_coord,
     monster_list_node_t * monster_list_node = monster_list->first_node;
     while (monster_list_node != NULL) {
        if (
-               monster_list_node->monster->coord_x == coord_x &&
-               monster_list_node->monster->coord_x == coord_x
+               (int) monster_list_node->monster->coord_x == coord_x &&
+               (int) monster_list_node->monster->coord_x == coord_x
         ) {
            return;
         }

@@ -180,25 +180,20 @@ void monster_moves(screen_t * screen, monster_t * monster,
                    character_t * character, int ** dungeon_contents) {
     int item_at_monster_next_coord, direction_to_monster_x,
         direction_to_monster_y;
+    float next_coord_x, next_coord_y;
     monster->distance_x = (int) monster->coord_x - character->coord_x;
     direction_to_monster_x = sign(monster->distance_x);
     monster->distance_y = (int) monster->coord_y - character->coord_y;
     direction_to_monster_y = sign(monster->distance_y);
-    monster->next_coord_x =
-        monster->coord_x - (
-            monster->speed * (float) direction_to_monster_x
-        );
-    monster->next_coord_y =
-        monster->coord_y - (
-            monster->speed * (float) direction_to_monster_y
-        );
+    next_coord_x =
+        monster->coord_x - (monster->speed * (float) direction_to_monster_x);
+    next_coord_y =
+        monster->coord_y - (monster->speed * (float) direction_to_monster_y);
     item_at_monster_next_coord =
-        dungeon_contents[
-            (int) monster->next_coord_x
-        ][(int) monster->next_coord_y];
+        dungeon_contents[(int) next_coord_x][(int) next_coord_y];
     if (item_at_monster_next_coord > BLANK) {
-        monster->next_coord_y = monster->coord_y;
-        monster->next_coord_x = monster->coord_x;
+        next_coord_y = monster->coord_y;
+        next_coord_x = monster->coord_x;
     }
     dungeon_contents[
         (int) monster->coord_x
@@ -206,15 +201,13 @@ void monster_moves(screen_t * screen, monster_t * monster,
     render_coord(
         screen, dungeon_contents, monster->coord_x, monster->coord_y
     );
-    dungeon_contents[
-        (int) monster->next_coord_x
-    ][(int) monster->next_coord_y] = monster->char_code;
+    dungeon_contents[(int) next_coord_x][(int) next_coord_y] =
+        monster->char_code;
     render_coord(
-        screen, dungeon_contents, (int) monster->next_coord_x,
-        (int) monster->next_coord_y
+        screen, dungeon_contents, (int) next_coord_x, (int) next_coord_y
     );
-    monster->coord_x = monster->next_coord_x;
-    monster->coord_y = monster->next_coord_y;
+    monster->coord_x = next_coord_x;
+    monster->coord_y = next_coord_y;
 }
 
 void monster_attacks(screen_t * screen, audio_state_t * audio_state,

@@ -1,8 +1,6 @@
 typedef struct {
     float coord_x;
     float coord_y;
-    float next_coord_x;
-    float next_coord_y;
     float speed;
     int distance_x;
     int distance_y;

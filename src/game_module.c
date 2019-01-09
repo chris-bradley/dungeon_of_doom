@@ -172,8 +172,7 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
     draw_message(screen, message);
     free(message);
     sound_noise(audio_state, sound_frequency);
-    sound_frequency = item_num;
-    sound_sawtooth(audio_state, sound_frequency);
+    sound_sawtooth(audio_state, item_num);
 }
 
 void monster_moves(screen_t * screen, monster_t * monster,
@@ -211,7 +210,7 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
                      monster_t * monster, character_t * character,
                      int item_at_character_coord, const char ** strings,
                      const char ** item_names) {
-    int damage, sound_frequency, item_num, monster_broke_item;
+    int damage, item_num, monster_broke_item;
     char * message;
     if (
             abs((int) monster->coord_x - character->coord_x) > 1 ||
@@ -221,8 +220,7 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
         return;
     }
     damage = monster->type * 0.5;
-    sound_frequency = damage;
-    sound_sawtooth(audio_state, sound_frequency);
+    sound_sawtooth(audio_state, damage);
     if (damage * 12 < character->attrs[LUCK] + character->attrs[AGILITY]) {
         return;
     }
@@ -234,7 +232,7 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
     strcpy(message, strings[5]);
     draw_message(screen, message);
     free(message);
-    sound_noise(audio_state, sound_frequency);
+    sound_noise(audio_state, damage);
     damage /= (
         3 + character->inventory[HEAVY_ARMOUR] +
         character->inventory[CHAIN_ARMOUR] +
@@ -246,14 +244,13 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
     character->attrs[VITALITY] -= damage / 101;
     item_num = 0;
     monster_broke_item = rand() % monster->type;
-    sound_frequency = monster->char_code;
-    sound_sawtooth(audio_state, sound_frequency);
-    sound_noise(audio_state, sound_frequency);
+    sound_sawtooth(audio_state, monster->char_code);
+    sound_noise(audio_state, monster->char_code);
     int done = 0;
     do {
         if (monster_broke_item == 1 && character->inventory[item_num] > 0) {
             monster_breaks_items(
-                screen, audio_state, item_num, sound_frequency, character,
+                screen, audio_state, item_num, monster->char_code, character,
                 strings, item_names
             );
             monster_broke_item = 0;
@@ -408,14 +405,11 @@ void cast_superzap(screen_t * screen, audio_state_t * audio_state,
 
 void cast_sanctuary(audio_state_t * audio_state, character_t * character,
                     int ** dungeon_contents, int item_at_character_coord) {
-    int sound_frequency;
     if (item_at_character_coord == BLANK) {
         dungeon_contents[character->coord_x][character->coord_y] = SAFE_PLACE;
     }
-    sound_frequency = 100;
-    sound_sawtooth(audio_state, sound_frequency);
-    sound_frequency = 200;
-    sound_sawtooth(audio_state, sound_frequency);
+    sound_sawtooth(audio_state, 100);
+    sound_sawtooth(audio_state, 200);
 }
 
 void cast_teleport(screen_t * screen, audio_state_t * audio_state,
@@ -606,15 +600,14 @@ int * init_song_notes() {
 
 void game_won(screen_t * screen, audio_state_t * audio_state,
               char * char_code_hero, int * finished, character_t * character) {
-    int index, sound_frequency, direction,
+    int index, direction,
         * song_notes = init_song_notes();
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, RED);
     tab(screen->cursor, 0, 1);
     free(print_text(screen, " THY QUEST IS OVER! "));
     for (index = 0; index < 18; index += 1) {
-        sound_frequency = song_notes[index];
-        sound_sawtooth(audio_state, sound_frequency);
+        sound_sawtooth(audio_state, song_notes[index]);
 
         for (direction = 1; direction <= 4; direction += 1) {
             character->facing = direction;
@@ -647,7 +640,7 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
 void get_item(screen_t * screen, audio_state_t * audio_state,
               int ** vertices, char * char_code_hero, int * finished,
               character_t * character, int ** dungeon_contents) {
-    int sound_frequency, item_to_get, item_to_get_coord_x, item_to_get_coord_y;
+    int item_to_get, item_to_get_coord_x, item_to_get_coord_y;
     item_to_get_coord_x = character->coord_x + vertices[character->facing][1];
     item_to_get_coord_y = character->coord_y + vertices[character->facing][2];
     if (item_to_get_coord_x < 0) {
@@ -680,10 +673,8 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
         screen, dungeon_contents, item_to_get_coord_x, item_to_get_coord_y
     );
     if (item_to_get > WALL && item_to_get < IDOL) {
-        sound_frequency = item_to_get;
-        sound_sawtooth(audio_state, sound_frequency);
-        sound_frequency = item_to_get + 5;
-        sound_sawtooth(audio_state, sound_frequency);
+        sound_sawtooth(audio_state, item_to_get);
+        sound_sawtooth(audio_state, item_to_get + 5);
     }
 }
 

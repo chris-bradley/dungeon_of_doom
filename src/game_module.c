@@ -213,18 +213,16 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
                      const char ** item_names) {
     int damage, sound_frequency, item_num, monster_broke_item;
     char * message;
-    damage = 0;
     if (
-            abs((int) monster->coord_x - character->coord_x) <= 1 &&
-            abs((int) monster->coord_y - character->coord_y) <= 1 &&
-            item_at_character_coord != SAFE_PLACE
+            abs((int) monster->coord_x - character->coord_x) > 1 ||
+            abs((int) monster->coord_y - character->coord_y) > 1 ||
+            item_at_character_coord == SAFE_PLACE
     ) {
-        damage = monster->type * 0.5;
-        sound_frequency = damage;
-        sound_sawtooth(audio_state, sound_frequency);
-    } else {
-        sound_frequency = 0;
+        return;
     }
+    damage = monster->type * 0.5;
+    sound_frequency = damage;
+    sound_sawtooth(audio_state, sound_frequency);
     if (damage * 12 < character->attrs[LUCK] + character->attrs[AGILITY]) {
         return;
     }

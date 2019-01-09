@@ -246,21 +246,18 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
     monster_broke_item = rand() % monster->type;
     sound_sawtooth(audio_state, monster->char_code);
     sound_noise(audio_state, monster->char_code);
-    int done = 0;
-    do {
-        if (monster_broke_item == 1 && character->inventory[item_num] > 0) {
-            monster_breaks_items(
-                screen, audio_state, item_num, monster->char_code, character,
-                strings, item_names
-            );
-            monster_broke_item = 0;
-        }
-        if (item_num < 10) {
+    if (monster_broke_item == 1) {
+        do {
+            if (character->inventory[item_num] > 0) {
+                monster_breaks_items(
+                    screen, audio_state, item_num, monster->char_code,
+                    character, strings, item_names
+                );
+                item_num = 10;
+            }
             item_num += 1;
-        } else {
-            done = 1;
-        }
-    } while (!done);
+        } while (item_num < 10);
+    }
 }
 
 void monsters_turn(screen_t * screen, audio_state_t * audio_state,

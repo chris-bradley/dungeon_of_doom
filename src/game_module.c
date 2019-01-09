@@ -190,8 +190,7 @@ void monster_moves(screen_t * screen, monster_t * monster,
     item_at_monster_next_coord =
         dungeon_contents[(int) next_coord_x][(int) next_coord_y];
     if (item_at_monster_next_coord > BLANK) {
-        next_coord_y = monster->coord_y;
-        next_coord_x = monster->coord_x;
+        return;
     }
     dungeon_contents[
         (int) monster->coord_x

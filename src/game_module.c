@@ -181,10 +181,8 @@ void monster_moves(screen_t * screen, monster_t * monster,
     int item_at_monster_next_coord, direction_to_monster_x,
         direction_to_monster_y;
     float next_coord_x, next_coord_y;
-    monster->distance_x = (int) monster->coord_x - character->coord_x;
-    direction_to_monster_x = sign(monster->distance_x);
-    monster->distance_y = (int) monster->coord_y - character->coord_y;
-    direction_to_monster_y = sign(monster->distance_y);
+    direction_to_monster_x = sign((int) monster->coord_x - character->coord_x);
+    direction_to_monster_y = sign((int) monster->coord_y - character->coord_y);
     next_coord_x =
         monster->coord_x - (monster->speed * (float) direction_to_monster_x);
     next_coord_y =
@@ -218,8 +216,8 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
     char * message;
     damage = 0;
     if (
-            abs(monster->distance_x) <= 1 &&
-            abs(monster->distance_y) <= 1 &&
+            abs((int) monster->coord_x - character->coord_x) <= 1 &&
+            abs((int) monster->coord_y - character->coord_y) <= 1 &&
             item_at_character_coord != SAFE_PLACE
     ) {
         damage = monster->type * 0.5;

@@ -2,8 +2,6 @@ typedef struct {
     float coord_x;
     float coord_y;
     float speed;
-    int distance_x;
-    int distance_y;
     int type;
     int strength;
     int char_code;

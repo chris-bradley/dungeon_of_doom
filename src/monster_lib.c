@@ -11,7 +11,6 @@ monster_t * monster_init(int type, int coord_x, int coord_y) {
     monster->type = type;
     monster->speed = type / 16.0;
     monster->strength = type * 6;
-    monster->distance_x = 3;
     monster->coord_x = (float) coord_x;
     monster->coord_y = (float) coord_y;
 

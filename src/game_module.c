@@ -177,8 +177,7 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
 
 void monster_moves(screen_t * screen, monster_t * monster,
                    character_t * character, int ** dungeon_contents) {
-    int item_at_monster_next_coord, direction_to_monster_x,
-        direction_to_monster_y;
+    int direction_to_monster_x, direction_to_monster_y;
     float next_coord_x, next_coord_y;
     direction_to_monster_x = sign((int) monster->coord_x - character->coord_x);
     direction_to_monster_y = sign((int) monster->coord_y - character->coord_y);
@@ -186,9 +185,7 @@ void monster_moves(screen_t * screen, monster_t * monster,
         monster->coord_x - (monster->speed * (float) direction_to_monster_x);
     next_coord_y =
         monster->coord_y - (monster->speed * (float) direction_to_monster_y);
-    item_at_monster_next_coord =
-        dungeon_contents[(int) next_coord_x][(int) next_coord_y];
-    if (item_at_monster_next_coord > BLANK) {
+    if (dungeon_contents[(int) next_coord_x][(int) next_coord_y] > BLANK) {
         return;
     }
     dungeon_contents[

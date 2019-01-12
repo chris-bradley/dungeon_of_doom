@@ -188,9 +188,7 @@ void monster_moves(screen_t * screen, monster_t * monster,
     if (dungeon_contents[(int) next_coord_x][(int) next_coord_y] > BLANK) {
         return;
     }
-    dungeon_contents[
-        (int) monster->coord_x
-    ][(int) monster->coord_y] = BLANK;
+    dungeon_contents[(int) monster->coord_x][(int) monster->coord_y] = BLANK;
     render_coord(
         screen, dungeon_contents, monster->coord_x, monster->coord_y
     );

@@ -206,7 +206,6 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
                      int item_at_character_coord, const char ** strings,
                      const char ** item_names) {
     int damage, item_num, monster_broke_item;
-    char * message;
     if (
             abs((int) monster->coord_x - character->coord_x) > 1 ||
             abs((int) monster->coord_y - character->coord_y) > 1 ||
@@ -219,14 +218,7 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
     if (damage * 12 < character->attrs[LUCK] + character->attrs[AGILITY]) {
         return;
     }
-    message = (char *) malloc(sizeof(char) * (strlen(strings[5]) + 1));
-    if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(message, strings[5]);
-    draw_message(screen, message);
-    free(message);
+    draw_message(screen, strings[5]);
     sound_noise(audio_state, damage);
     damage /= (
         3 + character->inventory[HEAVY_ARMOUR] +
@@ -274,18 +266,10 @@ void monsters_turn(screen_t * screen, audio_state_t * audio_state,
 
 void character_dies(screen_t * screen, audio_state_t * audio_state,
                     char * char_code_hero, character_t * character) {
-    char * message;
     int sound_frequency;
     character->facing = 5;
     character->attrs[STRENGTH] = 0;
-    message = (char *) malloc(sizeof(char));
-    if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(message, "");
-    draw_message(screen, message);
-    free(message);
+    draw_message(screen, "");
     tab(screen->cursor, 1, 5);
     free(print_text(screen, "THOU HAST EXPIRED!"));
     for (sound_frequency = 150; sound_frequency >= 1; sound_frequency -= 4) {
@@ -299,7 +283,6 @@ void monster_dies(screen_t * screen, audio_state_t * audio_state,
                   character_t * character, monster_list_t * monster_list,
                   monster_t * monster, int ** dungeon_contents,
                   const char ** strings) {
-    char * message;
     int coord_x = (int) monster->coord_x,
         coord_y = (int) monster->coord_y,
         sound_frequency;
@@ -307,14 +290,7 @@ void monster_dies(screen_t * screen, audio_state_t * audio_state,
     free(monster);
     dungeon_contents[coord_x][coord_y] = BLANK;
     character->attrs[EXPERIENCE] += 0.1;
-    message = (char *) malloc(sizeof(char) * (strlen(strings[6]) + 1));
-    if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(message, strings[6]);
-    draw_message(screen, message);
-    free(message);
+    draw_message(screen, strings[6]);
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
         sound_sawtooth(audio_state, sound_frequency);
         sound_noise(audio_state, sound_frequency);
@@ -479,14 +455,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     tab(screen->cursor, 0, 4);
     free(print_text(screen, "CONSULT THE LORE"));
     do {
-        message = (char *) malloc(sizeof(char) * 18);
-        if (message == NULL) {
-            fprintf(stderr, "message is NULL!\n");
-            exit(1);
-        }
-        strcpy(message, "USE SPELL NUMBER?");
-        pressed_key = get_keyboard_input(screen, message);
-        free(message);
+        pressed_key = get_keyboard_input(screen, "USE SPELL NUMBER?");
         char * outstring = (char *) malloc(sizeof(char) * 2);
         if (outstring == NULL) {
             fprintf(stderr, "outstring is NULL!\n");
@@ -691,16 +660,8 @@ void light_torch(screen_t * screen, monster_list_t * monster_list,
                  character_t * character, int ** dungeon_contents,
                  const char ** strings) {
     int coord_x, coord_y;
-    char * message;
     if (character->torches == 0) {
-        message = (char *) malloc(sizeof(char) * (strlen(strings[7]) + 1));
-        if (message == NULL) {
-            fprintf(stderr, "message is NULL!\n");
-            exit(1);
-        }
-        strcpy(message, strings[7]);
-        draw_message(screen, message);
-        free(message);
+        draw_message(screen, strings[7]);
         return;
     }
     for (
@@ -773,7 +734,6 @@ void load_level(screen_t * screen, int skip_first_exp_check,
                 const char ** strings, int screen_cols) {
     int correct_level_loaded, index, entrance_coord_x, entrance_coord_y,
         coord_x, coord_y;
-    char * message;
     do {
 
         if (
@@ -781,31 +741,16 @@ void load_level(screen_t * screen, int skip_first_exp_check,
                 character->attrs[EXPERIENCE] <
                     character->initial_experience + 1
         ) {
-            message =
-                (char *) malloc(sizeof(char) * (strlen(strings[11]) + 1));
-            if (message == NULL) {
-                fprintf(stderr, "message is NULL!\n");
-                exit(1);
-            }
-            strcpy(message, strings[11]);
             character->coord_x = character->prev_coord_x;
             character->coord_y = character->prev_coord_y;
-            draw_message(screen, message);
-            free(message);
+            draw_message(screen, strings[11]);
             return;
         }
         skip_first_exp_check = 0;
         clear_screen(screen);
         tab(screen->cursor, 0, 3);
         free(print_text(screen, "PREPARE DUNGEON TAPE"));
-        message = (char *) malloc(sizeof(char) * (strlen(strings[10]) + 1));
-        if (message == NULL) {
-            fprintf(stderr, "message is NULL!\n");
-            exit(1);
-        }
-        strcpy(message, strings[10]);
-        get_keyboard_input(screen, message);
-        free(message);
+        get_keyboard_input(screen, strings[10]);
         size_t filesize;
         FILE * file_handle = fopen("LEVEL", "r");
         fseek(file_handle, 0, SEEK_END);
@@ -872,19 +817,11 @@ void load_level_wo_first_exp_check(screen_t * screen,
 
 void load_character(screen_t * screen, character_t * character,
                     int * num_item_types, const char ** strings) {
-    char * message;
     int index, subindex, file_index;
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
     free(print_text(screen, "PREPARE HERO TAPE"));
-    message = (char *) malloc(sizeof(char) * (strlen(strings[10]) + 1));
-    if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(message, strings[10]);
-    get_keyboard_input(screen, message);
-    free(message);
+    get_keyboard_input(screen, strings[10]);
     FILE * file_handle = fopen("HERO", "r");
     size_t filesize;
     fseek(file_handle, 0, SEEK_END);
@@ -939,15 +876,7 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
                character_t * character, int num_item_types,
                int ** dungeon_contents) {
     int index, coord_x, coord_y;
-    char * message;
-    message = (char *) malloc(sizeof(char) * 18);
-    if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(message, "ONE MOMENT PLEASE");
-    draw_message(screen, message);
-    free(message);
+    draw_message(screen, "ONE MOMENT PLEASE");
     char * character_file_contents = (char *) malloc(
         sizeof(char) * (12 + num_item_types + strlen(character->name))
     );
@@ -1003,14 +932,7 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
     strcpy(character_file_contents + s_index, character->name);
     s_index += strlen(character->name);
     character_file_contents[s_index] = 0;
-    message = (char *) malloc(sizeof(char) * 16);
-    if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(message, "ANY KEY TO SAVE");
-    get_keyboard_input(screen, message);
-    free(message);
+    get_keyboard_input(screen, "ANY KEY TO SAVE");
     FILE * file_handle = fopen("HERO", "w");
     int error = fputs(character_file_contents, file_handle);
     if (error) {
@@ -1162,8 +1084,7 @@ int main(__attribute__((__unused__)) int argc,
         trap_coord_y,
         screen_cols;
     char pressed_key,
-         * char_code_hero = NULL,
-         * message;
+         * char_code_hero = NULL;
     const char ** strings, ** item_names;
     monster_list_t * monster_list = monster_list_init();
     monster_t * monster;
@@ -1319,16 +1240,7 @@ int main(__attribute__((__unused__)) int argc,
             game_over = 0;
         }
         else if (item_at_character_coord == EXIT) {
-            message =
-                (char *) malloc(sizeof(char) * (strlen(strings[12]) + 1));
-            if (message == NULL) {
-                fprintf(stderr, "message is NULL!\n");
-                exit(1);
-            }
-            strcpy(message, strings[12]);
-            message[strlen(strings[12])] = 0;
-            draw_message(screen, message);
-            free(message);
+            draw_message(screen, strings[12]);
             load_level_with_first_exp_check(
                 screen, monster_list, &dungeon_level, character,
                 dungeon_contents, strings, screen_cols

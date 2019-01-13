@@ -428,7 +428,8 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
                 int item_at_character_coord, const char ** strings,
                 int screen_cols) {
     int spell_number;
-    char pressed_key, * message;
+    char pressed_key;
+    const char * message;
     draw_character_and_stats(screen, char_code_hero, character);
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
@@ -456,20 +457,10 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
 
     character->spells_remaining[spell_number] -= 1;
     if (character->spells_remaining[spell_number] < 0) {
-        message = (char *) malloc(sizeof(char) * (strlen(strings[9]) + 1));
-        if (message == NULL) {
-            fprintf(stderr, "message is NULL!\n");
-            exit(1);
-        }
-        strcpy(message, strings[9]);
+        message = strings[9];
         spell_number = 7;
     } else {
-        message = (char *) malloc(sizeof(char));
-        if (message == NULL) {
-            fprintf(stderr, "message is NULL!\n");
-            exit(1);
-        }
-        strcpy(message, "");
+        message = "";
     }
     SDL_Rect rect = {
         .x = 0,
@@ -511,7 +502,6 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     }
     character->attrs[EXPERIENCE] += 0.2;
     draw_message(screen, message);
-    free(message);
 }
 
 int * init_song_notes() {

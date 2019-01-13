@@ -81,7 +81,7 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
     sprintf(outstring, "%i ", (int) character->attrs[AURA]);
     free(print_text(screen, outstring));
     tab(screen->cursor, 16, 17);
-    outstring[0] = "NESW."[character->facing - 1];
+    outstring[0] = "NESW."[character->facing];
     outstring[1] = 0;
     free(print_text(screen, outstring));
     tab(screen->cursor, 16, 20);
@@ -267,7 +267,7 @@ void monsters_turn(screen_t * screen, audio_state_t * audio_state,
 void character_dies(screen_t * screen, audio_state_t * audio_state,
                     char * char_code_hero, character_t * character) {
     int sound_frequency;
-    character->facing = 5;
+    character->facing = 4;
     character->attrs[STRENGTH] = 0;
     draw_message(screen, "");
     tab(screen->cursor, 1, 5);
@@ -543,7 +543,7 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
     for (index = 0; index < 18; index += 1) {
         sound_sawtooth(audio_state, song_notes[index]);
 
-        for (direction = 1; direction <= 4; direction += 1) {
+        for (direction = 0; direction < 4; direction += 1) {
             character->facing = direction;
             draw_character_and_stats(screen, char_code_hero, character);
             SDL_Delay(300 / 4);
@@ -575,8 +575,8 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
               int ** vertices, char * char_code_hero, int * finished,
               character_t * character, int ** dungeon_contents) {
     int item_to_get, item_to_get_coord_x, item_to_get_coord_y;
-    item_to_get_coord_x = character->coord_x + vertices[character->facing][1];
-    item_to_get_coord_y = character->coord_y + vertices[character->facing][2];
+    item_to_get_coord_x = character->coord_x + vertices[character->facing][0];
+    item_to_get_coord_y = character->coord_y + vertices[character->facing][1];
     if (item_to_get_coord_x < 0) {
         item_to_get_coord_x = 0;
     }
@@ -970,12 +970,12 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
         fprintf(stderr, "character->spells_remaining is NULL!\n");
         exit(1);
     }
-    *vertices = (int **) malloc(sizeof(int *) * 5);
+    *vertices = (int **) malloc(sizeof(int *) * 4);
     if (*vertices == NULL) {
         fprintf(stderr, "*vertices is NULL!\n");
         exit(1);
     }
-    for (i = 0; i < 5; i += 1) {
+    for (i = 0; i < 4; i += 1) {
         (*vertices)[i] = (int *) malloc(sizeof(int) * 3);
         if ((*vertices)[i] == NULL) {
             fprintf(stderr, "(*vertices)[%i] is NULL!\n", i);
@@ -1015,21 +1015,21 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
     (*strings)[12] = "EXIT FROM THIS LEVEL";
 
 
+    (*vertices)[0][0] = 0;
+    (*vertices)[0][1] = -1;
+    (*vertices)[1][0] = 1;
     (*vertices)[1][1] = 0;
-    (*vertices)[1][2] = -1;
+    (*vertices)[2][0] = 0;
     (*vertices)[2][1] = 1;
-    (*vertices)[2][2] = 0;
+    (*vertices)[3][0] = -1;
     (*vertices)[3][1] = 0;
-    (*vertices)[3][2] = 1;
-    (*vertices)[4][1] = -1;
-    (*vertices)[4][2] = 0;
 
     *finished = 0;
-    character->facing = 0;
+    character->facing = 3;
     *trap_coord_x = 0;
     *trap_coord_y = 0;
     *trapped = 0;
-    *char_code_hero = (char *) malloc(sizeof(char) * 7);
+    *char_code_hero = (char *) malloc(sizeof(char) * 6);
     if (*char_code_hero == NULL) {
         fprintf(stderr, "char_code_hero is NULL!\n");
         exit(1);
@@ -1037,10 +1037,10 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
     character->coord_x = 1;
     character->coord_y = 1;
     character->torches = 0;
-    for (index = 1; index <= 5; index += 1) {
-        (*char_code_hero)[index] = DUNGEON_BASE + index;
+    for (index = 0; index < 5; index += 1) {
+        (*char_code_hero)[index] = DUNGEON_BASE + index + 1;
     }
-    (*char_code_hero)[6] = 0;
+    (*char_code_hero)[5] = 0;
     init_platform_vars(audio_state);
 }
 
@@ -1133,15 +1133,15 @@ int main(__attribute__((__unused__)) int argc,
         if (pressed_key == 'n') {
             character->facing += 1;
         }
-        if (character->facing > 4) {
-            character->facing = 1;
+        if (character->facing > 3) {
+            character->facing = 0;
         }
-        if (character->facing < 1) {
-            character->facing = 4;
+        if (character->facing < 0) {
+            character->facing = 3;
         }
         if (pressed_key == 'm') {
-            character->coord_x += vertices[character->facing][1];
-            character->coord_y += vertices[character->facing][2];
+            character->coord_x += vertices[character->facing][0];
+            character->coord_y += vertices[character->facing][1];
         }
         if (character->coord_y > 15) {
             character->coord_y = 15;
@@ -1234,7 +1234,7 @@ int main(__attribute__((__unused__)) int argc,
     int i;
     free(character->name);
     free(character->inventory);
-    for (i = 0; i < 5; i += 1) {
+    for (i = 0; i < 4; i += 1) {
         free(vertices[i]);
     }
     free(vertices);

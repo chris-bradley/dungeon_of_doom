@@ -62,8 +62,8 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
     }
     render_bitmap(
         screen,
-        character->coord_x,
-        character->coord_y + 5,
+        character->coord_x + 1,
+        character->coord_y + 6,
         char_code_hero[character->facing] - DUNGEON_BASE,
         WHITE,
         RED
@@ -97,7 +97,7 @@ enum CharCode render_coord(screen_t * screen, int ** dungeon_contents,
     paper(screen->cursor, RED);
     ink(screen->cursor, YELLOW);
     item_at_coord = dungeon_contents[coord_x][coord_y];
-    tab(screen->cursor, coord_x, coord_y + 5);
+    tab(screen->cursor, coord_x + 1, coord_y + 6);
     render_bitmap(
         screen,
         screen->cursor->curs_x,
@@ -583,11 +583,11 @@ void get_item(screen_t * screen, audio_state_t * audio_state,
     if (item_to_get_coord_y < 0) {
         item_to_get_coord_y = 0;
     }
-    if (item_to_get_coord_x > 15) {
-        item_to_get_coord_x = 15;
+    if (item_to_get_coord_x > 14) {
+        item_to_get_coord_x = 14;
     }
-    if (item_to_get_coord_y > 15) {
-        item_to_get_coord_y = 15;
+    if (item_to_get_coord_y > 14) {
+        item_to_get_coord_y = 14;
     }
     item_to_get = dungeon_contents[item_to_get_coord_x][item_to_get_coord_y];
     if (item_to_get > WALL && item_to_get < IDOL) {
@@ -647,7 +647,7 @@ void light_torch(screen_t * screen, monster_list_t * monster_list,
                 coord_x <= character->coord_x + 3;
                 coord_x += 1
         ) {
-            if (coord_x > 0 && coord_x < 16 && coord_y > 0 && coord_y < 16) {
+            if (coord_x >= 0 && coord_x < 15 && coord_y >= 0 && coord_y < 15) {
                 render_coord_and_check_for_monster(
                     screen, monster_list, dungeon_contents, coord_x, coord_y
                 );
@@ -738,15 +738,15 @@ void load_level(screen_t * screen, int skip_first_exp_check,
         fread(file_contents, 1, filesize, file_handle);
         fclose(file_handle);
         index = 0;
-        for (coord_y = 1; coord_y <= 15; coord_y += 1) {
-            for (coord_x = 1; coord_x <= 15; coord_x += 1) {
+        for (coord_y = 0; coord_y < 15; coord_y += 1) {
+            for (coord_x = 0; coord_x < 15; coord_x += 1) {
                 dungeon_contents[coord_x][coord_y] =
                     (int) file_contents[index];
                 index += 1;
             }
         }
-        entrance_coord_x = (int) file_contents[index] - DUNGEON_BASE;
-        entrance_coord_y = (int) file_contents[index + 1] - DUNGEON_BASE;
+        entrance_coord_x = (int) file_contents[index] - DUNGEON_BASE - 1;
+        entrance_coord_y = (int) file_contents[index + 1] - DUNGEON_BASE - 1;
         *dungeon_level = (int) file_contents[index + 2] - DUNGEON_BASE;
         if (*dungeon_level > character->attrs[EXPERIENCE]) {
             show_level_too_deep_messages(screen, character);
@@ -864,18 +864,18 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
     }
     int s_index = 0;
     int t_index = 0;
-    for (coord_y = 1; coord_y <= 15; coord_y += 1) {
-        for (coord_x = 1; coord_x <= 15; coord_x += 1) {
+    for (coord_y = 0; coord_y < 15; coord_y += 1) {
+        for (coord_x = 0; coord_x < 15; coord_x += 1) {
             dungeon_file_contents[t_index] =
                 (char) dungeon_contents[coord_x][coord_y];
             t_index += 1;
         }
     }
     dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + character->coord_x);
+        (char) (DUNGEON_BASE + character->coord_x + 1);
     t_index += 1;
     dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + character->coord_y);
+        (char) (DUNGEON_BASE + character->coord_y + 1);
     t_index += 1;
     dungeon_file_contents[t_index] =
         (char) (DUNGEON_BASE + dungeon_level);
@@ -942,14 +942,14 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
                const char *** item_names, audio_state_t ** audio_state) {
     int index;
     *screen_cols = 40;
-    *dungeon_contents = (int **) malloc(sizeof(int *) * 16);
+    *dungeon_contents = (int **) malloc(sizeof(int *) * 15);
     if (*dungeon_contents == NULL) {
         fprintf(stderr, "*dungeon_contents is NULL!\n");
         exit(1);
     }
     int i;
     for (i = 0; i < 16; i += 1) {
-        (*dungeon_contents)[i] = (int *) malloc(sizeof(int) * 16);
+        (*dungeon_contents)[i] = (int *) malloc(sizeof(int) * 15);
         if ((*dungeon_contents)[i] == NULL) {
             fprintf(stderr, "(*dungeon_contents)[%i] is NULL!\n", i);
             exit(1);
@@ -1034,8 +1034,8 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
         fprintf(stderr, "char_code_hero is NULL!\n");
         exit(1);
     }
-    character->coord_x = 1;
-    character->coord_y = 1;
+    character->coord_x = 0;
+    character->coord_y = 0;
     character->torches = 0;
     for (index = 0; index < 5; index += 1) {
         (*char_code_hero)[index] = DUNGEON_BASE + index + 1;
@@ -1143,17 +1143,17 @@ int main(__attribute__((__unused__)) int argc,
             character->coord_x += vertices[character->facing][0];
             character->coord_y += vertices[character->facing][1];
         }
-        if (character->coord_y > 15) {
-            character->coord_y = 15;
+        if (character->coord_y > 14) {
+            character->coord_y = 14;
         }
-        if (character->coord_y < 1) {
-            character->coord_y = 1;
+        if (character->coord_y < 0) {
+            character->coord_y = 0;
         }
-        if (character->coord_x <  1) {
-            character->coord_x = 1;
+        if (character->coord_x < 0) {
+            character->coord_x = 0;
         }
-        if (character->coord_x > 15) {
-            character->coord_x = 15;
+        if (character->coord_x > 14) {
+            character->coord_x = 14;
         }
         item_at_character_coord =
             dungeon_contents[character->coord_x][character->coord_y];
@@ -1241,7 +1241,7 @@ int main(__attribute__((__unused__)) int argc,
     free(character->attrs);
     free(char_code_hero);
     free(character->spells_remaining);
-    for (i = 0; i < 16; i += 1) {
+    for (i = 0; i < 15; i += 1) {
         free(dungeon_contents[i]);
     }
     free(dungeon_contents);

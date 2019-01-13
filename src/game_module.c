@@ -28,7 +28,7 @@ void sound_noise(audio_state_t * audio_state, int sound_frequency) {
     sound(audio_state, &noise, 1, sound_frequency);
 }
 
-char get_keyboard_input(screen_t * screen, char * message) {
+char get_keyboard_input(screen_t * screen, const char * message) {
     char pressed_key;
     SDL_Rect * text_rect;
     paper(screen->cursor, YELLOW);
@@ -42,7 +42,7 @@ char get_keyboard_input(screen_t * screen, char * message) {
     return pressed_key;
 }
 
-void draw_message(screen_t * screen, char * message) {
+void draw_message(screen_t * screen, const char * message) {
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 0, 5);

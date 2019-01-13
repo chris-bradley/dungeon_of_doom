@@ -311,37 +311,32 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
     easily predicted, we just use 100.
     */
     sound_noise(audio_state, 100);
+    character->attrs[EXPERIENCE] += 0.05;
     if (
             character->attrs[AGILITY] + character->attrs[LUCK] <
                 rand() % monster->type + 2
     ) {
-        message = (char *) malloc(sizeof(char) * (strlen(strings[4]) + 1));
-        if (message == NULL) {
-            fprintf(stderr, "message is NULL!\n");
-            exit(1);
-        }
-        strcpy(message, strings[4]);
-        damage = 0;
-    } else {
-        t$_ind = rand() % 3 + 1;
-        message = (char *) malloc(
-            sizeof(char) * (strlen(strings[t$_ind]) + 1)
-        );
-        if (message == NULL) {
-            fprintf(stderr, "message is NULL!\n");
-            exit(1);
-        }
-        strcpy(message, strings[t$_ind]);
-        damage =
-            character->attrs[STRENGTH] + character->inventory[TWO_HAND_SWORD] +
-            character->inventory[BROADSWORD] +
-            character->inventory[SHORTSWORD] +
-            character->inventory[AXE] + character->inventory[MACE] +
-            character->inventory[FLAIL] + character->inventory[DAGGER] +
-            character->inventory[GAUNTLET] + (
-                rand() * character->attrs[LUCK] / RAND_MAX
-            );
+        draw_message(screen, strings[4]);
+        return;
     }
+    t$_ind = rand() % 3 + 1;
+    message = (char *) malloc(
+        sizeof(char) * (strlen(strings[t$_ind]) + 1)
+    );
+    if (message == NULL) {
+        fprintf(stderr, "message is NULL!\n");
+        exit(1);
+    }
+    strcpy(message, strings[t$_ind]);
+    damage =
+        character->attrs[STRENGTH] + character->inventory[TWO_HAND_SWORD] +
+        character->inventory[BROADSWORD] +
+        character->inventory[SHORTSWORD] +
+        character->inventory[AXE] + character->inventory[MACE] +
+        character->inventory[FLAIL] + character->inventory[DAGGER] +
+        character->inventory[GAUNTLET] + (
+            rand() * character->attrs[LUCK] / RAND_MAX
+        );
     monster->strength -= damage;
     draw_message(screen, message);
     free(message);

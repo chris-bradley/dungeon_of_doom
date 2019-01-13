@@ -936,7 +936,34 @@ void init_platform_vars(audio_state_t ** audio_state) {
     *audio_state = init_audio_state(2);
 }
 
-void init_vars(int *** vertices, char ** char_code_hero, int * finished,
+
+void init_vertices(int *** vertices) {
+    int i;
+    *vertices = (int **) malloc(sizeof(int *) * 4);
+    if (*vertices == NULL) {
+        fprintf(stderr, "*vertices is NULL!\n");
+        exit(1);
+    }
+    for (i = 0; i < 4; i += 1) {
+        (*vertices)[i] = (int *) malloc(sizeof(int) * 3);
+        if ((*vertices)[i] == NULL) {
+            fprintf(stderr, "(*vertices)[%i] is NULL!\n", i);
+            exit(1);
+        }
+    }
+
+    (*vertices)[0][0] = 0;
+    (*vertices)[0][1] = -1;
+    (*vertices)[1][0] = 1;
+    (*vertices)[1][1] = 0;
+    (*vertices)[2][0] = 0;
+    (*vertices)[2][1] = 1;
+    (*vertices)[3][0] = -1;
+    (*vertices)[3][1] = 0;
+
+}
+
+void init_vars(char ** char_code_hero, int * finished,
                character_t * character, int *** dungeon_contents,
                const char *** strings, int * trapped, int * trap_coord_x,
                int * trap_coord_y, int * screen_cols,
@@ -971,18 +998,6 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
         fprintf(stderr, "character->spells_remaining is NULL!\n");
         exit(1);
     }
-    *vertices = (int **) malloc(sizeof(int *) * 4);
-    if (*vertices == NULL) {
-        fprintf(stderr, "*vertices is NULL!\n");
-        exit(1);
-    }
-    for (i = 0; i < 4; i += 1) {
-        (*vertices)[i] = (int *) malloc(sizeof(int) * 3);
-        if ((*vertices)[i] == NULL) {
-            fprintf(stderr, "(*vertices)[%i] is NULL!\n", i);
-            exit(1);
-        }
-    }
     (*item_names)[0] = "GR SWORD";
     (*item_names)[1] = "SWORD";
     (*item_names)[2] = "AXE";
@@ -994,7 +1009,6 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
     (*item_names)[8] = "ARMOUR";
     (*item_names)[9] = "HELMET";
     (*item_names)[10] = "HEADPC.";
-
 
     *strings = (const char **) malloc(sizeof(const char *) * 12);
     if (*strings == NULL) {
@@ -1015,15 +1029,6 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
     (*strings)[10] = "YOU NEED EXPERIENCE";
     (*strings)[11] = "EXIT FROM THIS LEVEL";
 
-
-    (*vertices)[0][0] = 0;
-    (*vertices)[0][1] = -1;
-    (*vertices)[1][0] = 1;
-    (*vertices)[1][1] = 0;
-    (*vertices)[2][0] = 0;
-    (*vertices)[2][1] = 1;
-    (*vertices)[3][0] = -1;
-    (*vertices)[3][1] = 0;
 
     *finished = 0;
     character->facing = 3;
@@ -1072,10 +1077,11 @@ int main(__attribute__((__unused__)) int argc,
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     clear_screen(screen);
+    init_vertices(&vertices);
     init_vars(
-        &vertices, &char_code_hero, &finished, character, &dungeon_contents,
-        &strings, &trapped, &trap_coord_x, &trap_coord_y, &screen_cols,
-        &item_names, &audio_state
+        &char_code_hero, &finished, character, &dungeon_contents, &strings,
+	&trapped, &trap_coord_x, &trap_coord_y, &screen_cols, &item_names,
+	&audio_state
     );
     load_character(screen, character, &num_item_types, strings);
     load_level_wo_first_exp_check(

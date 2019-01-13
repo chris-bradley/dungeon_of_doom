@@ -303,33 +303,18 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
                     character_t * character, monster_list_t * monster_list,
                     monster_t * monster, int ** dungeon_contents,
                     const char ** strings) {
-    int damage, t$_ind = rand() % 3 + 1;
+    int damage, t$_ind;
     char * message;
-    message = (char *) malloc(sizeof(char) * (strlen(strings[t$_ind]) + 1));
-    if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
-        exit(1);
-    }
-    strcpy(message, strings[t$_ind]);
     /*
     The original code did not define sound_frequency before calling the
     subroutine at line 360 here. Since the value of sound_frequency is not
     easily predicted, we just use 100.
     */
     sound_noise(audio_state, 100);
-    damage =
-        character->attrs[STRENGTH] + character->inventory[TWO_HAND_SWORD] +
-        character->inventory[BROADSWORD] + character->inventory[SHORTSWORD] +
-        character->inventory[AXE] + character->inventory[MACE] +
-        character->inventory[FLAIL] + character->inventory[DAGGER] +
-        character->inventory[GAUNTLET] + (
-            rand() * character->attrs[LUCK] / RAND_MAX
-        );
     if (
             character->attrs[AGILITY] + character->attrs[LUCK] <
                 rand() % monster->type + 2
     ) {
-        free(message);
         message = (char *) malloc(sizeof(char) * (strlen(strings[4]) + 1));
         if (message == NULL) {
             fprintf(stderr, "message is NULL!\n");
@@ -337,6 +322,25 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
         }
         strcpy(message, strings[4]);
         damage = 0;
+    } else {
+        t$_ind = rand() % 3 + 1;
+        message = (char *) malloc(
+            sizeof(char) * (strlen(strings[t$_ind]) + 1)
+        );
+        if (message == NULL) {
+            fprintf(stderr, "message is NULL!\n");
+            exit(1);
+        }
+        strcpy(message, strings[t$_ind]);
+        damage =
+            character->attrs[STRENGTH] + character->inventory[TWO_HAND_SWORD] +
+            character->inventory[BROADSWORD] +
+            character->inventory[SHORTSWORD] +
+            character->inventory[AXE] + character->inventory[MACE] +
+            character->inventory[FLAIL] + character->inventory[DAGGER] +
+            character->inventory[GAUNTLET] + (
+                rand() * character->attrs[LUCK] / RAND_MAX
+            );
     }
     monster->strength -= damage;
     draw_message(screen, message);

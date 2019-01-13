@@ -400,6 +400,8 @@ void cast_metamorphosis(screen_t * screen, audio_state_t * audio_state,
         render_coord(
             screen, dungeon_contents, character->coord_x, character->coord_y
         );
+        SDL_RenderPresent(screen->ren);
+        SDL_Delay(300);
     }
     if (item_at_character_coord <= SAFE_PLACE) {
         monster = monster_list_get_nearest(

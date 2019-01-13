@@ -447,18 +447,18 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     free(print_text(screen, "CONSULT THE LORE"));
     do {
         pressed_key = get_keyboard_input(screen, "USE SPELL NUMBER?");
-        spell_number = atoi(&pressed_key);
+        spell_number = atoi(&pressed_key) - 1;
     } while (
-            spell_number == 0 ||
-            (character->inventory[NECRONOMICON] == 0 && spell_number < 5) ||
-            (character->inventory[SCROLLS] == 0 && spell_number > 3) ||
-            spell_number > 6
+            spell_number == -1 ||
+            (character->inventory[NECRONOMICON] == 0 && spell_number < 3) ||
+            (character->inventory[SCROLLS] == 0 && spell_number > 2) ||
+            spell_number > 5
     );
 
     character->spells_remaining[spell_number] -= 1;
     if (character->spells_remaining[spell_number] < 0) {
         message = strings[9];
-        spell_number = 7;
+        spell_number = 6;
     } else {
         message = "";
     }
@@ -470,34 +470,34 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     };
     clear_rect(screen, &rect, YELLOW);
     switch (spell_number) {
-        case 1:
+        case 0:
             cast_superzap(
                 screen, audio_state, character, monster_list, dungeon_contents,
                 strings
             );
             break;
-        case 2:
+        case 1:
             cast_sanctuary(
                 audio_state, character, dungeon_contents,
                 item_at_character_coord
             );
             break;
-        case 3:
+        case 2:
             cast_teleport(screen, audio_state, char_code_hero, character);
             break;
-        case 4:
+        case 3:
             cast_powersurge(character, spell_number);
             break;
-        case 5:
+        case 4:
             cast_metamorphosis(
                 screen, audio_state, monster_list, character, dungeon_contents,
                 item_at_character_coord
             );
             break;
-        case 6:
+        case 5:
             cast_healing(character);
             break;
-        case 7:
+        case 6:
             break;
     }
     character->attrs[EXPERIENCE] += 0.2;
@@ -833,10 +833,11 @@ void load_character(screen_t * screen, character_t * character,
     character->initial_strength = character->attrs[STRENGTH];
     character->initial_vitality = character->attrs[VITALITY];
     character->initial_experience = character->attrs[EXPERIENCE];
-    for (index = 1; index <= 2; index += 1) {
-        for (subindex = 1; subindex <= 3; subindex += 1) {
-            character->spells_remaining[(index - 1) * 3 + subindex] =
-                character->inventory[TORCH + index] * character->attrs[AURA];
+    for (index = 0; index < 2; index += 1) {
+        for (subindex = 0; subindex < 3; subindex += 1) {
+            character->spells_remaining[index * 3 + subindex] =
+                character->inventory[NECRONOMICON + index] *
+                character->attrs[AURA];
         }
     }
     if (character->inventory[TORCH] == 1) {
@@ -965,7 +966,7 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
         fprintf(stderr, "*item_names is NULL!\n");
         exit(1);
     }
-    character->spells_remaining = (int *) malloc(sizeof(int) * 7);
+    character->spells_remaining = (int *) malloc(sizeof(int) * 6);
     if (character->spells_remaining == NULL) {
         fprintf(stderr, "character->spells_remaining is NULL!\n");
         exit(1);

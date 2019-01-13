@@ -963,12 +963,24 @@ void init_vertices(int *** vertices) {
 
 }
 
-void init_vars(char ** char_code_hero, int * finished,
-               character_t * character, int *** dungeon_contents,
-               const char *** strings, int * trapped, int * trap_coord_x,
-               int * trap_coord_y, int * screen_cols,
-               const char *** item_names, audio_state_t ** audio_state) {
+void init_char_code_hero(char ** char_code_hero) {
     int index;
+    *char_code_hero = (char *) malloc(sizeof(char) * 6);
+    if (*char_code_hero == NULL) {
+        fprintf(stderr, "char_code_hero is NULL!\n");
+        exit(1);
+    }
+    for (index = 0; index < 5; index += 1) {
+        (*char_code_hero)[index] = DUNGEON_BASE + index + 1;
+    }
+    (*char_code_hero)[5] = 0;
+}
+
+void init_vars(int * finished, character_t * character,
+               int *** dungeon_contents, const char *** strings,
+               int * trapped, int * trap_coord_x, int * trap_coord_y,
+               int * screen_cols, const char *** item_names,
+               audio_state_t ** audio_state) {
     *screen_cols = 40;
     *dungeon_contents = (int **) malloc(sizeof(int *) * 15);
     if (*dungeon_contents == NULL) {
@@ -1035,18 +1047,9 @@ void init_vars(char ** char_code_hero, int * finished,
     *trap_coord_x = 0;
     *trap_coord_y = 0;
     *trapped = 0;
-    *char_code_hero = (char *) malloc(sizeof(char) * 6);
-    if (*char_code_hero == NULL) {
-        fprintf(stderr, "char_code_hero is NULL!\n");
-        exit(1);
-    }
     character->coord_x = 0;
     character->coord_y = 0;
     character->torches = 0;
-    for (index = 0; index < 5; index += 1) {
-        (*char_code_hero)[index] = DUNGEON_BASE + index + 1;
-    }
-    (*char_code_hero)[5] = 0;
     init_platform_vars(audio_state);
 }
 
@@ -1078,10 +1081,10 @@ int main(__attribute__((__unused__)) int argc,
     ink(screen->cursor, BLACK);
     clear_screen(screen);
     init_vertices(&vertices);
+    init_char_code_hero(&char_code_hero);
     init_vars(
-        &char_code_hero, &finished, character, &dungeon_contents, &strings,
-	&trapped, &trap_coord_x, &trap_coord_y, &screen_cols, &item_names,
-	&audio_state
+        &finished, character, &dungeon_contents, &strings, &trapped,
+        &trap_coord_x, &trap_coord_y, &screen_cols, &item_names, &audio_state
     );
     load_character(screen, character, &num_item_types, strings);
     load_level_wo_first_exp_check(

@@ -737,17 +737,17 @@ void load_level(screen_t * screen, int skip_first_exp_check,
         }
         fread(file_contents, 1, filesize, file_handle);
         fclose(file_handle);
-        index = 1;
+        index = 0;
         for (coord_y = 1; coord_y <= 15; coord_y += 1) {
             for (coord_x = 1; coord_x <= 15; coord_x += 1) {
                 dungeon_contents[coord_x][coord_y] =
-                    (int) file_contents[index - 1];
+                    (int) file_contents[index];
                 index += 1;
             }
         }
-        entrance_coord_x = (int) file_contents[index - 1] - DUNGEON_BASE;
-        entrance_coord_y = (int) file_contents[index] - DUNGEON_BASE;
-        *dungeon_level = (int) file_contents[index + 1] - DUNGEON_BASE;
+        entrance_coord_x = (int) file_contents[index] - DUNGEON_BASE;
+        entrance_coord_y = (int) file_contents[index + 1] - DUNGEON_BASE;
+        *dungeon_level = (int) file_contents[index + 2] - DUNGEON_BASE;
         if (*dungeon_level > character->attrs[EXPERIENCE]) {
             show_level_too_deep_messages(screen, character);
             correct_level_loaded = 1;

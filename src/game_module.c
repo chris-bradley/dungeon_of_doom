@@ -446,14 +446,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
     free(print_text(screen, "CONSULT THE LORE"));
     do {
         pressed_key = get_keyboard_input(screen, "USE SPELL NUMBER?");
-        char * outstring = (char *) malloc(sizeof(char) * 2);
-        if (outstring == NULL) {
-            fprintf(stderr, "outstring is NULL!\n");
-            exit(1);
-        }
-        sprintf(outstring, "%c", pressed_key);
-        spell_number = atoi(outstring);
-        free(outstring);
+        spell_number = atoi(&pressed_key);
     } while (
             spell_number == 0 ||
             (character->inventory[NECRONOMICON] == 0 && spell_number < 5) ||

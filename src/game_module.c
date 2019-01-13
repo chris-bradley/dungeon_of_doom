@@ -303,7 +303,7 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
                     character_t * character, monster_list_t * monster_list,
                     monster_t * monster, int ** dungeon_contents,
                     const char ** strings) {
-    int damage, t$_ind;
+    int damage;
     /*
     The original code did not define sound_frequency before calling the
     subroutine at line 360 here. Since the value of sound_frequency is not
@@ -318,7 +318,6 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
         draw_message(screen, strings[4]);
         return;
     }
-    t$_ind = rand() % 3 + 1;
     damage =
         character->attrs[STRENGTH] + character->inventory[TWO_HAND_SWORD] +
         character->inventory[BROADSWORD] +
@@ -329,7 +328,7 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
             rand() * character->attrs[LUCK] / RAND_MAX
         );
     monster->strength -= damage;
-    draw_message(screen, strings[t$_ind]);
+    draw_message(screen, strings[rand() % 3 + 1]);
     character->attrs[STRENGTH] -= damage / 100;
     character->attrs[EXPERIENCE] += 0.05;
     if (monster->strength < 1) {

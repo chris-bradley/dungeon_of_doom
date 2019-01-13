@@ -162,13 +162,13 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
     char * message;
     character->inventory[item_num] = 0;
     message = (char *) malloc(
-        sizeof(char) * (strlen(strings[8]) + strlen(item_names[item_num]) + 2)
+        sizeof(char) * (strlen(strings[7]) + strlen(item_names[item_num]) + 2)
     );
     if (message == NULL) {
         fprintf(stderr, "message is NULL!\n");
         exit(1);
     }
-    sprintf(message, "%s %s", strings[8], item_names[item_num]);
+    sprintf(message, "%s %s", strings[7], item_names[item_num]);
     draw_message(screen, message);
     free(message);
     sound_noise(audio_state, sound_frequency);
@@ -218,7 +218,7 @@ void monster_attacks(screen_t * screen, audio_state_t * audio_state,
     if (damage * 12 < character->attrs[LUCK] + character->attrs[AGILITY]) {
         return;
     }
-    draw_message(screen, strings[5]);
+    draw_message(screen, strings[4]);
     sound_noise(audio_state, damage);
     damage /= (
         3 + character->inventory[HEAVY_ARMOUR] +
@@ -290,7 +290,7 @@ void monster_dies(screen_t * screen, audio_state_t * audio_state,
     free(monster);
     dungeon_contents[coord_x][coord_y] = BLANK;
     character->attrs[EXPERIENCE] += 0.1;
-    draw_message(screen, strings[6]);
+    draw_message(screen, strings[5]);
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
         sound_sawtooth(audio_state, sound_frequency);
         sound_noise(audio_state, sound_frequency);
@@ -315,7 +315,7 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
             character->attrs[AGILITY] + character->attrs[LUCK] <
                 rand() % monster->type + 2
     ) {
-        draw_message(screen, strings[4]);
+        draw_message(screen, strings[3]);
         return;
     }
     damage =
@@ -328,7 +328,7 @@ void attack_monster(screen_t * screen, audio_state_t * audio_state,
             rand() * character->attrs[LUCK] / RAND_MAX
         );
     monster->strength -= damage;
-    draw_message(screen, strings[rand() % 3 + 1]);
+    draw_message(screen, strings[rand() % 3]);
     character->attrs[STRENGTH] -= damage / 100;
     character->attrs[EXPERIENCE] += 0.05;
     if (monster->strength < 1) {
@@ -457,7 +457,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
 
     character->spells_remaining[spell_number] -= 1;
     if (character->spells_remaining[spell_number] < 0) {
-        message = strings[9];
+        message = strings[8];
         spell_number = 6;
     } else {
         message = "";
@@ -634,7 +634,7 @@ void light_torch(screen_t * screen, monster_list_t * monster_list,
                  const char ** strings) {
     int coord_x, coord_y;
     if (character->torches == 0) {
-        draw_message(screen, strings[7]);
+        draw_message(screen, strings[6]);
         return;
     }
     for (
@@ -716,14 +716,14 @@ void load_level(screen_t * screen, int skip_first_exp_check,
         ) {
             character->coord_x = character->prev_coord_x;
             character->coord_y = character->prev_coord_y;
-            draw_message(screen, strings[11]);
+            draw_message(screen, strings[10]);
             return;
         }
         skip_first_exp_check = 0;
         clear_screen(screen);
         tab(screen->cursor, 0, 3);
         free(print_text(screen, "PREPARE DUNGEON TAPE"));
-        get_keyboard_input(screen, strings[10]);
+        get_keyboard_input(screen, strings[9]);
         size_t filesize;
         FILE * file_handle = fopen("LEVEL", "r");
         fseek(file_handle, 0, SEEK_END);
@@ -794,7 +794,7 @@ void load_character(screen_t * screen, character_t * character,
     clear_screen(screen);
     tab(screen->cursor, 0, 3);
     free(print_text(screen, "PREPARE HERO TAPE"));
-    get_keyboard_input(screen, strings[10]);
+    get_keyboard_input(screen, strings[9]);
     FILE * file_handle = fopen("HERO", "r");
     size_t filesize;
     fseek(file_handle, 0, SEEK_END);
@@ -996,24 +996,24 @@ void init_vars(int *** vertices, char ** char_code_hero, int * finished,
     (*item_names)[10] = "HEADPC.";
 
 
-    *strings = (const char **) malloc(sizeof(const char *) * (13));
+    *strings = (const char **) malloc(sizeof(const char *) * 12);
     if (*strings == NULL) {
         fprintf(stderr, "*strings is NULL!\n");
         exit(1);
     }
 
-    (*strings)[1] = "A GOOD BLOW";
-    (*strings)[2] = "WELL HIT SIRE";
-    (*strings)[3] = "THY AIM IS TRUE";
-    (*strings)[4] = "MISSED!";
-    (*strings)[5] = "HIT THEE!!";
-    (*strings)[6] = "THE MONSTER IS SLAIN";
-    (*strings)[7] = "NO LIGHT";
-    (*strings)[8] = "BROKEN THY ";
-    (*strings)[9] = "SPELL EXHAUSTED";
-    (*strings)[10] = "PRESS ANY KEY";
-    (*strings)[11] = "YOU NEED EXPERIENCE";
-    (*strings)[12] = "EXIT FROM THIS LEVEL";
+    (*strings)[0] = "A GOOD BLOW";
+    (*strings)[1] = "WELL HIT SIRE";
+    (*strings)[2] = "THY AIM IS TRUE";
+    (*strings)[3] = "MISSED!";
+    (*strings)[4] = "HIT THEE!!";
+    (*strings)[5] = "THE MONSTER IS SLAIN";
+    (*strings)[6] = "NO LIGHT";
+    (*strings)[7] = "BROKEN THY ";
+    (*strings)[8] = "SPELL EXHAUSTED";
+    (*strings)[9] = "PRESS ANY KEY";
+    (*strings)[10] = "YOU NEED EXPERIENCE";
+    (*strings)[11] = "EXIT FROM THIS LEVEL";
 
 
     (*vertices)[0][0] = 0;
@@ -1214,7 +1214,7 @@ int main(__attribute__((__unused__)) int argc,
             game_over = 0;
         }
         else if (item_at_character_coord == EXIT) {
-            draw_message(screen, strings[12]);
+            draw_message(screen, strings[11]);
             load_level_with_first_exp_check(
                 screen, monster_list, &dungeon_level, character,
                 dungeon_contents, strings, screen_cols

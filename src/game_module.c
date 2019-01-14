@@ -928,52 +928,59 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
     *finished = 1;
 }
 
-void init_audio(audio_state_t ** audio_state) {
+audio_state_t * init_audio() {
+    audio_state_t * audio_state;
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         fprintf(stderr, "SDL Init Failure!: %s\n", SDL_GetError());
         exit(1);
     }
-    *audio_state = init_audio_state(2);
+    audio_state = init_audio_state(2);
+
+    return audio_state;
 }
 
 
-void init_vertices(int *** vertices) {
-    int i;
-    *vertices = (int **) malloc(sizeof(int *) * 4);
-    if (*vertices == NULL) {
-        fprintf(stderr, "*vertices is NULL!\n");
+int ** init_vertices() {
+    int i, **vertices;
+    vertices = (int **) malloc(sizeof(int *) * 4);
+    if (vertices == NULL) {
+        fprintf(stderr, "vertices is NULL!\n");
         exit(1);
     }
     for (i = 0; i < 4; i += 1) {
-        (*vertices)[i] = (int *) malloc(sizeof(int) * 3);
-        if ((*vertices)[i] == NULL) {
-            fprintf(stderr, "(*vertices)[%i] is NULL!\n", i);
+        vertices[i] = (int *) malloc(sizeof(int) * 3);
+        if (vertices[i] == NULL) {
+            fprintf(stderr, "vertices[%i] is NULL!\n", i);
             exit(1);
         }
     }
 
-    (*vertices)[0][0] = 0;
-    (*vertices)[0][1] = -1;
-    (*vertices)[1][0] = 1;
-    (*vertices)[1][1] = 0;
-    (*vertices)[2][0] = 0;
-    (*vertices)[2][1] = 1;
-    (*vertices)[3][0] = -1;
-    (*vertices)[3][1] = 0;
+    vertices[0][0] = 0;
+    vertices[0][1] = -1;
+    vertices[1][0] = 1;
+    vertices[1][1] = 0;
+    vertices[2][0] = 0;
+    vertices[2][1] = 1;
+    vertices[3][0] = -1;
+    vertices[3][1] = 0;
 
+    return vertices;
 }
 
-void init_char_code_hero(char ** char_code_hero) {
+char * init_char_code_hero() {
     int index;
-    *char_code_hero = (char *) malloc(sizeof(char) * 6);
-    if (*char_code_hero == NULL) {
+    char * char_code_hero;
+    char_code_hero = (char *) malloc(sizeof(char) * 6);
+    if (char_code_hero == NULL) {
         fprintf(stderr, "char_code_hero is NULL!\n");
         exit(1);
     }
     for (index = 0; index < 5; index += 1) {
-        (*char_code_hero)[index] = DUNGEON_BASE + index + 1;
+        char_code_hero[index] = DUNGEON_BASE + index + 1;
     }
-    (*char_code_hero)[5] = 0;
+    char_code_hero[5] = 0;
+
+    return char_code_hero;
 }
 
 character_t * init_character() {
@@ -1001,60 +1008,66 @@ character_t * init_character() {
     return character;
 }
 
-void init_dungeon_contents(int *** dungeon_contents) {
-    *dungeon_contents = (int **) malloc(sizeof(int *) * 15);
-    if (*dungeon_contents == NULL) {
-        fprintf(stderr, "*dungeon_contents is NULL!\n");
+int ** init_dungeon_contents() {
+    int ** dungeon_contents = malloc(sizeof(int *) * 15);
+    if (dungeon_contents == NULL) {
+        fprintf(stderr, "dungeon_contents is NULL!\n");
         exit(1);
     }
     int i;
     for (i = 0; i < 16; i += 1) {
-        (*dungeon_contents)[i] = (int *) malloc(sizeof(int) * 15);
-        if ((*dungeon_contents)[i] == NULL) {
-            fprintf(stderr, "(*dungeon_contents)[%i] is NULL!\n", i);
+        dungeon_contents[i] = (int *) malloc(sizeof(int) * 15);
+        if (dungeon_contents[i] == NULL) {
+            fprintf(stderr, "dungeon_contents[%i] is NULL!\n", i);
             exit(1);
         }
     }
+
+    return dungeon_contents;
 }
 
-void init_strings(const char *** strings) {
-    *strings = (const char **) malloc(sizeof(const char *) * 12);
-    if (*strings == NULL) {
-        fprintf(stderr, "*strings is NULL!\n");
+const char ** init_strings() {
+    const char ** strings = malloc(sizeof(const char *) * 12);
+    if (strings == NULL) {
+        fprintf(stderr, "strings is NULL!\n");
         exit(1);
     }
 
-    (*strings)[0] = "A GOOD BLOW";
-    (*strings)[1] = "WELL HIT SIRE";
-    (*strings)[2] = "THY AIM IS TRUE";
-    (*strings)[3] = "MISSED!";
-    (*strings)[4] = "HIT THEE!!";
-    (*strings)[5] = "THE MONSTER IS SLAIN";
-    (*strings)[6] = "NO LIGHT";
-    (*strings)[7] = "BROKEN THY ";
-    (*strings)[8] = "SPELL EXHAUSTED";
-    (*strings)[9] = "PRESS ANY KEY";
-    (*strings)[10] = "YOU NEED EXPERIENCE";
-    (*strings)[11] = "EXIT FROM THIS LEVEL";
+    strings[0] = "A GOOD BLOW";
+    strings[1] = "WELL HIT SIRE";
+    strings[2] = "THY AIM IS TRUE";
+    strings[3] = "MISSED!";
+    strings[4] = "HIT THEE!!";
+    strings[5] = "THE MONSTER IS SLAIN";
+    strings[6] = "NO LIGHT";
+    strings[7] = "BROKEN THY ";
+    strings[8] = "SPELL EXHAUSTED";
+    strings[9] = "PRESS ANY KEY";
+    strings[10] = "YOU NEED EXPERIENCE";
+    strings[11] = "EXIT FROM THIS LEVEL";
+
+    return strings;
 }
 
-void init_item_names(const char *** item_names) {
-    *item_names = (const char **) malloc(sizeof(const char *) * (11));
-    if (*item_names == NULL) {
-        fprintf(stderr, "*item_names is NULL!\n");
+const char ** init_item_names() {
+    const char ** item_names = malloc(sizeof(const char *) * (11));
+    if (item_names == NULL) {
+        fprintf(stderr, "item_names is NULL!\n");
         exit(1);
     }
-    (*item_names)[0] = "GR SWORD";
-    (*item_names)[1] = "SWORD";
-    (*item_names)[2] = "AXE";
-    (*item_names)[3] = "MACE";
-    (*item_names)[4] = "FLAIL";
-    (*item_names)[5] = "DAGGER";
-    (*item_names)[6] = "ARMOUR";
-    (*item_names)[7] = "ARMOUR";
-    (*item_names)[8] = "ARMOUR";
-    (*item_names)[9] = "HELMET";
-    (*item_names)[10] = "HEADPC.";
+    item_names[0] = "GR SWORD";
+    item_names[1] = "SWORD";
+    item_names[2] = "AXE";
+    item_names[3] = "MACE";
+    item_names[4] = "FLAIL";
+    item_names[5] = "DAGGER";
+    item_names[6] = "ARMOUR";
+    item_names[7] = "ARMOUR";
+    item_names[8] = "ARMOUR";
+    item_names[9] = "HELMET";
+    item_names[10] = "HEADPC.";
+
+    return item_names;
 }
 
 int main(__attribute__((__unused__)) int argc,
@@ -1080,13 +1093,13 @@ int main(__attribute__((__unused__)) int argc,
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     clear_screen(screen);
-    init_vertices(&vertices);
-    init_char_code_hero(&char_code_hero);
+    vertices = init_vertices();
+    char_code_hero = init_char_code_hero();
     character = init_character();
-    init_dungeon_contents(&dungeon_contents);
-    init_strings(&strings);
-    init_item_names(&item_names);
-    init_audio(&audio_state);
+    dungeon_contents = init_dungeon_contents();
+    strings = init_strings();
+    item_names = init_item_names();
+    audio_state = init_audio();
 
     finished = 0;
     trap_coord_x = 0;

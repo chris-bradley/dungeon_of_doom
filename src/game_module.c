@@ -928,7 +928,7 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
     *finished = 1;
 }
 
-void init_platform_vars(audio_state_t ** audio_state) {
+void init_audio(audio_state_t ** audio_state) {
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         fprintf(stderr, "SDL Init Failure!: %s\n", SDL_GetError());
         exit(1);
@@ -1045,7 +1045,7 @@ void init_vars(int *** dungeon_contents, const char *** strings,
     (*strings)[10] = "YOU NEED EXPERIENCE";
     (*strings)[11] = "EXIT FROM THIS LEVEL";
 
-    init_platform_vars(audio_state);
+    init_audio(audio_state);
 }
 
 int main(__attribute__((__unused__)) int argc,

@@ -976,9 +976,26 @@ void init_char_code_hero(char ** char_code_hero) {
     (*char_code_hero)[5] = 0;
 }
 
-void init_vars(character_t * character, int *** dungeon_contents,
-               const char *** strings, const char *** item_names,
-               audio_state_t ** audio_state) {
+void init_character(character_t * character) {
+    character->attrs = (double *) malloc(sizeof(double) * 9);
+    if (character->attrs == NULL) {
+        fprintf(stderr, "character->attrs is NULL!\n");
+        exit(1);
+    }
+    character->spells_remaining = (int *) malloc(sizeof(int) * 6);
+    if (character->spells_remaining == NULL) {
+        fprintf(stderr, "character->spells_remaining is NULL!\n");
+        exit(1);
+    }
+
+    character->facing = 3;
+    character->coord_x = 0;
+    character->coord_y = 0;
+    character->torches = 0;
+}
+
+void init_vars(int *** dungeon_contents, const char *** strings,
+               const char *** item_names, audio_state_t ** audio_state) {
     *dungeon_contents = (int **) malloc(sizeof(int *) * 15);
     if (*dungeon_contents == NULL) {
         fprintf(stderr, "*dungeon_contents is NULL!\n");
@@ -992,19 +1009,9 @@ void init_vars(character_t * character, int *** dungeon_contents,
             exit(1);
         }
     }
-    character->attrs = (double *) malloc(sizeof(double) * 9);
-    if (character->attrs == NULL) {
-        fprintf(stderr, "character->attrs is NULL!\n");
-        exit(1);
-    }
     *item_names = (const char **) malloc(sizeof(const char *) * (11));
     if (*item_names == NULL) {
         fprintf(stderr, "*item_names is NULL!\n");
-        exit(1);
-    }
-    character->spells_remaining = (int *) malloc(sizeof(int) * 6);
-    if (character->spells_remaining == NULL) {
-        fprintf(stderr, "character->spells_remaining is NULL!\n");
         exit(1);
     }
     (*item_names)[0] = "GR SWORD";
@@ -1038,11 +1045,6 @@ void init_vars(character_t * character, int *** dungeon_contents,
     (*strings)[10] = "YOU NEED EXPERIENCE";
     (*strings)[11] = "EXIT FROM THIS LEVEL";
 
-
-    character->facing = 3;
-    character->coord_x = 0;
-    character->coord_y = 0;
-    character->torches = 0;
     init_platform_vars(audio_state);
 }
 
@@ -1075,9 +1077,8 @@ int main(__attribute__((__unused__)) int argc,
     clear_screen(screen);
     init_vertices(&vertices);
     init_char_code_hero(&char_code_hero);
-    init_vars(
-        character, &dungeon_contents, &strings, &item_names, &audio_state
-    );
+    init_character(character);
+    init_vars(&dungeon_contents, &strings, &item_names, &audio_state);
 
     finished = 0;
     trap_coord_x = 0;

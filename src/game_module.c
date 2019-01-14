@@ -1015,7 +1015,7 @@ int ** init_dungeon_contents() {
         exit(1);
     }
     int i;
-    for (i = 0; i < 16; i += 1) {
+    for (i = 0; i < 15; i += 1) {
         dungeon_contents[i] = (int *) malloc(sizeof(int) * 15);
         if (dungeon_contents[i] == NULL) {
             fprintf(stderr, "dungeon_contents[%i] is NULL!\n", i);

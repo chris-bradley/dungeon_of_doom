@@ -976,7 +976,12 @@ void init_char_code_hero(char ** char_code_hero) {
     (*char_code_hero)[5] = 0;
 }
 
-void init_character(character_t * character) {
+character_t * init_character() {
+    character_t * character = malloc(sizeof(character_t));
+    if (character == NULL) {
+        fprintf(stderr, "character is NULL!\n");
+        exit(1);
+    }
     character->attrs = (double *) malloc(sizeof(double) * 9);
     if (character->attrs == NULL) {
         fprintf(stderr, "character->attrs is NULL!\n");
@@ -992,6 +997,8 @@ void init_character(character_t * character) {
     character->coord_x = 0;
     character->coord_y = 0;
     character->torches = 0;
+
+    return character;
 }
 
 void init_dungeon_contents(int *** dungeon_contents) {
@@ -1067,11 +1074,7 @@ int main(__attribute__((__unused__)) int argc,
     const char ** strings, ** item_names;
     monster_list_t * monster_list = monster_list_init();
     monster_t * monster;
-    character_t * character = malloc(sizeof(character_t));
-    if (character == NULL) {
-        fprintf(stderr, "character is NULL!\n");
-        exit(1);
-    }
+    character_t * character;
     screen_t * screen = init_screen();
     audio_state_t * audio_state;
     paper(screen->cursor, YELLOW);
@@ -1079,7 +1082,7 @@ int main(__attribute__((__unused__)) int argc,
     clear_screen(screen);
     init_vertices(&vertices);
     init_char_code_hero(&char_code_hero);
-    init_character(character);
+    character = init_character();
     init_dungeon_contents(&dungeon_contents);
     init_strings(&strings);
     init_item_names(&item_names);

@@ -976,12 +976,9 @@ void init_char_code_hero(char ** char_code_hero) {
     (*char_code_hero)[5] = 0;
 }
 
-void init_vars(int * finished, character_t * character,
-               int *** dungeon_contents, const char *** strings,
-               int * trapped, int * trap_coord_x, int * trap_coord_y,
-               int * screen_cols, const char *** item_names,
+void init_vars(character_t * character, int *** dungeon_contents,
+               const char *** strings, const char *** item_names,
                audio_state_t ** audio_state) {
-    *screen_cols = 40;
     *dungeon_contents = (int **) malloc(sizeof(int *) * 15);
     if (*dungeon_contents == NULL) {
         fprintf(stderr, "*dungeon_contents is NULL!\n");
@@ -1042,11 +1039,7 @@ void init_vars(int * finished, character_t * character,
     (*strings)[11] = "EXIT FROM THIS LEVEL";
 
 
-    *finished = 0;
     character->facing = 3;
-    *trap_coord_x = 0;
-    *trap_coord_y = 0;
-    *trapped = 0;
     character->coord_x = 0;
     character->coord_y = 0;
     character->torches = 0;
@@ -1083,9 +1076,15 @@ int main(__attribute__((__unused__)) int argc,
     init_vertices(&vertices);
     init_char_code_hero(&char_code_hero);
     init_vars(
-        &finished, character, &dungeon_contents, &strings, &trapped,
-        &trap_coord_x, &trap_coord_y, &screen_cols, &item_names, &audio_state
+        character, &dungeon_contents, &strings, &item_names, &audio_state
     );
+
+    finished = 0;
+    trap_coord_x = 0;
+    trap_coord_y = 0;
+    trapped = 0;
+    screen_cols = 40;
+
     load_character(screen, character, &num_item_types, strings);
     load_level_wo_first_exp_check(
         screen, monster_list, &dungeon_level, character, dungeon_contents,

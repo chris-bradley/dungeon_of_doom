@@ -1010,24 +1010,7 @@ void init_dungeon_contents(int *** dungeon_contents) {
     }
 }
 
-void init_vars(const char *** strings, const char *** item_names) {
-    *item_names = (const char **) malloc(sizeof(const char *) * (11));
-    if (*item_names == NULL) {
-        fprintf(stderr, "*item_names is NULL!\n");
-        exit(1);
-    }
-    (*item_names)[0] = "GR SWORD";
-    (*item_names)[1] = "SWORD";
-    (*item_names)[2] = "AXE";
-    (*item_names)[3] = "MACE";
-    (*item_names)[4] = "FLAIL";
-    (*item_names)[5] = "DAGGER";
-    (*item_names)[6] = "ARMOUR";
-    (*item_names)[7] = "ARMOUR";
-    (*item_names)[8] = "ARMOUR";
-    (*item_names)[9] = "HELMET";
-    (*item_names)[10] = "HEADPC.";
-
+void init_strings(const char *** strings) {
     *strings = (const char **) malloc(sizeof(const char *) * 12);
     if (*strings == NULL) {
         fprintf(stderr, "*strings is NULL!\n");
@@ -1046,6 +1029,25 @@ void init_vars(const char *** strings, const char *** item_names) {
     (*strings)[9] = "PRESS ANY KEY";
     (*strings)[10] = "YOU NEED EXPERIENCE";
     (*strings)[11] = "EXIT FROM THIS LEVEL";
+}
+
+void init_vars(const char *** item_names) {
+    *item_names = (const char **) malloc(sizeof(const char *) * (11));
+    if (*item_names == NULL) {
+        fprintf(stderr, "*item_names is NULL!\n");
+        exit(1);
+    }
+    (*item_names)[0] = "GR SWORD";
+    (*item_names)[1] = "SWORD";
+    (*item_names)[2] = "AXE";
+    (*item_names)[3] = "MACE";
+    (*item_names)[4] = "FLAIL";
+    (*item_names)[5] = "DAGGER";
+    (*item_names)[6] = "ARMOUR";
+    (*item_names)[7] = "ARMOUR";
+    (*item_names)[8] = "ARMOUR";
+    (*item_names)[9] = "HELMET";
+    (*item_names)[10] = "HEADPC.";
 }
 
 int main(__attribute__((__unused__)) int argc,
@@ -1079,7 +1081,8 @@ int main(__attribute__((__unused__)) int argc,
     init_char_code_hero(&char_code_hero);
     init_character(character);
     init_dungeon_contents(&dungeon_contents);
-    init_vars(&strings, &item_names);
+    init_strings(&strings);
+    init_vars(&item_names);
     init_audio(&audio_state);
 
     finished = 0;

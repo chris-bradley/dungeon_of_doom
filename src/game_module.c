@@ -995,7 +995,7 @@ void init_character(character_t * character) {
 }
 
 void init_vars(int *** dungeon_contents, const char *** strings,
-               const char *** item_names, audio_state_t ** audio_state) {
+               const char *** item_names) {
     *dungeon_contents = (int **) malloc(sizeof(int *) * 15);
     if (*dungeon_contents == NULL) {
         fprintf(stderr, "*dungeon_contents is NULL!\n");
@@ -1044,8 +1044,6 @@ void init_vars(int *** dungeon_contents, const char *** strings,
     (*strings)[9] = "PRESS ANY KEY";
     (*strings)[10] = "YOU NEED EXPERIENCE";
     (*strings)[11] = "EXIT FROM THIS LEVEL";
-
-    init_audio(audio_state);
 }
 
 int main(__attribute__((__unused__)) int argc,
@@ -1078,7 +1076,8 @@ int main(__attribute__((__unused__)) int argc,
     init_vertices(&vertices);
     init_char_code_hero(&char_code_hero);
     init_character(character);
-    init_vars(&dungeon_contents, &strings, &item_names, &audio_state);
+    init_vars(&dungeon_contents, &strings, &item_names);
+    init_audio(&audio_state);
 
     finished = 0;
     trap_coord_x = 0;

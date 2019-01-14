@@ -1031,7 +1031,7 @@ void init_strings(const char *** strings) {
     (*strings)[11] = "EXIT FROM THIS LEVEL";
 }
 
-void init_vars(const char *** item_names) {
+void init_item_names(const char *** item_names) {
     *item_names = (const char **) malloc(sizeof(const char *) * (11));
     if (*item_names == NULL) {
         fprintf(stderr, "*item_names is NULL!\n");
@@ -1082,7 +1082,7 @@ int main(__attribute__((__unused__)) int argc,
     init_character(character);
     init_dungeon_contents(&dungeon_contents);
     init_strings(&strings);
-    init_vars(&item_names);
+    init_item_names(&item_names);
     init_audio(&audio_state);
 
     finished = 0;

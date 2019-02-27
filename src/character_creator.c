@@ -58,7 +58,7 @@ typedef struct {
 header_t * init_header(int screen_cols) {
     header_t * header = malloc(sizeof(header_t));
     if (header == NULL) {
-        fprintf(stderr, "header is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "header is NULL!");
         exit(1);
     }
     *header = (header_t) {
@@ -72,7 +72,7 @@ header_t * init_header(int screen_cols) {
     };
     header->message = (char *) malloc(sizeof(char) * 40);
     if (header->message == NULL) {
-        fprintf(stderr, "header->message is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "header->message is NULL!");
         exit(1);
     }
     strcpy(header->message, "");
@@ -86,7 +86,7 @@ char * get_player_string(screen_t * screen, int col, int row,
     SDL_Rect * typed_rect = NULL;
     typed_string = (char *) malloc(sizeof(char) * 40);
     if (typed_string == NULL) {
-        fprintf(stderr, "typed_string is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "typed_string is NULL!");
         exit(1);
     }
     typed_string[0] = 0;
@@ -136,7 +136,7 @@ void update_header(screen_t * screen, header_t * header) {
     tab(screen->cursor, header->left_col + 15, header->top_row + 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
-        fprintf(stderr, "outstring is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "outstring is NULL!");
         exit(1);
     }
     sprintf(outstring, "%i ", header->points);
@@ -231,7 +231,7 @@ void draw_title_row(screen_t * screen, title_row_t * title_row) {
 title_row_t * init_title_row() {
     title_row_t * title_row = (title_row_t *) malloc(sizeof(title_row_t));
     if (title_row == NULL) {
-        fprintf(stderr, "title_row is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "title_row is NULL!");
         exit(1);
     }
     *title_row = (title_row_t) {
@@ -286,7 +286,7 @@ void update_main(screen_t * screen, main_menu_t * main_menu) {
         tab(screen->cursor, 16, row);
         char * outstring = (char *) malloc(sizeof(char) * 40);
         if (outstring == NULL) {
-            fprintf(stderr, "outstring is NULL!\n");
+            SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "outstring is NULL!");
             exit(1);
         }
         sprintf(outstring, "%i ", menu_item->value);
@@ -311,7 +311,7 @@ int init_screen_cols() {
 main_menu_t * init_main_menu(int screen_cols) {
     main_menu_t * main_menu = (main_menu_t *) malloc(sizeof(main_menu_t));
     if (main_menu == NULL) {
-        fprintf(stderr, "main_menu is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "main_menu is NULL!");
         exit(1);
     }
     *main_menu = (main_menu_t) {
@@ -330,12 +330,12 @@ character_t * init_character(int inventory_size) {
     int index;
     character_t * character = (character_t *) malloc(sizeof(character_t));
     if (character == NULL) {
-        fprintf(stderr, "character is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "character is NULL!");
         exit(1);
     }
     character->inventory = (int *) malloc(sizeof(int) * inventory_size);
     if (character->inventory == NULL) {
-        fprintf(stderr, "*inventory is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "*inventory is NULL!");
         exit(1);
     }
 
@@ -401,13 +401,20 @@ character_class_t ** init_character_classes() {
         sizeof(character_class_t *) * 5
     );
     if (character_classes == NULL) {
-        fprintf(stderr, "character_classes is NULL!\n");
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "character_classes is NULL!"
+        );
         exit(1);
     }
     for (index = 0; index < 5; index += 1) {
         character_classes[index] = malloc(sizeof(character_class_t));
         if (character_classes[index] == NULL) {
-            fprintf(stderr, "character_classes[%i] is NULL!\n", index);
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "character_classes[%i] is NULL!",
+                index
+            );
             exit(1);
         }
     }
@@ -443,7 +450,10 @@ character_class_t ** init_character_classes() {
 int ** init_item_to_char_class() {
     int ** item_to_char_class = malloc(sizeof(int *) * 24);
     if (item_to_char_class == NULL) {
-        fprintf(stderr, "item_to_char_class is NULL!\n");
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "item_to_char_class is NULL!"
+        );
         exit(1);
     }
     int index_a, index_b,
@@ -476,7 +486,11 @@ int ** init_item_to_char_class() {
     for (index_a = 0; index_a < 24; index_a += 1) {
         item_to_char_class[index_a] = malloc(sizeof(int) * 5);
         if (item_to_char_class[index_a] == NULL) {
-            fprintf(stderr, "item_to_char_class[%i] is NULL!\n", index_a);
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "item_to_char_class[%i] is NULL!",
+                index_a
+            );
             exit(1);
         }
         for (index_b = 0; index_b < 5; index_b += 1) {
@@ -490,7 +504,7 @@ int ** init_item_to_char_class() {
 store_t * init_stores() {
     store_t * stores = malloc(sizeof(store_t) * 3);
     if (stores == NULL) {
-        fprintf(stderr, "stores is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "stores is NULL!");
         exit(1);
     }
     stores[0] = (store_t) {
@@ -661,7 +675,7 @@ const char ** init_attr_names() {
         sizeof(const char *) * 8
     );
     if (attr_names == NULL) {
-        fprintf(stderr, "attr_names is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "attr_names is NULL!");
         exit(1);
     }
     attr_names[STRENGTH] = "STRENGTH";
@@ -680,9 +694,9 @@ void save_character(character_t * character, int num_item_types) {
     FILE * save_file_handle = fopen("HERO", "w");
 
     if (!fputc((char) (num_item_types + char_base), save_file_handle)) {
-        fprintf(
-            stderr,
-            "Error %i writing number of items!\n",
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing number of items!",
             ferror(save_file_handle)
         );
     }
@@ -694,9 +708,9 @@ void save_character(character_t * character, int num_item_types) {
                     save_file_handle
                 )
         ) {
-            fprintf(
-                stderr,
-                "Error %i writing attr %i!\n",
+            SDL_LogError(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "Error %i writing attr %i!",
                 ferror(save_file_handle),
                 index
             );
@@ -709,39 +723,59 @@ void save_character(character_t * character, int num_item_types) {
                     save_file_handle
                 )
         ) {
-            fprintf(
-                stderr,
-                "Error %i writing inventory %i!\n",
+            SDL_LogError(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "Error %i writing inventory %i!",
                 ferror(save_file_handle),
                 index
             );
         }
     }
     if (!fputc((char) (character->gold + char_base), save_file_handle)) {
-        fprintf(stderr, "Error %i writing gold!\n", ferror(save_file_handle));
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing gold!",
+            ferror(save_file_handle)
+        );
     }
     if (!fputc((char) char_base, save_file_handle)) {
-        fprintf(
-            stderr,
-            "Error %i writing char_base!\n",
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing char_base!",
             ferror(save_file_handle)
         );
     }
     error = fputs(character->name, save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing character name!\n", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing character name!",
+            error
+        );
     }
     error = fputs(" -", save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing name delimiter!\n", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing name delimiter!",
+            error
+        );
     }
     error = fputs(character->class->name, save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing character class name!\n", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing character class name!",
+            error
+        );
     }
     error = fclose(save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i saving the character!\n", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i saving the character!",
+            error
+        );
     }
 }
 
@@ -757,7 +791,11 @@ void set_attr_phase(screen_t * screen, character_t * character,
     for (index = 0; index < 8; index += 1) {
         main_menu->items[index] = malloc(sizeof(menu_item_t));
         if (main_menu->items[index] == NULL) {
-            fprintf(stderr, "main_menu->items[%i] is NULL!\n", index);
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "main_menu->items[%i] is NULL!",
+                index
+            );
             exit(1);
         }
         *main_menu->items[index] = (menu_item_t) {
@@ -869,7 +907,7 @@ void character_naming_phase(screen_t * screen, character_t * character,
     char * typed_string = NULL;
     character->name = (char *) malloc(sizeof(char) * 40);
     if (character->name == NULL) {
-        fprintf(stderr, "character->name is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "character->name is NULL!");
         exit(1);
     }
     do {

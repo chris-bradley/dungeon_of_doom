@@ -57,7 +57,7 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
                               character_t * character) {
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
-        fprintf(stderr, "outstring is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "outstring is NULL!");
         exit(1);
     }
     render_bitmap(
@@ -165,7 +165,7 @@ void monster_breaks_items(screen_t * screen, audio_state_t * audio_state,
         sizeof(char) * (strlen(strings[7]) + strlen(item_names[item_num]) + 2)
     );
     if (message == NULL) {
-        fprintf(stderr, "message is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "message is NULL!");
         exit(1);
     }
     sprintf(message, "%s %s", strings[7], item_names[item_num]);
@@ -507,7 +507,7 @@ void cast_spell(screen_t * screen, audio_state_t * audio_state,
 int * init_song_notes() {
     int * song_notes = malloc(sizeof(int) * 18);
     if (song_notes == NULL) {
-        fprintf(stderr, "song_notes is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "song_notes is NULL!");
         exit(1);
     }
     song_notes[0] = 69;
@@ -552,7 +552,7 @@ void game_won(screen_t * screen, audio_state_t * audio_state,
     tab(screen->cursor, 1, 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
-        fprintf(stderr, "outstring is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "outstring is NULL!");
         exit(1);
     }
     sprintf(
@@ -667,7 +667,7 @@ void show_level_too_deep_messages(screen_t * screen, character_t * character) {
     newline(screen->cursor);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
-        fprintf(stderr, "outstring is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "outstring is NULL!");
         exit(1);
     }
     sprintf(outstring, "FOR LEVEL %d", (int) character->attrs[EXPERIENCE]);
@@ -732,7 +732,10 @@ void load_level(screen_t * screen, int skip_first_exp_check,
         fseek(file_handle, 0, SEEK_SET);
         char * file_contents = (char *) malloc(sizeof(char) * (filesize + 1));
         if (file_contents == NULL) {
-            fprintf(stderr, "file_contents is NULL!\n");
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "file_contents is NULL!"
+            );
             exit(1);
         }
         fread(file_contents, 1, filesize, file_handle);
@@ -803,7 +806,7 @@ void load_character(screen_t * screen, character_t * character,
     fseek(file_handle, 0, SEEK_SET);
     char * file_contents = (char *) malloc(sizeof(char) * (filesize + 1));
     if (file_contents == NULL) {
-        fprintf(stderr, "file_contents is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "file_contents is NULL!");
         exit(1);
     }
     fread(file_contents, 1, filesize, file_handle);
@@ -826,7 +829,7 @@ void load_character(screen_t * screen, character_t * character,
     character->treasure = (int) file_contents[file_index] - CHARACTER_BASE;
     character->name = (char *) malloc(sizeof(char) * (file_index + 2));
     if (character->name == NULL) {
-        fprintf(stderr, "character->name is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "character->name is NULL!");
         exit(1);
     }
     strcpy(character->name, file_contents + file_index + 1);
@@ -855,12 +858,15 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
         sizeof(char) * (12 + num_item_types + strlen(character->name))
     );
     if (character_file_contents == NULL) {
-        fprintf(stderr, "character_file_contents is NULL!\n");
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "character_file_contents is NULL!"
+        );
         exit(1);
     }
     char * dungeon_file_contents = (char *) malloc(sizeof(char) * 229);
     if (dungeon_file_contents == NULL) {
-        fprintf(stderr, "strings is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "strings is NULL!");
         exit(1);
     }
     int s_index = 0;
@@ -910,20 +916,36 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
     FILE * file_handle = fopen("HERO", "w");
     int error = fputs(character_file_contents, file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing the character!", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing the character!",
+            error
+        );
     }
     error = fclose(file_handle);
     if (error) {
-        fprintf(stderr, "Error %i closing the character!", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i closing the character!",
+            error
+        );
     }
     file_handle = fopen("LEVEL", "w");
     error = fputs(dungeon_file_contents, file_handle);
     if (error) {
-        fprintf(stderr, "Error %i writing the level!", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing the level!",
+            error
+        );
     }
     error = fclose(file_handle);
     if (error) {
-        fprintf(stderr, "Error %i closing the level!", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i closing the level!",
+            error
+        );
     }
     *finished = 1;
 }
@@ -931,7 +953,11 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
 audio_state_t * init_audio() {
     audio_state_t * audio_state;
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
-        fprintf(stderr, "SDL Init Failure!: %s\n", SDL_GetError());
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_AUDIO,
+            "SDL Init Failure!: %s",
+            SDL_GetError()
+        );
         exit(1);
     }
     audio_state = init_audio_state(2);
@@ -944,13 +970,17 @@ int ** init_vertices() {
     int i, ** vertices;
     vertices = (int **) malloc(sizeof(int *) * 4);
     if (vertices == NULL) {
-        fprintf(stderr, "vertices is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "vertices is NULL!");
         exit(1);
     }
     for (i = 0; i < 4; i += 1) {
         vertices[i] = (int *) malloc(sizeof(int) * 3);
         if (vertices[i] == NULL) {
-            fprintf(stderr, "vertices[%i] is NULL!\n", i);
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "vertices[%i] is NULL!",
+                i
+            );
             exit(1);
         }
     }
@@ -972,7 +1002,7 @@ char * init_char_code_hero() {
     char * char_code_hero;
     char_code_hero = (char *) malloc(sizeof(char) * 6);
     if (char_code_hero == NULL) {
-        fprintf(stderr, "char_code_hero is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "char_code_hero is NULL!");
         exit(1);
     }
     for (index = 0; index < 5; index += 1) {
@@ -986,17 +1016,23 @@ char * init_char_code_hero() {
 character_t * init_character() {
     character_t * character = malloc(sizeof(character_t));
     if (character == NULL) {
-        fprintf(stderr, "character is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "character is NULL!");
         exit(1);
     }
     character->attrs = (double *) malloc(sizeof(double) * 9);
     if (character->attrs == NULL) {
-        fprintf(stderr, "character->attrs is NULL!\n");
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "character->attrs is NULL!"
+        );
         exit(1);
     }
     character->spells_remaining = (int *) malloc(sizeof(int) * 6);
     if (character->spells_remaining == NULL) {
-        fprintf(stderr, "character->spells_remaining is NULL!\n");
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "character->spells_remaining is NULL!"
+        );
         exit(1);
     }
 
@@ -1011,14 +1047,21 @@ character_t * init_character() {
 int ** init_dungeon_contents() {
     int ** dungeon_contents = malloc(sizeof(int *) * 15);
     if (dungeon_contents == NULL) {
-        fprintf(stderr, "dungeon_contents is NULL!\n");
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "dungeon_contents is NULL!"
+        );
         exit(1);
     }
     int i;
     for (i = 0; i < 15; i += 1) {
         dungeon_contents[i] = (int *) malloc(sizeof(int) * 15);
         if (dungeon_contents[i] == NULL) {
-            fprintf(stderr, "dungeon_contents[%i] is NULL!\n", i);
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "dungeon_contents[%i] is NULL!",
+                i
+            );
             exit(1);
         }
     }
@@ -1029,7 +1072,7 @@ int ** init_dungeon_contents() {
 const char ** init_strings() {
     const char ** strings = malloc(sizeof(const char *) * 12);
     if (strings == NULL) {
-        fprintf(stderr, "strings is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "strings is NULL!");
         exit(1);
     }
 
@@ -1052,7 +1095,7 @@ const char ** init_strings() {
 const char ** init_item_names() {
     const char ** item_names = malloc(sizeof(const char *) * (11));
     if (item_names == NULL) {
-        fprintf(stderr, "item_names is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "item_names is NULL!");
         exit(1);
     }
     item_names[0] = "GR SWORD";

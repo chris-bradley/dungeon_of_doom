@@ -43,7 +43,7 @@ void draw_help(screen_t * screen, const char * help_lines[10]) {
 dungeon_t * init_level(int level_num) {
     dungeon_t * dungeon = malloc(sizeof(dungeon_t));
     if (dungeon == NULL) {
-        fprintf(stderr, "dungeon is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "dungeon is NULL!");
         exit(1);
     }
     for (int coord_x = 0; coord_x < 15; coord_x++) {
@@ -79,9 +79,9 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
                         save_file_handle
                     )
             ) {
-                fprintf(
-                    stderr,
-                    "Error %i writing dungeon contents at %i/%i!\n",
+                SDL_LogError(
+                    SDL_LOG_CATEGORY_SYSTEM,
+                    "Error %i writing dungeon contents at %i/%i!",
                     ferror(save_file_handle),
                     coord_x,
                     coord_y
@@ -95,9 +95,9 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
                 save_file_handle
             )
     ) {
-        fprintf(
-            stderr,
-            "Error %i writing dungeon entrance coord x!\n",
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing dungeon entrance coord x!",
             ferror(save_file_handle)
         );
     }
@@ -107,9 +107,9 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
                 save_file_handle
             )
     ) {
-        fprintf(
-            stderr,
-            "Error %i writing dungeon entrance coord y!\n",
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing dungeon entrance coord y!",
             ferror(save_file_handle)
         );
     }
@@ -119,16 +119,20 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
                 save_file_handle
             )
     ) {
-        fprintf(
-            stderr,
-            "Error %i writing the level number!\n",
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i writing the level number!",
             ferror(save_file_handle)
         );
     }
 
     error = fclose(save_file_handle);
     if (error) {
-        fprintf(stderr, "Error %i saving the level!\n", error);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error %i saving the level!",
+            error
+        );
     }
     tab(screen->cursor, 1, 4);
     clear_rect(screen, text_rect, RED);
@@ -146,7 +150,7 @@ int init_screen_cols() {
 const char ** init_help_lines() {
     const char ** help_lines = malloc(sizeof(const char *) * 10);
     if (help_lines == NULL) {
-        fprintf(stderr, "help_lines is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "help_lines is NULL!");
         exit(1);
     }
     help_lines[0] = "PRESS ANY KEY";
@@ -180,7 +184,10 @@ int main(__attribute__((__unused__)) int argc,
     tab(screen->cursor, 1, 2);
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
-        fprintf(stdout, "Allocating outstring failed!");
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Allocating outstring failed!"
+        );
         exit(1);
     }
     snprintf(outstring, 40, "THIS IS LEVEL: %i", dungeon->level_num);

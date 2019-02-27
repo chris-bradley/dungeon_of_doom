@@ -16,14 +16,18 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
         8 * screen->zoom
     );
     if (!c64_font) {
-        fprintf(stderr, "TTF_OpenFont: %s\n", TTF_GetError());
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_RENDER,
+            "TTF_OpenFont: %s",
+            TTF_GetError()
+        );
         exit(1);
     }
     int message_length = (int) strlen(message);
     SDL_Rect * text_pos;
     text_pos = malloc(sizeof(SDL_Rect));
     if (text_pos == NULL) {
-        fprintf(stderr, "text_pos is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "text_pos is NULL!");
         exit(1);
     }
     *text_pos = (SDL_Rect) {
@@ -44,11 +48,19 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
         screen->cursor->background_colour[3]
     );
     if (error) {
-        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_SetRenderDrawColor error: %s",
+            SDL_GetError()
+        );
     }
     error = SDL_RenderFillRect(screen->ren, text_pos);
     if (error) {
-        fprintf(stderr, "SDL_RenderFillRect error: %s\n", SDL_GetError());
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_RenderFillRect error: %s",
+            SDL_GetError()
+        );
     }
     // Foreground
     r = screen->cursor->foreground_colour[0];
@@ -81,8 +93,11 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
         text_pos
     );
     if (error) {
-        fprintf(stderr, "SDL_RenderCopy error: %s\n", SDL_GetError());
-        fflush(stderr);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_RenderCopy error: %s",
+            SDL_GetError()
+        );
     }
     SDL_DestroyTexture(text_texture);
     SDL_FreeSurface(text_surface);
@@ -119,14 +134,18 @@ void newline(cursor_t * cursor) {
 screen_t * init_screen() {
     screen_t * screen;
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-        fprintf(stderr, "SDL_Init error:%s\n", SDL_GetError());
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "SDL_Init error:%s",
+            SDL_GetError()
+        );
         SDL_Quit();
         exit(1);;
     }
     TTF_Init();
     screen = (screen_t *) malloc(sizeof(screen_t));
     if (screen == NULL) {
-        fprintf(stderr, "screen is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "screen is NULL!");
         exit(1);
     }
     screen->zoom = 3;
@@ -145,7 +164,11 @@ screen_t * init_screen() {
     );
     if (screen->ren == NULL) {
         SDL_DestroyWindow(screen->win);
-        fprintf(stdout, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_CreateRenderer Error: %s",
+            SDL_GetError()
+        );
         SDL_Quit();
         exit(1);;
     }
@@ -154,7 +177,7 @@ screen_t * init_screen() {
 
     screen->cursor = (cursor_t *) malloc(sizeof(cursor_t));
     if (screen->cursor == NULL) {
-        fprintf(stderr, "screen->cursor is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "screen->cursor is NULL!");
         exit(1);
     }
     screen->cursor->curs_x = 0;
@@ -203,7 +226,10 @@ char inkey$() {
                     }
                     break;
                 case SDL_QUIT:
-                    fprintf(stderr, "Quit through quit event.");
+                    SDL_LogInfo(
+                        SDL_LOG_CATEGORY_APPLICATION,
+                        "Quit through quit event."
+                    );
                     exit(1);
             }
         }
@@ -223,7 +249,11 @@ void draw_box(screen_t * screen, int top_row, int left_col, int rows, int cols,
         colours[colour][3]
     );
     if (error) {
-        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_SetRenderDrawColor error: %s\n",
+            SDL_GetError()
+        );
     }
     rect = (SDL_Rect) {
         .x = left_col * 8 * screen->zoom,
@@ -233,7 +263,11 @@ void draw_box(screen_t * screen, int top_row, int left_col, int rows, int cols,
     };
     error = SDL_RenderFillRect(screen->ren, &rect);
     if (error) {
-        fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_RenderFillRect!: %s",
+            SDL_GetError()
+        );
     }
 }
 
@@ -253,11 +287,19 @@ void clear_rect(screen_t * screen, SDL_Rect * rect, enum ColourNum colour) {
         colours[colour][3]
     );
     if (error) {
-        fprintf(stderr, "SDL_SetRenderDrawColor error: %s\n", SDL_GetError());
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_SetRenderDrawColor error: %s",
+            SDL_GetError()
+        );
     }
     error = SDL_RenderFillRect(screen->ren, rect);
     if (error) {
-        fprintf(stderr, "SDL_RenderFillRect!: %s\n", SDL_GetError());
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_RenderFillRect!: %s",
+            SDL_GetError()
+        );
     }
 }
 
@@ -296,7 +338,11 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
         0
     );
     if (surface == NULL) {
-        fprintf(stderr, "SDL_CreateRGBSurface error: %s\n", SDL_GetError());
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_CreateRGBSurface error: %s",
+            SDL_GetError()
+        );
     }
     uint32_t foreground_pix_colour = SDL_MapRGBA(
             surface->format,
@@ -344,8 +390,11 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
 
     error = SDL_RenderCopy(screen->ren, texture, NULL, &pos);
     if (error) {
-        fprintf(stderr, "SDL_RenderCopy error: %s\n", SDL_GetError());
-        fflush(stderr);
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER,
+            "SDL_RenderCopy error: %s",
+            SDL_GetError()
+        );
     }
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);

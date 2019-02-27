@@ -20,7 +20,7 @@ monster_t * monster_init(int type, int coord_x, int coord_y) {
 monster_list_t * monster_list_init() {
     monster_list_t * monster_list = malloc(sizeof(monster_list_t));
     if (monster_list == NULL) {
-        fprintf(stderr, "monster_list is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "monster_list is NULL!");
         exit(1);
     }
     *monster_list = (monster_list_t) {
@@ -32,7 +32,7 @@ monster_list_t * monster_list_init() {
 void monster_list_add(monster_list_t * monster_list, monster_t * monster) {
     monster_list_node_t * new_node = malloc(sizeof(monster_list_node_t));
     if (new_node == NULL) {
-        fprintf(stderr, "new_node is NULL!\n");
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "new_node is NULL!");
         exit(1);
     }
     *new_node = (monster_list_node_t) {

@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <SDL.h>
 #include "dungeon_lib.h"
 #include "character_lib.h"
@@ -691,7 +692,21 @@ const char ** init_attr_names() {
 
 void save_character(character_t * character, int num_item_types) {
     int char_base = 65, error, index;
+    errno = 0;
     FILE * save_file_handle = fopen("HERO", "w");
+    if (save_file_handle == NULL) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "save_file_handle is NULL!"
+        );
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error: %d (%s).",
+            errno,
+            strerror(errno)
+        );
+        exit(1);
+    }
 
     if (!fputc((char) (num_item_types + char_base), save_file_handle)) {
         SDL_LogError(

@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <errno.h>
 #include <unistd.h>
 #include "dungeon_lib.h"
 #include "monster_lib.h"
@@ -725,7 +726,21 @@ void load_level(screen_t * screen, int skip_first_exp_check,
         free(print_text(screen, "PREPARE DUNGEON TAPE"));
         get_keyboard_input(screen, strings[9]);
         size_t filesize;
+        errno = 0;
         FILE * file_handle = fopen("LEVEL", "r");
+        if (file_handle == NULL) {
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "file_handle is NULL!"
+            );
+            SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM,
+                "Error: %d (%s).",
+                errno,
+                strerror(errno)
+            );
+            exit(1);
+        }
         fseek(file_handle, 0, SEEK_END);
         // TODO: Check for fseek errors.
         filesize = ftell(file_handle);
@@ -798,7 +813,21 @@ void load_character(screen_t * screen, character_t * character,
     tab(screen->cursor, 0, 3);
     free(print_text(screen, "PREPARE HERO TAPE"));
     get_keyboard_input(screen, strings[9]);
+    errno = 0;
     FILE * file_handle = fopen("HERO", "r");
+    if (file_handle == NULL) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "file_handle is NULL!"
+        );
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error: %d (%s).",
+            errno,
+            strerror(errno)
+        );
+        exit(1);
+    }
     size_t filesize;
     fseek(file_handle, 0, SEEK_END);
     // TODO: Check for fseek errors.
@@ -913,7 +942,21 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
     s_index += strlen(character->name);
     character_file_contents[s_index] = 0;
     get_keyboard_input(screen, "ANY KEY TO SAVE");
+    errno = 0;
     FILE * file_handle = fopen("HERO", "w");
+    if (file_handle == NULL) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "file_handle is NULL!"
+        );
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error: %d (%s).",
+            errno,
+            strerror(errno)
+        );
+        exit(1);
+    }
     int error = fputs(character_file_contents, file_handle);
     if (error) {
         SDL_LogError(
@@ -930,7 +973,21 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
             error
         );
     }
+    errno = 0;
     file_handle = fopen("LEVEL", "w");
+    if (file_handle == NULL) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "file_handle is NULL!"
+        );
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error: %d (%s).",
+            errno,
+            strerror(errno)
+        );
+        exit(1);
+    }
     error = fputs(dungeon_file_contents, file_handle);
     if (error) {
         SDL_LogError(

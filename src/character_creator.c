@@ -692,8 +692,12 @@ const char ** init_attr_names() {
 
 void save_character(character_t * character, int num_item_types) {
     int char_base = 65, error, index;
+    char * character_dir = get_character_dir();
+    char * character_path = malloc(sizeof(char) * (strlen(character_dir) + 6));
+    sprintf(character_path, "%s%cHERO", character_dir, PATHSEP);
+    free(character_dir);
     errno = 0;
-    FILE * save_file_handle = fopen("HERO", "w");
+    FILE * save_file_handle = fopen(character_path, "w");
     if (save_file_handle == NULL) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
@@ -707,6 +711,7 @@ void save_character(character_t * character, int num_item_types) {
         );
         exit(1);
     }
+    free(character_path);
 
     if (!fputc((char) (num_item_types + char_base), save_file_handle)) {
         SDL_LogError(

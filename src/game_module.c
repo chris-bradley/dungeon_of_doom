@@ -726,8 +726,12 @@ void load_level(screen_t * screen, int skip_first_exp_check,
         free(print_text(screen, "PREPARE DUNGEON TAPE"));
         get_keyboard_input(screen, strings[9]);
         size_t filesize;
+        char * level_dir = get_level_dir();
+        char * level_path = malloc(sizeof(char) * (strlen(level_dir) + 7));
+        sprintf(level_path, "%s%cLEVEL", level_dir, PATHSEP);
+        free(level_dir);
         errno = 0;
-        FILE * file_handle = fopen("LEVEL", "r");
+        FILE * file_handle = fopen(level_path, "r");
         if (file_handle == NULL) {
             SDL_LogCritical(
                 SDL_LOG_CATEGORY_SYSTEM,
@@ -741,6 +745,8 @@ void load_level(screen_t * screen, int skip_first_exp_check,
             );
             exit(1);
         }
+        free(level_dir);
+
         fseek(file_handle, 0, SEEK_END);
         // TODO: Check for fseek errors.
         filesize = ftell(file_handle);
@@ -813,8 +819,12 @@ void load_character(screen_t * screen, character_t * character,
     tab(screen->cursor, 0, 3);
     free(print_text(screen, "PREPARE HERO TAPE"));
     get_keyboard_input(screen, strings[9]);
+    char * character_dir = get_character_dir();
+    char * character_path = malloc(sizeof(char) * (strlen(character_dir) + 6));
+    sprintf(character_path, "%s%cHERO", character_dir, PATHSEP);
+    free(character_dir);
     errno = 0;
-    FILE * file_handle = fopen("HERO", "r");
+    FILE * file_handle = fopen(character_path, "r");
     if (file_handle == NULL) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
@@ -828,6 +838,7 @@ void load_character(screen_t * screen, character_t * character,
         );
         exit(1);
     }
+    free(character_path);
     size_t filesize;
     fseek(file_handle, 0, SEEK_END);
     // TODO: Check for fseek errors.
@@ -942,8 +953,12 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
     s_index += strlen(character->name);
     character_file_contents[s_index] = 0;
     get_keyboard_input(screen, "ANY KEY TO SAVE");
+    char * character_dir = get_character_dir();
+    char * character_path = malloc(sizeof(char) * (strlen(character_dir) + 6));
+    sprintf(character_path, "%s%cHERO", character_dir, PATHSEP);
+    free(character_dir);
     errno = 0;
-    FILE * file_handle = fopen("HERO", "w");
+    FILE * file_handle = fopen(character_path, "w");
     if (file_handle == NULL) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
@@ -957,6 +972,7 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
         );
         exit(1);
     }
+    free(character_path);
     int error = fputs(character_file_contents, file_handle);
     if (error) {
         SDL_LogError(
@@ -973,8 +989,12 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
             error
         );
     }
+    char * level_dir = get_level_dir();
+    char * level_path = malloc(sizeof(char) * (strlen(level_dir) + 7));
+    sprintf(level_path, "%s%cLEVEL", level_dir, PATHSEP);
+    free(level_dir);
     errno = 0;
-    file_handle = fopen("LEVEL", "w");
+    file_handle = fopen(level_path, "w");
     if (file_handle == NULL) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
@@ -988,6 +1008,7 @@ void save_game(screen_t * screen, int * finished, int dungeon_level,
         );
         exit(1);
     }
+    free(level_path);
     error = fputs(dungeon_file_contents, file_handle);
     if (error) {
         SDL_LogError(

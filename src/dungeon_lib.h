@@ -62,3 +62,14 @@ void clear_rect(screen_t * screen, SDL_Rect * rect, enum ColourNum colour);
 void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
                    enum ColourNum foreground_colour,
                    enum ColourNum background_colour);
+
+#ifdef linux
+#define PATHSEP '/'
+#endif
+
+#ifdef WIN32
+#define PATHSEP '\\'
+#endif
+
+char * get_character_dir();
+char * get_level_dir();

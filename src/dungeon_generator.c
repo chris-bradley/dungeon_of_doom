@@ -70,8 +70,12 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     text_rect = print_text(screen, "ANY KEY TO SAVE");
     SDL_RenderPresent(screen->ren);
     inkey$();
+    char * level_dir = get_level_dir();
+    char * level_path = malloc(sizeof(char) * (strlen(level_dir) + 7));
+    sprintf(level_path, "%s%cLEVEL", level_dir, PATHSEP);
+    free(level_dir);
     errno = 0;
-    FILE * save_file_handle = fopen("LEVEL", "w");
+    FILE * save_file_handle = fopen(level_path, "w");
     if (save_file_handle == NULL) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
@@ -85,6 +89,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
         );
         exit(1);
     }
+    free(level_path);
     for (coord_y = 0; coord_y < 15; coord_y += 1) {
         for (coord_x = 0; coord_x < 15; coord_x += 1) {
             if (

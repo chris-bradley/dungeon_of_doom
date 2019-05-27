@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <sys/stat.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -398,4 +400,153 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
     }
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
+}
+
+#ifdef linux
+
+#include <pwd.h>
+#include <unistd.h>
+
+char * get_home_dir() {
+    struct passwd * user_info;
+    char * home_dir = getenv("HOME");
+    if (home_dir != NULL && strlen(home_dir) != 0) {
+        return home_dir;
+    }
+    user_info = getpwuid(getuid());
+    if (user_info == NULL) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Unable to find user home directory! Exiting."
+        );
+        exit(1);
+    }
+    return user_info->pw_dir;
+}
+
+#endif
+
+#ifdef WIN32
+char * get_home_dir() {
+    char * home_dir = getenv("USERPROFILE");
+    if (home_dir == NULL || strlen(home_dir) == 0) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Unable to find user home directory! Exiting."
+        );
+        exit(1);
+    }
+    return home_dir;
+}
+
+#endif
+
+#define GAMEDIR "dungeon_of_doom_1.0"
+
+#define CHARACTERDIR "characters"
+#define LEVELDIR "levels"
+
+void mkdir_if_not_exists(char * dir) {
+    errno = 0;
+    struct stat * dir_stat = malloc(sizeof(struct stat));
+    if (dir_stat == NULL) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "dir_stat is NULL!"
+        );
+        exit(1);
+    }
+    int stat_result = stat(dir, dir_stat);
+    if (stat_result == -1 && errno != ENOENT) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error checking %s existence!",
+            dir
+        );
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error: %d (%s).",
+            errno,
+            strerror(errno)
+        );
+        exit(1);
+    }
+    if (stat_result == 0) {
+        if (dir_stat->st_mode & S_IFDIR) {
+            // dir already exists and is a directory. Free memory and exit.
+            free(dir_stat);
+            return;
+        }
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "%s has a non-directory mode of %x!",
+            dir,
+            dir_stat->st_mode
+        );
+        exit(1);
+    }
+    free(dir_stat);
+#ifdef linux
+    int mkdir_result = mkdir(dir, S_IRWXU);
+#endif
+#ifdef WIN32
+    int mkdir_result = mkdir(dir);
+#endif
+    if (mkdir_result == -1 && errno != EEXIST) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Unable to create game directory!"
+        );
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "Error: %d (%s).",
+            errno,
+            strerror(errno)
+        );
+        exit(1);
+    }
+}
+
+char * get_game_dir() {
+    char * home_dir = get_home_dir();
+    char * game_dir = malloc(
+            sizeof(char) * (strlen(home_dir) + strlen(GAMEDIR) + 2)
+        );
+    if (game_dir == NULL) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "game_dir is NULL!");
+        exit(1);
+    }
+    sprintf(game_dir, "%s%c%s", home_dir, PATHSEP, GAMEDIR);
+    mkdir_if_not_exists(game_dir);
+    return game_dir;
+}
+
+char * get_character_dir() {
+    char * game_dir = get_game_dir();
+    char * character_dir = malloc(
+            sizeof(char) * (strlen(game_dir) + strlen(CHARACTERDIR) + 2)
+        );
+    if (character_dir == NULL) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "character_dir is NULL!");
+        exit(1);
+    }
+    sprintf(character_dir, "%s%c%s", game_dir, PATHSEP, CHARACTERDIR);
+    free(game_dir);
+    mkdir_if_not_exists(character_dir);
+    return character_dir;
+}
+
+char * get_level_dir() {
+    char * game_dir = get_game_dir();
+    char * level_dir = malloc(
+            sizeof(char) * (strlen(game_dir) + strlen(LEVELDIR) + 2)
+        );
+    if (level_dir == NULL) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "level_dir is NULL!");
+        exit(1);
+    }
+    sprintf(level_dir, "%s%c%s", game_dir, PATHSEP, LEVELDIR);
+    free(game_dir);
+    mkdir_if_not_exists(level_dir);
+    return level_dir;
 }

@@ -117,11 +117,11 @@ void check_for_monster(enum CharCode item_at_coord,
     }
     monster_list_node_t * monster_list_node = monster_list->first_node;
     while (monster_list_node != NULL) {
-       if (
-               (int) monster_list_node->monster->coord_x == coord_x &&
-               (int) monster_list_node->monster->coord_y == coord_y
+        if (
+                (int) monster_list_node->monster->coord_x == coord_x &&
+                (int) monster_list_node->monster->coord_y == coord_y
         ) {
-           return;
+            return;
         }
         monster_list_node = monster_list_node->next_node;
     }
@@ -941,7 +941,7 @@ audio_state_t * init_audio() {
 
 
 int ** init_vertices() {
-    int i, **vertices;
+    int i, ** vertices;
     vertices = (int **) malloc(sizeof(int *) * 4);
     if (vertices == NULL) {
         fprintf(stderr, "vertices is NULL!\n");

@@ -786,7 +786,7 @@ void set_attr_phase(screen_t * screen, character_t * character,
                     pressed_key == '-' &&
                     character->attrs[main_menu->selected_row] > 1
             ) {
-                character->attrs[main_menu->selected_row] -=1;
+                character->attrs[main_menu->selected_row] -= 1;
                 attr_points += 1;
                 main_menu->items[main_menu->selected_row]->value -= 1;
                 header->points += 1;

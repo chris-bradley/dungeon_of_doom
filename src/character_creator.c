@@ -509,161 +509,161 @@ store_t * init_stores() {
         exit(1);
     }
     stores[0] = (store_t) {
-        .name="ARMOURY",
-        .items={
+        .name = "ARMOURY",
+        .items = {
             (item_t) {
-                .id=TWO_HAND_SWORD,
-                .name="2 HAND SWORD",
-                .price=20,
-                .batch_size=5
+                .id = TWO_HAND_SWORD,
+                .name = "2 HAND SWORD",
+                .price = 20,
+                .batch_size = 5
             },
             (item_t) {
-                .id=BROADSWORD,
-                .name="BROADSWORD",
-                .price=16,
-                .batch_size=4
+                .id = BROADSWORD,
+                .name = "BROADSWORD",
+                .price = 16,
+                .batch_size = 4
             },
             (item_t) {
-                .id=SHORTSWORD,
-                .name="SHORTSWORD",
-                .price=12,
-                .batch_size=3
+                .id = SHORTSWORD,
+                .name = "SHORTSWORD",
+                .price = 12,
+                .batch_size = 3
             },
             (item_t) {
-                .id=AXE,
-                .name="AXE",
-                .price=15,
-                .batch_size=3
+                .id = AXE,
+                .name = "AXE",
+                .price = 15,
+                .batch_size = 3
             },
             (item_t) {
-                .id=MACE,
-                .name="MACE",
-                .price=8,
-                .batch_size=2
+                .id = MACE,
+                .name = "MACE",
+                .price = 8,
+                .batch_size = 2
             },
             (item_t) {
-                .id=FLAIL,
-                .name="FLAIL",
-                .price=10,
-                .batch_size=2
+                .id = FLAIL,
+                .name = "FLAIL",
+                .price = 10,
+                .batch_size = 2
             },
             (item_t) {
-                .id=DAGGER,
-                .name="DAGGER",
-                .price=8,
-                .batch_size=1
+                .id = DAGGER,
+                .name = "DAGGER",
+                .price = 8,
+                .batch_size = 1
             },
             (item_t) {
-                .id=GAUNTLET,
-                .name="GAUNTLET",
-                .price=6,
-                .batch_size=1
+                .id = GAUNTLET,
+                .name = "GAUNTLET",
+                .price = 6,
+                .batch_size = 1
             }
         }
     };
     stores[1] = (store_t) {
-        .name="ACCOUTREMENTS",
-        .items={
+        .name = "ACCOUTREMENTS",
+        .items = {
             (item_t) {
-                .id=HEAVY_ARMOUR,
-                .name="HEAVY ARMOUR",
-                .price=18,
-                .batch_size=5
+                .id = HEAVY_ARMOUR,
+                .name = "HEAVY ARMOUR",
+                .price = 18,
+                .batch_size = 5
             },
             (item_t) {
-                .id=CHAIN_ARMOUR,
-                .name="CHAIN ARMOUR",
-                .price=15,
-                .batch_size=4
+                .id = CHAIN_ARMOUR,
+                .name = "CHAIN ARMOUR",
+                .price = 15,
+                .batch_size = 4
             },
             (item_t) {
-                .id=LEATHER_ARMOUR,
-                .name="LEATHER ARMOUR",
-                .price=9,
-                .batch_size=3
+                .id = LEATHER_ARMOUR,
+                .name = "LEATHER ARMOUR",
+                .price = 9,
+                .batch_size = 3
             },
             (item_t) {
-                .id=HEAVY_ROBE,
-                .name="HEAVY ROBE",
-                .price=9,
-                .batch_size=1
+                .id = HEAVY_ROBE,
+                .name = "HEAVY ROBE",
+                .price = 9,
+                .batch_size = 1
             },
             (item_t) {
-                .id=GOLD_HELMET,
-                .name="GOLD HELMET",
-                .price=14,
-                .batch_size=2
+                .id = GOLD_HELMET,
+                .name = "GOLD HELMET",
+                .price = 14,
+                .batch_size = 2
             },
             (item_t) {
-                .id=HEADPIECE,
-                .name="HEADPIECE",
-                .price=8,
-                .batch_size=1
+                .id = HEADPIECE,
+                .name = "HEADPIECE",
+                .price = 8,
+                .batch_size = 1
             },
             (item_t) {
-                .id=SHIELD,
-                .name="SHIELD",
-                .price=6,
-                .batch_size=3
+                .id = SHIELD,
+                .name = "SHIELD",
+                .price = 6,
+                .batch_size = 3
             },
             (item_t) {
-                .id=TORCH,
-                .name="TORCH",
-                .price=6,
-                .batch_size=1
+                .id = TORCH,
+                .name = "TORCH",
+                .price = 6,
+                .batch_size = 1
             }
         }
     };
     stores[2] = (store_t) {
-        .name="EMPORIUM",
-        .items={
+        .name = "EMPORIUM",
+        .items = {
             (item_t) {
-                .id=NECRONOMICON,
-                .name="NECRONOMICON",
-                .price=20,
-                .batch_size=4
+                .id = NECRONOMICON,
+                .name = "NECRONOMICON",
+                .price = 20,
+                .batch_size = 4
             },
             (item_t) {
-                .id=SCROLLS,
-                .name="SCROLLS",
-                .price=15,
-                .batch_size=3
+                .id = SCROLLS,
+                .name = "SCROLLS",
+                .price = 15,
+                .batch_size = 3
             },
             (item_t) {
-                .id=RING,
-                .name="RING",
-                .price=14,
-                .batch_size=2
+                .id = RING,
+                .name = "RING",
+                .price = 14,
+                .batch_size = 2
             },
             (item_t) {
-                .id=MYSTIC_AMULET,
-                .name="MYSTIC AMULET",
-                .price=12,
-                .batch_size=2
+                .id = MYSTIC_AMULET,
+                .name = "MYSTIC AMULET",
+                .price = 12,
+                .batch_size = 2
             },
             (item_t) {
-                .id=SASH,
-                .name="SASH",
-                .price=10,
-                .batch_size=3
+                .id = SASH,
+                .name = "SASH",
+                .price = 10,
+                .batch_size = 3
             },
             (item_t) {
-                .id=CLOAK,
-                .name="CLOAK",
-                .price=8,
-                .batch_size=1
+                .id = CLOAK,
+                .name = "CLOAK",
+                .price = 8,
+                .batch_size = 1
             },
             (item_t) {
-                .id=HEALING_SALVE,
-                .name="HEALING SALVE",
-                .price=6,
-                .batch_size=1
+                .id = HEALING_SALVE,
+                .name = "HEALING SALVE",
+                .price = 6,
+                .batch_size = 1
             },
             (item_t) {
-                .id=POTIONS,
-                .name="POTIONS",
-                .price=6,
-                .batch_size=1
+                .id = POTIONS,
+                .name = "POTIONS",
+                .price = 6,
+                .batch_size = 1
             }
         }
     };

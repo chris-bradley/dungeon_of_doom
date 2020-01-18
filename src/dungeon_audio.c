@@ -255,19 +255,19 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
             exit(1);
         }
         *new_stream_queue = (stream_queue_t) {
-            .length=0,
-            .first_node=NULL,
-            .last_node=NULL
+            .length = 0,
+            .first_node = NULL,
+            .last_node = NULL
         };
         *(audio_state->streams + index) = new_stream_queue;
     };
     SDL_AudioSpec desired = {
-        .freq=44100,
-        .format=AUDIO_S8,
-        .channels=1,
-        .samples=4096,
-        .callback=play_sound,
-        .userdata=audio_state
+        .freq = 44100,
+        .format = AUDIO_S8,
+        .channels = 1,
+        .samples = 4096,
+        .callback = play_sound,
+        .userdata = audio_state
     };
     SDL_AudioSpec * obtained = malloc(sizeof(SDL_AudioSpec));
     if (obtained == NULL) {

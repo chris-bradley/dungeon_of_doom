@@ -399,8 +399,8 @@ int can_be_barbarian(character_t * character) {
 character_class_t ** init_character_classes() {
     int index;
     character_class_t ** character_classes = malloc(
-        sizeof(character_class_t *) * 5
-    );
+            sizeof(character_class_t *) * 5
+        );
     if (character_classes == NULL) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
@@ -673,8 +673,8 @@ store_t * init_stores() {
 
 const char ** init_attr_names() {
     const char ** attr_names = (const char **) malloc(
-        sizeof(const char *) * 8
-    );
+            sizeof(const char *) * 8
+        );
     if (attr_names == NULL) {
         SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "attr_names is NULL!");
         exit(1);

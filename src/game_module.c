@@ -903,10 +903,10 @@ void save_game(screen_t * screen, game_state_t * game_state,
     int index, coord_x, coord_y;
     draw_message(screen, "ONE MOMENT PLEASE");
     char * character_file_contents = (char *) malloc(
-        sizeof(char) * (
-            12 + num_item_types + strlen(game_state->character->name)
-        )
-    );
+            sizeof(char) * (
+                12 + num_item_types + strlen(game_state->character->name)
+            )
+        );
     if (character_file_contents == NULL) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,

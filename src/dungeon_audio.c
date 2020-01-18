@@ -275,12 +275,12 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
         exit(1);
     }
     SDL_AudioDeviceID device = SDL_OpenAudioDevice(
-        NULL,
-        0,
-        &desired,
-        obtained,
-        SDL_AUDIO_ALLOW_ANY_CHANGE
-    );
+            NULL,
+            0,
+            &desired,
+            obtained,
+            SDL_AUDIO_ALLOW_ANY_CHANGE
+        );
     if (device == 0) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_AUDIO,

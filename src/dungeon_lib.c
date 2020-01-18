@@ -14,9 +14,9 @@ uint8_t colours [4][4] = {
 
 SDL_Rect * print_text(screen_t * screen, const char * message) {
     TTF_Font * c64_font = TTF_OpenFont(
-        "fonts/dungeon_of_doom.ttf",
-        8 * screen->zoom
-    );
+            "fonts/dungeon_of_doom.ttf",
+            8 * screen->zoom
+        );
     if (!c64_font) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_RENDER,
@@ -43,12 +43,12 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
     uint8_t r, g, b;
     // Background
     int error = SDL_SetRenderDrawColor(
-        screen->ren,
-        screen->cursor->background_colour[0],
-        screen->cursor->background_colour[1],
-        screen->cursor->background_colour[2],
-        screen->cursor->background_colour[3]
-    );
+            screen->ren,
+            screen->cursor->background_colour[0],
+            screen->cursor->background_colour[1],
+            screen->cursor->background_colour[2],
+            screen->cursor->background_colour[3]
+        );
     if (error) {
         SDL_LogError(
             SDL_LOG_CATEGORY_RENDER,
@@ -76,15 +76,15 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
     };
 
     SDL_Surface * text_surface = TTF_RenderText_Solid(
-        c64_font,
-        message,
-        text_color
-    );
+            c64_font,
+            message,
+            text_color
+        );
 
     SDL_Texture * text_texture = SDL_CreateTextureFromSurface(
-        screen->ren,
-        text_surface
-    );
+            screen->ren,
+            text_surface
+        );
 
     text_pos->h += 1;
 
@@ -282,12 +282,12 @@ void draw_bordered_box(screen_t * screen, int top_row, int left_col, int rows,
 
 void clear_rect(screen_t * screen, SDL_Rect * rect, enum ColourNum colour) {
     int error = SDL_SetRenderDrawColor(
-        screen->ren,
-        colours[colour][0],
-        colours[colour][1],
-        colours[colour][2],
-        colours[colour][3]
-    );
+            screen->ren,
+            colours[colour][0],
+            colours[colour][1],
+            colours[colour][2],
+            colours[colour][3]
+        );
     if (error) {
         SDL_LogError(
             SDL_LOG_CATEGORY_RENDER,
@@ -330,15 +330,15 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
                    enum ColourNum foreground_colour,
                    enum ColourNum background_colour) {
     SDL_Surface * surface = SDL_CreateRGBSurface(
-        0,
-        8 * screen->zoom,
-        8 * screen->zoom,
-        32,
-        0,
-        0,
-        0,
-        0
-    );
+            0,
+            8 * screen->zoom,
+            8 * screen->zoom,
+            32,
+            0,
+            0,
+            0,
+            0
+        );
     if (surface == NULL) {
         SDL_LogError(
             SDL_LOG_CATEGORY_RENDER,

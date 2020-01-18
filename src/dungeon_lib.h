@@ -3,8 +3,8 @@
 typedef struct {
     int curs_x;
     int curs_y;
-    uint8_t foreground_colour [4];
-    uint8_t background_colour [4];
+    uint8_t foreground_colour[4];
+    uint8_t background_colour[4];
 } cursor_t;
 
 typedef struct {

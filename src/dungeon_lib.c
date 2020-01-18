@@ -5,7 +5,7 @@
 
 #include "dungeon_lib.h"
 
-uint8_t colours [4][4] = {
+uint8_t colours[4][4] = {
     {0x00, 0x00, 0x00, 0},
     {0x88, 0x20, 0x00, 0},
     {0xf0, 0xe8, 0x58, 0},
@@ -305,7 +305,7 @@ void clear_rect(screen_t * screen, SDL_Rect * rect, enum ColourNum colour) {
     }
 }
 
-uint8_t bitmaps [18][8] = {
+uint8_t bitmaps[18][8] = {
     {255, 255, 255, 255, 255, 255, 255, 255},
     {56, 56, 16, 56, 84, 16, 40, 68},
     {28, 28, 8, 30, 40, 40, 20, 18},

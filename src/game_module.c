@@ -942,13 +942,15 @@ void save_game(screen_t * screen, game_state_t * game_state,
         (char) (CHARACTER_BASE + num_item_types);
     s_index += 1;
     for (index = 0; index < 8; index += 1) {
-        character_file_contents[s_index] =
-            (char) (game_state->character->attrs[index] + CHARACTER_BASE);
+        character_file_contents[s_index] = (char) (
+            game_state->character->attrs[index] + CHARACTER_BASE
+        );
         s_index += 1;
     }
     for (index = 0; index < num_item_types; index += 1) {
-        character_file_contents[s_index] = (char)
-            (game_state->character->inventory[index] + CHARACTER_BASE);
+        character_file_contents[s_index] = (char) (
+            game_state->character->inventory[index] + CHARACTER_BASE
+        );
         s_index += 1;
     }
     character_file_contents[s_index] = (char) (

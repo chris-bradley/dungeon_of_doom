@@ -77,15 +77,9 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     errno = 0;
     FILE * save_file_handle = fopen(level_path, "w");
     if (save_file_handle == NULL) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "save_file_handle is NULL!");
         SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "save_file_handle is NULL!"
-        );
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error: %d (%s).",
-            errno,
-            strerror(errno)
+            SDL_LOG_CATEGORY_SYSTEM, "Error: %d (%s).", errno, strerror(errno)
         );
         exit(1);
     }
@@ -102,9 +96,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
                 SDL_LogError(
                     SDL_LOG_CATEGORY_SYSTEM,
                     "Error %i writing dungeon contents at %i/%i!",
-                    ferror(save_file_handle),
-                    coord_x,
-                    coord_y
+                    ferror(save_file_handle), coord_x, coord_y
                 );
             }
         }
@@ -133,15 +125,9 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
             ferror(save_file_handle)
         );
     }
-    if (
-            !fputc(
-                (char) dungeon->level_num + char_base,
-                save_file_handle
-            )
-    ) {
+    if (!fputc((char) dungeon->level_num + char_base, save_file_handle)) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing the level number!",
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing the level number!",
             ferror(save_file_handle)
         );
     }
@@ -149,9 +135,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     error = fclose(save_file_handle);
     if (error) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i saving the level!",
-            error
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i saving the level!", error
         );
     }
     tab(screen->cursor, 1, 4);
@@ -205,8 +189,7 @@ int main(__attribute__((__unused__)) int argc,
     char * outstring = (char *) malloc(sizeof(char) * 40);
     if (outstring == NULL) {
         SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Allocating outstring failed!"
+            SDL_LOG_CATEGORY_SYSTEM, "Allocating outstring failed!"
         );
         exit(1);
     }
@@ -243,8 +226,7 @@ int main(__attribute__((__unused__)) int argc,
         }
         render_bitmap(
             screen, cur_coord.x + 1, cur_coord.y + 6,
-            dungeon->contents[cur_coord.x][cur_coord.y] + 6,
-            BLACK, WHITE
+            dungeon->contents[cur_coord.x][cur_coord.y] + 6, BLACK, WHITE
         );
 
         SDL_RenderPresent(screen->ren);

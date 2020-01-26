@@ -52,8 +52,7 @@ void play_sound(void * userdata, Uint8 * stream, int len) {
             SDL_MixAudioFormat(
                 stream + len - silence,
                 cur_node->stream + cur_node->samples_played,
-                audio_state->audio_spec->format,
-                node_remaining,
+                audio_state->audio_spec->format, node_remaining,
                 SDL_MIX_MAXVOLUME
             );
             silence -= node_remaining;
@@ -240,8 +239,7 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
     };
     if (audio_state->streams == NULL) {
         SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "audio_state->streams is NULL!"
+            SDL_LOG_CATEGORY_SYSTEM, "audio_state->streams is NULL!"
         );
         exit(1);
     }
@@ -249,8 +247,7 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
         new_stream_queue = malloc(sizeof(stream_queue_t));
         if (new_stream_queue == NULL) {
             SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM,
-                "new_stream_queue is NULL!"
+                SDL_LOG_CATEGORY_SYSTEM, "new_stream_queue is NULL!"
             );
             exit(1);
         }
@@ -275,16 +272,11 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
         exit(1);
     }
     SDL_AudioDeviceID device = SDL_OpenAudioDevice(
-            NULL,
-            0,
-            &desired,
-            obtained,
-            SDL_AUDIO_ALLOW_ANY_CHANGE
+            NULL, 0, &desired, obtained, SDL_AUDIO_ALLOW_ANY_CHANGE
         );
     if (device == 0) {
         SDL_LogCritical(
-            SDL_LOG_CATEGORY_AUDIO,
-            "SDL_OpenAudioDevice() failure: %s",
+            SDL_LOG_CATEGORY_AUDIO, "SDL_OpenAudioDevice() failure: %s",
             SDL_GetError()
         );
         exit(1);
@@ -293,40 +285,34 @@ audio_state_t * init_audio_state(Uint8 num_stream_queues) {
     audio_state->audio_spec = obtained;
     if (desired.freq != audio_state->audio_spec->freq) {
         SDL_LogWarn(
-            SDL_LOG_CATEGORY_AUDIO,
-            "audio_state->audio_spec->freq is %i",
+            SDL_LOG_CATEGORY_AUDIO, "audio_state->audio_spec->freq is %i",
             audio_state->audio_spec->freq
         );
     }
     if (desired.format != audio_state->audio_spec->format) {
         SDL_LogWarn(
-            SDL_LOG_CATEGORY_AUDIO,
-            "audio_state->audio_spec->format is %i",
+            SDL_LOG_CATEGORY_AUDIO, "audio_state->audio_spec->format is %i",
             audio_state->audio_spec->format
         );
     }
     if (desired.channels != audio_state->audio_spec->channels) {
         SDL_LogWarn(
-            SDL_LOG_CATEGORY_AUDIO,
-            "audio_state->audio_spec->channels is %i",
+            SDL_LOG_CATEGORY_AUDIO, "audio_state->audio_spec->channels is %i",
             audio_state->audio_spec->channels
         );
     }
     if (desired.samples != audio_state->audio_spec->samples) {
         SDL_LogWarn(
-            SDL_LOG_CATEGORY_AUDIO,
-            "audio_state->audio_spec.samples is %i",
+            SDL_LOG_CATEGORY_AUDIO, "audio_state->audio_spec.samples is %i",
             audio_state->audio_spec->samples
         );
     }
     SDL_LogInfo(
-        SDL_LOG_CATEGORY_AUDIO,
-        "audio_state->audio_spec.silence is %i",
+        SDL_LOG_CATEGORY_AUDIO, "audio_state->audio_spec.silence is %i",
         audio_state->audio_spec->silence
     );
     SDL_LogInfo(
-        SDL_LOG_CATEGORY_AUDIO,
-        "audio_state->audio_spec.size is %i",
+        SDL_LOG_CATEGORY_AUDIO, "audio_state->audio_spec.size is %i",
         audio_state->audio_spec->size
     );
     return audio_state;

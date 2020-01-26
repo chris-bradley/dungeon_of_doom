@@ -410,8 +410,7 @@ void cast_metamorphosis(ui_t * ui, game_state_t * game_state,
             game_state->character->coord_x
         ][
             game_state->character->coord_y
-        ] =
-            rand() % 8 + 1 + BLANK;
+        ] = rand() % 8 + 1 + BLANK;
         sound_sawtooth(ui->audio_state, sound_frequency);
         render_coord(
             ui->screen, game_state->dungeon_contents,
@@ -755,10 +754,7 @@ void load_level(ui_t * ui, int skip_first_exp_check,
         errno = 0;
         FILE * file_handle = fopen(level_path, "r");
         if (file_handle == NULL) {
-            SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM,
-                "file_handle is NULL!"
-            );
+            SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "file_handle is NULL!");
             SDL_LogCritical(
                 SDL_LOG_CATEGORY_SYSTEM,
                 "Error: %d (%s).",
@@ -775,10 +771,7 @@ void load_level(ui_t * ui, int skip_first_exp_check,
         fseek(file_handle, 0, SEEK_SET);
         char * file_contents = (char *) malloc(sizeof(char) * (filesize + 1));
         if (file_contents == NULL) {
-            SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM,
-                "file_contents is NULL!"
-            );
+            SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "file_contents is NULL!");
             exit(1);
         }
         fread(file_contents, 1, filesize, file_handle);
@@ -835,10 +828,7 @@ void load_character(ui_t * ui, character_t * character, int * num_item_types) {
     errno = 0;
     FILE * file_handle = fopen(character_path, "r");
     if (file_handle == NULL) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "file_handle is NULL!"
-        );
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "file_handle is NULL!");
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
             "Error: %d (%s).",
@@ -972,10 +962,7 @@ void save_game(screen_t * screen, game_state_t * game_state,
     errno = 0;
     FILE * file_handle = fopen(character_path, "w");
     if (file_handle == NULL) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "file_handle is NULL!"
-        );
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "file_handle is NULL!");
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
             "Error: %d (%s).",
@@ -1008,10 +995,7 @@ void save_game(screen_t * screen, game_state_t * game_state,
     errno = 0;
     file_handle = fopen(level_path, "w");
     if (file_handle == NULL) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "file_handle is NULL!"
-        );
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "file_handle is NULL!");
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM,
             "Error: %d (%s).",
@@ -1111,10 +1095,7 @@ character_t * init_character() {
     }
     character->attrs = (double *) malloc(sizeof(double) * 9);
     if (character->attrs == NULL) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "character->attrs is NULL!"
-        );
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "character->attrs is NULL!");
         exit(1);
     }
     character->spells_remaining = (int *) malloc(sizeof(int) * 6);
@@ -1137,10 +1118,7 @@ character_t * init_character() {
 int ** init_dungeon_contents() {
     int ** dungeon_contents = malloc(sizeof(int *) * 15);
     if (dungeon_contents == NULL) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "dungeon_contents is NULL!"
-        );
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "dungeon_contents is NULL!");
         exit(1);
     }
     int i;
@@ -1313,14 +1291,11 @@ int main(__attribute__((__unused__)) int argc,
         item_at_character_coord =
             game_state->dungeon_contents[
                 game_state->character->coord_x
-            ][
-                game_state->character->coord_y
-            ];
+            ][game_state->character->coord_y];
         if (item_at_character_coord == WALL) {
             render_coord(
                 ui->screen, game_state->dungeon_contents,
-                game_state->character->coord_x,
-                game_state->character->coord_y
+                game_state->character->coord_x, game_state->character->coord_y
             );
             game_state->character->coord_x =
                 game_state->character->prev_coord_x;
@@ -1356,9 +1331,7 @@ int main(__attribute__((__unused__)) int argc,
                 game_state->character->attrs[VITALITY] / 1100;
         }
         draw_character_and_stats(
-            ui->screen,
-            char_code_hero,
-            game_state->character
+            ui->screen, char_code_hero, game_state->character
         );
         if (
                 game_state->character->prev_coord_x !=
@@ -1382,8 +1355,7 @@ int main(__attribute__((__unused__)) int argc,
                 item_at_character_coord != EXIT
         ) {
             game_over = 0;
-        }
-        else if (item_at_character_coord == EXIT) {
+        } else if (item_at_character_coord == EXIT) {
             draw_message(ui->screen, ui->strings[11]);
             load_level_with_first_exp_check(ui, game_state);
             game_over = 0;

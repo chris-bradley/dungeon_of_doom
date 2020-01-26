@@ -198,17 +198,14 @@ void select_row(screen_t * screen, main_menu_t * main_menu, char pressed_key) {
     ink(screen->cursor, RED);
     if (main_menu->selector_rect != NULL) {
         clear_rect(
-            screen,
-            main_menu->selector_rect,
-            main_menu->background_colour
+            screen, main_menu->selector_rect, main_menu->background_colour
         );
         free(main_menu->selector_rect);
         main_menu->selector_rect = NULL;
     }
     if (pressed_key == 'a' && main_menu->selected_row > 0) {
         main_menu->selected_row -= 1;
-    }
-    else if (
+    } else if (
             pressed_key == 'z' &&
             main_menu->selected_row < main_menu->num_rows - 1
     ) {
@@ -243,13 +240,8 @@ title_row_t * init_title_row() {
 
 void draw_header(screen_t * screen, header_t * header) {
     draw_bordered_box(
-        screen,
-        header->top_row,
-        header->left_col,
-        header->rows,
-        header->cols,
-        header->background_colour,
-        header->border_colour
+        screen, header->top_row, header->left_col, header->rows, header->cols,
+        header->background_colour, header->border_colour
     );
     update_header(screen, header);
 }
@@ -265,18 +257,14 @@ void update_main(screen_t * screen, main_menu_t * main_menu) {
 
         if (menu_item->label_rect != NULL) {
             clear_rect(
-                screen,
-                menu_item->label_rect,
-                main_menu->background_colour
+                screen, menu_item->label_rect, main_menu->background_colour
             );
             free(menu_item->label_rect);
             menu_item->label_rect = NULL;
         }
         if (menu_item->value_rect != NULL) {
             clear_rect(
-                screen,
-                menu_item->value_rect,
-                main_menu->background_colour
+                screen, menu_item->value_rect, main_menu->background_colour
             );
             free(menu_item->value_rect);
             menu_item->value_rect = NULL;
@@ -387,8 +375,7 @@ int can_be_warrior(character_t * character) {
 int can_be_barbarian(character_t * character) {
     double * attrs = character->attrs;
     if (
-            attrs[STRENGTH] > 8 &&
-            attrs[VITALITY] + attrs[AGILITY] > 12 &&
+            attrs[STRENGTH] > 8 && attrs[VITALITY] + attrs[AGILITY] > 12 &&
             attrs[MORALITY] < 6
     ) {
         return 1;
@@ -402,10 +389,7 @@ character_class_t ** init_character_classes() {
             sizeof(character_class_t *) * 5
         );
     if (character_classes == NULL) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "character_classes is NULL!"
-        );
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "character_classes is NULL!");
         exit(1);
     }
     for (index = 0; index < 5; index += 1) {
@@ -457,8 +441,7 @@ int ** init_item_to_char_class() {
         );
         exit(1);
     }
-    int index_a, index_b,
-        values[24][5] = {
+    int index_a, index_b, values[24][5] = {
             {0, 0, 0, 0, 1},
             {0, 0, 0, 1, 1},
             {1, 0, 0, 1, 1},
@@ -699,15 +682,9 @@ void save_character(character_t * character, int num_item_types) {
     errno = 0;
     FILE * save_file_handle = fopen(character_path, "w");
     if (save_file_handle == NULL) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "save_file_handle is NULL!");
         SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "save_file_handle is NULL!"
-        );
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error: %d (%s).",
-            errno,
-            strerror(errno)
+            SDL_LOG_CATEGORY_SYSTEM, "Error: %d (%s).", errno, strerror(errno)
         );
         exit(1);
     }
@@ -715,8 +692,7 @@ void save_character(character_t * character, int num_item_types) {
 
     if (!fputc((char) (num_item_types + char_base), save_file_handle)) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing number of items!",
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing number of items!",
             ferror(save_file_handle)
         );
     }
@@ -729,10 +705,8 @@ void save_character(character_t * character, int num_item_types) {
                 )
         ) {
             SDL_LogError(
-                SDL_LOG_CATEGORY_SYSTEM,
-                "Error %i writing attr %i!",
-                ferror(save_file_handle),
-                index
+                SDL_LOG_CATEGORY_SYSTEM, "Error %i writing attr %i!",
+                ferror(save_file_handle), index
             );
         }
     }
@@ -744,57 +718,46 @@ void save_character(character_t * character, int num_item_types) {
                 )
         ) {
             SDL_LogError(
-                SDL_LOG_CATEGORY_SYSTEM,
-                "Error %i writing inventory %i!",
-                ferror(save_file_handle),
-                index
+                SDL_LOG_CATEGORY_SYSTEM, "Error %i writing inventory %i!",
+                ferror(save_file_handle), index
             );
         }
     }
     if (!fputc((char) (character->gold + char_base), save_file_handle)) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing gold!",
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing gold!",
             ferror(save_file_handle)
         );
     }
     if (!fputc((char) char_base, save_file_handle)) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing char_base!",
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing char_base!",
             ferror(save_file_handle)
         );
     }
     error = fputs(character->name, save_file_handle);
     if (error) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing character name!",
-            error
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing character name!", error
         );
     }
     error = fputs(" -", save_file_handle);
     if (error) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing name delimiter!",
-            error
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing name delimiter!", error
         );
     }
     error = fputs(character->class->name, save_file_handle);
     if (error) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing character class name!",
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing character class name!",
             error
         );
     }
     error = fclose(save_file_handle);
     if (error) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i saving the character!",
-            error
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i saving the character!", error
         );
     }
 }
@@ -812,9 +775,7 @@ void set_attr_phase(screen_t * screen, character_t * character,
         main_menu->items[index] = malloc(sizeof(menu_item_t));
         if (main_menu->items[index] == NULL) {
             SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM,
-                "main_menu->items[%i] is NULL!",
-                index
+                SDL_LOG_CATEGORY_SYSTEM, "main_menu->items[%i] is NULL!", index
             );
             exit(1);
         }
@@ -949,10 +910,7 @@ void character_naming_phase(screen_t * screen, character_t * character,
         col = 1;
         row = 3;
         typed_string = get_player_string(
-            screen,
-            col,
-            row,
-            header->background_colour
+            screen, col, row, header->background_colour
         );
         strcpy(character->name, typed_string);
         free(typed_string);

@@ -7,9 +7,7 @@ int main(__attribute__((__unused__)) int argc,
     int freq;
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         SDL_LogCritical(
-            SDL_LOG_CATEGORY_AUDIO,
-            "SDL Init Failure!: %s",
-            SDL_GetError()
+            SDL_LOG_CATEGORY_AUDIO, "SDL Init Failure!: %s", SDL_GetError()
         );
         return 1;
     }
@@ -22,25 +20,16 @@ int main(__attribute__((__unused__)) int argc,
     stream_queue_t * second_stream = *(audio_state->streams + 1);
 
 
+    stream_queue_enqueue(main_stream, stream, freq * 4);
     stream_queue_enqueue(
-        main_stream,
-        stream,
+        main_stream, sawtooth(440, freq * 4, audio_state->audio_spec), freq * 4
+    );
+    stream_queue_enqueue(
+        main_stream, sine_wave(440, freq * 4, audio_state->audio_spec),
         freq * 4
     );
     stream_queue_enqueue(
-        main_stream,
-        sawtooth(440, freq * 4, audio_state->audio_spec),
-        freq * 4
-    );
-    stream_queue_enqueue(
-        main_stream,
-        sine_wave(440, freq * 4, audio_state->audio_spec),
-        freq * 4
-    );
-    stream_queue_enqueue(
-        main_stream,
-        noise(440, freq * 4, audio_state->audio_spec),
-        freq * 4
+        main_stream, noise(440, freq * 4, audio_state->audio_spec), freq * 4
     );
     SDL_PauseAudioDevice(audio_state->device, 0);
     SDL_Delay(16000);
@@ -49,18 +38,14 @@ int main(__attribute__((__unused__)) int argc,
     int length = 0.3 * freq;
     for (sound_frequency = 1; sound_frequency <= 12; sound_frequency += 1) {
         stream = sawtooth(
-            sound_frequency * 16.940,
-            length,
-            audio_state->audio_spec
+            sound_frequency * 16.940, length, audio_state->audio_spec
         );
         if (sound_frequency == 12) {
             volume_filter(stream, length, 0, length, 0, 0);
         }
         stream_queue_enqueue(main_stream, stream, length);
         stream = noise(
-            sound_frequency * 16.940,
-            length,
-            audio_state->audio_spec
+            sound_frequency * 16.940, length, audio_state->audio_spec
         );
         if (sound_frequency == 12) {
             volume_filter(stream, length, 0, length, 0, 0);

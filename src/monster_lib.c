@@ -43,8 +43,7 @@ void monster_list_add(monster_list_t * monster_list, monster_t * monster) {
 }
 
 void monster_list_remove(monster_list_t * monster_list, monster_t * monster) {
-    monster_list_node_t * node = monster_list->first_node,
-                        * prev_node = NULL;
+    monster_list_node_t * node = monster_list->first_node, * prev_node = NULL;
     while (node != NULL) {
         if (node->monster == monster) {
             if (node == monster_list->first_node) {
@@ -82,8 +81,7 @@ monster_t * monster_list_get_nearest(monster_list_t * monster_list,
 }
 
 void monster_list_clear(monster_list_t * monster_list) {
-    monster_list_node_t * monster_node = monster_list->first_node,
-                        * next_node;
+    monster_list_node_t * monster_node = monster_list->first_node, * next_node;
     while (monster_node != NULL) {
         free(monster_node->monster);
         next_node = monster_node->next_node;

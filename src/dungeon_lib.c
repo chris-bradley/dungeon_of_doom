@@ -55,7 +55,8 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
     SDL_Color text_color = {
         .r = screen->cursor->foreground_colour[0],
         .g = screen->cursor->foreground_colour[1],
-        .b = screen->cursor->foreground_colour[2]
+        .b = screen->cursor->foreground_colour[2],
+        .a = screen->cursor->foreground_colour[3]
     };
 
     TTF_Font * c64_font = TTF_OpenFont(

@@ -13,16 +13,10 @@ uint8_t colours[4][4] = {
 };
 
 SDL_Rect * print_text(screen_t * screen, const char * message) {
-    TTF_Font * c64_font = TTF_OpenFont(
-            "fonts/dungeon_of_doom.ttf", 8 * screen->zoom
-        );
-    if (!c64_font) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_RENDER, "TTF_OpenFont: %s", TTF_GetError()
-        );
-        exit(1);
-    }
     int message_length = (int) strlen(message);
+    if (!message_length) {
+        return NULL;
+    }
     SDL_Rect * text_pos;
     text_pos = malloc(sizeof(SDL_Rect));
     if (text_pos == NULL) {
@@ -69,6 +63,15 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
         .b = b
     };
 
+    TTF_Font * c64_font = TTF_OpenFont(
+            "fonts/dungeon_of_doom.ttf", 8 * screen->zoom
+        );
+    if (!c64_font) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_RENDER, "TTF_OpenFont: %s", TTF_GetError()
+        );
+        exit(1);
+    }
     SDL_Surface * text_surface = TTF_RenderText_Solid(
             c64_font, message, text_color
         );

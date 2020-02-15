@@ -31,7 +31,6 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
     };
     screen->cursor->curs_x += message_length;
 
-    uint8_t r, g, b;
     // Background
     int error = SDL_SetRenderDrawColor(
             screen->ren, screen->cursor->background_colour[0],
@@ -53,14 +52,10 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
         );
     }
     // Foreground
-    r = screen->cursor->foreground_colour[0];
-    g = screen->cursor->foreground_colour[1];
-    b = screen->cursor->foreground_colour[2];
-
     SDL_Color text_color = {
-        .r = r,
-        .g = g,
-        .b = b
+        .r = screen->cursor->foreground_colour[0],
+        .g = screen->cursor->foreground_colour[1],
+        .b = screen->cursor->foreground_colour[2]
     };
 
     TTF_Font * c64_font = TTF_OpenFont(

@@ -736,22 +736,24 @@ void save_character(character_t * character, int num_item_types) {
         );
     }
     error = fputs(character->name, save_file_handle);
-    if (error) {
+    if (error < 0) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing character name!", error
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing character name!",
+            ferror(save_file_handle)
         );
     }
     error = fputs(" -", save_file_handle);
-    if (error) {
+    if (error < 0) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing name delimiter!", error
+            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing name delimiter!",
+            ferror(save_file_handle)
         );
     }
     error = fputs(character->class->name, save_file_handle);
-    if (error) {
+    if (error < 0) {
         SDL_LogError(
             SDL_LOG_CATEGORY_SYSTEM, "Error %i writing character class name!",
-            error
+            ferror(save_file_handle)
         );
     }
     error = fclose(save_file_handle);

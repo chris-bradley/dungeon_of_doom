@@ -973,11 +973,11 @@ void save_game(screen_t * screen, game_state_t * game_state,
     }
     free(character_path);
     int error = fputs(character_file_contents, file_handle);
-    if (error) {
+    if (error < 0) {
         SDL_LogError(
             SDL_LOG_CATEGORY_SYSTEM,
             "Error %i writing the character!",
-            error
+            ferror(file_handle)
         );
     }
     error = fclose(file_handle);
@@ -1006,11 +1006,11 @@ void save_game(screen_t * screen, game_state_t * game_state,
     }
     free(level_path);
     error = fputs(dungeon_file_contents, file_handle);
-    if (error) {
+    if (error < 0) {
         SDL_LogError(
             SDL_LOG_CATEGORY_SYSTEM,
             "Error %i writing the level!",
-            error
+            ferror(file_handle)
         );
     }
     error = fclose(file_handle);

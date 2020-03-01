@@ -73,3 +73,5 @@ void render_bitmap(screen_t * screen, int col, int row, int bitmap_num,
 
 char * get_character_dir();
 char * get_level_dir();
+
+void handle_args(int argc, char * argv[]);

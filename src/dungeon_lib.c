@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <unistd.h>
 
 #include "dungeon_lib.h"
 
@@ -479,4 +480,36 @@ char * get_level_dir() {
     free(game_dir);
     mkdir_if_not_exists(level_dir);
     return level_dir;
+}
+
+void handle_args(int argc, char * argv[]) {
+    int next_arg = getopt(argc, argv, "v::");
+    SDL_LogPriority priority;
+    while (next_arg != -1) {
+        if (next_arg == 'v') {
+            if (!optarg) {
+                priority = SDL_LOG_PRIORITY_ERROR;
+            } else if (!strcmp(optarg, "0")) {
+                priority = SDL_LOG_PRIORITY_CRITICAL;
+            } else if (!strcmp(optarg, "1")) {
+                priority = SDL_LOG_PRIORITY_ERROR;
+            } else if (!strcmp(optarg, "2")) {
+                priority = SDL_LOG_PRIORITY_WARN;
+            } else if (!strcmp(optarg, "3")) {
+                priority = SDL_LOG_PRIORITY_INFO;
+            } else if (!strcmp(optarg, "4")) {
+                priority = SDL_LOG_PRIORITY_DEBUG;
+            } else if (!strcmp(optarg, "5")) {
+                priority = SDL_LOG_PRIORITY_VERBOSE;
+            } else {
+                SDL_LogCritical(
+                    SDL_LOG_CATEGORY_SYSTEM, "invalid verbsoity argument %s!",
+                    optarg
+                );
+                exit(1);
+            }
+            SDL_LogSetAllPriority(priority);
+        }
+        next_arg = getopt(argc, argv, "v::");
+    }
 }

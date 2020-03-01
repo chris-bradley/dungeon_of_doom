@@ -919,8 +919,8 @@ void character_naming_phase(screen_t * screen, character_t * character,
     } while (strlen(character->name) > 10);
 }
 
-int main(__attribute__((__unused__)) int argc,
-         __attribute__((__unused__)) char * argv[]) {
+int main(int argc, char * argv[]) {
+    handle_args(argc, argv);
     int index, num_item_types,
         screen_cols = init_screen_cols();
     character_class_t ** character_classes = init_character_classes();

@@ -170,8 +170,8 @@ const char ** init_help_lines() {
     return help_lines;
 }
 
-int main(__attribute__((__unused__)) int argc,
-         __attribute__((__unused__)) char * argv[]) {
+int main(int argc, char * argv[]) {
+    handle_args(argc, argv);
     int screen_cols;
     coord_t cur_coord;
     const char ** help_lines = init_help_lines();

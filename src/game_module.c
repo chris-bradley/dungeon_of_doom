@@ -1181,8 +1181,8 @@ const char ** init_item_names() {
     return item_names;
 }
 
-int main(__attribute__((__unused__)) int argc,
-         __attribute__((__unused__)) char * argv[]) {
+int main(int argc, char * argv[]) {
+    handle_args(argc, argv);
     int ** vertices,
         num_item_types,
         item_at_character_coord,  // Object at character->coord_x / NY

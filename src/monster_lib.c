@@ -2,12 +2,13 @@
 #include <stdio.h>
 #include <math.h>
 #include <SDL.h>
-#include "dungeon_lib.h"
 #include "monster_lib.h"
+
+int MONSTER_CODE_BASE = 104;
 
 monster_t * monster_init(int type, int coord_x, int coord_y) {
     monster_t * monster = malloc(sizeof(monster_t));
-    monster->char_code = type + VASE;
+    monster->char_code = type + MONSTER_CODE_BASE;
     monster->type = type;
     monster->speed = type / 16.0;
     monster->strength = type * 6;

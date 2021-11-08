@@ -33,7 +33,21 @@ The project currently has a simple makefile in the `src` directory. It currently
 Copy `dungeon_generator`, `character_creator`, `game_module` and the `fonts` directory to where you want to install the game.
 
 ### Windows
-Copy `dungeon_generator.exe`, `character_creator.exe`, `game_module.exe`, the `fonts` directory and a copy of your MinGW's `libwinpthread-1.dll` to where you want to install the game.
+Copy the following files to the install location:
+ - The game's own executables:
+   - `dungeon_generator.exe`
+   - `character_creator.exe`
+   - `game_module.exe`
+ - The `fonts` directory
+ - The required MinGW libraries:
+   - `libwinpthread-1.dll`
+   - `SDL2.dll`
+   - `SDL2_ttf.dll` and its dependencies:
+     - `libfreetype-6.dll`
+     - `libbz2-1.dll`
+     - `libpng16-16.dll`
+     - `zlib1.dll`
+     - `libssp-0.dll`
 
 ## RUNNING THE PROGRAMS
 

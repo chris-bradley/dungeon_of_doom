@@ -1,7 +1,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <SDL.h>
-#include <SDL_ttf.h>
 #include <unistd.h>
 
 #include "dungeon_lib.h"
@@ -12,6 +11,18 @@ uint8_t colours[4][4] = {
     {0xf0, 0xe8, 0x58, SDL_ALPHA_OPAQUE},
     {0xff, 0xff, 0xff, SDL_ALPHA_OPAQUE}
 };
+
+uint32_t convert_gray_to_rgb(FT_Bitmap * bitmap, int row, int col,
+                             uint8_t colour[4]) {
+    uint8_t in_pixel = bitmap->buffer[row * bitmap->width + col],
+        red = in_pixel * colour[0] / 255,
+        blue = in_pixel * colour[2] / 255,
+        green = in_pixel * colour[1] / 255;
+    if (in_pixel == 0) {
+        return 0x00000000;
+    }
+    return (red << 24) | (green << 16) | (blue << 8) | colour[3];
+}
 
 SDL_Rect * print_text(screen_t * screen, const char * message) {
     int message_length = (int) strlen(message);
@@ -52,26 +63,90 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
             SDL_GetError()
         );
     }
-    // Foreground
-    SDL_Color text_color = {
-        .r = screen->cursor->foreground_colour[0],
-        .g = screen->cursor->foreground_colour[1],
-        .b = screen->cursor->foreground_colour[2],
-        .a = screen->cursor->foreground_colour[3]
-    };
 
-    TTF_Font * c64_font = TTF_OpenFont(
-            "fonts/dungeon_of_doom.ttf", 8 * screen->zoom
-        );
-    if (!c64_font) {
-        SDL_LogCritical(
-            SDL_LOG_CATEGORY_RENDER, "TTF_OpenFont: %s", TTF_GetError()
+    FT_Face face;
+    error = FT_New_Face(
+        *(screen->ft_lib), "fonts/dungeon_of_doom.ttf", 0, &face
+    );
+    if (error) {
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER, "FT_New_Face error: %i", error
         );
         exit(1);
     }
-    SDL_Surface * text_surface = TTF_RenderText_Solid(
-            c64_font, message, text_color
+    error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
+    error = FT_Set_Pixel_Sizes(face, 0, 8 * screen->zoom);
+    if (error) {
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER, "FT_Set_Pixel_Sizes error: %i", error
         );
+        exit(1);
+    }
+    size_t i;
+    uint8_t row;
+    uint8_t col;
+    uint32_t pixel;
+    int pixel_index = 0;
+    int letter_left_index = 0;
+    SDL_Surface * text_surface = SDL_CreateRGBSurface(
+            0, text_pos->w, text_pos->h, 32, 0xFF000000, 0x00FF0000,
+            0x0000FF00, 0x000000FF
+        );
+
+    int x_padding, top_padding, left_padding, right_padding;
+    for (i = 0; i < strlen(message); i += 1) {
+        error = FT_Load_Char(face, message[i], FT_LOAD_RENDER);
+        if (error) {
+            SDL_LogError(
+                SDL_LOG_CATEGORY_RENDER, "FT_Load_Char error: %i", error
+            );
+            exit(1);
+        }
+        x_padding = screen->zoom * 8 - face->glyph->bitmap.width;
+        left_padding = x_padding / 2;
+        right_padding = x_padding - left_padding;
+        letter_left_index += left_padding;
+        top_padding = (screen->zoom * 8 - face->glyph->bitmap.rows) / 2;
+        uint32_t (*pixel_convert_func) (FT_Bitmap *, int, int, uint8_t[4]);
+        for (row = 0; row < face->glyph->bitmap.rows; row += 1) {
+            pixel_index = (top_padding + row) * text_pos->w + letter_left_index;
+            for (col = 0; col < face->glyph->bitmap.width; col += 1) {
+                switch (face->glyph->bitmap.pixel_mode) {
+                    case FT_PIXEL_MODE_GRAY:
+                        pixel_convert_func = &convert_gray_to_rgb;
+                        break;
+                    case FT_PIXEL_MODE_MONO:
+                    case FT_PIXEL_MODE_GRAY2:
+                    case FT_PIXEL_MODE_GRAY4:
+                    case FT_PIXEL_MODE_BGRA:
+                    case FT_PIXEL_MODE_LCD:
+                    case FT_PIXEL_MODE_LCD_V:
+                        SDL_LogError(
+                            SDL_LOG_CATEGORY_RENDER,
+                            "Unsupported Pixel Mode: %i",
+                            face->glyph->bitmap.pixel_mode
+                        );
+                        exit(1);
+                    default:
+                        SDL_LogError(
+                            SDL_LOG_CATEGORY_RENDER,
+                            "Unrecognized Pixel Mode: %i",
+                            face->glyph->bitmap.pixel_mode
+                        );
+                        exit(1);
+                }
+                pixel = pixel_convert_func(
+                    &(face->glyph->bitmap),
+                    row,
+                    col,
+                    screen->cursor->foreground_colour
+                );
+                ((uint32_t *) text_surface->pixels)[pixel_index] = pixel;
+                pixel_index += 1;
+            }
+        }
+        letter_left_index += face->glyph->bitmap.width + right_padding;
+    }
 
     SDL_Texture * text_texture = SDL_CreateTextureFromSurface(
             screen->ren, text_surface
@@ -87,7 +162,6 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
     }
     SDL_DestroyTexture(text_texture);
     SDL_FreeSurface(text_surface);
-    TTF_CloseFont(c64_font);
 
     text_pos->h -= 1;
     return text_pos;
@@ -126,7 +200,6 @@ screen_t * init_screen() {
         SDL_Quit();
         exit(1);;
     }
-    TTF_Init();
     screen = (screen_t *) malloc(sizeof(screen_t));
     if (screen == NULL) {
         SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "screen is NULL!");
@@ -152,6 +225,18 @@ screen_t * init_screen() {
     SDL_RenderClear(screen->ren);
     SDL_RenderPresent(screen->ren);
 
+    screen->ft_lib = malloc(sizeof(FT_Library));
+
+    int error = FT_Init_FreeType(screen->ft_lib);
+    if (error) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM,
+            "error %i initting FreeType!",
+            error
+        );
+        exit(1);
+    }
+
     screen->cursor = (cursor_t *) malloc(sizeof(cursor_t));
     if (screen->cursor == NULL) {
         SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "screen->cursor is NULL!");
@@ -165,7 +250,7 @@ screen_t * init_screen() {
 void destroy_screen(screen_t * screen) {
     free(screen->cursor);
 
-    TTF_Quit();
+    FT_Done_FreeType(*(screen->ft_lib));
     SDL_DestroyRenderer(screen->ren);
     SDL_DestroyWindow(screen->win);
     SDL_Quit();

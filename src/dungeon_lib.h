@@ -1,3 +1,6 @@
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 // TODO: Investigate if the name is valid. The '_t' suffix is common but may
 // not adhere to the POSIX standards.
 typedef struct {
@@ -10,6 +13,7 @@ typedef struct {
 typedef struct {
     SDL_Renderer * ren;
     SDL_Window * win;
+    FT_Library * ft_lib;
     cursor_t * cursor;
     int zoom;
 } screen_t;

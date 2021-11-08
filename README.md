@@ -14,8 +14,8 @@ BUILDING
 The project currently has a simple makefile in the `src` directory. It currently builds on Linux for Linux and Windows targets. The executables are currently also written to the `src` directory. Issue #16 exists for restructuring the build system.
 
 ### Requirements
- - requires `SDL2` and `SDL2_ttf` and their development libraries
- - Windows build also requires MinGW, freetype, iconv, png, bz2 and z
+ - requires `SDL2` and `freetype` and their development libraries
+ - Windows build also requires MinGW, iconv, png, bz2 and z
 
 ### Targets
  - The end target names for Linux are `game_module`, `character_creator` and `dungeon_generator`.
@@ -32,6 +32,13 @@ The project currently has a simple makefile in the `src` directory. It currently
 ### Linux
 Copy `dungeon_generator`, `character_creator`, `game_module` and the `fonts` directory to where you want to install the game.
 
+Also make sure the following dependencies are installed:
+ - SDL 2
+ - Freetype 6
+ - libbzip2
+ - libpng 1.6
+ - zlib
+
 ### Windows
 Copy the following files to the install location:
  - The game's own executables:
@@ -42,8 +49,7 @@ Copy the following files to the install location:
  - The required MinGW libraries:
    - `libwinpthread-1.dll`
    - `SDL2.dll`
-   - `SDL2_ttf.dll` and its dependencies:
-     - `libfreetype-6.dll`
+   - `libfreetype-6.dll` and its dependencies:
      - `libbz2-1.dll`
      - `libpng16-16.dll`
      - `zlib1.dll`

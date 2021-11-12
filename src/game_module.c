@@ -763,7 +763,7 @@ void load_level(ui_t * ui, int skip_first_exp_check,
             );
             exit(1);
         }
-        free(level_dir);
+        free(level_path);
 
         fseek(file_handle, 0, SEEK_END);
         // TODO: Check for fseek errors.

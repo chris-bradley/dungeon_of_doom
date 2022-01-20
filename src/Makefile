@@ -114,7 +114,6 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		$(MINGW_DYN_LIBS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		-l setupapi \
-		$(MINGW_DYN_LIBS) \
 		`$(MINGW_ROOT)/bin/freetype-config --libs` \
 		${MINGW_FT_LIBS} \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
@@ -171,7 +170,6 @@ game_module.exe : \
 		$(MINGW_DYN_LIBS) \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		-l setupapi \
-		$(MINGW_DYN_LIBS) \
 		`$(MINGW_ROOT)/bin/freetype-config --libs` \
 		${MINGW_FT_LIBS} \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \

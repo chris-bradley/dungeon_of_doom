@@ -4,14 +4,7 @@ MINGW_GCC = i686-w64-mingw32-gcc
 MINGW_ROOT = /usr/i686-w64-mingw32/sys-root/mingw/
 MINGW_PKG_CONFIG = /usr/bin/i686-w64-mingw32-pkg-config
 MINGW_FT_LIBS = `${MINGW_PKG_CONFIG} libpng bzip2 --libs`
-MINGW_DYN_LIBS = \
-		-Wl,-Bdynamic \
-		-l winmm \
-		-l ole32 \
-		-l gdi32 \
-		-l imm32 \
-		-l version \
-		-l oleaut32
+MINGW_DYN_LIBS = -mwindows
 
 
 all: \

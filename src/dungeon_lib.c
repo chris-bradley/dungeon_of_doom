@@ -148,6 +148,13 @@ SDL_Rect * print_text(screen_t * screen, const char * message) {
         letter_left_index += face->glyph->bitmap.width + right_padding;
     }
 
+    error = FT_Done_Face(face);
+    if (error) {
+        SDL_LogError(
+            SDL_LOG_CATEGORY_RENDER, "FT_Done_Face error: %i", error
+        );
+        exit(1);
+    }
     SDL_Texture * text_texture = SDL_CreateTextureFromSurface(
             screen->ren, text_surface
         );

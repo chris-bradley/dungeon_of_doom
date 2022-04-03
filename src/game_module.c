@@ -6,6 +6,8 @@
 #include "dungeon_audio.h"
 #include "character_lib.h"
 #include "libcoord.h"
+#include "libmap.h"
+
 
 typedef struct {
     screen_t * screen;
@@ -16,9 +18,8 @@ typedef struct {
 
 typedef struct {
     character_t * character;
-    int ** dungeon_contents;
+    dungeon_t * dungeon;
     monster_list_t * monster_list;
-    int dungeon_level;
     int finished;
 } game_state_t;
 
@@ -108,12 +109,12 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
     SDL_RenderPresent(screen->ren);
 }
 
-enum CharCode render_coord(screen_t * screen, int ** dungeon_contents,
+enum CharCode render_coord(screen_t * screen, dungeon_t * dungeon,
                            coord_t coord) {
     enum CharCode item_at_coord;
     paper(screen->cursor, RED);
     ink(screen->cursor, YELLOW);
-    item_at_coord = dungeon_contents[coord.x][coord.y];
+    item_at_coord = dungeon->contents[coord.x][coord.y];
     tab(screen->cursor, coord.x + 1, coord.y + 6);
     render_bitmap(
         screen,
@@ -148,9 +149,7 @@ void check_for_monster(enum CharCode item_at_coord,
 void render_coord_and_check_for_monster(screen_t * screen,
                                         game_state_t * game_state,
                                         coord_t coord) {
-    int item_at_coord = render_coord(
-            screen, game_state->dungeon_contents, coord
-        );
+    int item_at_coord = render_coord(screen, game_state->dungeon, coord);
     check_for_monster(item_at_coord, game_state->monster_list, coord);
 }
 
@@ -185,7 +184,7 @@ void monster_breaks_items(ui_t * ui, int item_num, int sound_frequency,
 }
 
 void monster_moves(screen_t * screen, monster_t * monster,
-                   character_t * character, int ** dungeon_contents) {
+                   character_t * character, dungeon_t * dungeon) {
     int direction_to_monster_x, direction_to_monster_y;
     direction_to_monster_x = sign((int) monster->coord.x - character->coord.x);
     direction_to_monster_y = sign((int) monster->coord.y - character->coord.y);
@@ -201,17 +200,17 @@ void monster_moves(screen_t * screen, monster_t * monster,
         .x = (int) next_coord_float.x,
         .y = (int) next_coord_float.y
     };
-    if (dungeon_contents[next_coord.x][next_coord.y] > BLANK) {
+    if (dungeon->contents[next_coord.x][next_coord.y] > BLANK) {
         return;
     }
     coord_t monster_coord = {
         .x = (int) monster->coord.x,
         .y = (int) monster->coord.y
     };
-    dungeon_contents[monster_coord.x][monster_coord.y] = BLANK;
-    render_coord(screen, dungeon_contents, monster_coord);
-    dungeon_contents[next_coord.x][next_coord.y] = monster->char_code;
-    render_coord(screen, dungeon_contents, next_coord);
+    dungeon->contents[monster_coord.x][monster_coord.y] = BLANK;
+    render_coord(screen, dungeon, monster_coord);
+    dungeon->contents[next_coord.x][next_coord.y] = monster->char_code;
+    render_coord(screen, dungeon, next_coord);
     monster->coord.x = next_coord_float.x;
     monster->coord.y = next_coord_float.y;
 }
@@ -270,7 +269,7 @@ void monsters_turn(ui_t * ui, game_state_t * game_state,
             ui->screen,
             monster,
             game_state->character,
-            game_state->dungeon_contents
+            game_state->dungeon
         );
         monster_attacks(
             ui, monster, game_state->character, item_at_character_coord,
@@ -303,14 +302,14 @@ void monster_dies(ui_t * ui, game_state_t * game_state, monster_t * monster) {
     int sound_frequency;
     monster_list_remove(game_state->monster_list, monster);
     free(monster);
-    game_state->dungeon_contents[coord.x][coord.y] = BLANK;
+    game_state->dungeon->contents[coord.x][coord.y] = BLANK;
     game_state->character->attrs[EXPERIENCE] += 0.1;
     draw_message(ui->screen, ui->strings[5]);
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
         sound_sawtooth(ui->audio_state, sound_frequency);
         sound_noise(ui->audio_state, sound_frequency);
     }
-    render_coord(ui->screen, game_state->dungeon_contents, coord);
+    render_coord(ui->screen, game_state->dungeon, coord);
 }
 
 void attack_monster(ui_t * ui, game_state_t * game_state,
@@ -370,7 +369,7 @@ void cast_superzap(ui_t * ui, game_state_t * game_state) {
 void cast_sanctuary(audio_state_t * audio_state, game_state_t * game_state,
                     int item_at_character_coord) {
     if (item_at_character_coord == BLANK) {
-        game_state->dungeon_contents[
+        game_state->dungeon->contents[
             game_state->character->coord.x
         ][
             game_state->character->coord.y
@@ -404,15 +403,14 @@ void cast_metamorphosis(ui_t * ui, game_state_t * game_state,
     int sound_frequency;
     monster_t * monster;
     for (sound_frequency = 1; sound_frequency <= 30; sound_frequency += 1) {
-        game_state->dungeon_contents[
+        game_state->dungeon->contents[
             game_state->character->coord.x
         ][
             game_state->character->coord.y
         ] = rand() % 8 + 1 + BLANK;
         sound_sawtooth(ui->audio_state, sound_frequency);
         render_coord(
-            ui->screen, game_state->dungeon_contents,
-            game_state->character->coord
+            ui->screen, game_state->dungeon, game_state->character->coord
         );
         SDL_RenderPresent(ui->screen->ren);
         SDL_Delay(300);
@@ -606,11 +604,11 @@ void get_item(ui_t * ui, int ** vertices, char * char_code_hero,
     if (item_to_get_coord.y > 14) {
         item_to_get_coord.y = 14;
     }
-    item_to_get = game_state->dungeon_contents[
+    item_to_get = game_state->dungeon->contents[
         item_to_get_coord.x
     ][item_to_get_coord.y];
     if (item_to_get > WALL && item_to_get < IDOL) {
-        game_state->dungeon_contents[item_to_get_coord.x][
+        game_state->dungeon->contents[item_to_get_coord.x][
             item_to_get_coord.y
         ] = BLANK;
     }
@@ -624,7 +622,7 @@ void get_item(ui_t * ui, int ** vertices, char * char_code_hero,
     if (item_to_get == IDOL) {
         game_won(ui, char_code_hero, game_state);
     }
-    render_coord(ui->screen, game_state->dungeon_contents, item_to_get_coord);
+    render_coord(ui->screen, game_state->dungeon, item_to_get_coord);
     if (item_to_get > WALL && item_to_get < IDOL) {
         sound_sawtooth(ui->audio_state, item_to_get);
         sound_sawtooth(ui->audio_state, item_to_get + 5);
@@ -773,17 +771,17 @@ void load_level(ui_t * ui, int skip_first_exp_check,
         index = 0;
         for (coord.y = 0; coord.y < 15; coord.y += 1) {
             for (coord.x = 0; coord.x < 15; coord.x += 1) {
-                game_state->dungeon_contents[coord.x][coord.y] =
+                game_state->dungeon->contents[coord.x][coord.y] =
                     (int) file_contents[index];
                 index += 1;
             }
         }
         entrance_coord.x = (int) file_contents[index] - DUNGEON_BASE - 1;
         entrance_coord.y = (int) file_contents[index + 1] - DUNGEON_BASE - 1;
-        game_state->dungeon_level =
+        game_state->dungeon->level_num =
             (int) file_contents[index + 2] - DUNGEON_BASE;
         if (
-                game_state->dungeon_level >
+                game_state->dungeon->level_num >
                     game_state->character->attrs[EXPERIENCE]
         ) {
             show_level_too_deep_messages(ui->screen, game_state->character);
@@ -909,7 +907,7 @@ void save_game(screen_t * screen, game_state_t * game_state,
     for (coord.y = 0; coord.y < 15; coord.y += 1) {
         for (coord.x = 0; coord.x < 15; coord.x += 1) {
             dungeon_file_contents[t_index] =
-                (char) game_state->dungeon_contents[coord.x][coord.y];
+                (char) game_state->dungeon->contents[coord.x][coord.y];
             t_index += 1;
         }
     }
@@ -920,7 +918,7 @@ void save_game(screen_t * screen, game_state_t * game_state,
         (char) (DUNGEON_BASE + game_state->character->coord.y + 1);
     t_index += 1;
     dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + game_state->dungeon_level);
+        (char) (DUNGEON_BASE + game_state->dungeon->level_num);
     t_index += 1;
     dungeon_file_contents[t_index] = 0;
     character_file_contents[s_index] =
@@ -1110,26 +1108,13 @@ character_t * init_character() {
     return character;
 }
 
-int ** init_dungeon_contents() {
-    int ** dungeon_contents = malloc(sizeof(int *) * 15);
-    if (dungeon_contents == NULL) {
-        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "dungeon_contents is NULL!");
+dungeon_t * init_dungeon() {
+    dungeon_t * dungeon = malloc(sizeof(dungeon_t));
+    if (dungeon == NULL) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "dungeon is NULL!");
         exit(1);
     }
-    int i;
-    for (i = 0; i < 15; i += 1) {
-        dungeon_contents[i] = (int *) malloc(sizeof(int) * 15);
-        if (dungeon_contents[i] == NULL) {
-            SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM,
-                "dungeon_contents[%i] is NULL!",
-                i
-            );
-            exit(1);
-        }
-    }
-
-    return dungeon_contents;
+    return dungeon;
 }
 
 const char ** init_strings() {
@@ -1202,7 +1187,7 @@ int main(int argc, char * argv[]) {
     vertices = init_vertices();
     char_code_hero = init_char_code_hero();
     game_state->character = init_character();
-    game_state->dungeon_contents = init_dungeon_contents();
+    game_state->dungeon = init_dungeon();
     item_names = init_item_names();
 
     game_state->finished = 0;
@@ -1282,13 +1267,12 @@ int main(int argc, char * argv[]) {
             game_state->character->coord.x = 14;
         }
         item_at_character_coord =
-            game_state->dungeon_contents[
+            game_state->dungeon->contents[
                 game_state->character->coord.x
             ][game_state->character->coord.y];
         if (item_at_character_coord == WALL) {
             render_coord(
-                ui->screen, game_state->dungeon_contents,
-                game_state->character->coord
+                ui->screen, game_state->dungeon, game_state->character->coord
             );
             game_state->character->coord.x =
                 game_state->character->prev_coord.x;
@@ -1375,10 +1359,7 @@ int main(int argc, char * argv[]) {
     free(game_state->character->attrs);
     free(char_code_hero);
     free(game_state->character->spells_remaining);
-    for (i = 0; i < 15; i += 1) {
-        free(game_state->dungeon_contents[i]);
-    }
-    free(game_state->dungeon_contents);
+    free(game_state->dungeon);
     free(item_names);
     free(game_state->character);
     monster_list_clear(game_state->monster_list);

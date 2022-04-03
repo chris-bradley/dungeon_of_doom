@@ -2,12 +2,7 @@
 #include <SDL.h>
 #include "dungeon_lib.h"
 #include "libcoord.h"
-
-typedef struct {
-    int contents[15][15];
-    coord_t entrance_coord;
-    int level_num;
-} dungeon_t;
+#include "libmap.h"
 
 
 void place_item(coord_t cur_coord, dungeon_t * dungeon, char pressed_key) {

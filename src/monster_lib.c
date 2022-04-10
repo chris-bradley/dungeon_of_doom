@@ -6,14 +6,14 @@
 
 int MONSTER_CODE_BASE = 104;
 
-monster_t * monster_init(int type, int coord_x, int coord_y) {
+monster_t * monster_init(int type, coord_t coord) {
     monster_t * monster = malloc(sizeof(monster_t));
     monster->char_code = type + MONSTER_CODE_BASE;
     monster->type = type;
     monster->speed = type / 16.0;
     monster->strength = type * 6;
-    monster->coord_x = (float) coord_x;
-    monster->coord_y = (float) coord_y;
+    monster->coord.x = (float) coord.x;
+    monster->coord.y = (float) coord.y;
 
     return monster;
 }
@@ -61,15 +61,15 @@ void monster_list_remove(monster_list_t * monster_list, monster_t * monster) {
 }
 
 monster_t * monster_list_get_nearest(monster_list_t * monster_list,
-                                     int coord_x, int coord_y) {
+                                     coord_t coord) {
     float distance, closest_distance = 0;
     monster_list_node_t * monster_node = monster_list->first_node;
     monster_t * monster, * nearest_monster = NULL;
     while (monster_node != NULL) {
         monster = monster_node->monster;
         distance = sqrt(
-            pow(abs(monster->coord_x - coord_x), 2) -
-                pow(abs(monster->coord_y - coord_y), 2)
+            pow(abs(monster->coord.x - coord.x), 2) -
+                pow(abs(monster->coord.y - coord.y), 2)
         );
         if (closest_distance == 0 || distance < closest_distance) {
             nearest_monster = monster;

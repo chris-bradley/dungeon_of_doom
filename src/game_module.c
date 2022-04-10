@@ -5,6 +5,7 @@
 #include "monster_lib.h"
 #include "dungeon_audio.h"
 #include "character_lib.h"
+#include "libcoord.h"
 
 typedef struct {
     screen_t * screen;
@@ -78,8 +79,8 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
     }
     render_bitmap(
         screen,
-        character->coord_x + 1,
-        character->coord_y + 6,
+        character->coord.x + 1,
+        character->coord.y + 6,
         char_code_hero[character->facing] - DUNGEON_BASE,
         WHITE,
         RED
@@ -108,12 +109,12 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
 }
 
 enum CharCode render_coord(screen_t * screen, int ** dungeon_contents,
-                           int coord_x, int coord_y) {
+                           coord_t coord) {
     enum CharCode item_at_coord;
     paper(screen->cursor, RED);
     ink(screen->cursor, YELLOW);
-    item_at_coord = dungeon_contents[coord_x][coord_y];
-    tab(screen->cursor, coord_x + 1, coord_y + 6);
+    item_at_coord = dungeon_contents[coord.x][coord.y];
+    tab(screen->cursor, coord.x + 1, coord.y + 6);
     render_bitmap(
         screen,
         screen->cursor->curs_x,
@@ -126,40 +127,31 @@ enum CharCode render_coord(screen_t * screen, int ** dungeon_contents,
 }
 
 void check_for_monster(enum CharCode item_at_coord,
-                       monster_list_t * monster_list, int coord_x,
-                       int coord_y) {
+                       monster_list_t * monster_list, coord_t coord) {
     if (item_at_coord <= SAFE_PLACE) {
         return;
     }
     monster_list_node_t * monster_list_node = monster_list->first_node;
     while (monster_list_node != NULL) {
         if (
-                (int) monster_list_node->monster->coord_x == coord_x &&
-                (int) monster_list_node->monster->coord_y == coord_y
+                (int) monster_list_node->monster->coord.x == coord.x &&
+                (int) monster_list_node->monster->coord.y == coord.y
         ) {
             return;
         }
         monster_list_node = monster_list_node->next_node;
     }
-    monster_list_add(
-        monster_list,
-        monster_init(item_at_coord - VASE, coord_x, coord_y)
-    );
+    monster_list_add(monster_list, monster_init(item_at_coord - VASE, coord));
 }
 
 
 void render_coord_and_check_for_monster(screen_t * screen,
                                         game_state_t * game_state,
-                                        int coord_x, int coord_y) {
+                                        coord_t coord) {
     int item_at_coord = render_coord(
-            screen,
-            game_state->dungeon_contents,
-            coord_x,
-            coord_y
+            screen, game_state->dungeon_contents, coord
         );
-    check_for_monster(
-        item_at_coord, game_state->monster_list, coord_x, coord_y
-    );
+    check_for_monster(item_at_coord, game_state->monster_list, coord);
 }
 
 int sign(int x) {
@@ -195,35 +187,41 @@ void monster_breaks_items(ui_t * ui, int item_num, int sound_frequency,
 void monster_moves(screen_t * screen, monster_t * monster,
                    character_t * character, int ** dungeon_contents) {
     int direction_to_monster_x, direction_to_monster_y;
-    float next_coord_x, next_coord_y;
-    direction_to_monster_x = sign((int) monster->coord_x - character->coord_x);
-    direction_to_monster_y = sign((int) monster->coord_y - character->coord_y);
-    next_coord_x =
-        monster->coord_x - (monster->speed * (float) direction_to_monster_x);
-    next_coord_y =
-        monster->coord_y - (monster->speed * (float) direction_to_monster_y);
-    if (dungeon_contents[(int) next_coord_x][(int) next_coord_y] > BLANK) {
+    direction_to_monster_x = sign((int) monster->coord.x - character->coord.x);
+    direction_to_monster_y = sign((int) monster->coord.y - character->coord.y);
+    coord_float_t next_coord_float = {
+        .x = monster->coord.x - (
+            monster->speed * (float) direction_to_monster_x
+        ),
+        .y = monster->coord.y - (
+            monster->speed * (float) direction_to_monster_y
+        )
+    };
+    coord_t next_coord = {
+        .x = (int) next_coord_float.x,
+        .y = (int) next_coord_float.y
+    };
+    if (dungeon_contents[next_coord.x][next_coord.y] > BLANK) {
         return;
     }
-    dungeon_contents[(int) monster->coord_x][(int) monster->coord_y] = BLANK;
-    render_coord(
-        screen, dungeon_contents, monster->coord_x, monster->coord_y
-    );
-    dungeon_contents[(int) next_coord_x][(int) next_coord_y] =
-        monster->char_code;
-    render_coord(
-        screen, dungeon_contents, (int) next_coord_x, (int) next_coord_y
-    );
-    monster->coord_x = next_coord_x;
-    monster->coord_y = next_coord_y;
+    coord_t monster_coord = {
+        .x = (int) monster->coord.x,
+        .y = (int) monster->coord.y
+    };
+    dungeon_contents[monster_coord.x][monster_coord.y] = BLANK;
+    render_coord(screen, dungeon_contents, monster_coord);
+    dungeon_contents[next_coord.x][next_coord.y] = monster->char_code;
+    render_coord(screen, dungeon_contents, next_coord);
+    monster->coord.x = next_coord_float.x;
+    monster->coord.y = next_coord_float.y;
 }
 
 void monster_attacks(ui_t * ui, monster_t * monster, character_t * character,
                      int item_at_character_coord, const char ** item_names) {
     int damage, item_num, monster_broke_item;
     if (
-            abs((int) monster->coord_x - character->coord_x) > 1 ||
-            abs((int) monster->coord_y - character->coord_y) > 1 ||
+            abs((int) monster->coord.x - character->coord.x) > 1 ||
+            abs((int) monster->coord.y - character->coord.y) > 1 ||
             item_at_character_coord == SAFE_PLACE
     ) {
         return;
@@ -298,21 +296,22 @@ void character_dies(ui_t * ui, char * char_code_hero,
 }
 
 void monster_dies(ui_t * ui, game_state_t * game_state, monster_t * monster) {
-    int coord_x = (int) monster->coord_x,
-        coord_y = (int) monster->coord_y,
-        sound_frequency;
+    coord_t coord = {
+        .x = (int) monster->coord.x,
+        .y = (int) monster->coord.y
+    };
+    int sound_frequency;
     monster_list_remove(game_state->monster_list, monster);
     free(monster);
-    game_state->dungeon_contents[coord_x][coord_y] = BLANK;
+    game_state->dungeon_contents[coord.x][coord.y] = BLANK;
     game_state->character->attrs[EXPERIENCE] += 0.1;
     draw_message(ui->screen, ui->strings[5]);
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
         sound_sawtooth(ui->audio_state, sound_frequency);
         sound_noise(ui->audio_state, sound_frequency);
     }
-    render_coord(ui->screen, game_state->dungeon_contents, coord_x, coord_y);
+    render_coord(ui->screen, game_state->dungeon_contents, coord);
 }
-
 
 void attack_monster(ui_t * ui, game_state_t * game_state,
                     monster_t * monster) {
@@ -362,8 +361,7 @@ void cast_superzap(ui_t * ui, game_state_t * game_state) {
     }
     if (game_state->monster_list->first_node != NULL) {
         monster = monster_list_get_nearest(
-            game_state->monster_list, game_state->character->coord_x,
-            game_state->character->coord_y
+            game_state->monster_list, game_state->character->coord
         );
         monster_dies(ui, game_state, monster);
     }
@@ -373,9 +371,9 @@ void cast_sanctuary(audio_state_t * audio_state, game_state_t * game_state,
                     int item_at_character_coord) {
     if (item_at_character_coord == BLANK) {
         game_state->dungeon_contents[
-            game_state->character->coord_x
+            game_state->character->coord.x
         ][
-            game_state->character->coord_y
+            game_state->character->coord.y
         ] = SAFE_PLACE;
     }
     sound_sawtooth(audio_state, 100);
@@ -384,8 +382,8 @@ void cast_sanctuary(audio_state_t * audio_state, game_state_t * game_state,
 
 void cast_teleport(ui_t * ui, char * char_code_hero, character_t * character) {
     int sound_frequency;
-    character->coord_x = rand() % 13;
-    character->coord_y = rand() % 13;
+    character->coord.x = rand() % 13;
+    character->coord.y = rand() % 13;
     for (sound_frequency = 0; sound_frequency <= 255; sound_frequency += 8) {
         sound_noise(ui->audio_state, sound_frequency);
         sound_sawtooth(ui->audio_state, sound_frequency);
@@ -407,22 +405,21 @@ void cast_metamorphosis(ui_t * ui, game_state_t * game_state,
     monster_t * monster;
     for (sound_frequency = 1; sound_frequency <= 30; sound_frequency += 1) {
         game_state->dungeon_contents[
-            game_state->character->coord_x
+            game_state->character->coord.x
         ][
-            game_state->character->coord_y
+            game_state->character->coord.y
         ] = rand() % 8 + 1 + BLANK;
         sound_sawtooth(ui->audio_state, sound_frequency);
         render_coord(
             ui->screen, game_state->dungeon_contents,
-            game_state->character->coord_x, game_state->character->coord_y
+            game_state->character->coord
         );
         SDL_RenderPresent(ui->screen->ren);
         SDL_Delay(300);
     }
     if (item_at_character_coord <= SAFE_PLACE) {
         monster = monster_list_get_nearest(
-            game_state->monster_list, game_state->character->coord_x,
-            game_state->character->coord_y
+            game_state->monster_list, game_state->character->coord
         );
         if (monster != NULL) {
             monster_list_remove(game_state->monster_list, monster);
@@ -588,33 +585,33 @@ void game_won(ui_t * ui, char * char_code_hero, game_state_t * game_state) {
 
 void get_item(ui_t * ui, int ** vertices, char * char_code_hero,
               game_state_t * game_state) {
-    int item_to_get, item_to_get_coord_x, item_to_get_coord_y;
-    item_to_get_coord_x =
-        game_state->character->coord_x + vertices[
+    int item_to_get;
+    coord_t item_to_get_coord = {
+        .x = game_state->character->coord.x + vertices[
             game_state->character->facing
-        ][0];
-    item_to_get_coord_y =
-        game_state->character->coord_y + vertices[
+        ][0],
+        .y = game_state->character->coord.y + vertices[
             game_state->character->facing
-        ][1];
-    if (item_to_get_coord_x < 0) {
-        item_to_get_coord_x = 0;
+        ][1]
+    };
+    if (item_to_get_coord.x < 0) {
+        item_to_get_coord.x = 0;
     }
-    if (item_to_get_coord_y < 0) {
-        item_to_get_coord_y = 0;
+    if (item_to_get_coord.y < 0) {
+        item_to_get_coord.y = 0;
     }
-    if (item_to_get_coord_x > 14) {
-        item_to_get_coord_x = 14;
+    if (item_to_get_coord.x > 14) {
+        item_to_get_coord.x = 14;
     }
-    if (item_to_get_coord_y > 14) {
-        item_to_get_coord_y = 14;
+    if (item_to_get_coord.y > 14) {
+        item_to_get_coord.y = 14;
     }
     item_to_get = game_state->dungeon_contents[
-        item_to_get_coord_x
-    ][item_to_get_coord_y];
+        item_to_get_coord.x
+    ][item_to_get_coord.y];
     if (item_to_get > WALL && item_to_get < IDOL) {
-        game_state->dungeon_contents[item_to_get_coord_x][
-            item_to_get_coord_y
+        game_state->dungeon_contents[item_to_get_coord.x][
+            item_to_get_coord.y
         ] = BLANK;
     }
     if (item_to_get == VASE) {
@@ -627,10 +624,7 @@ void get_item(ui_t * ui, int ** vertices, char * char_code_hero,
     if (item_to_get == IDOL) {
         game_won(ui, char_code_hero, game_state);
     }
-    render_coord(
-        ui->screen, game_state->dungeon_contents, item_to_get_coord_x,
-        item_to_get_coord_y
-    );
+    render_coord(ui->screen, game_state->dungeon_contents, item_to_get_coord);
     if (item_to_get > WALL && item_to_get < IDOL) {
         sound_sawtooth(ui->audio_state, item_to_get);
         sound_sawtooth(ui->audio_state, item_to_get + 5);
@@ -655,24 +649,24 @@ void drink_potion(character_t * character) {
 }
 
 void light_torch(ui_t * ui, game_state_t * game_state) {
-    int coord_x, coord_y;
+    coord_t coord;
     if (game_state->character->torches == 0) {
         draw_message(ui->screen, ui->strings[6]);
         return;
     }
     for (
-            coord_y = game_state->character->coord_y - 3;
-            coord_y <= game_state->character->coord_y + 3;
-            coord_y += 1
+            coord.y = game_state->character->coord.y - 3;
+            coord.y <= game_state->character->coord.y + 3;
+            coord.y += 1
     ) {
         for (
-                coord_x = game_state->character->coord_x - 3;
-                coord_x <= game_state->character->coord_x + 3;
-                coord_x += 1
+                coord.x = game_state->character->coord.x - 3;
+                coord.x <= game_state->character->coord.x + 3;
+                coord.x += 1
         ) {
-            if (coord_x >= 0 && coord_x < 15 && coord_y >= 0 && coord_y < 15) {
+            if (coord.x >= 0 && coord.x < 15 && coord.y >= 0 && coord.y < 15) {
                 render_coord_and_check_for_monster(
-                    ui->screen, game_state, coord_x, coord_y
+                    ui->screen, game_state, coord
                 );
             }
         }
@@ -725,8 +719,8 @@ void draw_interface(ui_t * ui, character_t * character) {
 
 void load_level(ui_t * ui, int skip_first_exp_check,
                 game_state_t * game_state) {
-    int correct_level_loaded, index, entrance_coord_x, entrance_coord_y,
-        coord_x, coord_y;
+    int correct_level_loaded, index;
+    coord_t entrance_coord, coord;
     do {
 
         if (
@@ -734,10 +728,10 @@ void load_level(ui_t * ui, int skip_first_exp_check,
                 game_state->character->attrs[EXPERIENCE] <
                     game_state->character->initial_experience + 1
         ) {
-            game_state->character->coord_x =
-                game_state->character->prev_coord_x;
-            game_state->character->coord_y =
-                game_state->character->prev_coord_y;
+            game_state->character->coord.x =
+                game_state->character->prev_coord.x;
+            game_state->character->coord.y =
+                game_state->character->prev_coord.y;
             draw_message(ui->screen, ui->strings[10]);
             return;
         }
@@ -777,15 +771,15 @@ void load_level(ui_t * ui, int skip_first_exp_check,
         fread(file_contents, 1, filesize, file_handle);
         fclose(file_handle);
         index = 0;
-        for (coord_y = 0; coord_y < 15; coord_y += 1) {
-            for (coord_x = 0; coord_x < 15; coord_x += 1) {
-                game_state->dungeon_contents[coord_x][coord_y] =
+        for (coord.y = 0; coord.y < 15; coord.y += 1) {
+            for (coord.x = 0; coord.x < 15; coord.x += 1) {
+                game_state->dungeon_contents[coord.x][coord.y] =
                     (int) file_contents[index];
                 index += 1;
             }
         }
-        entrance_coord_x = (int) file_contents[index] - DUNGEON_BASE - 1;
-        entrance_coord_y = (int) file_contents[index + 1] - DUNGEON_BASE - 1;
+        entrance_coord.x = (int) file_contents[index] - DUNGEON_BASE - 1;
+        entrance_coord.y = (int) file_contents[index + 1] - DUNGEON_BASE - 1;
         game_state->dungeon_level =
             (int) file_contents[index + 2] - DUNGEON_BASE;
         if (
@@ -800,10 +794,10 @@ void load_level(ui_t * ui, int skip_first_exp_check,
         free(file_contents);
     } while (correct_level_loaded);
     draw_interface(ui, game_state->character);
-    game_state->character->coord_x = entrance_coord_x;
-    game_state->character->coord_y = entrance_coord_y;
-    game_state->character->prev_coord_x = game_state->character->coord_x;
-    game_state->character->prev_coord_y = game_state->character->coord_y;
+    game_state->character->coord.x = entrance_coord.x;
+    game_state->character->coord.y = entrance_coord.y;
+    game_state->character->prev_coord.x = game_state->character->coord.x;
+    game_state->character->prev_coord.y = game_state->character->coord.y;
     monster_list_clear(game_state->monster_list);
 }
 
@@ -890,7 +884,8 @@ void load_character(ui_t * ui, character_t * character, int * num_item_types) {
 
 void save_game(screen_t * screen, game_state_t * game_state,
                int num_item_types) {
-    int index, coord_x, coord_y;
+    int index;
+    coord_t coord;
     draw_message(screen, "ONE MOMENT PLEASE");
     char * character_file_contents = (char *) malloc(
             sizeof(char) * (
@@ -911,18 +906,18 @@ void save_game(screen_t * screen, game_state_t * game_state,
     }
     int s_index = 0;
     int t_index = 0;
-    for (coord_y = 0; coord_y < 15; coord_y += 1) {
-        for (coord_x = 0; coord_x < 15; coord_x += 1) {
+    for (coord.y = 0; coord.y < 15; coord.y += 1) {
+        for (coord.x = 0; coord.x < 15; coord.x += 1) {
             dungeon_file_contents[t_index] =
-                (char) game_state->dungeon_contents[coord_x][coord_y];
+                (char) game_state->dungeon_contents[coord.x][coord.y];
             t_index += 1;
         }
     }
     dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + game_state->character->coord_x + 1);
+        (char) (DUNGEON_BASE + game_state->character->coord.x + 1);
     t_index += 1;
     dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + game_state->character->coord_y + 1);
+        (char) (DUNGEON_BASE + game_state->character->coord.y + 1);
     t_index += 1;
     dungeon_file_contents[t_index] =
         (char) (DUNGEON_BASE + game_state->dungeon_level);
@@ -1108,8 +1103,8 @@ character_t * init_character() {
     }
 
     character->facing = 3;
-    character->coord_x = 0;
-    character->coord_y = 0;
+    character->coord.x = 0;
+    character->coord.y = 0;
     character->torches = 0;
 
     return character;
@@ -1185,10 +1180,9 @@ int main(int argc, char * argv[]) {
     handle_args(argc, argv);
     int ** vertices,
         num_item_types,
-        item_at_character_coord,  // Object at character->coord_x / NY
-        trapped,  // Flag to see if we can exit.
-        trap_coord_x,
-        trap_coord_y;
+        item_at_character_coord,  // Object at character->coord.x
+        trapped;  // Flag to see if we can exit.
+    coord_t trap_coord;
     char pressed_key,
          * char_code_hero = NULL;
     const char ** item_names;
@@ -1212,8 +1206,8 @@ int main(int argc, char * argv[]) {
     item_names = init_item_names();
 
     game_state->finished = 0;
-    trap_coord_x = 0;
-    trap_coord_y = 0;
+    trap_coord.x = 0;
+    trap_coord.y = 0;
     trapped = 0;
 
     load_character(ui, game_state->character, &num_item_types);
@@ -1227,8 +1221,7 @@ int main(int argc, char * argv[]) {
                 game_state->monster_list->first_node != NULL
         ) {
             monster = monster_list_get_nearest(
-                game_state->monster_list, game_state->character->coord_x,
-                game_state->character->coord_y
+                game_state->monster_list, game_state->character->coord
             );
             if (monster != NULL) {
                 attack_monster(ui, game_state, monster);
@@ -1269,48 +1262,48 @@ int main(int argc, char * argv[]) {
             game_state->character->facing = 3;
         }
         if (pressed_key == 'm') {
-            game_state->character->coord_x += vertices[
+            game_state->character->coord.x += vertices[
                 game_state->character->facing
             ][0];
-            game_state->character->coord_y += vertices[
+            game_state->character->coord.y += vertices[
                 game_state->character->facing
             ][1];
         }
-        if (game_state->character->coord_y > 14) {
-            game_state->character->coord_y = 14;
+        if (game_state->character->coord.y > 14) {
+            game_state->character->coord.y = 14;
         }
-        if (game_state->character->coord_y < 0) {
-            game_state->character->coord_y = 0;
+        if (game_state->character->coord.y < 0) {
+            game_state->character->coord.y = 0;
         }
-        if (game_state->character->coord_x < 0) {
-            game_state->character->coord_x = 0;
+        if (game_state->character->coord.x < 0) {
+            game_state->character->coord.x = 0;
         }
-        if (game_state->character->coord_x > 14) {
-            game_state->character->coord_x = 14;
+        if (game_state->character->coord.x > 14) {
+            game_state->character->coord.x = 14;
         }
         item_at_character_coord =
             game_state->dungeon_contents[
-                game_state->character->coord_x
-            ][game_state->character->coord_y];
+                game_state->character->coord.x
+            ][game_state->character->coord.y];
         if (item_at_character_coord == WALL) {
             render_coord(
                 ui->screen, game_state->dungeon_contents,
-                game_state->character->coord_x, game_state->character->coord_y
+                game_state->character->coord
             );
-            game_state->character->coord_x =
-                game_state->character->prev_coord_x;
-            game_state->character->coord_y =
-                game_state->character->prev_coord_y;
+            game_state->character->coord.x =
+                game_state->character->prev_coord.x;
+            game_state->character->coord.y =
+                game_state->character->prev_coord.y;
             game_state->character->attrs[STRENGTH] -= 0.03;
         }
         if (item_at_character_coord == TRAP) {
-            trap_coord_x = game_state->character->coord_x;
-            trap_coord_y = game_state->character->coord_y;
+            trap_coord.x = game_state->character->coord.x;
+            trap_coord.y = game_state->character->coord.y;
             trapped = 1;
         }
         if (trapped == 1) {
-            game_state->character->coord_x = trap_coord_x;
-            game_state->character->coord_y = trap_coord_y;
+            game_state->character->coord.x = trap_coord.x;
+            game_state->character->coord.y = trap_coord.y;
         }
         if (
                 game_state->character->attrs[STRENGTH] >
@@ -1334,18 +1327,17 @@ int main(int argc, char * argv[]) {
             ui->screen, char_code_hero, game_state->character
         );
         if (
-                game_state->character->prev_coord_x !=
-                    game_state->character->coord_x ||
-                game_state->character->prev_coord_y !=
-                    game_state->character->coord_y
+                game_state->character->prev_coord.x !=
+                    game_state->character->coord.x ||
+                game_state->character->prev_coord.y !=
+                    game_state->character->coord.y
         ) {
             render_coord_and_check_for_monster(
-                ui->screen, game_state, game_state->character->prev_coord_x,
-                game_state->character->prev_coord_y
+                ui->screen, game_state, game_state->character->prev_coord
             );
         }
-        game_state->character->prev_coord_x = game_state->character->coord_x;
-        game_state->character->prev_coord_y = game_state->character->coord_y;
+        game_state->character->prev_coord.x = game_state->character->coord.x;
+        game_state->character->prev_coord.y = game_state->character->coord.y;
         if (game_state->monster_list->first_node != NULL) {
             monsters_turn(ui, game_state, item_at_character_coord, item_names);
         }

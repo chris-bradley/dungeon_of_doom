@@ -1,11 +1,7 @@
 #include <errno.h>
 #include <SDL.h>
 #include "dungeon_lib.h"
-
-typedef struct {
-    int x;
-    int y;
-} coord_t;
+#include "libcoord.h"
 
 typedef struct {
     int contents[15][15];
@@ -47,9 +43,10 @@ dungeon_t * init_level(int level_num) {
         SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "dungeon is NULL!");
         exit(1);
     }
-    for (int coord_x = 0; coord_x < 15; coord_x++) {
-        for (int coord_y = 0; coord_y < 15; coord_y++) {
-            dungeon->contents[coord_x][coord_y] = 0;
+    coord_t coord;
+    for (coord.x = 0; coord.x < 15; coord.x++) {
+        for (coord.y = 0; coord.y < 15; coord.y++) {
+            dungeon->contents[coord.x][coord.y] = 0;
         }
     }
     dungeon->entrance_coord.x = -1;
@@ -65,7 +62,8 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     dungeon_t * new_dungeon;
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
-    int coord_x, coord_y, error;
+    coord_t coord;
+    int error;
     tab(screen->cursor, 1, 4);
     text_rect = print_text(screen, "ANY KEY TO SAVE");
     SDL_RenderPresent(screen->ren);
@@ -84,11 +82,11 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
         exit(1);
     }
     free(level_path);
-    for (coord_y = 0; coord_y < 15; coord_y += 1) {
-        for (coord_x = 0; coord_x < 15; coord_x += 1) {
+    for (coord.y = 0; coord.y < 15; coord.y += 1) {
+        for (coord.x = 0; coord.x < 15; coord.x += 1) {
             if (
                     !fputc(
-                        (char) dungeon->contents[coord_x][coord_y] +
+                        (char) dungeon->contents[coord.x][coord.y] +
                             char_code_blank,
                         save_file_handle
                     )
@@ -96,7 +94,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
                 SDL_LogError(
                     SDL_LOG_CATEGORY_SYSTEM,
                     "Error %i writing dungeon contents at %i/%i!",
-                    ferror(save_file_handle), coord_x, coord_y
+                    ferror(save_file_handle), coord.x, coord.y
                 );
             }
         }

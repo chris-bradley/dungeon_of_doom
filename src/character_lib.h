@@ -1,3 +1,5 @@
+#include "libcoord.h"
+
 enum AttrNum {
     STRENGTH = 0,
     VITALITY = 1,
@@ -45,10 +47,8 @@ typedef struct {
 } character_class_t;
 
 typedef struct character_s_t {
-    int coord_x;
-    int coord_y;
-    int prev_coord_x;
-    int prev_coord_y;
+    coord_t coord;
+    coord_t prev_coord;
     int facing;  // Facing. NESW
     double * attrs;
     double initial_strength;

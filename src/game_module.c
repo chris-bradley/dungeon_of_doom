@@ -1150,7 +1150,7 @@ int main(int argc, char * argv[]) {
         num_item_types,
         item_at_character_coord,  // Object at character->coord.x
         trapped;  // Flag to see if we can exit.
-    coord_t trap_coord;
+    coord_t trap_coord, prev_coord;
     char pressed_key,
          * char_code_hero = NULL;
     const char ** item_names;
@@ -1180,9 +1180,7 @@ int main(int argc, char * argv[]) {
 
     load_character(ui, game_state->character, &num_item_types);
     load_level_wo_first_exp_check(ui, game_state);
-    coord_t_set(
-        &game_state->character->prev_coord, game_state->character->coord
-    );
+    coord_t_set(&prev_coord, game_state->character->coord);
     int game_over = 0;
     do {
         SDL_RenderPresent(ui->screen->ren);
@@ -1259,10 +1257,7 @@ int main(int argc, char * argv[]) {
             render_coord(
                 ui->screen, game_state->dungeon, game_state->character->coord
             );
-            coord_t_set(
-                &game_state->character->coord,
-                game_state->character->prev_coord
-            );
+            coord_t_set(&game_state->character->coord, prev_coord);
             game_state->character->attrs[STRENGTH] -= 0.03;
         }
         if (item_at_character_coord == TRAP) {
@@ -1293,19 +1288,12 @@ int main(int argc, char * argv[]) {
         draw_character_and_stats(
             ui->screen, char_code_hero, game_state->character
         );
-        if (
-                coord_t_is_equal(
-                    game_state->character->prev_coord,
-                    game_state->character->coord
-                ) != 1
-        ) {
+        if (coord_t_is_equal(prev_coord, game_state->character->coord) != 1) {
             render_coord_and_check_for_monster(
-                ui->screen, game_state, game_state->character->prev_coord
+                ui->screen, game_state, prev_coord
             );
         }
-        coord_t_set(
-            &game_state->character->prev_coord, game_state->character->coord
-        );
+        coord_t_set(&prev_coord, game_state->character->coord);
         if (game_state->monster_list->first_node != NULL) {
             monsters_turn(ui, game_state, item_at_character_coord, item_names);
         }
@@ -1318,15 +1306,9 @@ int main(int argc, char * argv[]) {
         } else if (item_at_character_coord == EXIT) {
             draw_message(ui->screen, ui->strings[11]);
             if (load_level_with_first_exp_check(ui, game_state)) {
-                coord_t_set(
-                    &game_state->character->prev_coord,
-                    game_state->character->coord
-                );
+                coord_t_set(&prev_coord, game_state->character->coord);
             } else {
-                coord_t_set(
-                    &game_state->character->coord,
-                    game_state->character->prev_coord
-                );
+                coord_t_set(&game_state->character->coord, prev_coord);
             }
             game_over = 0;
         } else {

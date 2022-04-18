@@ -48,7 +48,6 @@ typedef struct {
 
 typedef struct character_s_t {
     coord_t coord;
-    coord_t prev_coord;
     int facing;  // Facing. NESW
     double * attrs;
     double initial_strength;

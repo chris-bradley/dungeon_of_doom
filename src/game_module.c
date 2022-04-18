@@ -702,8 +702,8 @@ void draw_interface(ui_t * ui, character_t * character) {
     free(print_text(ui->screen, "EXP"));
 }
 
-void load_level(ui_t * ui, int skip_first_exp_check,
-                game_state_t * game_state) {
+int load_level(ui_t * ui, int skip_first_exp_check,
+               game_state_t * game_state) {
     int correct_level_loaded, index;
     coord_t entrance_coord, coord;
     do {
@@ -713,12 +713,8 @@ void load_level(ui_t * ui, int skip_first_exp_check,
                 game_state->character->attrs[EXPERIENCE] <
                     game_state->character->initial_experience + 1
         ) {
-            coord_t_set(
-                &game_state->character->coord,
-                game_state->character->prev_coord
-            );
             draw_message(ui->screen, ui->strings[10]);
-            return;
+            return 0;
         }
         skip_first_exp_check = 0;
         clear_screen(ui->screen);
@@ -781,18 +777,16 @@ void load_level(ui_t * ui, int skip_first_exp_check,
     } while (correct_level_loaded);
     draw_interface(ui, game_state->character);
     coord_t_set(&game_state->character->coord, entrance_coord);
-    coord_t_set(
-        &game_state->character->prev_coord, game_state->character->coord
-    );
     monster_list_clear(game_state->monster_list);
+    return 1;
 }
 
-void load_level_with_first_exp_check(ui_t * ui, game_state_t * game_state) {
-    load_level(ui, 0, game_state);
+int load_level_with_first_exp_check(ui_t * ui, game_state_t * game_state) {
+    return load_level(ui, 0, game_state);
 }
 
-void load_level_wo_first_exp_check(ui_t * ui, game_state_t * game_state) {
-    load_level(ui, 1, game_state);
+int load_level_wo_first_exp_check(ui_t * ui, game_state_t * game_state) {
+    return load_level(ui, 1, game_state);
 }
 
 void load_character(ui_t * ui, character_t * character, int * num_item_types) {
@@ -1186,6 +1180,9 @@ int main(int argc, char * argv[]) {
 
     load_character(ui, game_state->character, &num_item_types);
     load_level_wo_first_exp_check(ui, game_state);
+    coord_t_set(
+        &game_state->character->prev_coord, game_state->character->coord
+    );
     int game_over = 0;
     do {
         SDL_RenderPresent(ui->screen->ren);
@@ -1320,7 +1317,17 @@ int main(int argc, char * argv[]) {
             game_over = 0;
         } else if (item_at_character_coord == EXIT) {
             draw_message(ui->screen, ui->strings[11]);
-            load_level_with_first_exp_check(ui, game_state);
+            if (load_level_with_first_exp_check(ui, game_state)) {
+                coord_t_set(
+                    &game_state->character->prev_coord,
+                    game_state->character->coord
+                );
+            } else {
+                coord_t_set(
+                    &game_state->character->coord,
+                    game_state->character->prev_coord
+                );
+            }
             game_over = 0;
         } else {
             game_over = 1;

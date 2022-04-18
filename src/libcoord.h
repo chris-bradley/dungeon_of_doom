@@ -13,3 +13,11 @@ typedef struct {
     float x;
     float y;
 } coord_float_t;
+
+int coord_t_is_equal(coord_t coord, coord_t coord2);
+int coord_float_t_is_equal(coord_float_t coord, coord_t coord2);
+
+void coord_t_set(coord_t * target, coord_t source);
+void coord_t_set_from_float(coord_t * target, coord_float_t coord);
+void coord_float_t_set_from_float(coord_float_t * target,
+		                  coord_float_t source);

@@ -10,8 +10,7 @@ void place_item(coord_t cur_coord, dungeon_t * dungeon, char pressed_key) {
     if (pressed_key_num == 9) {
         pressed_key_num = 9 + (rand() % 3);
     } else if (pressed_key_num == 5) {
-        dungeon->entrance_coord.x = cur_coord.x;
-        dungeon->entrance_coord.y = cur_coord.y;
+        coord_t_set(&dungeon->entrance_coord, cur_coord);
     }
     dungeon->contents[cur_coord.x][cur_coord.y] = pressed_key_num;
 }

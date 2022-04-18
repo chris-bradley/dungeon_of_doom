@@ -13,6 +13,8 @@ all: \
 	make \
 		dungeon_lib_win.o \
 		dungeon_lib_lin.o \
+		libcoord_win.o \
+		libcoord_lin.o \
 		dungeon_generator.exe \
 		dungeon_generator \
 		character_creator.exe \
@@ -88,6 +90,20 @@ monster_lib_lin.o: monster_lib.h monster_lib.c
 		`sdl2-config --libs` \
 		-o monster_lib_lin.o
 
+libcoord_lin.o: libcoord.h libcoord.c
+	gcc \
+		$(BASE_FLAGS) \
+		-c \
+		libcoord.c \
+		-o libcoord_lin.o
+
+libcoord_win.o: libcoord.h libcoord.c
+	$(MINGW_GCC) \
+		$(BASE_FLAGS) \
+		-c \
+		libcoord.c \
+		-o libcoord_win.o
+
 monster_lib_win.o: monster_lib.h monster_lib.c
 	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
@@ -98,10 +114,11 @@ monster_lib_win.o: monster_lib.h monster_lib.c
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		-o monster_lib_win.o
 
-dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
+dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o libcoord_win.o
 	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
+		libcoord_win.o \
 		dungeon_generator.c \
 		-static-libgcc \
 		$(MINGW_DYN_LIBS) \
@@ -113,7 +130,7 @@ dungeon_generator.exe : dungeon_generator.c dungeon_lib_win.o
 		`$(MINGW_ROOT)/bin/freetype-config --cflags` \
 		-o dungeon_generator.exe
 
-dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
+dungeon_generator : dungeon_generator.c dungeon_lib_lin.o libcoord_lin.o
 	gcc \
 		$(BASE_FLAGS) \
 		`sdl2-config --libs` \
@@ -122,6 +139,7 @@ dungeon_generator : dungeon_generator.c dungeon_lib_lin.o
 		`freetype-config --cflags` \
 		-o dungeon_generator \
 		dungeon_lib_lin.o \
+		libcoord_lin.o \
 		dungeon_generator.c
 
 character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
@@ -152,12 +170,13 @@ character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 
 game_module.exe : \
 	game_module.c dungeon_lib_win.o dungeon_audio_win.o character_lib.h \
-	monster_lib_win.o
+	monster_lib_win.o libcoord_win.o
 	$(MINGW_GCC) \
 		$(BASE_FLAGS) \
 		dungeon_lib_win.o \
 		dungeon_audio_win.o \
 		monster_lib_win.o \
+		libcoord_win.o \
 		game_module.c \
 		-static-libgcc \
 		$(MINGW_DYN_LIBS) \
@@ -171,7 +190,7 @@ game_module.exe : \
 
 game_module : \
 	game_module.c dungeon_lib_lin.o dungeon_audio_lin.o character_lib.h \
-	monster_lib_lin.o
+	monster_lib_lin.o libcoord_lin.o
 	gcc \
 		$(BASE_FLAGS) \
 		`sdl2-config --libs` \
@@ -183,6 +202,7 @@ game_module : \
 		dungeon_lib_lin.o \
 		dungeon_audio_lin.o \
 		monster_lib_lin.o \
+		libcoord_lin.o \
 		game_module.c
 
 test_audio.exe : test_audio.c dungeon_audio_win.o

@@ -114,7 +114,7 @@ enum CharCode render_coord(screen_t * screen, dungeon_t * dungeon,
     enum CharCode item_at_coord;
     paper(screen->cursor, RED);
     ink(screen->cursor, YELLOW);
-    item_at_coord = dungeon->contents[coord.x][coord.y];
+    item_at_coord = dungeon_t_get_item(dungeon, coord);
     tab(screen->cursor, coord.x + 1, coord.y + 6);
     render_bitmap(
         screen,
@@ -199,14 +199,14 @@ void monster_moves(screen_t * screen, monster_t * monster,
     };
     coord_t next_coord;
     coord_t_set_from_float(&next_coord, next_coord_float);
-    if (dungeon->contents[next_coord.x][next_coord.y] > BLANK) {
+    if (dungeon_t_get_item(dungeon, next_coord) > BLANK) {
         return;
     }
     coord_t monster_coord;
     coord_t_set_from_float(&monster_coord, monster->coord);
-    dungeon->contents[monster_coord.x][monster_coord.y] = BLANK;
+    dungeon_t_set_item(dungeon, monster_coord, BLANK);
     render_coord(screen, dungeon, monster_coord);
-    dungeon->contents[next_coord.x][next_coord.y] = monster->char_code;
+    dungeon_t_set_item(dungeon, next_coord, monster->char_code);
     render_coord(screen, dungeon, next_coord);
     coord_float_t_set_from_float(&monster->coord, next_coord_float);
 }
@@ -296,7 +296,7 @@ void monster_dies(ui_t * ui, game_state_t * game_state, monster_t * monster) {
     int sound_frequency;
     monster_list_remove(game_state->monster_list, monster);
     free(monster);
-    game_state->dungeon->contents[coord.x][coord.y] = BLANK;
+    dungeon_t_set_item(game_state->dungeon, coord, BLANK);
     game_state->character->attrs[EXPERIENCE] += 0.1;
     draw_message(ui->screen, ui->strings[5]);
     for (sound_frequency = 200; sound_frequency >= 150; sound_frequency -= 8) {
@@ -363,11 +363,9 @@ void cast_superzap(ui_t * ui, game_state_t * game_state) {
 void cast_sanctuary(audio_state_t * audio_state, game_state_t * game_state,
                     int item_at_character_coord) {
     if (item_at_character_coord == BLANK) {
-        game_state->dungeon->contents[
-            game_state->character->coord.x
-        ][
-            game_state->character->coord.y
-        ] = SAFE_PLACE;
+        dungeon_t_set_item(
+            game_state->dungeon, game_state->character->coord, SAFE_PLACE
+        );
     }
     sound_sawtooth(audio_state, 100);
     sound_sawtooth(audio_state, 200);
@@ -397,11 +395,10 @@ void cast_metamorphosis(ui_t * ui, game_state_t * game_state,
     int sound_frequency;
     monster_t * monster;
     for (sound_frequency = 1; sound_frequency <= 30; sound_frequency += 1) {
-        game_state->dungeon->contents[
-            game_state->character->coord.x
-        ][
-            game_state->character->coord.y
-        ] = rand() % 8 + 1 + BLANK;
+        dungeon_t_set_item(
+            game_state->dungeon, game_state->character->coord,
+            rand() % 8 + 1 + BLANK
+        );
         sound_sawtooth(ui->audio_state, sound_frequency);
         render_coord(
             ui->screen, game_state->dungeon, game_state->character->coord
@@ -598,13 +595,9 @@ void get_item(ui_t * ui, int ** vertices, char * char_code_hero,
     if (item_to_get_coord.y > 14) {
         item_to_get_coord.y = 14;
     }
-    item_to_get = game_state->dungeon->contents[
-        item_to_get_coord.x
-    ][item_to_get_coord.y];
+    item_to_get = dungeon_t_get_item(game_state->dungeon, item_to_get_coord);
     if (item_to_get > WALL && item_to_get < IDOL) {
-        game_state->dungeon->contents[item_to_get_coord.x][
-            item_to_get_coord.y
-        ] = BLANK;
+        dungeon_t_set_item(game_state->dungeon, item_to_get_coord, BLANK);
     }
     if (item_to_get == VASE) {
         game_state->character->inventory[HEALING_SALVE] += 1;
@@ -765,8 +758,9 @@ void load_level(ui_t * ui, int skip_first_exp_check,
         index = 0;
         for (coord.y = 0; coord.y < 15; coord.y += 1) {
             for (coord.x = 0; coord.x < 15; coord.x += 1) {
-                game_state->dungeon->contents[coord.x][coord.y] =
-                    (int) file_contents[index];
+                dungeon_t_set_item(
+                    game_state->dungeon, coord, (int) file_contents[index]
+                );
                 index += 1;
             }
         }
@@ -900,8 +894,9 @@ void save_game(screen_t * screen, game_state_t * game_state,
     int t_index = 0;
     for (coord.y = 0; coord.y < 15; coord.y += 1) {
         for (coord.x = 0; coord.x < 15; coord.x += 1) {
-            dungeon_file_contents[t_index] =
-                (char) game_state->dungeon->contents[coord.x][coord.y];
+            dungeon_file_contents[t_index] = (char) dungeon_t_get_item(
+                game_state->dungeon, coord
+            );
             t_index += 1;
         }
     }
@@ -1260,10 +1255,9 @@ int main(int argc, char * argv[]) {
         if (game_state->character->coord.x > 14) {
             game_state->character->coord.x = 14;
         }
-        item_at_character_coord =
-            game_state->dungeon->contents[
-                game_state->character->coord.x
-            ][game_state->character->coord.y];
+        item_at_character_coord = dungeon_t_get_item(
+            game_state->dungeon, game_state->character->coord
+        );
         if (item_at_character_coord == WALL) {
             render_coord(
                 ui->screen, game_state->dungeon, game_state->character->coord

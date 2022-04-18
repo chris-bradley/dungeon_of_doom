@@ -12,7 +12,7 @@ void place_item(coord_t cur_coord, dungeon_t * dungeon, char pressed_key) {
     } else if (pressed_key_num == 5) {
         coord_t_set(&dungeon->entrance_coord, cur_coord);
     }
-    dungeon->contents[cur_coord.x][cur_coord.y] = pressed_key_num;
+    dungeon_t_set_item(dungeon, cur_coord, pressed_key_num);
 }
 
 void draw_help(screen_t * screen, const char * help_lines[10]) {
@@ -40,7 +40,7 @@ dungeon_t * init_level(int level_num) {
     coord_t coord;
     for (coord.x = 0; coord.x < 15; coord.x++) {
         for (coord.y = 0; coord.y < 15; coord.y++) {
-            dungeon->contents[coord.x][coord.y] = 0;
+            dungeon_t_set_item(dungeon, coord, 0);
         }
     }
     dungeon->entrance_coord.x = -1;
@@ -80,7 +80,7 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
         for (coord.x = 0; coord.x < 15; coord.x += 1) {
             if (
                     !fputc(
-                        (char) dungeon->contents[coord.x][coord.y] +
+                        (char) dungeon_t_get_item(dungeon, coord) +
                             char_code_blank,
                         save_file_handle
                     )
@@ -218,7 +218,7 @@ int main(int argc, char * argv[]) {
         }
         render_bitmap(
             screen, cur_coord.x + 1, cur_coord.y + 6,
-            dungeon->contents[cur_coord.x][cur_coord.y] + 6, BLACK, WHITE
+            dungeon_t_get_item(dungeon, cur_coord) + 6, BLACK, WHITE
         );
 
         SDL_RenderPresent(screen->ren);

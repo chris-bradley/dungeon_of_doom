@@ -50,13 +50,10 @@ dungeon_t * init_level(int level_num) {
 }
 
 dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
-    int char_base = 96,
-        char_code_blank = char_base + 6;
     SDL_Rect * text_rect;
     dungeon_t * new_dungeon;
     paper(screen->cursor, RED);
     ink(screen->cursor, WHITE);
-    coord_t coord;
     int error;
     tab(screen->cursor, 1, 4);
     text_rect = print_text(screen, "ANY KEY TO SAVE");
@@ -67,6 +64,9 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
     sprintf(level_path, "%s%cLEVEL", level_dir, PATHSEP);
     free(level_dir);
     errno = 0;
+    char * dungeon_file_contents = dungeon_t_serialize(
+            dungeon, dungeon->entrance_coord
+        );
     FILE * save_file_handle = fopen(level_path, "w");
     if (save_file_handle == NULL) {
         SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "save_file_handle is NULL!");
@@ -76,54 +76,14 @@ dungeon_t * save_level(screen_t * screen, dungeon_t * dungeon) {
         exit(1);
     }
     free(level_path);
-    for (coord.y = 0; coord.y < 15; coord.y += 1) {
-        for (coord.x = 0; coord.x < 15; coord.x += 1) {
-            if (
-                    !fputc(
-                        (char) dungeon_t_get_item(dungeon, coord) +
-                            char_code_blank,
-                        save_file_handle
-                    )
-            ) {
-                SDL_LogError(
-                    SDL_LOG_CATEGORY_SYSTEM,
-                    "Error %i writing dungeon contents at %i/%i!",
-                    ferror(save_file_handle), coord.x, coord.y
-                );
-            }
-        }
-    }
-    if (
-            !fputc(
-                (char) dungeon->entrance_coord.x + char_base + 1,
-                save_file_handle
-            )
-    ) {
+    error = fputs(dungeon_file_contents, save_file_handle);
+    if (error < 0) {
         SDL_LogError(
             SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing dungeon entrance coord x!",
+            "Error %i writing the level!",
             ferror(save_file_handle)
         );
     }
-    if (
-            !fputc(
-                (char) dungeon->entrance_coord.y + char_base + 1,
-                save_file_handle
-            )
-    ) {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM,
-            "Error %i writing dungeon entrance coord y!",
-            ferror(save_file_handle)
-        );
-    }
-    if (!fputc((char) dungeon->level_num + char_base, save_file_handle)) {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_SYSTEM, "Error %i writing the level number!",
-            ferror(save_file_handle)
-        );
-    }
-
     error = fclose(save_file_handle);
     if (error) {
         SDL_LogError(

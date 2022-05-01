@@ -82,7 +82,7 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
         screen,
         character->coord.x + 1,
         character->coord.y + 6,
-        char_code_hero[character->facing] - DUNGEON_BASE,
+        char_code_hero[character->facing],
         WHITE,
         RED
     );
@@ -704,8 +704,8 @@ void draw_interface(ui_t * ui, character_t * character) {
 
 int load_level(ui_t * ui, int skip_first_exp_check,
                game_state_t * game_state) {
-    int correct_level_loaded, index;
-    coord_t entrance_coord, coord;
+    int correct_level_loaded;
+    coord_t entrance_coord;
     do {
 
         if (
@@ -751,19 +751,9 @@ int load_level(ui_t * ui, int skip_first_exp_check,
         }
         fread(file_contents, 1, filesize, file_handle);
         fclose(file_handle);
-        index = 0;
-        for (coord.y = 0; coord.y < 15; coord.y += 1) {
-            for (coord.x = 0; coord.x < 15; coord.x += 1) {
-                dungeon_t_set_item(
-                    game_state->dungeon, coord, (int) file_contents[index]
-                );
-                index += 1;
-            }
-        }
-        entrance_coord.x = (int) file_contents[index] - DUNGEON_BASE - 1;
-        entrance_coord.y = (int) file_contents[index + 1] - DUNGEON_BASE - 1;
-        game_state->dungeon->level_num =
-            (int) file_contents[index + 2] - DUNGEON_BASE;
+        dungeon_t_deserialize(
+            game_state->dungeon, file_contents, &entrance_coord
+        );
         if (
                 game_state->dungeon->level_num >
                     game_state->character->attrs[EXPERIENCE]
@@ -865,7 +855,6 @@ void load_character(ui_t * ui, character_t * character, int * num_item_types) {
 void save_game(screen_t * screen, game_state_t * game_state,
                int num_item_types) {
     int index;
-    coord_t coord;
     draw_message(screen, "ONE MOMENT PLEASE");
     char * character_file_contents = (char *) malloc(
             sizeof(char) * (
@@ -879,31 +868,10 @@ void save_game(screen_t * screen, game_state_t * game_state,
         );
         exit(1);
     }
-    char * dungeon_file_contents = (char *) malloc(sizeof(char) * 229);
-    if (dungeon_file_contents == NULL) {
-        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "strings is NULL!");
-        exit(1);
-    }
+    char * dungeon_file_contents = dungeon_t_serialize(
+            game_state->dungeon, game_state->character->coord
+        );
     int s_index = 0;
-    int t_index = 0;
-    for (coord.y = 0; coord.y < 15; coord.y += 1) {
-        for (coord.x = 0; coord.x < 15; coord.x += 1) {
-            dungeon_file_contents[t_index] = (char) dungeon_t_get_item(
-                game_state->dungeon, coord
-            );
-            t_index += 1;
-        }
-    }
-    dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + game_state->character->coord.x + 1);
-    t_index += 1;
-    dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + game_state->character->coord.y + 1);
-    t_index += 1;
-    dungeon_file_contents[t_index] =
-        (char) (DUNGEON_BASE + game_state->dungeon->level_num);
-    t_index += 1;
-    dungeon_file_contents[t_index] = 0;
     character_file_contents[s_index] =
         (char) (CHARACTER_BASE + num_item_types);
     s_index += 1;
@@ -1056,7 +1024,7 @@ char * init_char_code_hero() {
         exit(1);
     }
     for (index = 0; index < 5; index += 1) {
-        char_code_hero[index] = DUNGEON_BASE + index + 1;
+        char_code_hero[index] = index + 1;
     }
     char_code_hero[5] = 0;
 

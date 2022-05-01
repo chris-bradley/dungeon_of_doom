@@ -48,20 +48,16 @@ dungeon_lib_win.o : dungeon_lib.c dungeon_lib.h
 		-c dungeon_lib.c \
 		-static-libgcc \
 		$(MINGW_DYN_LIBS) \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-		`$(MINGW_ROOT)/bin/freetype-config --libs` \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
-		`$(MINGW_ROOT)/bin/freetype-config --cflags` \
+		`$(MINGW_ROOT)/bin/sdl2-config --libs --cflags` \
+		`$(MINGW_ROOT)/bin/freetype-config --libs --cflags` \
 		-o dungeon_lib_win.o
 
 dungeon_lib_lin.o : dungeon_lib.c dungeon_lib.h
 	gcc \
 		$(BASE_FLAGS) \
 		-c dungeon_lib.c \
-		`sdl2-config --libs` \
-		`freetype-config --libs` \
-		`sdl2-config --cflags` \
-		`freetype-config --cflags` \
+		`sdl2-config --libs --cflags` \
+		`freetype-config --libs --cflags` \
 		-o dungeon_lib_lin.o
 
 dungeon_audio_lin.o : dungeon_audio.c dungeon_audio.h
@@ -69,8 +65,7 @@ dungeon_audio_lin.o : dungeon_audio.c dungeon_audio.h
 		$(BASE_FLAGS) \
 		-c \
 		dungeon_audio.c \
-		`sdl2-config --libs` \
-		`sdl2-config --cflags` \
+		`sdl2-config --libs --cflags` \
 		-o dungeon_audio_lin.o
 
 dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
@@ -79,8 +74,7 @@ dungeon_audio_win.o : dungeon_audio.c dungeon_audio.h
 		-c \
 		dungeon_audio.c \
 		$(MINGW_DYN_LIBS) \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
+		`$(MINGW_ROOT)/bin/sdl2-config --libs --cflags` \
 		-o dungeon_audio_win.o
 
 monster_lib_lin.o: monster_lib.h monster_lib.c
@@ -88,8 +82,7 @@ monster_lib_lin.o: monster_lib.h monster_lib.c
 		$(BASE_FLAGS) \
 		-c \
 		monster_lib.c \
-		`sdl2-config --cflags` \
-		`sdl2-config --libs` \
+		`sdl2-config --cflags --libs` \
 		-o monster_lib_lin.o
 
 libcoord_lin.o: libcoord.h libcoord.c
@@ -119,9 +112,8 @@ libmap_win.o: libmap.h libmap.c
 		$(BASE_FLAGS) \
 		-c \
 		libmap.c \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
+		`$(MINGW_ROOT)/bin/sdl2-config --cflags --libs` \
 		${MINGW_FT_LIBS} \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		-o libmap_win.o
 
 monster_lib_win.o: monster_lib.h monster_lib.c
@@ -130,8 +122,7 @@ monster_lib_win.o: monster_lib.h monster_lib.c
 		-c \
 		monster_lib.c \
 		$(MINGW_DYN_LIBS) \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
+		`$(MINGW_ROOT)/bin/sdl2-config --cflags --libs` \
 		-o monster_lib_win.o
 
 dungeon_generator.exe : \
@@ -144,22 +135,18 @@ dungeon_generator.exe : \
 		dungeon_generator.c \
 		-static-libgcc \
 		$(MINGW_DYN_LIBS) \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
+		`$(MINGW_ROOT)/bin/sdl2-config --libs --cflags` \
 		-l setupapi \
-		`$(MINGW_ROOT)/bin/freetype-config --libs` \
+		`$(MINGW_ROOT)/bin/freetype-config --libs --cflags` \
 		${MINGW_FT_LIBS} \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
-		`$(MINGW_ROOT)/bin/freetype-config --cflags` \
 		-o dungeon_generator.exe
 
 dungeon_generator : \
 	dungeon_generator.c dungeon_lib_lin.o libcoord_lin.o libmap_lin.o
 	gcc \
 		$(BASE_FLAGS) \
-		`sdl2-config --libs` \
-		`freetype-config --libs` \
-		`sdl2-config --cflags` \
-		`freetype-config --cflags` \
+		`sdl2-config --libs --cflags` \
+		`freetype-config --libs --cflags` \
 		-o dungeon_generator \
 		dungeon_lib_lin.o \
 		libcoord_lin.o \
@@ -173,21 +160,17 @@ character_creator.exe : character_creator.c dungeon_lib_win.o character_lib.h
 		character_creator.c \
 		-static-libgcc \
 		$(MINGW_DYN_LIBS) \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
+		`$(MINGW_ROOT)/bin/sdl2-config --libs --cflags` \
 		-l setupapi \
-		`$(MINGW_ROOT)/bin/freetype-config --libs` \
+		`$(MINGW_ROOT)/bin/freetype-config --libs --cflags` \
 		${MINGW_FT_LIBS} \
-		`$(MINGW_ROOT)/bin/freetype-config --cflags` \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		-o character_creator.exe
 
 character_creator : character_creator.c dungeon_lib_lin.o character_lib.h
 	gcc \
 		$(BASE_FLAGS) \
-		`sdl2-config --libs` \
-		`freetype-config --libs` \
-		`sdl2-config --cflags` \
-		`freetype-config --cflags` \
+		`sdl2-config --libs --cflags` \
+		`freetype-config --libs --cflags` \
 		-o character_creator \
 		dungeon_lib_lin.o \
 		character_creator.c
@@ -205,12 +188,10 @@ game_module.exe : \
 		game_module.c \
 		-static-libgcc \
 		$(MINGW_DYN_LIBS) \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
+		`$(MINGW_ROOT)/bin/sdl2-config --libs --cflags` \
 		-l setupapi \
-		`$(MINGW_ROOT)/bin/freetype-config --libs` \
+		`$(MINGW_ROOT)/bin/freetype-config --libs --cflags` \
 		${MINGW_FT_LIBS} \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
-		`$(MINGW_ROOT)/bin/freetype-config --cflags` \
 		-o game_module.exe
 
 game_module : \
@@ -218,11 +199,9 @@ game_module : \
 	monster_lib_lin.o libcoord_lin.o libmap_lin.o
 	gcc \
 		$(BASE_FLAGS) \
-		`sdl2-config --libs` \
-		`freetype-config --libs` \
+		`sdl2-config --libs --cflags` \
+		`freetype-config --libs  --cflags` \
 		-l m \
-		`sdl2-config --cflags` \
-		`freetype-config --cflags` \
 		-o game_module \
 		dungeon_lib_lin.o \
 		dungeon_audio_lin.o \
@@ -237,9 +216,8 @@ test_audio.exe : test_audio.c dungeon_audio_win.o
 		test_audio.c \
 		-static-libgcc \
 		$(MINGW_DYN_LIBS) \
-		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
+		`$(MINGW_ROOT)/bin/sdl2-config --libs --cflags` \
 		-l setupapi \
-		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		dungeon_audio_win.o \
 		-o test_audio.exe
 
@@ -248,7 +226,6 @@ test_audio : test_audio.c dungeon_audio_lin.o
 		$(BASE_FLAGS) \
 		test_audio.c \
 		-l m \
-		`sdl2-config --libs` \
-		`sdl2-config --cflags` \
+		`sdl2-config --libs --cflags` \
 		dungeon_audio_lin.o \
 		-o test_audio

@@ -120,7 +120,7 @@ enum CharCode render_coord(screen_t * screen, dungeon_t * dungeon,
         screen,
         screen->cursor->curs_x,
         screen->cursor->curs_y,
-        item_at_coord - DUNGEON_BASE,
+        item_at_coord,
         YELLOW,
         RED
     );

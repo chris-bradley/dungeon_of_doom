@@ -27,15 +27,14 @@ enum ColourNum {
 
 enum CharCode {
     CHARACTER_BASE = 65,
-    DUNGEON_BASE = 96,
-    BLANK = 102,
-    WALL = 103,
-    VASE = 104,
-    CHEST = 105,
-    IDOL = 106,
-    EXIT = 108,
-    TRAP = 109,
-    SAFE_PLACE = 110
+    BLANK = 6,
+    WALL = 7,
+    VASE = 8,
+    CHEST = 9,
+    IDOL = 10,
+    EXIT = 12,
+    TRAP = 13,
+    SAFE_PLACE = 14
 };
 
 SDL_Rect * print_text(screen_t * screen, const char * message);

@@ -112,7 +112,6 @@ libmap_lin.o: libmap.h libmap.c
 		-c \
 		libmap.c \
 		`sdl2-config --libs --cflags` \
-		`freetype-config --libs --cflags` \
 		-o libmap_lin.o
 
 libmap_win.o: libmap.h libmap.c
@@ -122,7 +121,6 @@ libmap_win.o: libmap.h libmap.c
 		libmap.c \
 		`$(MINGW_ROOT)/bin/sdl2-config --cflags` \
 		${MINGW_FT_LIBS} \
-		`$(MINGW_ROOT)/bin/freetype-config --cflags` \
 		`$(MINGW_ROOT)/bin/sdl2-config --libs` \
 		-o libmap_win.o
 

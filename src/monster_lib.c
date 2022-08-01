@@ -68,8 +68,8 @@ monster_t * monster_list_get_nearest(monster_list_t * monster_list,
     while (monster_node != NULL) {
         monster = monster_node->monster;
         distance = sqrt(
-            pow(abs(monster->coord.x - coord.x), 2) -
-                pow(abs(monster->coord.y - coord.y), 2)
+            pow(abs((int) monster->coord.x - coord.x), 2) -
+                pow(abs((int) monster->coord.y - coord.y), 2)
         );
         if (closest_distance == 0 || distance < closest_distance) {
             nearest_monster = monster;

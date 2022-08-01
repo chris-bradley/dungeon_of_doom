@@ -71,13 +71,8 @@ void draw_message(screen_t * screen, const char * message) {
     free(text_rect);
 }
 
-void draw_character_and_stats(screen_t * screen, char * char_code_hero,
-                              character_t * character) {
-    char * outstring = (char *) malloc(sizeof(char) * 40);
-    if (outstring == NULL) {
-        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "outstring is NULL!");
-        exit(1);
-    }
+void draw_character(screen_t * screen, char * char_code_hero,
+		    character_t * character) {
     render_bitmap(
         screen,
         character->coord.x + 1,
@@ -86,6 +81,14 @@ void draw_character_and_stats(screen_t * screen, char * char_code_hero,
         WHITE,
         RED
     );
+}
+
+void draw_stats(screen_t * screen, character_t * character) {
+    char * outstring = (char *) malloc(sizeof(char) * 40);
+    if (outstring == NULL) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "outstring is NULL!");
+        exit(1);
+    }
     paper(screen->cursor, YELLOW);
     ink(screen->cursor, BLACK);
     tab(screen->cursor, 16, 8);
@@ -280,13 +283,14 @@ void character_dies(ui_t * ui, char * char_code_hero,
     int sound_frequency;
     character->facing = 4;
     character->attrs[STRENGTH] = 0;
+    draw_stats(ui->screen, character);
     draw_message(ui->screen, "");
     tab(ui->screen->cursor, 1, 5);
     free(print_text(ui->screen, "THOU HAST EXPIRED!"));
     for (sound_frequency = 150; sound_frequency >= 1; sound_frequency -= 4) {
         sound_sawtooth(ui->audio_state, sound_frequency);
         sound_noise(ui->audio_state, sound_frequency);
-        draw_character_and_stats(ui->screen, char_code_hero, character);
+        draw_character(ui->screen, char_code_hero, character);
     }
 }
 
@@ -379,7 +383,7 @@ void cast_teleport(ui_t * ui, char * char_code_hero, character_t * character) {
         sound_noise(ui->audio_state, sound_frequency);
         sound_sawtooth(ui->audio_state, sound_frequency);
     }
-    draw_character_and_stats(ui->screen, char_code_hero, character);
+    draw_character(ui->screen, char_code_hero, character);
 }
 
 void cast_powersurge(character_t * character, int spell_number) {
@@ -430,9 +434,7 @@ void cast_spell(ui_t * ui, char * char_code_hero, game_state_t * game_state,
     int spell_number;
     char pressed_key;
     const char * message;
-    draw_character_and_stats(
-        ui->screen, char_code_hero, game_state->character
-    );
+    draw_character(ui->screen, char_code_hero, game_state->character);
     paper(ui->screen->cursor, YELLOW);
     ink(ui->screen->cursor, BLACK);
     tab(ui->screen->cursor, 0, 1);
@@ -542,9 +544,7 @@ void game_won(ui_t * ui, char * char_code_hero, game_state_t * game_state) {
 
         for (direction = 0; direction < 4; direction += 1) {
             game_state->character->facing = direction;
-            draw_character_and_stats(
-                ui->screen, char_code_hero, game_state->character
-            );
+            draw_character(ui->screen, char_code_hero, game_state->character);
             SDL_Delay(300 / 4);
         }
     }
@@ -1253,9 +1253,10 @@ int main(int argc, char * argv[]) {
             game_state->character->attrs[STRENGTH] +=
                 game_state->character->attrs[VITALITY] / 1100;
         }
-        draw_character_and_stats(
+        draw_character(
             ui->screen, char_code_hero, game_state->character
         );
+        draw_stats(ui->screen, game_state->character);
         if (coord_t_is_equal(prev_coord, game_state->character->coord) != 1) {
             render_coord_and_check_for_monster(
                 ui->screen, game_state, prev_coord
